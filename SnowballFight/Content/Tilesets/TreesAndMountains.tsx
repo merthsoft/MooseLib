@@ -498,7 +498,7 @@
  </tile>
  <tile id="99">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="100">
@@ -6218,7 +6218,7 @@
  </tile>
  <tile id="1243">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="1244">

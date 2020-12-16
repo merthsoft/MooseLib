@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.4" tiledversion="2020.11.25" name="Ice" tilewidth="16" tileheight="16" tilecount="600" columns="24">
  <image source="../Images/Ice.png" width="384" height="400"/>
+ <tile id="14">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="15">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
+ </tile>
  <tile id="16">
   <properties>
    <property name="blocking" type="bool" value="true"/>
@@ -55,6 +65,16 @@
    <frame tileid="22" duration="80"/>
    <frame tileid="23" duration="80"/>
   </animation>
+ </tile>
+ <tile id="38">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="39">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
  </tile>
  <tile id="40">
   <properties>
@@ -322,6 +342,11 @@
   </properties>
  </tile>
  <tile id="177">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="178">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>

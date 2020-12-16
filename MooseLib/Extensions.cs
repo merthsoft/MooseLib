@@ -86,6 +86,9 @@ namespace MooseLib
         public static bool InBounds(this Vector2 pos, int width, int height)
             => pos.X >= 0 && pos.Y >= 0 && pos.X < width && pos.Y < height;
 
+        public static List<GridPos> FindPath(this JumpPointParam pathFinder, Vector2 cell1, int x2, int y2)
+            => pathFinder.FindPath(cell1, new Vector2(x2, y2));
+
         public static List<GridPos> FindPath(this JumpPointParam pathFinder, Vector2 cell1, Vector2 cell2)
         {
             if (!cell1.InBounds(pathFinder.SearchGrid.width, pathFinder.SearchGrid.height))

@@ -23,6 +23,7 @@ namespace MooseLib
         protected SpriteBatch SpriteBatch = null!;
 
         protected readonly List<Unit> Units = new();
+        protected readonly Queue<Unit> SpawnQueue = new();
         protected readonly Dictionary<string, SpriteSheet> Animations = new();
         protected readonly List<Unit> SelectedUnits = new();
 
@@ -89,6 +90,8 @@ namespace MooseLib
         protected override void Update(GameTime gameTime)
         {
             MapRenderer.Update(gameTime);
+            if (SpawnQueue.Count > 0)
+                Units.Add(SpawnQueue.Dequeue());
             Units.ForEach(unit => unit.Update(gameTime));
 
             BuildGrid();
@@ -141,6 +144,15 @@ namespace MooseLib
                 LoadAnimation(animationKey);
             var unit = new Unit(Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
             Units.Add(unit);
+            return unit;
+        }
+
+        protected Unit AddUnitToSpawnQueue(string animationKey, int cellX, int cellY, Direction direction = Direction.None, State state = State.Idle, int speed = 0)
+        {
+            if (!Animations.ContainsKey(animationKey))
+                LoadAnimation(animationKey);
+            var unit = new Unit(Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
+            SpawnQueue.Enqueue(unit);
             return unit;
         }
 

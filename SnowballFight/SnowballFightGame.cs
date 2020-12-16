@@ -32,20 +32,20 @@ namespace SnowballFight
         {
             MainMap.CopyMap(Content.Load<TiledMap>("Maps/testmap"), 0, 0);
 
-            AddUnit("Skeleton", 5, 9, speed: 3);
-            AddUnit("Skeleton", 9, 4, speed: 3);
-            AddUnit("Skeleton", 1, 3, speed: 3);
-            AddUnit("Skeleton", 11, 11, speed: 3, state: State.Attack);
+            AddUnitToSpawnQueue("Skeleton", 5, 9, speed: 3);
+            AddUnitToSpawnQueue("Skeleton", 9, 4, speed: 3);
+            AddUnitToSpawnQueue("Skeleton", 1, 3, speed: 3);
+            AddUnitToSpawnQueue("Skeleton", 11, 11, speed: 3, state: State.Attack);
 
-            AddUnit("Crossbowman", 12, 14, speed: 4);
-            AddUnit("Crossbowman", 13, 14, speed: 4);
+            AddUnitToSpawnQueue("Crossbowman", 12, 14, speed: 4);
+            AddUnitToSpawnQueue("Crossbowman", 13, 14, speed: 4);
 
-            AddUnit("Footman", 13, 12, speed: 5);
-            AddUnit("Footman", 11, 13, speed: 5);
-            var attackingFootman = AddUnit("Footman", 12, 12, speed: 5, state: State.Attack);
+            AddUnitToSpawnQueue("Footman", 13, 12, speed: 5);
+            AddUnitToSpawnQueue("Footman", 11, 13, speed: 5);
+            var attackingFootman = AddUnitToSpawnQueue("Footman", 12, 12, speed: 5, state: State.Attack);
             attackingFootman.SpriteEffects = SpriteEffects.FlipHorizontally;
 
-            AddUnit("Dog", 10, 13, speed: 7);
+            AddUnitToSpawnQueue("Dog", 10, 13, speed: 7);
 
             base.LoadContent();
 
@@ -115,7 +115,8 @@ namespace SnowballFight
 
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.White);
+                    if (!MainMap.IsBlockedAt(x, y))
+                        SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.White);
 
             var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,
