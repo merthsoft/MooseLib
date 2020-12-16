@@ -81,7 +81,10 @@ namespace MooseLib
         }
 
         protected void LoadMap()
-            => MapRenderer.LoadMap(MainMap);
+        {
+            MapRenderer.LoadMap(MainMap);
+            BuildGrid();
+        }
 
         protected override void Update(GameTime gameTime)
         {

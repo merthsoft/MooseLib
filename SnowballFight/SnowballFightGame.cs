@@ -80,9 +80,14 @@ namespace SnowballFight
         }
 
         protected override void Draw(GameTime gameTime)
-            => Draw(selectedUnitPostDraw: DrawSelectedUnitStuff);
+            => Draw(
+                selectedUnitPreDraw: DrawSelectedUnitStuffPre,
+                selectedUnitPostDraw: DrawSelectedUnitStuffPost);
 
-        private void DrawSelectedUnitStuff(Unit selectedUnit)
+        private void DrawSelectedUnitStuffPre(Unit selectedUnit)
+            => SpriteBatch.FillRectangle(selectedUnit.Location, TileSize, Color.Red.HalveAlphaChannel());
+
+        private void DrawSelectedUnitStuffPost(Unit selectedUnit)
         {
             var unitCell = selectedUnit.GetCell(MainMap);
             WalkableGrid.SetWalkableAt((int)unitCell.X, (int)unitCell.Y, true);
@@ -92,9 +97,6 @@ namespace SnowballFight
             for (var deltaX = -selectedUnit.Speed; deltaX <= selectedUnit.Speed; deltaX++)
                 for (var deltaY = -selectedUnit.Speed; deltaY <= selectedUnit.Speed; deltaY++)
                 {
-                    if (deltaX == 0 && deltaY == 0)
-                        continue;
-
                     var deltaCell = new Vector2(unitCell.X + deltaX, unitCell.Y + deltaY);
 
                     if (deltaCell.X < 0 || deltaCell.Y < 0 || deltaCell.X >= MapWidth || deltaCell.Y >= MapHeight)
@@ -104,8 +106,8 @@ namespace SnowballFight
                     if (path.Count > 0 && path.Count - 1 <= selectedUnit.Speed)
                     {
                         var color = path.Count - 1 <= selectedUnit.Speed / 2
-                                ? Color.Green.HalveAlphaChannel()
-                                : Color.DarkOrange.HalveAlphaChannel();
+                                    ? Color.Green.HalveAlphaChannel()
+                                    : Color.DarkOrange.HalveAlphaChannel();
                         var worldDelta = selectedUnit.Location + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
                         SpriteBatch.FillRectangle(worldDelta, TileSize, color);
                     }
@@ -113,7 +115,7 @@ namespace SnowballFight
 
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.Black);
+                    SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.White);
 
             var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,
