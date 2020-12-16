@@ -12,6 +12,8 @@ namespace SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
+        private MouseState CurrentMouseState;
+
         public SnowballFightGame()
         {
         }
@@ -52,10 +54,10 @@ namespace SnowballFight
 
         protected override void Update(GameTime gameTime)
         {
-            var mouseState = Mouse.GetState();
-            var worldClick = MainCamera.ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
+            CurrentMouseState = Mouse.GetState();
+            var worldClick = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
 
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
                 foreach (var unit in Units)
                 {
@@ -68,7 +70,7 @@ namespace SnowballFight
                 }
             }
 
-            if (mouseState.RightButton == ButtonState.Pressed)
+            if (CurrentMouseState.RightButton == ButtonState.Pressed)
             {
                 if (SelectedUnits.Count == 1 && !SelectedUnits[0].Clicked(worldClick))
                     SelectedUnits.Clear();
@@ -82,7 +84,6 @@ namespace SnowballFight
 
         private void DrawSelectedUnitStuff(Unit selectedUnit)
         {
-            
             var unitCell = selectedUnit.GetCell(MainMap);
             WalkableGrid.SetWalkableAt((int)unitCell.X, (int)unitCell.Y, true);
 
@@ -114,10 +115,9 @@ namespace SnowballFight
                 for (var y = 0; y < MapHeight; y++)
                     SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.Black);
 
-            var mouseState = Mouse.GetState();
             var mouseCell = MainCamera.ScreenToWorld(
-                                mouseState.Position.X / TileWidth * TileWidth,
-                                mouseState.Position.Y / TileHeight * TileHeight);
+                                CurrentMouseState.Position.X / TileWidth * TileWidth,
+                                CurrentMouseState.Position.Y / TileHeight * TileHeight);
             mouseCell /= TileSize;
 
             var mousePath = pathFinder.FindPath(unitCell, mouseCell);

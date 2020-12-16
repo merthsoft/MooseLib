@@ -59,7 +59,7 @@ namespace MooseLib
         {
             MainMap = new TiledMap("map", width, height, tileWith, tileHeight, TiledMapTileDrawOrder.RightDown, TiledMapOrientation.Orthogonal);
 
-            WalkableGrid = new DynamicGrid();
+            WalkableGrid = new StaticGrid(width, height);
 
             BaseLayer = new TiledMapTileLayer("Base Layer", width, height, tileWith, tileHeight);
             UnderGroundUnitLayer = new TiledMapTileLayer("Under Ground Unit Layer", width, height, tileWith, tileHeight);

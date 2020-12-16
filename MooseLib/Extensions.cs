@@ -83,8 +83,16 @@ namespace MooseLib
             }
         }
 
+        public static bool InBounds(this Vector2 pos, int width, int height)
+            => pos.X >= 0 && pos.Y >= 0 && pos.X < width && pos.Y < height;
+
         public static List<GridPos> FindPath(this JumpPointParam pathFinder, Vector2 cell1, Vector2 cell2)
         {
+            if (!cell1.InBounds(pathFinder.SearchGrid.width, pathFinder.SearchGrid.height))
+                return new();
+            if (!cell2.InBounds(pathFinder.SearchGrid.width, pathFinder.SearchGrid.height))
+                return new();
+
             pathFinder.Reset(new((int)cell1.X, (int)cell1.Y), new((int)cell2.X, (int)cell2.Y));
             return JumpPointFinder.GetFullPath(JumpPointFinder.FindPath(pathFinder));
         }
