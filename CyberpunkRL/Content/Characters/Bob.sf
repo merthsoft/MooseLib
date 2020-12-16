@@ -1,0 +1,54 @@
+{
+  "textureAtlas": {
+    "texture": "Bob_16x16.png",
+    "regionWidth": 16,
+    "regionHeight": 32
+  },
+  "cycles": {
+    "idle_Right": {
+      "frames": [24,25,26,27,28,29],
+      "isLooping": true,
+      "frameDuration": 0.15
+    },
+    "idle_Up": {
+      "frames": [30,31,32,33,34,35],
+      "isLooping": true,
+      "frameDuration": 0.15
+    },
+    "idle_Left": {
+      "frames": [36,37,38,39,40,41],
+      "isLooping": true,
+      "frameDuration": 0.15
+    },
+    "idle_Down": {
+      "frames": [42,43,44,45,46,47],
+      "isLooping": true,
+      "frameDuration": 0.15
+    },
+    "walk_Right": {
+      "frames": [48,49,50,51,52,53],
+      "isLooping": true,
+      "frameDuration": 0.07000001
+    },
+    "walk_Up": {
+      "frames": [54,55,56,57,58,59],
+      "isLooping": true,
+      "frameDuration": 0.07000001
+    },
+    "walk_Left": {
+      "frames": [60,61,62,63,64,65],
+      "isLooping": true,
+      "frameDuration": 0.07000001
+    },
+    "walk_Down": {
+      "frames": [66,67,68,69,70,71],
+      "isLooping": true,
+      "frameDuration": 0.07000001
+    },
+    "phone_Down": {
+      "frames": [120,121,122,123,124,125,126,127,128],
+      "isLooping": false,
+      "frameDuration": 0.1
+    }
+  }
+}

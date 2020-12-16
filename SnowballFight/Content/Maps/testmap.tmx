@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="2020.11.25" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="1">
+ <tileset firstgid="1" source="../Tilesets/Ice.tsx"/>
+ <tileset firstgid="601" source="../Tilesets/TreesAndMountains.tsx"/>
+ <layer id="1" name="Base Layer" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzVkcsNwjAMhp1uAWsFCjvwUHcoFPbiIViBUBAzcIAjf4SjRlEDxD1x+NT64C+/7YyIsj9AK6IVMwBD1c1XoH8K+vRmLvRpzrNml3M6n07MWnieHIzAWDW+Cb4zoa/yslqH9v5/9ZWcx82Zc12xy9bLxF06p/XZLCXPvRC4TuBIjSO1P6QHDNiDHTgw7h2JzznPXu2/k+LbBo6QW6Lv8cVpBHPXEecGPMFFsMdri0viiWU0fOfUe3zKKLlH7DZddtc2913Y/wLFTj7c
+  </data>
+ </layer>
+ <layer id="5" name="Under Ground Unit Layer" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApIBwAGQAAB
+  </data>
+ </layer>
+ <layer id="3" name="Ground Unit Layer" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJydlN0uA1EQx093OacELyDxEXVHSYRtNdbHm+CGKomEZ8C98jD03sfD4LYI/8nOpNMj+2WSX6a7e84vM3N223XG3IKuyhIjoTHjYAo0QBs4UAWj/EyuKe+BZ+x/csO5xr4OnrfU+ibYBTFnuRZoXc1khzibyuF75N5GmCPjOGen74hVjrlfHTPq96Ln3FJ96p71ve2c+iYL+HTv7fDvvqyeI69H7SozP+1Mm6PMb76EbwzrT7iOlnKJ2z8PiVnO+kymVX1V9krPQpovK+h9vORZ6ncxLnC+WXHBtereN0Hl/0qzwzXRHE7BmaqvrHfOJB5yBPjmPy3+P1zervSYgMeyax/cgXuXXH/Z8r4O11bH/gi8gFewBtZz6rwKjLkGN8Hw/b5NaiPfClhlXyPH9wDPI+ixb8EM+oxUr5TrBep7g+cdfIAfmg3Wf9uBR3qlfACOeY4Vz9vnMyOHnB+tPwLLyrMEDplfS6xJtg==
+  </data>
+ </layer>
+ <layer id="6" name="Above Ground Unit Layer" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApIBwAGQAAB
+  </data>
+ </layer>
+</map>
