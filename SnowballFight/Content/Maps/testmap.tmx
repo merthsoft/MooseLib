@@ -14,12 +14,12 @@
  </layer>
  <layer id="3" name="Ground Unit Layer" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJydlE1OAkEQRpsRu5H4dwtcKJoQHZA4AjdRN4poQoJnUPeih1H3KodRtyjRr0JVLCaS6Z5KXird0/1SVTMwdMbcgaHKEsUFY8pgFdRBFzhQAov8TNaUO+AV91/cbJbo4XlTnW+ANkg4y1qgc1khzoZypD2yt+fho+izM+1IVE64X984UH3qnvXeIfvWwPo/jhUPn+69y74K2PDoOU71qF0h89POeXMMnR/FEs6fcx1N5RJ3qE/qK7FXehZCfRT0PV7xLPW3mKj3mycGXKvufR8U8itNi2uiOVyAS1VfHm+fHRF+818W/x8u+868WIbHsusI3IMHN11/23Bfj2ur4n4M3sAI1MBuRp3XkTE34Daa3R/baW3k2wY77Ktn+B7heQLPyid9xqpXylWP+t7h+QCf4Idmg/MT++eRXikfgzOeYyHlHfM7I4e8Pzp/CraUZxOcML8DR0jJ
+   eJxjYBgFo2AUjIJRMApIBwAGQAAB
   </data>
  </layer>
  <layer id="6" name="Above Ground Unit Layer" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApIBwAGQAAB
+   eJydlE1OAkEQRpsRu5H4dwtcKJoQHZA4AjdRN4poQoJnUPeih1H3KodRtyjRr0JVLCaS6Z5KXird0/1SVTMwdMbcgaHKEsUFY8pgFdRBFzhQAov8TNaUO+AV91/cbJbo4XlTnW+ANkg4y1qgc1khzoZypD2yt+fho+izM+1IVE64X984UH3qnvXeIfvWwPo/jhUPn+69y74K2PDoOU71qF0h89POeXMMnR/FEs6fcx1N5RJ3qE/qK7FXehZCfRT0PV7xLPW3mKj3mycGXKvufR8U8itNi2uiOVyAS1VfHm+fHRF+818W/x8u+868WIbHsusI3IMHN11/23Bfj2ur4n4M3sAI1MBuRp3XkTE34Daa3R/baW3k2wY77Ktn+B7heQLPyid9xqpXylWP+t7h+QCf4Idmg/MT++eRXikfgzOeYyHlHfM7I4e8Pzp/CraUZxOcML8DR0jJ
   </data>
  </layer>
 </map>

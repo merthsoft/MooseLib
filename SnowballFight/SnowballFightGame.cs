@@ -20,8 +20,8 @@ namespace SnowballFight
 
         protected override void Initialize()
         {
-            Graphics.PreferredBackBufferWidth = 1280;
-            Graphics.PreferredBackBufferHeight = 768;
+            Graphics.PreferredBackBufferWidth = 640;
+            Graphics.PreferredBackBufferHeight = 640;
             Graphics.ApplyChanges();
 
             InitializeMap(20, 20, 16, 16);
@@ -35,14 +35,14 @@ namespace SnowballFight
             AddUnitToSpawnQueue("Skeleton", 5, 9, speed: 3);
             AddUnitToSpawnQueue("Skeleton", 9, 4, speed: 3);
             AddUnitToSpawnQueue("Skeleton", 1, 3, speed: 3);
-            AddUnitToSpawnQueue("Skeleton", 11, 11, speed: 3, state: State.Attack);
+            AddUnitToSpawnQueue("Skeleton", 11, 11, speed: 3);
 
             AddUnitToSpawnQueue("Crossbowman", 12, 14, speed: 4);
             AddUnitToSpawnQueue("Crossbowman", 13, 14, speed: 4);
 
             AddUnitToSpawnQueue("Footman", 13, 12, speed: 5);
             AddUnitToSpawnQueue("Footman", 11, 13, speed: 5);
-            var attackingFootman = AddUnitToSpawnQueue("Footman", 12, 12, speed: 5, state: State.Attack);
+            var attackingFootman = AddUnitToSpawnQueue("Footman", 12, 12, speed: 5);
             attackingFootman.SpriteEffects = SpriteEffects.FlipHorizontally;
 
             AddUnitToSpawnQueue("Dog", 10, 13, speed: 7);
@@ -155,7 +155,7 @@ namespace SnowballFight
 
             var mousePath = FindPath(unitCell, mouseCell);
             var mousePathCount = mousePath.Count();
-            if (mousePathCount > 1 && mousePathCount <= selectedUnit.Speed)
+            if (mousePathCount > 0 && mousePathCount <= selectedUnit.Speed)
             {
                 var lastCell = (unitCell * TileSize) + HalfTileSize;
                 var index = 0;
@@ -163,8 +163,7 @@ namespace SnowballFight
                 {
                     var nextCell = new Vector2(p.X * TileWidth, p.Y * TileHeight) + HalfTileSize;
                     SpriteBatch.DrawLine(lastCell, nextCell, Color.Black, 2);
-                    //if (index > 1)
-                        SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
+                    SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
                     lastCell = nextCell;
                     index++;
                 }
