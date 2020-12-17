@@ -5,10 +5,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="EpPathFinding.cs" Version="1.4.2" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="RoyT.AStar" Version="3.0.2" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended">
