@@ -953,6 +953,11 @@
    <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
+ <tile id="274">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
+ </tile>
  <tile id="275">
   <properties>
    <property name="blocking" type="bool" value="true"/>

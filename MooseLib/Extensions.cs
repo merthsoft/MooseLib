@@ -86,18 +86,28 @@ namespace MooseLib
         public static bool InBounds(this Vector2 pos, int width, int height)
             => pos.X >= 0 && pos.Y >= 0 && pos.X < width && pos.Y < height;
 
-        public static List<GridPos> FindPath(this JumpPointParam pathFinder, Vector2 cell1, int x2, int y2)
+        public static IEnumerable<Vector2> FindPath(this JumpPointParam pathFinder, Vector2 cell1, int x2, int y2)
             => pathFinder.FindPath(cell1, new Vector2(x2, y2));
 
-        public static List<GridPos> FindPath(this JumpPointParam pathFinder, Vector2 cell1, Vector2 cell2)
+        public static IEnumerable<Vector2> FindPath(this JumpPointParam pathFinder, Vector2 cell1, Vector2 cell2)
         {
             if (!cell1.InBounds(pathFinder.SearchGrid.width, pathFinder.SearchGrid.height))
-                return new();
+                return Enumerable.Empty<Vector2>();
             if (!cell2.InBounds(pathFinder.SearchGrid.width, pathFinder.SearchGrid.height))
-                return new();
+                return Enumerable.Empty<Vector2>();
 
             pathFinder.Reset(new((int)cell1.X, (int)cell1.Y), new((int)cell2.X, (int)cell2.Y));
-            return JumpPointFinder.GetFullPath(JumpPointFinder.FindPath(pathFinder));
+            return JumpPointFinder.GetFullPath(JumpPointFinder.FindPath(pathFinder))
+                    .Distinct().Select(gridPos => new Vector2(gridPos.x, gridPos.y));
         }
+
+        public static void ForEach<T>(this IEnumerable<T> set, Action<T> action)
+        {
+            foreach (var t in set)
+                action(t);
+        }
+
+        public static Vector2 GetFloor(this Vector2 vector)
+            => new((int)vector.X, (int)vector.Y);
     }
 }

@@ -32,14 +32,14 @@ namespace MooseLib
         protected TiledMapTileLayer GroundUnitLayer = null!;
         protected TiledMapTileLayer AboveGroundUnitLayer = null!;
 
-        protected int MapHeight => MainMap.Height;
-        protected int MapWidth => MainMap.Width;
-        protected int TileWidth => MainMap.TileWidth;
-        protected int TileHeight => MainMap.TileHeight;
-        protected Size2 TileSize => new(TileWidth, TileHeight); // TODO: Cache
-        protected Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
+        public int MapHeight => MainMap.Height;
+        public int MapWidth => MainMap.Width;
+        public int TileWidth => MainMap.TileWidth;
+        public int TileHeight => MainMap.TileHeight;
+        public Size2 TileSize => new(TileWidth, TileHeight); // TODO: Cache
+        public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
 
-        protected BaseGrid WalkableGrid = null!;
+        protected StaticGrid WalkableGrid = null!;
 
         public MooseGame()
         {
@@ -55,13 +55,11 @@ namespace MooseLib
 
             base.Initialize();
         }
-        
+
         protected void InitializeMap(int width, int height, int tileWith, int tileHeight)
         {
             MainMap = new TiledMap("map", width, height, tileWith, tileHeight, TiledMapTileDrawOrder.RightDown, TiledMapOrientation.Orthogonal);
-
-            WalkableGrid = new StaticGrid(width, height);
-
+            WalkableGrid = new StaticGrid(MapWidth, MapHeight);
             BaseLayer = new TiledMapTileLayer("Base Layer", width, height, tileWith, tileHeight);
             UnderGroundUnitLayer = new TiledMapTileLayer("Under Ground Unit Layer", width, height, tileWith, tileHeight);
             GroundUnitLayer = new TiledMapTileLayer("Ground Unit Layer", width, height, tileWith, tileHeight);
@@ -101,7 +99,7 @@ namespace MooseLib
         {
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    WalkableGrid.SetWalkableAt(x, y, !MainMap.IsBlockedAt(x, y) && !Units.Exists(u => u.InCell(MainMap, x, y)));
+                    WalkableGrid.SetWalkableAt(x, y, !MainMap.IsBlockedAt(x, y) && !Units.Exists(u => u.InCell(x, y)));
         }
 
         protected override void Draw(GameTime gameTime)
@@ -142,7 +140,7 @@ namespace MooseLib
         {
             if (!Animations.ContainsKey(animationKey))
                 LoadAnimation(animationKey);
-            var unit = new Unit(Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
+            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
             Units.Add(unit);
             return unit;
         }
@@ -151,7 +149,7 @@ namespace MooseLib
         {
             if (!Animations.ContainsKey(animationKey))
                 LoadAnimation(animationKey);
-            var unit = new Unit(Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
+            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
             SpawnQueue.Enqueue(unit);
             return unit;
         }

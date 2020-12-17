@@ -5,14 +5,15 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
-using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
         private MouseState CurrentMouseState;
+        
 
         public SnowballFightGame()
         {
@@ -59,14 +60,37 @@ namespace SnowballFight
 
             if (CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
-                foreach (var unit in Units)
+                if (SelectedUnits.Count == 0)
                 {
-                    if (unit.Clicked(worldClick))
+                    foreach (var unit in Units)
                     {
-                        SelectedUnits.Clear();
-                        SelectedUnits.Add(unit);
-                        break;
+                        if (unit.Clicked(worldClick))
+                        {
+                            SelectedUnits.Clear();
+                            SelectedUnits.Add(unit);
+                            break;
+                        }
                     }
+                }
+                else
+                {
+                    var selectedUnit = SelectedUnits[0];
+                    var unitCell = selectedUnit.GetCell();
+                    var mouseCell = MainCamera.ScreenToWorld(
+                                CurrentMouseState.Position.X / TileWidth * TileWidth,
+                                CurrentMouseState.Position.Y / TileHeight * TileHeight);
+                    mouseCell /= TileSize;
+
+                    WalkableGrid.SetWalkableAt((int)unitCell.X, (int)unitCell.Y, true);
+                    var pathFinder = new JumpPointParam(WalkableGrid, iAllowEndNodeUnWalkable: EndNodeUnWalkableTreatment.DISALLOW, iDiagonalMovement: DiagonalMovement.Never, iMode: HeuristicMode.MANHATTAN);
+                    var path = pathFinder.FindPath(unitCell, mouseCell).Skip(1).ToList();
+                    if (path.Count > 0)
+                    {
+                        path.ForEach(selectedUnit.MoveQueue.Enqueue);
+                        selectedUnit.State = State.Walk;
+                        SelectedUnits.Clear();
+                    }
+                    WalkableGrid.SetWalkableAt((int)unitCell.X, (int)unitCell.Y, false);
                 }
             }
 
@@ -80,20 +104,18 @@ namespace SnowballFight
         }
 
         protected override void Draw(GameTime gameTime)
-            => Draw(
-                selectedUnitPreDraw: DrawSelectedUnitStuffPre,
-                selectedUnitPostDraw: DrawSelectedUnitStuffPost);
+        {
+            Draw(DrawSelectedUnitStuffPre);
+        }
 
         private void DrawSelectedUnitStuffPre(Unit selectedUnit)
-            => SpriteBatch.FillRectangle(selectedUnit.Location, TileSize, Color.Red.HalveAlphaChannel());
-
-        private void DrawSelectedUnitStuffPost(Unit selectedUnit)
         {
-            var unitCell = selectedUnit.GetCell(MainMap);
-            WalkableGrid.SetWalkableAt((int)unitCell.X, (int)unitCell.Y, true);
+            SpriteBatch.FillRectangle(selectedUnit.Location, TileSize, Color.Red.HalveAlphaChannel());
 
-            var pathFinder = new JumpPointParam(WalkableGrid, iDiagonalMovement: DiagonalMovement.Never, iAllowEndNodeUnWalkable: EndNodeUnWalkableTreatment.DISALLOW, iMode: HeuristicMode.MANHATTAN);
-            
+            var unitCell = selectedUnit.GetCell();
+            WalkableGrid.SetWalkableAt((int)unitCell.X, (int)unitCell.Y, true);
+            var pathFinder = new JumpPointParam(WalkableGrid, iAllowEndNodeUnWalkable: EndNodeUnWalkableTreatment.DISALLOW, iDiagonalMovement: DiagonalMovement.Never, iMode: HeuristicMode.MANHATTAN) { CurIterationType = IterationType.LOOP };
+
             for (var deltaX = -selectedUnit.Speed; deltaX <= selectedUnit.Speed; deltaX++)
                 for (var deltaY = -selectedUnit.Speed; deltaY <= selectedUnit.Speed; deltaY++)
                 {
@@ -103,14 +125,16 @@ namespace SnowballFight
                         continue;
 
                     var path = pathFinder.FindPath(unitCell, deltaCell);
-                    if (path.Count > 0 && path.Count - 1 <= selectedUnit.Speed)
-                    {
-                        var color = path.Count - 1 <= selectedUnit.Speed / 2
-                                    ? Color.Green.HalveAlphaChannel()
-                                    : Color.DarkOrange.HalveAlphaChannel();
-                        var worldDelta = selectedUnit.Location + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
-                        SpriteBatch.FillRectangle(worldDelta, TileSize, color);
-                    }
+                    var pathCount = path.Count();
+                    
+                    if ((pathCount <= 0) || (pathCount - 1 > selectedUnit.Speed))
+                        continue;
+                    
+                    var color = pathCount - 1 <= selectedUnit.Speed / 2
+                       ? Color.Green.HalveAlphaChannel()
+                       : Color.DarkOrange.HalveAlphaChannel();
+                    var worldDelta = selectedUnit.Location + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
+                    SpriteBatch.FillRectangle(worldDelta, TileSize, color);
                 }
 
             for (var x = 0; x < MapWidth; x++)
@@ -124,18 +148,22 @@ namespace SnowballFight
             mouseCell /= TileSize;
 
             var mousePath = pathFinder.FindPath(unitCell, mouseCell);
-            if (mousePath.Count > 0 && mousePath.Count - 1 <= selectedUnit.Speed)
+            var mousePathCount = mousePath.Count();
+            if (mousePathCount > 0 && mousePathCount - 1 <= selectedUnit.Speed)
             {
                 var lastCell = (unitCell * TileSize) + HalfTileSize;
+                var index = 0;
                 foreach (var p in mousePath)
                 {
-                    var nextCell = new Vector2(p.x * TileWidth, p.y * TileHeight) + HalfTileSize;
+                    var nextCell = new Vector2(p.X * TileWidth, p.Y * TileHeight) + HalfTileSize;
                     SpriteBatch.DrawLine(lastCell, nextCell, Color.Black, 2);
+                    if (index > 1)
+                        SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
                     lastCell = nextCell;
+                    index++;
                 }
-
+                SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
             }
-
             WalkableGrid.SetWalkableAt((int)unitCell.X, (int)unitCell.Y, false);
         }
     }
