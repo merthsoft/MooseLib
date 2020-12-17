@@ -104,7 +104,7 @@ namespace MooseLib
         {
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) && !Units.Exists(u => u.InCell(x, y)) ? 100 : 1;
+                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) || Units.Exists(u => u.InCell(x, y)) ? 100 : 1;
         }
 
         protected override void Draw(GameTime gameTime)

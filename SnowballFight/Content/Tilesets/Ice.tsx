@@ -348,7 +348,7 @@
  </tile>
  <tile id="178">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="179">
@@ -771,6 +771,36 @@
    <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
+ <tile id="240">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
+  <animation>
+   <frame tileid="592" duration="80"/>
+   <frame tileid="593" duration="80"/>
+   <frame tileid="594" duration="80"/>
+   <frame tileid="595" duration="80"/>
+   <frame tileid="596" duration="80"/>
+   <frame tileid="597" duration="80"/>
+   <frame tileid="598" duration="80"/>
+   <frame tileid="599" duration="80"/>
+  </animation>
+ </tile>
+ <tile id="241">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
+  <animation>
+   <frame tileid="568" duration="80"/>
+   <frame tileid="569" duration="80"/>
+   <frame tileid="570" duration="80"/>
+   <frame tileid="571" duration="80"/>
+   <frame tileid="572" duration="80"/>
+   <frame tileid="573" duration="80"/>
+   <frame tileid="574" duration="80"/>
+   <frame tileid="575" duration="80"/>
+  </animation>
+ </tile>
  <tile id="242">
   <animation>
    <frame tileid="136" duration="80"/>
@@ -955,7 +985,7 @@
  </tile>
  <tile id="274">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="275">
@@ -1204,6 +1234,11 @@
   </properties>
  </tile>
  <tile id="335">
+  <properties>
+   <property name="blocking" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="336">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
