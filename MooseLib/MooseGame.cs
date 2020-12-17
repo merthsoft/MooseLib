@@ -176,17 +176,14 @@ namespace MooseLib
             var endX = (int)endCell.X;
             var endY = (int)endCell.Y;
 
-            var cache = BlockingMap[startX, startY];
-            BlockingMap[startX, startY] = 0;
-
-            var grid = Grid.CreateGridWithLateralConnections(
+            var grid = Grid.CreateGridWithDiagonalConnections(
                     new GridSize(MapWidth, MapHeight),
                     new Roy_T.AStar.Primitives.Size(Distance.FromMeters(1), Distance.FromMeters(1)),
                     Velocity.FromMetersPerSecond(1));
 
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    if (BlockingMap[x, y] > 1)
+                    if (BlockingMap[x, y] > 1 && !(x == startX && y == startY))
                         grid.DisconnectNode(new(x, y));
 
             var path = new PathFinder()
@@ -195,13 +192,9 @@ namespace MooseLib
             if (path.Type != PathType.Complete)
                 return Enumerable.Empty<Vector2>();
             
-            var ret = path.Edges
+            return path.Edges
                 .Select(e => new Vector2((int)e.End.Position.X, (int)e.End.Position.Y))
                 .Distinct();
-
-            BlockingMap[startX, startY] = cache;
-
-            return ret;
         }
     }
 }
