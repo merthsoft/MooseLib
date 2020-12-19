@@ -58,16 +58,13 @@ namespace SnowballFight
             var uiFont = Content.Load<SpriteFont>("Fonts/TheKingIsDead");
             WindowManager = new(windowTexture, uiFont, new(6, 6));
 
-            var window = WindowManager.NewWindow(25, 25, 64, 64);
-            window.AddActionLabel(0, 0, "Grow", Color.Gold, Color.Maroon, (c, _) =>
-                c.Window.Size = c.Window.Size + new Vector2(16, 16)
-            );
-            window.AddActionLabel(0, 16, "Shrink", Color.Gold, Color.Maroon, (c, _) =>
-                c.Window.Size = c.Window.Size - new Vector2(16, 16)
-            );
-            window.AddActionLabel(0, 32, "Close", Color.Gold, Color.Maroon, (c, _) =>
-                c.Window.Close = true
-            );
+            var window = WindowManager
+                .NewWindow(25, 25, 64, 64)
+                .AddActionList(0, 0, Color.Gold, Color.Maroon, 
+                    ("Grow", (c, _) => c.Window.Size = c.Window.Size + new Vector2(16, 16)),
+                    ("Shrink", (c, _) => c.Window.Size = c.Window.Size - new Vector2(16, 16)),
+                    ("Close", (c, _) => c.Window.Close = true)
+                );
         }
 
         protected override void Update(GameTime gameTime)

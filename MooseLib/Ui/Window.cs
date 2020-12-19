@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MooseLib.Ui
 {
@@ -118,6 +119,34 @@ namespace MooseLib.Ui
                 Color = color,
                 MouseOverColor = mouseOverColor,
                 Action = action,
+            };
+            Controls.Add(ret);
+            return ret;
+        }
+
+        public TextList AddActionList(int x, int y, Color color, Color mouseOverColor, Action<Control, UpdateParameters> action, params string[] options)
+        {
+            var ret = new TextList(this, options)
+            {
+                Position = new(x, y),
+                Color = color,
+                MouseOverColor = mouseOverColor,
+                Action = action,
+                SelectMode = SelectMode.None,
+            };
+            Controls.Add(ret);
+            return ret;
+        }
+
+        public TextList AddActionList(int x, int y, Color color, Color mouseOverColor, params (string text, Action<Control, UpdateParameters> action)[] options)
+        {
+            var ret = new TextList(this, options.Select(o => o.text))
+            {
+                Position = new(x, y),
+                Color = color,
+                MouseOverColor = mouseOverColor,
+                Action = (c, u) => options[(c as TextList)!.MouseOverIndex].action(c, u),
+                SelectMode = SelectMode.None,
             };
             Controls.Add(ret);
             return ret;

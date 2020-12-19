@@ -6,7 +6,7 @@ namespace MooseLib.Ui
 {
     public abstract class Control
     {
-        public object Object { get; set; }
+        public object? Object { get; set; }
         public Window Window { get; }
         public Vector2 Position { get; set; }
 
@@ -23,7 +23,7 @@ namespace MooseLib.Ui
 
         protected Vector2 GlobalPosition => Position + Window.Position + Window.WindowManager.ControlDrawOffset;
 
-        public new Action<Control, UpdateParameters>? Action { get; set; }
+        public Action<Control, UpdateParameters>? Action { get; set; }
 
         public Control(Window window)
             => Window = window;
