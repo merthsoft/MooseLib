@@ -10,7 +10,19 @@ namespace MooseLib.Ui
         public WindowManager WindowManager { get; set; }
         public bool Close { get; set; }
 
-        public Rectangle Rectangle { get; set; }
+        private Rectangle rectangle;
+        public Rectangle Rectangle
+        { 
+            get => rectangle; 
+            set
+            {
+                rectangle = new(
+                    value.X, value.Y, 
+                    value.Width,
+                    value.Height
+                );
+            }
+        }
 
         public Vector2 Position
         {
@@ -110,5 +122,11 @@ namespace MooseLib.Ui
             Controls.Add(ret);
             return ret;
         }
+
+        public void SetCellSize(int cellWidth, int cellHeight)
+            => Size = new(cellWidth * WindowManager.TileWidth, cellHeight * WindowManager.TileHeight);
+
+        public void SetCellPosition(int cellX, int cellY)
+            => Position = new(cellX * WindowManager.TileWidth, cellY * WindowManager.TileHeight);
     }
 }

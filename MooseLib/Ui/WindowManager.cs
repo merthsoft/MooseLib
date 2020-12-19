@@ -59,8 +59,6 @@ namespace MooseLib.Ui
 
         public Window NewWindow(int x, int y, int width, int height)
         {
-            width += TileWidth - width % TileWidth;
-            height += TileHeight - height % TileHeight;
             var ret = new Window(this, x, y, width, height);
             Windows.Add(ret);
             return ret;
