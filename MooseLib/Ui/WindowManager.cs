@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using System;
 using System.Collections.Generic;
 
 namespace MooseLib.Ui
@@ -9,14 +10,28 @@ namespace MooseLib.Ui
     public class WindowManager
     {
         public SpriteFont Font { get; set; }
-        public Texture2D WindowTexture { get; }
+        
+        private Texture2D windowTexture = null!;
+        public Texture2D WindowTexture
+        {
+            get => windowTexture;
+            set
+            {
+                windowTexture = value;
+
+                TileWidth = WindowTexture.Width / 3;
+                TileHeight = WindowTexture.Height / 3;
+                for (var index = 0; index < 9; index++)
+                    TextureRects[index] = new Rectangle(index % 3 * TileWidth, index / 3 * TileHeight, TileWidth, TileHeight);
+            }
+        }
         public List<Window> Windows { get; } = new();
 
         internal Vector2 ControlDrawOffset { get; }
 
         internal Rectangle[] TextureRects = new Rectangle[9];
-        internal int TileWidth { get; }
-        internal int TileHeight { get; }
+        internal int TileWidth { get; private set; }
+        internal int TileHeight { get; private set; }
 
         internal MouseState CurrentMouseState { get; set; }
         internal MouseState PreviousMouseState { get; set; }
@@ -26,11 +41,6 @@ namespace MooseLib.Ui
             WindowTexture = windowTexture;
             Font = font;
             ControlDrawOffset = controlDrawOffset;
-
-            TileWidth = WindowTexture.Width / 3;
-            TileHeight = WindowTexture.Height / 3;
-            for (var index = 0; index < 9; index++)
-                TextureRects[index] = new Rectangle(index % 3 * TileWidth, index / 3 * TileHeight, TileWidth, TileHeight);
         }
 
         public void Update(GameTime gameTime, OrthographicCamera camera)
@@ -60,6 +70,15 @@ namespace MooseLib.Ui
         public Window NewWindow(int x, int y, int width, int height)
         {
             var ret = new Window(this, x, y, width, height);
+            Windows.Add(ret);
+            return ret;
+        }
+
+        public Window NewActionListWindow(int x, int y, Color textColor, Color mouseOverColor, Action<Control, UpdateParameters> action, params string[] options)
+        {
+            var ret = new Window(this, x, y, 0, 0);
+            var list = ret.AddActionList(0, 0, textColor, mouseOverColor, action, options);
+            ret.Size = list.CalculateSize() + new Vector2(TileWidth, TileHeight);
             Windows.Add(ret);
             return ret;
         }

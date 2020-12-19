@@ -54,17 +54,19 @@ namespace SnowballFight
 
             MainCamera.ZoomIn(1f);
 
-            var windowTexture = Content.Load<Texture2D>("Images/window");
+            var themes = new[] {
+                Content.Load<Texture2D>("Images/window"),
+                Content.Load<Texture2D>("Images/window2"),
+                Content.Load<Texture2D>("Images/window3"),
+                Content.Load<Texture2D>("Images/window4"),
+            };
             var uiFont = Content.Load<SpriteFont>("Fonts/TheKingIsDead");
-            WindowManager = new(windowTexture, uiFont, new(6, 6));
+            WindowManager = new(themes[0], uiFont, new(6, 6));
 
             var window = WindowManager
-                .NewWindow(25, 25, 64, 64)
-                .AddActionList(0, 0, Color.Gold, Color.Maroon, 
-                    ("Grow", (c, _) => c.Window.Size = c.Window.Size + new Vector2(16, 16)),
-                    ("Shrink", (c, _) => c.Window.Size = c.Window.Size - new Vector2(16, 16)),
-                    ("Close", (c, _) => c.Window.Close = true)
-                );
+                .NewActionListWindow(25, 25, Color.Gold, Color.Maroon, 
+                    (c, _) => c.Window.WindowManager.WindowTexture = themes[(c as TextList)!.MouseOverIndex],
+                    "Theme 1", "Theme 2", "Theme 3", "Theme 4");
         }
 
         protected override void Update(GameTime gameTime)
