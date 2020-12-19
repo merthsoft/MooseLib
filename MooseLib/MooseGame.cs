@@ -11,7 +11,6 @@ using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace MooseLib
@@ -176,7 +175,7 @@ namespace MooseLib
             var endX = (int)endCell.X;
             var endY = (int)endCell.Y;
 
-            var grid = Grid.CreateGridWithDiagonalConnections(
+            var grid = Grid.CreateGridWithLateralConnections(
                     new GridSize(MapWidth, MapHeight),
                     new Roy_T.AStar.Primitives.Size(Distance.FromMeters(1), Distance.FromMeters(1)),
                     Velocity.FromMetersPerSecond(1));

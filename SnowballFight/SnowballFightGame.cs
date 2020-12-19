@@ -4,8 +4,10 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
+using MooseLib.Ui;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 namespace SnowballFight
 {
@@ -13,6 +15,7 @@ namespace SnowballFight
     {
         private MouseState CurrentMouseState;
         private readonly List<(Vector2, Color)> SelectedUnitHintCells = new();
+        private WindowManager WindowManager = null!;
 
         public SnowballFightGame()
         {
@@ -50,6 +53,17 @@ namespace SnowballFight
             base.LoadContent();
 
             MainCamera.ZoomIn(1f);
+
+            var windowTexture = Content.Load<Texture2D>("Images/window");
+            var uiFont = Content.Load<SpriteFont>("Fonts/TheKingIsDead");
+            WindowManager = new(windowTexture, uiFont, new(6, 6));
+
+            var window = WindowManager.NewWindow(25, 25, 48, 24);
+            window.AddActionLabel(0, 0, "Click Me", Color.Gold, Color.Maroon, (c, _) =>
+                {
+                    (c as Label)!.Text = "Again!";
+                    c.Action = (c2, _) => c2.Window.Close = true;
+                });
         }
 
         protected override void Update(GameTime gameTime)
@@ -80,7 +94,7 @@ namespace SnowballFight
                                         var color = pathCount - 1 <= unit.Speed / 2
                                            ? Color.Green.HalveAlphaChannel()
                                            : Color.DarkOrange.HalveAlphaChannel();
-                                        var worldDelta = unit.Location + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
+                                        var worldDelta = unit.Position + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
                                         SelectedUnitHintCells.Add((worldDelta, color));
                                     }
                                 }
@@ -115,6 +129,7 @@ namespace SnowballFight
             }
 
             base.Update(gameTime);
+            WindowManager.Update(gameTime, MainCamera);
         }
 
         private void SelectSingleUnit(Unit unit)
@@ -132,11 +147,14 @@ namespace SnowballFight
         protected override void Draw(GameTime gameTime)
         {
             Draw(DrawSelectedUnitStuffPre);
+            SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+            WindowManager.Draw(gameTime, SpriteBatch);
+            SpriteBatch.End();
         }
 
         private void DrawSelectedUnitStuffPre(Unit selectedUnit)
         {
-            SpriteBatch.FillRectangle(selectedUnit.Location, TileSize, Color.Red.HalveAlphaChannel());
+            SpriteBatch.FillRectangle(selectedUnit.Position, TileSize, Color.Red.HalveAlphaChannel());
 
             var unitCell = selectedUnit.GetCell();
 

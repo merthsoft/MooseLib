@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Sprites;
-using MonoGame.Extended.Tiled;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace MooseLib
 {
@@ -11,7 +9,7 @@ namespace MooseLib
     {
         public MooseGame ParentGame { get; set; }
 
-        public Vector2 Location { get; set; }
+        public Vector2 Position { get; set; }
         public AnimatedSprite Sprite { get; set; }
         public Direction Direction { get; set; } = Direction.Down;
 
@@ -39,7 +37,7 @@ namespace MooseLib
         public Unit(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, Direction direction = Direction.Down, State state = State.Idle)
         {
             Sprite = new AnimatedSprite(spriteSheet);
-            Location = new(cellX * 16, cellY * 16);
+            Position = new(cellX * 16, cellY * 16);
             SpriteOffset = new Vector2(8, 8);
             Direction = direction;
             State = state;
@@ -47,7 +45,7 @@ namespace MooseLib
         }
 
         public void Draw(SpriteBatch spriteBatch)
-            => Sprite.Draw(spriteBatch, Location + SpriteOffset, Rotation, Scale, SpriteEffects);
+            => Sprite.Draw(spriteBatch, Position + SpriteOffset, Rotation, Scale, SpriteEffects);
 
         public void Update(GameTime gameTime)
         {
@@ -55,8 +53,8 @@ namespace MooseLib
             {
                 if (MoveDirection != Vector2.Zero)
                 {
-                    Location += MoveDirection;
-                    if (Location == NextLocation)
+                    Position += MoveDirection;
+                    if (Position == NextLocation)
                         MoveDirection = Vector2.Zero;
                 }
                 else if (MoveQueue.Count == 0)
@@ -82,13 +80,13 @@ namespace MooseLib
         }
 
         public bool Clicked(Vector2 worldLocation)
-            => worldLocation.X >= Location.X && worldLocation.X < (Location.X + 16)
-            && worldLocation.Y >= Location.Y && worldLocation.Y < (Location.Y + 16);
+            => worldLocation.X >= Position.X && worldLocation.X < (Position.X + 16)
+            && worldLocation.Y >= Position.Y && worldLocation.Y < (Position.Y + 16);
 
         public Vector2 GetCell()
-            => new((int)(Location.X / ParentGame.TileWidth), (int)(Location.Y / ParentGame.TileHeight));
+            => new((int)(Position.X / ParentGame.TileWidth), (int)(Position.Y / ParentGame.TileHeight));
 
         public bool InCell(int x, int y)
-            => (Location / new Vector2(ParentGame.TileWidth, ParentGame.TileHeight)) == new Vector2(x, y);
+            => (Position / new Vector2(ParentGame.TileWidth, ParentGame.TileHeight)) == new Vector2(x, y);
     }
 }

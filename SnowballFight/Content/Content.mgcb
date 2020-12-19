@@ -15,6 +15,13 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Fonts/TheKingIsDead.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/TheKingIsDead.spritefont
+
 #begin Images/BuildingsAndWalls.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -110,6 +117,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/Units/Necromancers.png
+
+#begin Images/window.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/window.png
 
 #begin Maps/testmap.tmx
 /importer:TiledMapImporter
