@@ -18,9 +18,6 @@ namespace MooseLib.Ui
             set
             {
                 windowTexture = value;
-
-                TileWidth = WindowTexture.Width / 3;
-                TileHeight = WindowTexture.Height / 3;
                 for (var index = 0; index < 9; index++)
                     TextureRects[index] = new Rectangle(index % 3 * TileWidth, index / 3 * TileHeight, TileWidth, TileHeight);
             }
@@ -33,8 +30,15 @@ namespace MooseLib.Ui
         public Color TextMouseOverColor { get; set; } = Color.White;
         public Color SelectedColor { get; set; } = Color.Blue;
 
-        public Theme(string name, Texture2D windowTexture, SpriteFont font)
-        => (Name, WindowTexture, Font)
-         = (name, windowTexture, font);
+        public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, SpriteFont font)
+            => (Name, TileWidth, TileHeight, WindowTexture, Font)
+             = (name, tileWidth, tileHeight, windowTexture, font);
+
+        internal void DrawWindowTexture(SpriteBatch spriteBatch, int index, Vector2 position, int x, int y)
+        {
+            var sourceRect = TextureRects[index];
+            var destRect = new Rectangle((int)position.X + x * TileWidth, (int)position.Y + y * TileHeight, TileWidth, TileHeight);
+            spriteBatch.Draw(WindowTexture, destRect, sourceRect, Color.White);
+        }
     }
 }

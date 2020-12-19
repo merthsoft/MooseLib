@@ -59,16 +59,9 @@ namespace MooseLib.Ui
         {
             var ret = new Window(this, x, y, 0, 0);
             var list = ret.AddActionList(0, 0, action, options);
-            ret.Size = list.CalculateSize() + new Vector2(DefaultTheme.TileWidth, DefaultTheme.TileHeight);
+            ret.Size = list.CalculateSize() + new Vector2(DefaultTheme.TileWidth * 2, DefaultTheme.TileHeight);
             Windows.Add(ret);
             return ret;
-        }
-
-        internal void DrawWindowTexture(SpriteBatch spriteBatch, Theme theme, int index, Vector2 position, int x, int y)
-        {
-            var sourceRect = theme.TextureRects[index];
-            var destRect = new Rectangle((int)position.X + x * theme.TileWidth, (int)position.Y + y * theme.TileHeight, theme.TileWidth, theme.TileHeight);
-            spriteBatch.Draw(theme.WindowTexture, destRect, sourceRect, Color.White);
         }
     }
 }

@@ -195,5 +195,8 @@ namespace MooseLib
                 .Select(e => new Vector2((int)e.End.Position.X, (int)e.End.Position.Y))
                 .Distinct();
         }
+
+        public Unit? UnitAtWorldLocation(Vector2 worldLocation)
+            => Units.FirstOrDefault(unit => unit.AtWorldLocation(worldLocation));
     }
 }

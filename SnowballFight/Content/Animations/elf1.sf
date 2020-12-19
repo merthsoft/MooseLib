@@ -1,32 +1,32 @@
 {
   "textureAtlas": {
-    "texture": "..\\Images\\Units\\Inferno.png",
+    "texture": "..\\Images\\units.png",
     "regionWidth": 16,
     "regionHeight": 16
   },
   "cycles": {
     "idle": {
-      "frames": [40,41,42,43],
+      "frames": [64,65,66,67],
       "isLooping": true,
       "frameDuration": 0.2
     },
     "walk": {
-      "frames": [44,45,46,47],
+      "frames": [68,69,70,71],
       "isLooping": true,
-      "frameDuration": 0.0799999759
+      "frameDuration": 0.2
     },
     "attack": {
-      "frames": [48,49,50,51],
-      "isLooping": true,
-      "frameDuration": 0.06999998
-    },
-    "damage": {
-      "frames": [52,53,54,55],
+      "frames": [72,73,74,75],
       "isLooping": false,
       "frameDuration": 0.2
     },
-    "die": {
-      "frames": [56,57,58,59],
+    "hit": {
+      "frames": [76,77,78,79],
+      "isLooping": false,
+      "frameDuration": 0.2
+    },
+    "defeat": {
+      "frames": [80,81,82,83],
       "isLooping": false,
       "frameDuration": 0.2
     }

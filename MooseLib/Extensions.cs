@@ -30,11 +30,15 @@ namespace MooseLib
         public static Color HalveAlphaChannel(this Color c)
             => new(c, c.A / 2);
 
-        public static bool GetBoolProperty(this TiledMapProperties poperties, string name)
+        public static bool? GetBoolProperty(this TiledMapProperties? poperties, string name)
         {
+            if (poperties == null)
+                return false;
+            
             var property = poperties.FirstOrDefault(p => p.Key == name).Value;
             if (property == null)
-                return false;
+                return null;
+            
             return bool.TryParse(property, out var result) && result;
         }
 
@@ -45,14 +49,16 @@ namespace MooseLib
                 return false;
 
             var firstTile = map.GetTilesetFirstGlobalIdentifier(tileSet);
-            var tileSetTile = tileSet.Tiles?.FirstOrDefault(t => t.LocalTileIdentifier == tile.GlobalIdentifier - firstTile);
+            var tileSetTile = tileSet.Tiles.FirstOrDefault(t => t.LocalTileIdentifier == tile.GlobalIdentifier - firstTile);
 
-            return tileSetTile?.Properties?.GetBoolProperty("blocking") ?? false;
+            var ret = tileSetTile?.Properties.GetBoolProperty("blocking");
+            ret ??= tileSet.Properties.GetBoolProperty("blocking");
+            ret ??= false;
+            return ret.Value;
         }
 
         public static bool IsBlockedAt(this TiledMapTileLayer layer, ushort x, ushort y, TiledMap map)
-            => layer.Properties.GetBoolProperty("blocking")
-            || layer.GetTile(x, y).IsBlocking(map);
+            => layer.GetTile(x, y).IsBlocking(map);
 
 
         public static bool IsBlockedAt(this TiledMap map, int x, int y)

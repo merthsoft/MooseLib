@@ -79,7 +79,7 @@ namespace MooseLib
             Sprite.Update(gameTime);
         }
 
-        public bool Clicked(Vector2 worldLocation)
+        public bool AtWorldLocation(Vector2 worldLocation)
             => worldLocation.X >= Position.X && worldLocation.X < (Position.X + 16)
             && worldLocation.Y >= Position.Y && worldLocation.Y < (Position.Y + 16);
 

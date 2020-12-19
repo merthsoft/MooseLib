@@ -1,32 +1,32 @@
 {
   "textureAtlas": {
-    "texture": "..\\Images\\Units\\Castle.png",
+    "texture": "..\\Images\\units.png",
     "regionWidth": 16,
     "regionHeight": 16
   },
   "cycles": {
     "idle": {
-      "frames": [60,61,62,63],
+      "frames": [106,107,108,109],
       "isLooping": true,
-      "frameDuration": 0.149999976
+      "frameDuration": 0.2
     },
     "walk": {
-      "frames": [64,65,66,67],
+      "frames": [110,111,112,113,114],
       "isLooping": true,
       "frameDuration": 0.2
     },
     "attack": {
-      "frames": [68,69,70,71],
-      "isLooping": true,
-      "frameDuration": 0.2
-    },
-    "damage": {
-      "frames": [72,73,74,75],
+      "frames": [],
       "isLooping": false,
       "frameDuration": 0.2
     },
-    "die": {
-      "frames": [76,77,78,79],
+    "hit": {
+      "frames": [],
+      "isLooping": false,
+      "frameDuration": 0.2
+    },
+    "defeat": {
+      "frames": [],
       "isLooping": false,
       "frameDuration": 0.2
     }

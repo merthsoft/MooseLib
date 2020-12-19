@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="2020.11.25" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="1">
- <tileset firstgid="1" source="../Tilesets/Ice.tsx"/>
- <tileset firstgid="601" source="../Tilesets/TreesAndMountains.tsx"/>
- <layer id="1" name="Base Layer" width="20" height="20">
+<map version="1.4" tiledversion="2020.11.25" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="1">
+ <tileset firstgid="1" source="../Tilesets/ground.tsx"/>
+ <tileset firstgid="1405" source="../Tilesets/blocking.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="30" height="30">
   <data encoding="base64" compression="zlib">
-   eJydk1FOwlAQRV+7hX7htoTqFtSGsAVSC+xBd6E7QIz+uACKGLdASMA/Z8Kd9GbyXqh+3EyZzjudO/PIQwg56TILYS5aiMZZlxsib3EeyRVZd34IKacSXQhnhtxUdC+6Rl5lNRXVlxInkTxHrWnQ5x3xTCW+U8GPrzGu73GEWt/PLTzp7wL9+d48k8/xuxmxYn69b5Oeu6H5pWrHifl578ZcRHhcq7ya5hnz68Xz97wCezOmzUDvxhXdEc41tBfvQXmvoWNaPd/vOpEzPt9J5f1IXIUTV+MbtBa9u/9OTBPXn57biFrEAbQU7ULXf0rmvcT8juGkFzDs2fjfZ3g1OA3ig+QeRXs6+0V9tj19m55Ez463J8/a7/YfvAPO7uBz+UcO8z7gmb222PO5fcR4zOTZDXrsI8Uz359u11u8yyn25VmPvJu+HNMvnQeDuw==
+   eJzt1E0OgjAQhuGGayhRUWP8WaNiTIyeQBdIdKH3P4Vfk5o0kzpqp7CaxRMWEF6mFDJjTKaUUh0ZQekUnmGLzQFsoBdwbqlXMk1r7a4ZJ1xPrhfqc+0FLGH+oflPK9QuvOd+7wXba2AGt0B3J2hyJnBw7VPibg59qMmxgrvXXpEmt2d/aVbMuz3CA6bwJOcuglkl31LsGttZr4Ju7LzS/0bsvHthN2beb/sp1bz0W5E26by5u3ftNVJ1qK3XkOxPpbryAuZ7KVQ=
   </data>
  </layer>
- <layer id="5" name="Under Ground Unit Layer" width="20" height="20">
+ <layer id="3" name="Tile Layer 3" width="30" height="30">
   <data encoding="base64" compression="zlib">
-   eJxjYKA9UBkgvfQGckhs1QFzxdACinSwQx5KI8eJNB3sHUlAYaAdMISB8kA7gAIAAP5gAU8=
+   eJztwQEBAAAAgiD/r25IQAEAAPBoDhAAAQ==
   </data>
  </layer>
- <layer id="3" name="Ground Unit Layer" width="20" height="20">
+ <layer id="2" name="Tile Layer 2" width="30" height="30">
   <data encoding="base64" compression="zlib">
-   eJxjYCAMAhmJx8QCQvpINY+QXkrMg+kfNW9wmYdsBqXmoZtJDfOwmTvYzaN2GIyah1sdtcyjpNyl1DwAhO8dyw==
-  </data>
- </layer>
- <layer id="6" name="Above Ground Unit Layer" width="20" height="20">
-  <data encoding="base64" compression="zlib">
-   eJydlElOw0AQRRsD3QEx3QIWjBtMiDDDSRg2KBikSHAGYE/gMMCe4TCEbQDBL6VK/BgsDyU9ldzufqqqdtINzt2ALmWLsVHnJsEM2ABtEEADjOs7e5a8B55x/ikMZ4sU71u0vwl2QaLZng3ZVxTmbJIj67G19RI+iY46s46EcqL9lo0t6pN75rVt9c2CuX8c0yV83HtbffNgoUTPcaZHdlWZHzvz5lh1fhIT2H+idbTIZe6qPquvoV7r2ajqk5Dv8UJnyd9iQvdbJ861Vu59E4zUV7odrUnmcArOqL463o46IvzmPzz+P0LxmbyYgser6wDcgrswqKtObanWtgxHDF7Aa0nfZeTcFbiOhtf7flCb+FbAKvj0xb57eB7AI/msz5h6lbyvsxRvXrzB0wPv4Fv24cyX//VYr5LXwCJIw986+3pn4rD7OwTHYIk8cv5I+QGGmUnE
+   eJztlV9LVEEYxg/Izq437daqUJSlLoYg4d26FZJFQWkZht5ai1aKiP25qotKEUTCm7QvUBSbskbpndVXEGnR6sJuSj+DpfS8nGdwHM/ZTdMFsRd+zJz58z7zvDPsLgccpw/0gxkwAR6BAuU4j9kOcm6V30+4ZoD8Ar+BHQeDjnMIHGVbDo4F3bkm5PmKPZVoY8rNLWPl/D4OmsFrjI+DFvQzaD+DMVCm3L1vPHTPQuMcaAAXQD3oBBVBN4eDfQ2gijoZ+pOcV5XrR74vKdef7q+wTtK+y6F7BHRR/27QzZEG1ciTYh45Q5r9JnqVM4nfZtZnlt6lL7Sq9ZplyH0YnAHd4Dz1G1nnSmoIMfZT7ItOJrB2F9es3AsY++7h0/TayXvtsnTfGn5jRPellnKPVyy9SWqFMF7oM3ePPoU7bM37reC9pqidNlq5328+fsyoUdnnS+m5h9riWWo4F3DfbxV9vuL9zVua73OcwWt+GGO9hlep90XjPa/Qn7wVrZft/ux4mmNdL+t9n+/5C9ZfVt7+vO7vX+IEcj0ADzeZc+gvvWeLF9B8uY1edmtMbUMt/8feimd4MyNgFDzP4/uZhtYH8BF8yqPuD2j9BItgKQ+6cf4u7UMbBhGwn2OREPqhnT/DhjNBMwpKdlA7Yfwe6xrcCOVH244iaLUb2putecLnvyWuNq4JI3cxNWqpp7VPbtFzPMt/WxH1roM6atykXhvH23LU28+f1znClp6QoG7YGD9tnKHYIOLzbY/bHDC0NKJxm35PcT7KM+j5uLFPf+v9dVar+37oNVGeV0K0kxZyJv3WRbODb+CWD0mrtceS1twforiNPA==
   </data>
  </layer>
 </map>

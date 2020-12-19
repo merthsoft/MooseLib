@@ -5,6 +5,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -14,20 +15,22 @@ namespace SnowballFight
     public class SnowballFightGame : MooseGame
     {
         private MouseState CurrentMouseState;
-        private readonly List<(Vector2, Color)> SelectedUnitHintCells = new();
         private WindowManager WindowManager = null!;
 
+        private readonly List<(Vector2, Color)> SelectedUnitHintCells = new();
+        private Unit? TargettedUnit { get; set; }
+        
         public SnowballFightGame()
         {
         }
 
         protected override void Initialize()
         {
-            Graphics.PreferredBackBufferWidth = 640;
-            Graphics.PreferredBackBufferHeight = 640;
+            Graphics.PreferredBackBufferWidth = 960;
+            Graphics.PreferredBackBufferHeight = 960;
             Graphics.ApplyChanges();
 
-            InitializeMap(20, 20, 16, 16);
+            InitializeMap(30, 30, 16, 16);
             base.Initialize();
         }
 
@@ -35,20 +38,16 @@ namespace SnowballFight
         {
             MainMap.CopyMap(Content.Load<TiledMap>("Maps/testmap"), 0, 0);
 
-            AddUnitToSpawnQueue("Skeleton", 5, 9, speed: 3);
-            AddUnitToSpawnQueue("Skeleton", 9, 4, speed: 3);
-            AddUnitToSpawnQueue("Skeleton", 1, 3, speed: 3);
-            AddUnitToSpawnQueue("Skeleton", 11, 11, speed: 3);
+            AddUnitToSpawnQueue("deer", 5, 9, speed: 3);
+            AddUnitToSpawnQueue("elf1", 9, 4, speed: 3);
+            AddUnitToSpawnQueue("elf2", 1, 3, speed: 3);
+            AddUnitToSpawnQueue("elf3", 11, 11, speed: 3);
 
-            AddUnitToSpawnQueue("Crossbowman", 12, 14, speed: 4);
-            AddUnitToSpawnQueue("Crossbowman", 13, 14, speed: 4);
+            AddUnitToSpawnQueue("krampus", 12, 14, speed: 4);
+            AddUnitToSpawnQueue("mari", 13, 14, speed: 4);
 
-            AddUnitToSpawnQueue("Footman", 13, 12, speed: 5);
-            AddUnitToSpawnQueue("Footman", 11, 13, speed: 5);
-            var attackingFootman = AddUnitToSpawnQueue("Footman", 12, 12, speed: 5);
-            attackingFootman.SpriteEffects = SpriteEffects.FlipHorizontally;
-
-            AddUnitToSpawnQueue("Dog", 10, 13, speed: 7);
+            AddUnitToSpawnQueue("santa", 13, 12, speed: 5);
+            AddUnitToSpawnQueue("snowman", 11, 13, speed: 5);
 
             base.LoadContent();
 
@@ -63,64 +62,47 @@ namespace SnowballFight
 
             var windowTextures = new Texture2D[]
             {
-                Content.Load<Texture2D>("Images/Windows/window1"),
-                Content.Load<Texture2D>("Images/Windows/window2"),
-                Content.Load<Texture2D>("Images/Windows/window3"),
-                Content.Load<Texture2D>("Images/Windows/window4"),
-                Content.Load<Texture2D>("Images/Windows/window6"),
-                Content.Load<Texture2D>("Images/Windows/window5"),
+                Content.Load<Texture2D>("Images/window1"),
+                Content.Load<Texture2D>("Images/window2"),
             };
             WindowManager = new WindowManager(new Theme[] {
-                new("Theme 1", windowTextures[0], fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new("Theme 2", windowTextures[1], fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new("Theme 3", windowTextures[2], fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new("Theme 4", windowTextures[3], fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new("Theme 5", windowTextures[4], fonts[0]) { ControlDrawOffset = new(10, 9), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new("Theme 6", windowTextures[5], fonts[2]) { ControlDrawOffset = new(8, 10), TextColor = Color.Black, TextMouseOverColor = Color.LightCoral },
+                new("Candycane", windowTextures[0], 16, 16, fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new("Winter", windowTextures[1], 16, 16, fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon }
             });
-
-            var window = WindowManager
-                .NewActionListWindow(25, 25,
-                    (c, _) => c.Window.Theme = WindowManager.Themes[(c as TextList)!.MouseOverIndex],
-                    WindowManager.Themes.Select(t => t.Name).ToArray());
         }
 
         protected override void Update(GameTime gameTime)
         {
             CurrentMouseState = Mouse.GetState();
             var worldClick = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
+            var mouseOverUnit = UnitAtWorldLocation(worldClick);
 
             if (CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
                 if (SelectedUnits.Count == 0)
                 {
-                    foreach (var unit in Units)
-                    {
-                        if (unit.Clicked(worldClick))
+                    if (mouseOverUnit == null)
+                        return;
+                    
+                    SelectSingleUnit(mouseOverUnit);
+                    var unitCell = mouseOverUnit.GetCell();
+                    for (var deltaX = -mouseOverUnit.Speed; deltaX <= mouseOverUnit.Speed; deltaX++)
+                        for (var deltaY = -mouseOverUnit.Speed; deltaY <= mouseOverUnit.Speed; deltaY++)
                         {
-                            SelectSingleUnit(unit);
-                            var unitCell = unit.GetCell();
-                            for (var deltaX = -unit.Speed; deltaX <= unit.Speed; deltaX++)
-                                for (var deltaY = -unit.Speed; deltaY <= unit.Speed; deltaY++)
-                                {
-                                    var deltaCell = new Vector2(unitCell.X + deltaX, unitCell.Y + deltaY);
+                            var deltaCell = new Vector2(unitCell.X + deltaX, unitCell.Y + deltaY);
 
-                                    var path = FindPath(unitCell, deltaCell);
-                                    var pathCount = path.Count();
-                                    if (pathCount > 0 && pathCount <= unit.Speed)
-                                    {
+                            var path = FindPath(unitCell, deltaCell);
+                            var pathCount = path.Count();
+                            if (pathCount > 0 && pathCount <= mouseOverUnit.Speed)
+                            {
 
-                                        var color = pathCount - 1 <= unit.Speed / 2
-                                           ? Color.Green.HalveAlphaChannel()
-                                           : Color.DarkOrange.HalveAlphaChannel();
-                                        var worldDelta = unit.Position + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
-                                        SelectedUnitHintCells.Add((worldDelta, color));
-                                    }
-                                }
-
-                            break;
+                                var color = pathCount - 1 <= mouseOverUnit.Speed / 2
+                                   ? Color.Green.HalveAlphaChannel()
+                                   : Color.DarkOrange.HalveAlphaChannel();
+                                var worldDelta = mouseOverUnit.Position + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
+                                SelectedUnitHintCells.Add((worldDelta, color));
+                            }
                         }
-                    }
                 }
                 else
                 {
@@ -139,12 +121,16 @@ namespace SnowballFight
                         ClearSelectUnits();
                     }
                 }
-            }
-
-            if (CurrentMouseState.RightButton == ButtonState.Pressed)
+            } 
+            else if (CurrentMouseState.RightButton == ButtonState.Pressed)
             {
-                if (SelectedUnits.Count == 1 && !SelectedUnits[0].Clicked(worldClick))
+                if (SelectedUnits.Count == 1 && !SelectedUnits[0].AtWorldLocation(worldClick))
                     ClearSelectUnits();
+            }
+            else
+            {
+                if (SelectedUnits.Count == 1 && SelectedUnits[0] != mouseOverUnit)
+                    TargettedUnit = mouseOverUnit;
             }
 
             base.Update(gameTime);
@@ -161,14 +147,21 @@ namespace SnowballFight
         {
             SelectedUnits.Clear();
             SelectedUnitHintCells.Clear();
+            TargettedUnit = null;
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            Draw(DrawSelectedUnitStuffPre);
+            Draw(DrawSelectedUnitStuffPre, DrawSelectedUnitStuffPost);
             SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             WindowManager.Draw(gameTime, SpriteBatch);
             SpriteBatch.End();
+        }
+
+        private void DrawSelectedUnitStuffPost(Unit selectedUnit)
+        {
+            if (TargettedUnit != null)
+                SpriteBatch.DrawLine(selectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize, Color.DarkRed, 3);
         }
 
         private void DrawSelectedUnitStuffPre(Unit selectedUnit)

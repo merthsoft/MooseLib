@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="2020.11.25" name="TreesAndMountains" tilewidth="16" tileheight="16" tilecount="1612" columns="52">
- <image source="../Images/TreesAndMountains.png" width="832" height="496"/>
+<tileset version="1.4" tiledversion="2020.11.25" name="ground" tilewidth="16" tileheight="16" tilecount="1404" columns="26">
+ <image source="../Images/ground.png" width="416" height="865"/>
  <tile id="0">
   <properties>
    <property name="blocking" type="bool" value="false"/>
@@ -178,57 +178,147 @@
  </tile>
  <tile id="35">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="18" duration="80"/>
+   <frame tileid="19" duration="80"/>
+   <frame tileid="20" duration="80"/>
+   <frame tileid="21" duration="80"/>
+   <frame tileid="22" duration="80"/>
+   <frame tileid="23" duration="80"/>
+   <frame tileid="24" duration="80"/>
+   <frame tileid="25" duration="80"/>
+  </animation>
  </tile>
  <tile id="36">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="44" duration="80"/>
+   <frame tileid="45" duration="80"/>
+   <frame tileid="46" duration="80"/>
+   <frame tileid="47" duration="80"/>
+   <frame tileid="48" duration="80"/>
+   <frame tileid="49" duration="80"/>
+   <frame tileid="50" duration="80"/>
+   <frame tileid="51" duration="80"/>
+  </animation>
  </tile>
  <tile id="37">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="70" duration="80"/>
+   <frame tileid="71" duration="80"/>
+   <frame tileid="72" duration="80"/>
+   <frame tileid="73" duration="80"/>
+   <frame tileid="74" duration="80"/>
+   <frame tileid="75" duration="80"/>
+   <frame tileid="76" duration="80"/>
+   <frame tileid="77" duration="80"/>
+  </animation>
  </tile>
  <tile id="38">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="96" duration="80"/>
+   <frame tileid="97" duration="80"/>
+   <frame tileid="98" duration="80"/>
+   <frame tileid="99" duration="80"/>
+   <frame tileid="100" duration="80"/>
+   <frame tileid="101" duration="80"/>
+   <frame tileid="102" duration="80"/>
+   <frame tileid="103" duration="80"/>
+  </animation>
  </tile>
  <tile id="39">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="122" duration="80"/>
+   <frame tileid="123" duration="80"/>
+   <frame tileid="124" duration="80"/>
+   <frame tileid="125" duration="80"/>
+   <frame tileid="126" duration="80"/>
+   <frame tileid="127" duration="80"/>
+   <frame tileid="128" duration="80"/>
+   <frame tileid="129" duration="80"/>
+  </animation>
  </tile>
  <tile id="40">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="148" duration="80"/>
+   <frame tileid="149" duration="80"/>
+   <frame tileid="150" duration="80"/>
+   <frame tileid="151" duration="80"/>
+   <frame tileid="152" duration="80"/>
+   <frame tileid="153" duration="80"/>
+   <frame tileid="154" duration="80"/>
+   <frame tileid="155" duration="80"/>
+  </animation>
  </tile>
  <tile id="41">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="174" duration="80"/>
+   <frame tileid="175" duration="80"/>
+   <frame tileid="176" duration="80"/>
+   <frame tileid="177" duration="80"/>
+   <frame tileid="178" duration="80"/>
+   <frame tileid="179" duration="80"/>
+   <frame tileid="180" duration="80"/>
+   <frame tileid="181" duration="80"/>
+  </animation>
  </tile>
  <tile id="42">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="200" duration="80"/>
+   <frame tileid="201" duration="80"/>
+   <frame tileid="202" duration="80"/>
+   <frame tileid="203" duration="80"/>
+   <frame tileid="204" duration="80"/>
+   <frame tileid="205" duration="80"/>
+   <frame tileid="206" duration="80"/>
+   <frame tileid="207" duration="80"/>
+  </animation>
  </tile>
  <tile id="43">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="226" duration="80"/>
+   <frame tileid="227" duration="80"/>
+   <frame tileid="228" duration="80"/>
+   <frame tileid="229" duration="80"/>
+   <frame tileid="230" duration="80"/>
+   <frame tileid="231" duration="80"/>
+   <frame tileid="232" duration="80"/>
+   <frame tileid="233" duration="80"/>
+  </animation>
  </tile>
  <tile id="44">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="45">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="46">
@@ -238,7 +328,7 @@
  </tile>
  <tile id="47">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="48">
@@ -248,7 +338,7 @@
  </tile>
  <tile id="49">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="50">
@@ -258,7 +348,7 @@
  </tile>
  <tile id="51">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="52">
@@ -308,48 +398,118 @@
  </tile>
  <tile id="61">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="62">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="278" duration="80"/>
+   <frame tileid="279" duration="80"/>
+   <frame tileid="280" duration="80"/>
+   <frame tileid="281" duration="80"/>
+   <frame tileid="282" duration="80"/>
+   <frame tileid="283" duration="80"/>
+   <frame tileid="284" duration="80"/>
+   <frame tileid="285" duration="80"/>
+  </animation>
  </tile>
  <tile id="63">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="304" duration="80"/>
+   <frame tileid="305" duration="80"/>
+   <frame tileid="306" duration="80"/>
+   <frame tileid="307" duration="80"/>
+   <frame tileid="308" duration="80"/>
+   <frame tileid="309" duration="80"/>
+   <frame tileid="310" duration="80"/>
+   <frame tileid="311" duration="80"/>
+  </animation>
  </tile>
  <tile id="64">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="330" duration="80"/>
+   <frame tileid="331" duration="80"/>
+   <frame tileid="332" duration="80"/>
+   <frame tileid="333" duration="80"/>
+   <frame tileid="334" duration="80"/>
+   <frame tileid="335" duration="80"/>
+   <frame tileid="336" duration="80"/>
+   <frame tileid="337" duration="80"/>
+  </animation>
  </tile>
  <tile id="65">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="356" duration="80"/>
+   <frame tileid="357" duration="80"/>
+   <frame tileid="358" duration="80"/>
+   <frame tileid="359" duration="80"/>
+   <frame tileid="360" duration="80"/>
+   <frame tileid="361" duration="80"/>
+   <frame tileid="362" duration="80"/>
+   <frame tileid="363" duration="80"/>
+  </animation>
  </tile>
  <tile id="66">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="382" duration="80"/>
+   <frame tileid="383" duration="80"/>
+   <frame tileid="384" duration="80"/>
+   <frame tileid="385" duration="80"/>
+   <frame tileid="386" duration="80"/>
+   <frame tileid="387" duration="80"/>
+   <frame tileid="388" duration="80"/>
+   <frame tileid="389" duration="80"/>
+  </animation>
  </tile>
  <tile id="67">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="408" duration="80"/>
+   <frame tileid="409" duration="80"/>
+   <frame tileid="410" duration="80"/>
+   <frame tileid="411" duration="80"/>
+   <frame tileid="412" duration="80"/>
+   <frame tileid="413" duration="80"/>
+   <frame tileid="414" duration="80"/>
+   <frame tileid="415" duration="80"/>
+  </animation>
  </tile>
  <tile id="68">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="69">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="460" duration="80"/>
+   <frame tileid="461" duration="80"/>
+   <frame tileid="462" duration="80"/>
+   <frame tileid="463" duration="80"/>
+   <frame tileid="464" duration="80"/>
+   <frame tileid="465" duration="80"/>
+   <frame tileid="466" duration="80"/>
+   <frame tileid="467" duration="80"/>
+  </animation>
  </tile>
  <tile id="70">
   <properties>
@@ -438,72 +598,162 @@
  </tile>
  <tile id="87">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="486" duration="80"/>
+   <frame tileid="487" duration="80"/>
+   <frame tileid="488" duration="80"/>
+   <frame tileid="489" duration="80"/>
+   <frame tileid="490" duration="80"/>
+   <frame tileid="491" duration="80"/>
+   <frame tileid="492" duration="80"/>
+   <frame tileid="493" duration="80"/>
+  </animation>
  </tile>
  <tile id="88">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="512" duration="80"/>
+   <frame tileid="513" duration="80"/>
+   <frame tileid="514" duration="80"/>
+   <frame tileid="515" duration="80"/>
+   <frame tileid="516" duration="80"/>
+   <frame tileid="517" duration="80"/>
+   <frame tileid="518" duration="80"/>
+   <frame tileid="519" duration="80"/>
+  </animation>
  </tile>
  <tile id="89">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="538" duration="80"/>
+   <frame tileid="539" duration="80"/>
+   <frame tileid="540" duration="80"/>
+   <frame tileid="541" duration="80"/>
+   <frame tileid="542" duration="80"/>
+   <frame tileid="543" duration="80"/>
+   <frame tileid="544" duration="80"/>
+   <frame tileid="545" duration="80"/>
+  </animation>
  </tile>
  <tile id="90">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="564" duration="80"/>
+   <frame tileid="565" duration="80"/>
+   <frame tileid="566" duration="80"/>
+   <frame tileid="567" duration="80"/>
+   <frame tileid="568" duration="80"/>
+   <frame tileid="569" duration="80"/>
+   <frame tileid="570" duration="80"/>
+   <frame tileid="571" duration="80"/>
+  </animation>
  </tile>
  <tile id="91">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="590" duration="80"/>
+   <frame tileid="591" duration="80"/>
+   <frame tileid="592" duration="80"/>
+   <frame tileid="593" duration="80"/>
+   <frame tileid="594" duration="80"/>
+   <frame tileid="595" duration="80"/>
+   <frame tileid="596" duration="80"/>
+   <frame tileid="597" duration="80"/>
+  </animation>
  </tile>
  <tile id="92">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="616" duration="80"/>
+   <frame tileid="617" duration="80"/>
+   <frame tileid="618" duration="80"/>
+   <frame tileid="619" duration="80"/>
+   <frame tileid="620" duration="80"/>
+   <frame tileid="621" duration="80"/>
+   <frame tileid="622" duration="80"/>
+   <frame tileid="623" duration="80"/>
+  </animation>
  </tile>
  <tile id="93">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="642" duration="80"/>
+   <frame tileid="643" duration="80"/>
+   <frame tileid="644" duration="80"/>
+   <frame tileid="645" duration="80"/>
+   <frame tileid="646" duration="80"/>
+   <frame tileid="647" duration="80"/>
+   <frame tileid="648" duration="80"/>
+   <frame tileid="649" duration="80"/>
+  </animation>
  </tile>
  <tile id="94">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="668" duration="80"/>
+   <frame tileid="669" duration="80"/>
+   <frame tileid="670" duration="80"/>
+   <frame tileid="671" duration="80"/>
+   <frame tileid="672" duration="80"/>
+   <frame tileid="673" duration="80"/>
+   <frame tileid="674" duration="80"/>
+   <frame tileid="675" duration="80"/>
+  </animation>
  </tile>
  <tile id="95">
   <properties>
    <property name="blocking" type="bool" value="true"/>
   </properties>
+  <animation>
+   <frame tileid="694" duration="80"/>
+   <frame tileid="695" duration="80"/>
+   <frame tileid="696" duration="80"/>
+   <frame tileid="697" duration="80"/>
+   <frame tileid="698" duration="80"/>
+   <frame tileid="699" duration="80"/>
+   <frame tileid="700" duration="80"/>
+   <frame tileid="701" duration="80"/>
+  </animation>
  </tile>
  <tile id="96">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="97">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="98">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="99">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="100">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="101">
@@ -513,7 +763,7 @@
  </tile>
  <tile id="102">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="103">
@@ -568,47 +818,47 @@
  </tile>
  <tile id="113">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="114">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="115">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="116">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="117">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="118">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="119">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="120">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="121">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="122">
@@ -698,22 +948,22 @@
  </tile>
  <tile id="139">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="140">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="141">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="142">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="143">
@@ -743,12 +993,12 @@
  </tile>
  <tile id="148">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="149">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="150">
@@ -758,7 +1008,7 @@
  </tile>
  <tile id="151">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="152">
@@ -768,7 +1018,7 @@
  </tile>
  <tile id="153">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="154">
@@ -778,7 +1028,7 @@
  </tile>
  <tile id="155">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="156">
@@ -828,27 +1078,27 @@
  </tile>
  <tile id="165">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="166">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="167">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="168">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="169">
   <properties>
-   <property name="blocking" type="bool" value="false"/>
+   <property name="blocking" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="170">
@@ -873,12 +1123,12 @@
  </tile>
  <tile id="174">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="175">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="176">
@@ -888,7 +1138,7 @@
  </tile>
  <tile id="177">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="178">
@@ -898,7 +1148,7 @@
  </tile>
  <tile id="179">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="180">
@@ -908,7 +1158,7 @@
  </tile>
  <tile id="181">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="182">
@@ -1108,52 +1358,52 @@
  </tile>
  <tile id="221">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="222">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="223">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="224">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="225">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="226">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="227">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="228">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="229">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="230">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="231">
@@ -1163,7 +1413,7 @@
  </tile>
  <tile id="232">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="233">
@@ -1368,37 +1618,37 @@
  </tile>
  <tile id="273">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="274">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="275">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="276">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="277">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="278">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="279">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="280">
@@ -1408,7 +1658,7 @@
  </tile>
  <tile id="281">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="282">
@@ -1418,7 +1668,7 @@
  </tile>
  <tile id="283">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="284">
@@ -1428,7 +1678,7 @@
  </tile>
  <tile id="285">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="286">
@@ -1698,32 +1948,32 @@
  </tile>
  <tile id="339">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="340">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="341">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="342">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="343">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="344">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="345">
@@ -1733,7 +1983,7 @@
  </tile>
  <tile id="346">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="347">
@@ -1743,7 +1993,7 @@
  </tile>
  <tile id="348">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="349">
@@ -1753,7 +2003,7 @@
  </tile>
  <tile id="350">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="351">
@@ -1953,42 +2203,42 @@
  </tile>
  <tile id="390">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="391">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="392">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="393">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="394">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="395">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="396">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="397">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="398">
@@ -1998,7 +2248,7 @@
  </tile>
  <tile id="399">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="400">
@@ -2008,7 +2258,7 @@
  </tile>
  <tile id="401">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="402">
@@ -2213,37 +2463,37 @@
  </tile>
  <tile id="442">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="443">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="444">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="445">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="446">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="447">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="448">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="449">
@@ -2253,7 +2503,7 @@
  </tile>
  <tile id="450">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="451">
@@ -2263,7 +2513,7 @@
  </tile>
  <tile id="452">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="453">
@@ -2273,7 +2523,7 @@
  </tile>
  <tile id="454">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="455">
@@ -5923,32 +6173,32 @@
  </tile>
  <tile id="1184">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1185">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1186">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1187">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1188">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1189">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1190">
@@ -5958,7 +6208,7 @@
  </tile>
  <tile id="1191">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1192">
@@ -5968,7 +6218,7 @@
  </tile>
  <tile id="1193">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1194">
@@ -5978,7 +6228,7 @@
  </tile>
  <tile id="1195">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1196">
@@ -6178,52 +6428,52 @@
  </tile>
  <tile id="1235">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1236">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1237">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1238">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1239">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1240">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1241">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1242">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1243">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1244">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1245">
@@ -6233,7 +6483,7 @@
  </tile>
  <tile id="1246">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1247">
@@ -6438,37 +6688,37 @@
  </tile>
  <tile id="1287">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1288">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1289">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1290">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1291">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1292">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1293">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1294">
@@ -6478,7 +6728,7 @@
  </tile>
  <tile id="1295">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1296">
@@ -6488,7 +6738,7 @@
  </tile>
  <tile id="1297">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1298">
@@ -6498,7 +6748,7 @@
  </tile>
  <tile id="1299">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1300">
@@ -6698,22 +6948,22 @@
  </tile>
  <tile id="1339">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1340">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1341">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1342">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1343">
@@ -6958,22 +7208,22 @@
  </tile>
  <tile id="1391">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1392">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1393">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1394">
   <properties>
-   <property name="blocking" type="bool" value="true"/>
+   <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="1395">
@@ -7021,1124 +7271,132 @@
    <property name="blocking" type="bool" value="false"/>
   </properties>
  </tile>
- <tile id="1404">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1405">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1406">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1407">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1408">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1409">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1410">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1411">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1412">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1413">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1414">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1415">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1416">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1417">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1418">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1419">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1420">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1421">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1422">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1423">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1424">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1425">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1426">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1427">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1428">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1429">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1430">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1431">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1432">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1433">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1434">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1435">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1436">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1437">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1438">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1439">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1440">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1441">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1442">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1443">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1444">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1445">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1446">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1447">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1448">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1449">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1450">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1451">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1452">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1453">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1454">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1455">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1456">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1457">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1458">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1459">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1460">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1461">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1462">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1463">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1464">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1465">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1466">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1467">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1468">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1469">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1470">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1471">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1472">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1473">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1474">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1475">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1476">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1477">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1478">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1479">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1480">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1481">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1482">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1483">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1484">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1485">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1486">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1487">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1488">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1489">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1490">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1491">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1492">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1493">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1494">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1495">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1496">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1497">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1498">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1499">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1500">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1501">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1502">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1503">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1504">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1505">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1506">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1507">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1508">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1509">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1510">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1511">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1512">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1513">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1514">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1515">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1516">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1517">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1518">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1519">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1520">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1521">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1522">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1523">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1524">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1525">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1526">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1527">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1528">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1529">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1530">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1531">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1532">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1533">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1534">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1535">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1536">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1537">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1538">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1539">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1540">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1541">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1542">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1543">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1544">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1545">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1546">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1547">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1548">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1549">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1550">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1551">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1552">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1553">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1554">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1555">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1556">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1557">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1558">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1559">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1560">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1561">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1562">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1563">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1564">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1565">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1566">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1567">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1568">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1569">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1570">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1571">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1572">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1573">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1574">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1575">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1576">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1577">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1578">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1579">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1580">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1581">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1582">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1583">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1584">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1585">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1586">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1587">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1588">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1589">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1590">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1591">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1592">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1593">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1594">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1595">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1596">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1597">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1598">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1599">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1600">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1601">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1602">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1603">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1604">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1605">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1606">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1607">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1608">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1609">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1610">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
- <tile id="1611">
-  <properties>
-   <property name="blocking" type="bool" value="false"/>
-  </properties>
- </tile>
  <wangsets>
-  <wangset name="Features" type="mixed" tile="170">
-   <wangcolor name="Snowy Pine Trees" color="#00ff00" tile="-1" probability="1"/>
-   <wangcolor name="Snowcapped Mountains" color="#3550ff" tile="-1" probability="1"/>
-   <wangtile tileid="171" wangid="0,0,0,1,0,0,0,0"/>
-   <wangtile tileid="172" wangid="0,0,0,1,0,1,0,0"/>
-   <wangtile tileid="173" wangid="0,0,0,0,0,1,0,0"/>
-   <wangtile tileid="174" wangid="0,1,0,1,0,1,0,0"/>
-   <wangtile tileid="175" wangid="0,0,0,1,0,1,0,1"/>
-   <wangtile tileid="176" wangid="0,0,0,1,0,0,0,0"/>
-   <wangtile tileid="177" wangid="0,0,0,1,0,1,0,0"/>
-   <wangtile tileid="178" wangid="0,0,0,0,0,1,0,0"/>
-   <wangtile tileid="179" wangid="0,0,0,1,0,0,0,0"/>
-   <wangtile tileid="180" wangid="0,0,0,1,0,1,0,0"/>
-   <wangtile tileid="181" wangid="0,0,0,0,0,1,0,0"/>
-   <wangtile tileid="221" wangid="0,1,0,0,0,1,0,1"/>
-   <wangtile tileid="222" wangid="0,1,0,1,0,0,0,1"/>
-   <wangtile tileid="223" wangid="0,1,0,1,0,0,0,0"/>
-   <wangtile tileid="224" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="225" wangid="0,0,0,0,0,1,0,1"/>
-   <wangtile tileid="226" wangid="0,1,0,1,0,0,0,1"/>
-   <wangtile tileid="227" wangid="0,1,0,0,0,1,0,1"/>
-   <wangtile tileid="228" wangid="0,1,0,1,0,0,0,0"/>
-   <wangtile tileid="229" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="230" wangid="0,0,0,0,0,1,0,1"/>
-   <wangtile tileid="231" wangid="0,1,0,1,0,0,0,0"/>
-   <wangtile tileid="232" wangid="0,1,0,1,0,1,0,1"/>
-   <wangtile tileid="233" wangid="0,0,0,0,0,1,0,1"/>
-   <wangtile tileid="273" wangid="0,0,0,1,0,1,0,1"/>
-   <wangtile tileid="274" wangid="0,1,0,1,0,1,0,0"/>
-   <wangtile tileid="275" wangid="0,1,0,0,0,0,0,0"/>
-   <wangtile tileid="276" wangid="0,1,0,0,0,0,0,1"/>
-   <wangtile tileid="277" wangid="0,0,0,0,0,0,0,1"/>
-   <wangtile tileid="278" wangid="0,1,0,0,0,1,0,0"/>
-   <wangtile tileid="279" wangid="0,0,0,1,0,0,0,1"/>
-   <wangtile tileid="280" wangid="0,1,0,0,0,0,0,0"/>
-   <wangtile tileid="281" wangid="0,1,0,0,0,0,0,1"/>
-   <wangtile tileid="282" wangid="0,0,0,0,0,0,0,1"/>
-   <wangtile tileid="283" wangid="0,1,0,0,0,0,0,0"/>
-   <wangtile tileid="284" wangid="0,1,0,0,0,0,0,1"/>
-   <wangtile tileid="285" wangid="0,0,0,0,0,0,0,1"/>
-   <wangtile tileid="1185" wangid="0,0,0,2,0,0,0,0"/>
-   <wangtile tileid="1186" wangid="0,0,0,2,0,2,0,0"/>
-   <wangtile tileid="1187" wangid="0,0,0,0,0,2,0,0"/>
-   <wangtile tileid="1188" wangid="0,2,0,2,0,2,0,0"/>
-   <wangtile tileid="1189" wangid="0,0,0,2,0,2,0,2"/>
-   <wangtile tileid="1190" wangid="0,0,0,2,0,0,0,0"/>
-   <wangtile tileid="1191" wangid="0,0,0,2,0,2,0,0"/>
-   <wangtile tileid="1192" wangid="0,0,0,0,0,2,0,0"/>
-   <wangtile tileid="1193" wangid="0,0,0,2,0,0,0,0"/>
-   <wangtile tileid="1194" wangid="0,0,0,2,0,2,0,0"/>
-   <wangtile tileid="1195" wangid="0,0,0,0,0,2,0,0"/>
-   <wangtile tileid="1235" wangid="0,2,0,0,0,2,0,2"/>
-   <wangtile tileid="1236" wangid="0,2,0,2,0,0,0,2"/>
-   <wangtile tileid="1237" wangid="0,2,0,2,0,0,0,0"/>
-   <wangtile tileid="1238" wangid="0,2,0,2,0,2,0,2"/>
-   <wangtile tileid="1239" wangid="0,0,0,0,0,2,0,2"/>
-   <wangtile tileid="1240" wangid="0,2,0,2,0,0,0,2"/>
-   <wangtile tileid="1241" wangid="0,2,0,0,0,2,0,2"/>
-   <wangtile tileid="1242" wangid="0,2,0,2,0,0,0,0"/>
-   <wangtile tileid="1243" wangid="0,2,0,2,0,2,0,2"/>
-   <wangtile tileid="1244" wangid="0,0,0,0,0,2,0,2"/>
-   <wangtile tileid="1245" wangid="0,2,0,2,0,0,0,0"/>
-   <wangtile tileid="1246" wangid="0,2,0,2,0,2,0,2"/>
-   <wangtile tileid="1247" wangid="0,0,0,0,0,2,0,2"/>
-   <wangtile tileid="1287" wangid="0,0,0,2,0,2,0,2"/>
-   <wangtile tileid="1288" wangid="0,2,0,2,0,2,0,0"/>
-   <wangtile tileid="1289" wangid="0,2,0,0,0,0,0,0"/>
-   <wangtile tileid="1290" wangid="0,2,0,0,0,0,0,2"/>
-   <wangtile tileid="1291" wangid="0,0,0,0,0,0,0,2"/>
-   <wangtile tileid="1292" wangid="0,2,0,0,0,2,0,0"/>
-   <wangtile tileid="1293" wangid="0,0,0,2,0,0,0,2"/>
-   <wangtile tileid="1294" wangid="0,2,0,0,0,0,0,0"/>
-   <wangtile tileid="1295" wangid="0,2,0,0,0,0,0,2"/>
-   <wangtile tileid="1296" wangid="0,0,0,0,0,0,0,2"/>
-   <wangtile tileid="1297" wangid="0,2,0,0,0,0,0,0"/>
-   <wangtile tileid="1298" wangid="0,2,0,0,0,0,0,2"/>
-   <wangtile tileid="1299" wangid="0,0,0,0,0,0,0,2"/>
+  <wangset name="Terrain" type="mixed" tile="-1">
+   <wangcolor name="Ground" color="#ff0000" tile="-1" probability="1"/>
+   <wangcolor name="Snow" color="#00ff00" tile="-1" probability="1"/>
+   <wangcolor name="Ice" color="#0000ff" tile="-1" probability="1"/>
+   <wangcolor name="Water" color="#ff7700" tile="-1" probability="1"/>
+   <wangtile tileid="1" wangid="1,1,1,1,1,1,1,1"/>
+   <wangtile tileid="2" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="26" wangid="3,3,3,3,3,3,3,3"/>
+   <wangtile tileid="27" wangid="3,3,3,1,1,1,3,3"/>
+   <wangtile tileid="28" wangid="3,3,3,1,3,3,3,3"/>
+   <wangtile tileid="29" wangid="3,3,3,3,3,1,3,3"/>
+   <wangtile tileid="30" wangid="1,1,3,3,3,1,1,1"/>
+   <wangtile tileid="31" wangid="1,1,1,1,3,3,3,1"/>
+   <wangtile tileid="32" wangid="1,1,3,3,3,1,1,1"/>
+   <wangtile tileid="33" wangid="1,1,3,3,3,3,3,1"/>
+   <wangtile tileid="34" wangid="1,1,1,1,3,3,3,1"/>
+   <wangtile tileid="35" wangid="4,4,4,4,4,4,4,4"/>
+   <wangtile tileid="36" wangid="4,4,4,1,1,1,4,4"/>
+   <wangtile tileid="37" wangid="4,4,4,1,4,4,4,4"/>
+   <wangtile tileid="38" wangid="4,4,4,4,4,1,4,4"/>
+   <wangtile tileid="39" wangid="1,1,4,4,4,1,1,1"/>
+   <wangtile tileid="40" wangid="1,1,1,1,4,4,4,1"/>
+   <wangtile tileid="41" wangid="1,1,4,4,4,1,1,1"/>
+   <wangtile tileid="42" wangid="1,1,4,4,4,4,4,1"/>
+   <wangtile tileid="43" wangid="1,1,1,1,4,4,4,1"/>
+   <wangtile tileid="53" wangid="1,1,3,3,3,3,3,1"/>
+   <wangtile tileid="54" wangid="3,1,3,3,3,3,3,3"/>
+   <wangtile tileid="55" wangid="3,3,3,3,3,3,3,1"/>
+   <wangtile tileid="56" wangid="3,3,3,1,1,1,1,1"/>
+   <wangtile tileid="57" wangid="3,1,1,1,1,1,3,3"/>
+   <wangtile tileid="58" wangid="3,3,3,3,3,1,1,1"/>
+   <wangtile tileid="60" wangid="3,1,1,1,3,3,3,3"/>
+   <wangtile tileid="62" wangid="1,1,4,4,4,4,4,1"/>
+   <wangtile tileid="63" wangid="4,1,4,4,4,4,4,4"/>
+   <wangtile tileid="64" wangid="4,4,4,0,4,4,4,1"/>
+   <wangtile tileid="65" wangid="4,4,4,1,1,1,1,1"/>
+   <wangtile tileid="66" wangid="4,1,1,1,1,1,4,4"/>
+   <wangtile tileid="67" wangid="4,4,4,4,4,1,1,1"/>
+   <wangtile tileid="69" wangid="4,1,1,1,4,4,4,4"/>
+   <wangtile tileid="78" wangid="3,3,3,1,3,3,3,1"/>
+   <wangtile tileid="79" wangid="3,1,3,3,3,1,3,3"/>
+   <wangtile tileid="80" wangid="3,1,1,1,3,3,3,3"/>
+   <wangtile tileid="81" wangid="3,3,3,3,3,1,1,1"/>
+   <wangtile tileid="82" wangid="3,1,1,3,3,1,1,3"/>
+   <wangtile tileid="83" wangid="3,3,1,1,3,3,1,1"/>
+   <wangtile tileid="84" wangid="3,3,3,1,1,1,1,1"/>
+   <wangtile tileid="85" wangid="3,3,3,1,1,1,3,3"/>
+   <wangtile tileid="86" wangid="3,1,1,1,1,1,3,3"/>
+   <wangtile tileid="87" wangid="4,4,4,1,4,4,4,1"/>
+   <wangtile tileid="88" wangid="4,1,4,4,4,1,4,4"/>
+   <wangtile tileid="89" wangid="4,1,1,1,4,4,4,4"/>
+   <wangtile tileid="90" wangid="4,4,4,4,4,1,1,1"/>
+   <wangtile tileid="91" wangid="4,1,4,4,4,1,4,4"/>
+   <wangtile tileid="92" wangid="4,4,4,1,4,4,4,1"/>
+   <wangtile tileid="93" wangid="4,4,4,1,1,1,1,1"/>
+   <wangtile tileid="94" wangid="4,4,4,1,1,1,4,4"/>
+   <wangtile tileid="95" wangid="4,1,1,1,1,1,4,4"/>
+   <wangtile tileid="105" wangid="3,3,3,2,2,2,3,3"/>
+   <wangtile tileid="106" wangid="3,3,3,2,3,3,3,3"/>
+   <wangtile tileid="107" wangid="3,3,3,3,3,2,3,3"/>
+   <wangtile tileid="108" wangid="2,2,3,3,3,2,2,2"/>
+   <wangtile tileid="109" wangid="2,2,2,2,3,3,3,2"/>
+   <wangtile tileid="110" wangid="2,2,3,3,3,2,2,2"/>
+   <wangtile tileid="111" wangid="2,2,3,3,3,3,3,2"/>
+   <wangtile tileid="112" wangid="2,2,2,2,3,3,3,2"/>
+   <wangtile tileid="114" wangid="4,4,2,2,2,2,2,4"/>
+   <wangtile tileid="115" wangid="4,4,4,2,4,4,4,4"/>
+   <wangtile tileid="116" wangid="4,4,4,4,4,2,4,4"/>
+   <wangtile tileid="117" wangid="2,2,4,4,4,2,2,2"/>
+   <wangtile tileid="118" wangid="2,2,2,2,4,4,4,2"/>
+   <wangtile tileid="119" wangid="2,2,4,4,4,2,2,2"/>
+   <wangtile tileid="120" wangid="2,2,4,4,4,4,4,2"/>
+   <wangtile tileid="121" wangid="2,2,2,2,4,4,4,2"/>
+   <wangtile tileid="131" wangid="2,2,3,3,3,3,3,2"/>
+   <wangtile tileid="132" wangid="3,2,3,3,3,3,3,3"/>
+   <wangtile tileid="133" wangid="3,3,3,3,3,3,3,2"/>
+   <wangtile tileid="134" wangid="3,3,3,2,2,2,2,2"/>
+   <wangtile tileid="135" wangid="3,2,2,2,2,2,3,3"/>
+   <wangtile tileid="136" wangid="3,3,3,3,3,2,2,2"/>
+   <wangtile tileid="138" wangid="3,2,2,2,3,3,3,3"/>
+   <wangtile tileid="140" wangid="2,2,2,4,4,4,2,2"/>
+   <wangtile tileid="141" wangid="4,2,4,4,4,4,4,4"/>
+   <wangtile tileid="142" wangid="4,4,4,4,4,4,4,2"/>
+   <wangtile tileid="143" wangid="4,4,4,2,2,2,2,2"/>
+   <wangtile tileid="144" wangid="4,2,2,2,2,2,4,4"/>
+   <wangtile tileid="145" wangid="4,4,4,4,4,2,2,2"/>
+   <wangtile tileid="147" wangid="4,2,2,2,4,4,4,4"/>
+   <wangtile tileid="156" wangid="3,3,3,0,3,3,3,0"/>
+   <wangtile tileid="157" wangid="3,0,3,3,3,0,3,3"/>
+   <wangtile tileid="158" wangid="2,2,2,2,2,3,3,3"/>
+   <wangtile tileid="159" wangid="2,3,3,3,2,2,2,2"/>
+   <wangtile tileid="160" wangid="2,2,2,3,2,2,2,3"/>
+   <wangtile tileid="161" wangid="2,3,2,2,2,3,2,2"/>
+   <wangtile tileid="162" wangid="3,3,3,2,2,2,2,2"/>
+   <wangtile tileid="163" wangid="3,3,3,2,2,2,3,3"/>
+   <wangtile tileid="164" wangid="3,2,2,2,2,2,3,3"/>
+   <wangtile tileid="165" wangid="0,0,0,2,0,0,0,2"/>
+   <wangtile tileid="166" wangid="4,2,4,4,4,2,4,4"/>
+   <wangtile tileid="167" wangid="4,2,2,2,4,4,4,4"/>
+   <wangtile tileid="168" wangid="4,4,4,4,4,2,2,2"/>
+   <wangtile tileid="169" wangid="4,2,2,4,4,2,2,4"/>
+   <wangtile tileid="170" wangid="4,4,2,2,4,4,2,2"/>
+   <wangtile tileid="171" wangid="4,4,4,2,2,2,2,2"/>
+   <wangtile tileid="172" wangid="4,4,4,2,2,2,4,4"/>
+   <wangtile tileid="173" wangid="4,2,2,2,2,2,4,4"/>
+   <wangtile tileid="184" wangid="1,1,2,2,2,1,1,1"/>
+   <wangtile tileid="185" wangid="1,1,2,2,2,2,2,1"/>
+   <wangtile tileid="186" wangid="1,1,1,1,2,2,2,1"/>
+   <wangtile tileid="187" wangid="2,2,1,1,1,2,2,2"/>
+   <wangtile tileid="188" wangid="2,2,1,1,1,1,1,2"/>
+   <wangtile tileid="189" wangid="2,2,2,2,1,1,1,2"/>
+   <wangtile tileid="208" wangid="1,2,1,1,1,2,1,1"/>
+   <wangtile tileid="209" wangid="1,1,1,2,1,1,1,2"/>
+   <wangtile tileid="210" wangid="2,2,2,2,2,1,1,1"/>
+   <wangtile tileid="212" wangid="2,1,1,1,2,2,2,2"/>
+   <wangtile tileid="213" wangid="1,1,1,1,1,2,2,2"/>
+   <wangtile tileid="215" wangid="1,2,2,2,1,1,1,1"/>
+   <wangtile tileid="234" wangid="2,2,2,1,2,2,2,1"/>
+   <wangtile tileid="235" wangid="2,1,2,2,2,1,2,2"/>
+   <wangtile tileid="236" wangid="2,2,2,1,1,1,1,1"/>
+   <wangtile tileid="237" wangid="2,2,2,1,1,1,2,2"/>
+   <wangtile tileid="238" wangid="2,1,1,1,1,1,2,2"/>
+   <wangtile tileid="239" wangid="1,1,1,2,2,2,2,2"/>
+   <wangtile tileid="240" wangid="1,1,1,2,2,2,1,1"/>
+   <wangtile tileid="241" wangid="1,2,2,2,2,2,1,1"/>
   </wangset>
  </wangsets>
 </tileset>

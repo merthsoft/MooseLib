@@ -94,7 +94,7 @@ namespace MooseLib.Ui
                         index = 7;
                     else if (x == numXTiles - 1)
                         index = 5;
-                    WindowManager.DrawWindowTexture(spriteBatch, Theme, index, Position, x, y);
+                    Theme.DrawWindowTexture(spriteBatch, index, Position, x, y);
                 }
 
             Controls.ForEach(c => c.Draw(spriteBatch));
