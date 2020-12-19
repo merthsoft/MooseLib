@@ -9,6 +9,8 @@ namespace MooseLib.Ui
     public class Window
     {
         public WindowManager WindowManager { get; set; }
+        public Theme Theme { get; set; }
+
         public bool Close { get; set; }
 
         private Rectangle rectangle;
@@ -49,8 +51,8 @@ namespace MooseLib.Ui
             : this(windowManager, new(x, y, w, h)) { }
 
         public Window(WindowManager windowManager, Rectangle rectangle)
-            => (WindowManager, Rectangle)
-             = (windowManager, rectangle);
+            => (WindowManager, Rectangle, Theme)
+             = (windowManager, rectangle, windowManager.DefaultTheme);
 
         public void Update(UpdateParameters updateParameters)
         {
@@ -69,8 +71,8 @@ namespace MooseLib.Ui
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            var numXTiles = Rectangle.Width / WindowManager.TileWidth;
-            var numYTiles = Rectangle.Height / WindowManager.TileHeight;
+            var numXTiles = Rectangle.Width / Theme.TileWidth;
+            var numYTiles = Rectangle.Height / Theme.TileHeight;
 
             for (var x = 0; x < numXTiles; x++)
                 for (var y = 0; y < numYTiles; y++)
@@ -92,45 +94,40 @@ namespace MooseLib.Ui
                         index = 7;
                     else if (x == numXTiles - 1)
                         index = 5;
-                    WindowManager.DrawWindowTexture(spriteBatch, index, Position, x, y);
+                    WindowManager.DrawWindowTexture(spriteBatch, Theme, index, Position, x, y);
                 }
 
             Controls.ForEach(c => c.Draw(spriteBatch));
         }
 
-        public Label AddLabel(int x, int y, string text, Color color)
+        public Label AddLabel(int x, int y, string text)
         {
             var ret = new Label(this)
             {
                 Position = new(x, y),
                 Text = text,
-                Color = color
             };
             Controls.Add(ret);
             return ret;
         }
 
-        public Label AddActionLabel(int x, int y, string text, Color color, Color mouseOverColor, Action<Control, UpdateParameters> action)
+        public Label AddActionLabel(int x, int y, string text, Action<Control, UpdateParameters> action)
         {
             var ret = new Label(this)
             {
                 Position = new(x, y),
                 Text = text,
-                Color = color,
-                MouseOverColor = mouseOverColor,
                 Action = action,
             };
             Controls.Add(ret);
             return ret;
         }
 
-        public TextList AddActionList(int x, int y, Color color, Color mouseOverColor, Action<Control, UpdateParameters> action, params string[] options)
+        public TextList AddActionList(int x, int y, Action<Control, UpdateParameters> action, params string[] options)
         {
             var ret = new TextList(this, options)
             {
                 Position = new(x, y),
-                Color = color,
-                MouseOverColor = mouseOverColor,
                 Action = action,
                 SelectMode = SelectMode.None,
             };
@@ -138,13 +135,11 @@ namespace MooseLib.Ui
             return ret;
         }
 
-        public TextList AddActionList(int x, int y, Color color, Color mouseOverColor, params (string text, Action<Control, UpdateParameters> action)[] options)
+        public TextList AddActionList(int x, int y, params (string text, Action<Control, UpdateParameters> action)[] options)
         {
             var ret = new TextList(this, options.Select(o => o.text))
             {
                 Position = new(x, y),
-                Color = color,
-                MouseOverColor = mouseOverColor,
                 Action = (c, u) => options[(c as TextList)!.MouseOverIndex].action(c, u),
                 SelectMode = SelectMode.None,
             };
@@ -153,9 +148,9 @@ namespace MooseLib.Ui
         }
 
         public void SetCellSize(int cellWidth, int cellHeight)
-            => Size = new(cellWidth * WindowManager.TileWidth, cellHeight * WindowManager.TileHeight);
+            => Size = new(cellWidth * Theme.TileWidth, cellHeight * Theme.TileHeight);
 
         public void SetCellPosition(int cellX, int cellY)
-            => Position = new(cellX * WindowManager.TileWidth, cellY * WindowManager.TileHeight);
+            => Position = new(cellX * Theme.TileWidth, cellY * Theme.TileHeight);
     }
 }

@@ -8,6 +8,7 @@ namespace MooseLib.Ui
     {
         public object? Object { get; set; }
         public Window Window { get; }
+        public Theme Theme => Window.Theme;
         public Vector2 Position { get; set; }
 
         protected UpdateParameters UpdateParameters { get; set; } = null!;
@@ -21,7 +22,7 @@ namespace MooseLib.Ui
             }
         }
 
-        protected Vector2 GlobalPosition => Position + Window.Position + Window.WindowManager.ControlDrawOffset;
+        protected Vector2 GlobalPosition => Position + Window.Position + Window.Theme.ControlDrawOffset;
 
         public Action<Control, UpdateParameters>? Action { get; set; }
 

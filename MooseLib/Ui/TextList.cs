@@ -9,9 +9,6 @@ namespace MooseLib.Ui
     public class TextList : Control
     {
         public List<TextListOption> Options = new();
-        public Color Color { get; set; } = Color.Black;
-        public Color MouseOverColor { get; set; } = Color.White;
-        public Color SelectedColor { get; set; } = Color.Blue;
         public SelectMode SelectMode { get; set; } = SelectMode.None;
 
         public int MouseOverIndex { get; protected set; } = -1;
@@ -29,22 +26,22 @@ namespace MooseLib.Ui
         public override Vector2 CalculateSize()
             => Options.Aggregate(Vector2.Zero, (acc, o) =>
             {
-                var textSize = Window.WindowManager.Font.MeasureString(o.Text);
-                return new Vector2(Math.Max(acc.X, textSize.X), acc.Y + Window.WindowManager.TileHeight);
+                var textSize = Window.Theme.Font.MeasureString(o.Text);
+                return new Vector2(Math.Max(acc.X, textSize.X), acc.Y + Window.Theme.TileHeight);
             });
                 
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (Options.Count == 0 || Window.WindowManager.Font == null)
+            if (Options.Count == 0 || Window.Theme.Font == null)
                 return;
 
             for (var index = 0; index < Options.Count; index++)
                 spriteBatch.DrawString(
-                    Window.WindowManager.Font, 
+                    Window.Theme.Font, 
                     Options[index].Text, 
-                    GlobalPosition + new Vector2(0, index * Window.WindowManager.TileHeight), 
-                    index == MouseOverIndex ? MouseOverColor : Color
+                    GlobalPosition + new Vector2(0, index * Window.Theme.TileHeight), 
+                    index == MouseOverIndex ? Theme.TextMouseOverColor : Theme.TextColor
                 );
         }
 
@@ -52,7 +49,7 @@ namespace MooseLib.Ui
         {
             if (updateParameters.MouseOver)
             {
-                MouseOverIndex = (int)updateParameters.LocalMousePosition.Y / Window.WindowManager.TileHeight;
+                MouseOverIndex = (int)updateParameters.LocalMousePosition.Y / Window.Theme.TileHeight;
                 if (updateParameters.MouseOver && updateParameters.LeftMouse)
                 {
                     Options[MouseOverIndex].Selected = SelectMode switch

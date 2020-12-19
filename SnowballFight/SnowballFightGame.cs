@@ -54,19 +54,21 @@ namespace SnowballFight
 
             MainCamera.ZoomIn(1f);
 
-            var themes = new[] {
-                Content.Load<Texture2D>("Images/window"),
-                Content.Load<Texture2D>("Images/window2"),
-                Content.Load<Texture2D>("Images/window3"),
-                Content.Load<Texture2D>("Images/window4"),
-            };
             var uiFont = Content.Load<SpriteFont>("Fonts/TheKingIsDead");
-            WindowManager = new(themes[0], uiFont, new(6, 6));
+            var themes = new[] {
+                new Theme(Content.Load<Texture2D>("Images/Windows/window1"), uiFont) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new Theme(Content.Load<Texture2D>("Images/Windows/window2"), uiFont) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new Theme(Content.Load<Texture2D>("Images/Windows/window3"), uiFont) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new Theme(Content.Load<Texture2D>("Images/Windows/window4"), uiFont) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new Theme(Content.Load<Texture2D>("Images/Windows/window6"), uiFont) { ControlDrawOffset = new(10, 9), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new Theme(Content.Load<Texture2D>("Images/Windows/window5"), uiFont) { ControlDrawOffset = new(8, 10), TextColor = Color.Black, TextMouseOverColor = Color.LightCoral },
+            };
+            WindowManager = new(themes);
 
             var window = WindowManager
-                .NewActionListWindow(25, 25, Color.Gold, Color.Maroon, 
-                    (c, _) => c.Window.WindowManager.WindowTexture = themes[(c as TextList)!.MouseOverIndex],
-                    "Theme 1", "Theme 2", "Theme 3", "Theme 4");
+                .NewActionListWindow(25, 25,
+                    (c, _) => c.Window.Theme = WindowManager.Themes[(c as TextList)!.MouseOverIndex],
+                    themes.Select((_, i) => $"Theme {i + 1}").ToArray());
         }
 
         protected override void Update(GameTime gameTime)

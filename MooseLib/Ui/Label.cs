@@ -6,8 +6,6 @@ namespace MooseLib.Ui
     public class Label : Control
     {
         public string? Text { get; set; }
-        public Color Color { get; set; } = Color.Black;
-        public Color MouseOverColor { get; set; } = Color.White;
 
         public Label(Window window) : base(window)
         {
@@ -15,14 +13,14 @@ namespace MooseLib.Ui
         }
 
         public override Vector2 CalculateSize()
-            => Window.WindowManager.Font.MeasureString(Text);
+            => Window.Theme.Font.MeasureString(Text);
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (Text == null || Window.WindowManager.Font == null)
+            if (Text == null || Window.Theme.Font == null)
                 return;
 
-            spriteBatch.DrawString(Window.WindowManager.Font, Text, GlobalPosition, UpdateParameters.MouseOver ? MouseOverColor : Color);
+            spriteBatch.DrawString(Window.Theme.Font, Text, GlobalPosition, UpdateParameters.MouseOver ? Theme.TextMouseOverColor : Theme.TextColor);
         }
 
         public override void Update(UpdateParameters updateParameters)
