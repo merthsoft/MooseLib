@@ -5,10 +5,8 @@ using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 
 namespace SnowballFight
 {
@@ -39,8 +37,8 @@ namespace SnowballFight
             MainMap.CopyMap(Content.Load<TiledMap>("Maps/testmap"), 0, 0);
 
             AddUnitToSpawnQueue("deer", 5, 9, speed: 3);
-            AddUnitToSpawnQueue("elf1", 9, 4, speed: 3);
-            AddUnitToSpawnQueue("elf2", 1, 3, speed: 3);
+            AddUnitToSpawnQueue("elf1", 10, 5, speed: 3);
+            AddUnitToSpawnQueue("elf2", 3, 10, speed: 3);
             AddUnitToSpawnQueue("elf3", 11, 11, speed: 3);
 
             AddUnitToSpawnQueue("krampus", 12, 14, speed: 4);
@@ -81,28 +79,28 @@ namespace SnowballFight
             {
                 if (SelectedUnits.Count == 0)
                 {
-                    if (mouseOverUnit == null)
-                        return;
-                    
-                    SelectSingleUnit(mouseOverUnit);
-                    var unitCell = mouseOverUnit.GetCell();
-                    for (var deltaX = -mouseOverUnit.Speed; deltaX <= mouseOverUnit.Speed; deltaX++)
-                        for (var deltaY = -mouseOverUnit.Speed; deltaY <= mouseOverUnit.Speed; deltaY++)
-                        {
-                            var deltaCell = new Vector2(unitCell.X + deltaX, unitCell.Y + deltaY);
-
-                            var path = FindPath(unitCell, deltaCell);
-                            var pathCount = path.Count();
-                            if (pathCount > 0 && pathCount <= mouseOverUnit.Speed)
+                    if (mouseOverUnit != null && mouseOverUnit.State == State.Idle)
+                    {
+                        SelectSingleUnit(mouseOverUnit);
+                        var unitCell = mouseOverUnit.GetCell();
+                        for (var deltaX = -mouseOverUnit.Speed; deltaX <= mouseOverUnit.Speed; deltaX++)
+                            for (var deltaY = -mouseOverUnit.Speed; deltaY <= mouseOverUnit.Speed; deltaY++)
                             {
+                                var deltaCell = new Vector2(unitCell.X + deltaX, unitCell.Y + deltaY);
 
-                                var color = pathCount - 1 <= mouseOverUnit.Speed / 2
-                                   ? Color.Green.HalveAlphaChannel()
-                                   : Color.DarkOrange.HalveAlphaChannel();
-                                var worldDelta = mouseOverUnit.Position + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
-                                SelectedUnitHintCells.Add((worldDelta, color));
+                                var path = FindPath(unitCell, deltaCell);
+                                var pathCount = path.Count();
+                                if (pathCount > 0 && pathCount <= mouseOverUnit.Speed)
+                                {
+
+                                    var color = pathCount - 1 <= mouseOverUnit.Speed / 2
+                                       ? Color.Green.HalveAlphaChannel()
+                                       : Color.DarkOrange.HalveAlphaChannel();
+                                    var worldDelta = mouseOverUnit.Position + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
+                                    SelectedUnitHintCells.Add((worldDelta, color));
+                                }
                             }
-                        }
+                    }    
                 }
                 else
                 {
@@ -176,7 +174,7 @@ namespace SnowballFight
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
                     if (!MainMap.IsBlockedAt(x, y))
-                        SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.White);
+                        SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.LightGray);
 
             var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,
