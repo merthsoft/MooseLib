@@ -54,21 +54,35 @@ namespace SnowballFight
 
             MainCamera.ZoomIn(1f);
 
-            var uiFont = Content.Load<SpriteFont>("Fonts/TheKingIsDead");
-            var themes = new[] {
-                new Theme(Content.Load<Texture2D>("Images/Windows/window1"), uiFont) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new Theme(Content.Load<Texture2D>("Images/Windows/window2"), uiFont) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new Theme(Content.Load<Texture2D>("Images/Windows/window3"), uiFont) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new Theme(Content.Load<Texture2D>("Images/Windows/window4"), uiFont) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new Theme(Content.Load<Texture2D>("Images/Windows/window6"), uiFont) { ControlDrawOffset = new(10, 9), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
-                new Theme(Content.Load<Texture2D>("Images/Windows/window5"), uiFont) { ControlDrawOffset = new(8, 10), TextColor = Color.Black, TextMouseOverColor = Color.LightCoral },
+            var fonts = new SpriteFont[]
+            {
+                Content.Load<SpriteFont>("Fonts/TheKingIsDead"),
+                Content.Load<SpriteFont>("Fonts/gothic-pixel-font"),
+                Content.Load<SpriteFont>("Fonts/Pixeled English Font"),
             };
-            WindowManager = new(themes);
+
+            var windowTextures = new Texture2D[]
+            {
+                Content.Load<Texture2D>("Images/Windows/window1"),
+                Content.Load<Texture2D>("Images/Windows/window2"),
+                Content.Load<Texture2D>("Images/Windows/window3"),
+                Content.Load<Texture2D>("Images/Windows/window4"),
+                Content.Load<Texture2D>("Images/Windows/window6"),
+                Content.Load<Texture2D>("Images/Windows/window5"),
+            };
+            WindowManager = new WindowManager(new Theme[] {
+                new("Theme 1", windowTextures[0], fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new("Theme 2", windowTextures[1], fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new("Theme 3", windowTextures[2], fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new("Theme 4", windowTextures[3], fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new("Theme 5", windowTextures[4], fonts[0]) { ControlDrawOffset = new(10, 9), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new("Theme 6", windowTextures[5], fonts[2]) { ControlDrawOffset = new(8, 10), TextColor = Color.Black, TextMouseOverColor = Color.LightCoral },
+            });
 
             var window = WindowManager
                 .NewActionListWindow(25, 25,
                     (c, _) => c.Window.Theme = WindowManager.Themes[(c as TextList)!.MouseOverIndex],
-                    themes.Select((_, i) => $"Theme {i + 1}").ToArray());
+                    WindowManager.Themes.Select(t => t.Name).ToArray());
         }
 
         protected override void Update(GameTime gameTime)

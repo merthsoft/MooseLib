@@ -15,6 +15,20 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Fonts/gothic-pixel-font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/gothic-pixel-font.spritefont
+
+#begin Fonts/Pixeled English Font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Pixeled English Font.spritefont
+
 #begin Fonts/TheKingIsDead.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

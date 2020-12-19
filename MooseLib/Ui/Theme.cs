@@ -5,6 +5,7 @@ namespace MooseLib.Ui
 {
     public class Theme
     {
+        public string Name { get; private set; }
 
         internal Rectangle[] TextureRects = new Rectangle[9];
 
@@ -32,10 +33,8 @@ namespace MooseLib.Ui
         public Color TextMouseOverColor { get; set; } = Color.White;
         public Color SelectedColor { get; set; } = Color.Blue;
 
-        public Theme(Texture2D windowTexture, SpriteFont font)
-        {
-            WindowTexture = windowTexture;
-            Font = font;
-        }
+        public Theme(string name, Texture2D windowTexture, SpriteFont font)
+        => (Name, WindowTexture, Font)
+         = (name, windowTexture, font);
     }
 }
