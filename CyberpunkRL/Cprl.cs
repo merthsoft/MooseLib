@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Tiled;
@@ -38,6 +39,8 @@ namespace CyberpunkRl
             AddUnit("Bob", 1, 3, Direction.Up);
 
             base.LoadContent();
+
+            MainCamera.ZoomIn(1f);
         }
 
         protected override void Update(GameTime gameTime)
@@ -66,6 +69,19 @@ namespace CyberpunkRl
             }
 
             base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+            => Draw(DrawSelectedUnitStuffPre, DrawSelectedUnitStuffPost);
+
+        public void DrawSelectedUnitStuffPre(UnitBase obj)
+        {
+
+        }
+
+        private void DrawSelectedUnitStuffPost(UnitBase obj)
+        {
+
         }
     }
 }

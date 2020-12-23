@@ -116,13 +116,15 @@ namespace MooseLib
             MapRenderer.Draw(BaseLayer, transformMatrix);
             MapRenderer.Draw(UnderGroundUnitLayer, transformMatrix);
 
-            SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-            
             if (selectedUnitPreDraw != null)
-                foreach (var selectedUnit in SelectedUnits)
-                    selectedUnitPreDraw(selectedUnit);
-            
-            SpriteBatch.End();
+            {
+                SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+                
+                    foreach (var selectedUnit in SelectedUnits)
+                        selectedUnitPreDraw(selectedUnit);
+                
+                SpriteBatch.End();
+            }
 
             MapRenderer.Draw(GroundUnitLayer, transformMatrix);
 
@@ -137,9 +139,8 @@ namespace MooseLib
 
             MapRenderer.Draw(AboveGroundUnitLayer, transformMatrix);
 
-            if (MainMap.TileLayers.Count > DefaultNumberOfLayers)
-                for (var index = DefaultNumberOfLayers; index < MainMap.TileLayers.Count; index++)
-                    MapRenderer.Draw(MainMap.TileLayers[index], transformMatrix);
+            for (var index = DefaultNumberOfLayers; index < MainMap.TileLayers.Count; index++)
+                MapRenderer.Draw(MainMap.TileLayers[index], transformMatrix);
         }
 
         protected UnitBase AddUnit(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle)

@@ -166,7 +166,8 @@ namespace SnowballFight
         {
             Draw(
                 u => DrawSelectedUnitStuffPre((u as Unit)!), 
-                u => DrawSelectedUnitStuffPost((u as Unit)!));
+                u => DrawSelectedUnitStuffPost((u as Unit)!)
+            );
             SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             WindowManager.Draw(gameTime, SpriteBatch);
             SpriteBatch.End();
