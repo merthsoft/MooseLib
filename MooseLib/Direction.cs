@@ -1,11 +1,11 @@
 ﻿namespace MooseLib
 {
-    public enum Direction
+    public static class Direction
     {
-        None,
-        Right,
-        Up,
-        Left,
-        Down
+        public const string None = "None";
+        public const string Right = "Right";
+        public const string Up = "Up";
+        public const string Left = "Left";
+        public const string Down = "Down";
     }
 }

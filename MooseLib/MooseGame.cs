@@ -24,11 +24,11 @@ namespace MooseLib
         protected OrthographicCamera MainCamera = null!;
         protected SpriteBatch SpriteBatch = null!;
 
-        protected readonly List<Unit> Units = new();
-        protected readonly Queue<Unit> SpawnQueue = new();
+        protected readonly List<UnitBase> Units = new();
         protected readonly Dictionary<string, SpriteSheet> Animations = new();
-        protected readonly List<Unit> SelectedUnits = new();
+        protected readonly List<UnitBase> SelectedUnits = new();
 
+        protected static readonly int DefaultNumberOfLayers = 4;
         protected TiledMapTileLayer BaseLayer = null!;
         protected TiledMapTileLayer UnderGroundUnitLayer = null!;
         protected TiledMapTileLayer GroundUnitLayer = null!;
@@ -92,8 +92,6 @@ namespace MooseLib
         protected override void Update(GameTime gameTime)
         {
             MapRenderer.Update(gameTime);
-            if (SpawnQueue.Count > 0)
-                Units.Add(SpawnQueue.Dequeue());
             Units.ForEach(unit => unit.Update(gameTime));
 
             BuildGrid();
@@ -109,7 +107,7 @@ namespace MooseLib
         protected override void Draw(GameTime gameTime)
             => Draw();
 
-        protected void Draw(Action<Unit>? selectedUnitPreDraw = null, Action<Unit>? selectedUnitPostDraw = null)
+        protected void Draw(Action<UnitBase>? selectedUnitPreDraw = null, Action<UnitBase>? selectedUnitPostDraw = null)
         {
             GraphicsDevice.Clear(Color.Black);
 
@@ -138,23 +136,18 @@ namespace MooseLib
             SpriteBatch.End();
 
             MapRenderer.Draw(AboveGroundUnitLayer, transformMatrix);
+
+            if (MainMap.TileLayers.Count > DefaultNumberOfLayers)
+                for (var index = DefaultNumberOfLayers; index < MainMap.TileLayers.Count; index++)
+                    MapRenderer.Draw(MainMap.TileLayers[index], transformMatrix);
         }
 
-        protected Unit AddUnit(string animationKey, int cellX, int cellY, Direction direction = Direction.None, State state = State.Idle, int speed = 0)
+        protected UnitBase AddUnit(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle)
         {
             if (!Animations.ContainsKey(animationKey))
                 LoadAnimation(animationKey);
-            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
+            var unit = new UnitBase(this, Animations[animationKey], cellX, cellY, direction, state);
             Units.Add(unit);
-            return unit;
-        }
-
-        protected Unit AddUnitToSpawnQueue(string animationKey, int cellX, int cellY, Direction direction = Direction.None, State state = State.Idle, int speed = 0)
-        {
-            if (!Animations.ContainsKey(animationKey))
-                LoadAnimation(animationKey);
-            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
-            SpawnQueue.Enqueue(unit);
             return unit;
         }
 
@@ -165,7 +158,12 @@ namespace MooseLib
             => cell.X > 0 && cell.X < MapWidth
             && cell.Y > 0 && cell.Y < MapHeight;
 
-        public IEnumerable<Vector2> FindPath(Vector2 startCell, Vector2 endCell)
+        public IEnumerator<Vector2> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition)
+        {
+            yield break;
+        }
+
+        public IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell)
         {
             if (!CellIsInBounds(startCell) || !CellIsInBounds(endCell))
                 return Enumerable.Empty<Vector2>();
@@ -196,7 +194,7 @@ namespace MooseLib
                 .Distinct();
         }
 
-        public Unit? UnitAtWorldLocation(Vector2 worldLocation)
+        public UnitBase? UnitAtWorldLocation(Vector2 worldLocation)
             => Units.FirstOrDefault(unit => unit.AtWorldLocation(worldLocation));
     }
 }

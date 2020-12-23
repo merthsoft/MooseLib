@@ -15,9 +15,10 @@ namespace SnowballFight
         private MouseState CurrentMouseState;
         private WindowManager WindowManager = null!;
 
+        private readonly Queue<UnitBase> SpawnQueue = new();
         private readonly List<(Vector2, Color)> SelectedUnitHintCells = new();
-        private Unit? TargettedUnit { get; set; }
-        
+        private UnitBase? TargettedUnit { get; set; }
+
         public SnowballFightGame()
         {
         }
@@ -30,6 +31,15 @@ namespace SnowballFight
 
             InitializeMap(30, 30, 16, 16);
             base.Initialize();
+        }
+
+        private Unit AddUnitToSpawnQueue(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle, int speed = 0)
+        {
+            if (!Animations.ContainsKey(animationKey))
+                LoadAnimation(animationKey);
+            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
+            SpawnQueue.Enqueue(unit);
+            return unit;
         }
 
         protected override void LoadContent()
@@ -63,6 +73,7 @@ namespace SnowballFight
                 Content.Load<Texture2D>("Images/window1"),
                 Content.Load<Texture2D>("Images/window2"),
             };
+
             WindowManager = new WindowManager(new Theme[] {
                 new("Candycane", windowTextures[0], 16, 16, fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
                 new("Winter", windowTextures[1], 16, 16, fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon }
@@ -73,7 +84,7 @@ namespace SnowballFight
         {
             CurrentMouseState = Mouse.GetState();
             var worldClick = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
-            var mouseOverUnit = UnitAtWorldLocation(worldClick);
+            var mouseOverUnit = (UnitAtWorldLocation(worldClick) as Unit)!;
 
             if (CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
@@ -88,7 +99,7 @@ namespace SnowballFight
                             {
                                 var deltaCell = new Vector2(unitCell.X + deltaX, unitCell.Y + deltaY);
 
-                                var path = FindPath(unitCell, deltaCell);
+                                var path = FindCellPath(unitCell, deltaCell);
                                 var pathCount = path.Count();
                                 if (pathCount > 0 && pathCount <= mouseOverUnit.Speed)
                                 {
@@ -104,14 +115,14 @@ namespace SnowballFight
                 }
                 else
                 {
-                    var selectedUnit = SelectedUnits[0];
+                    var selectedUnit = (SelectedUnits[0] as Unit)!;
                     var unitCell = selectedUnit.GetCell();
                     var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,
                                 CurrentMouseState.Position.Y / TileHeight * TileHeight);
                     mouseCell /= TileSize;
 
-                    var path = FindPath(unitCell, mouseCell);
+                    var path = FindCellPath(unitCell, mouseCell);
                     if (path.Any())
                     {
                         path.ForEach(selectedUnit.MoveQueue.Enqueue);
@@ -131,11 +142,14 @@ namespace SnowballFight
                     TargettedUnit = mouseOverUnit;
             }
 
+            if (SpawnQueue.Count > 0)
+                Units.Add(SpawnQueue.Dequeue());
+
             base.Update(gameTime);
             WindowManager.Update(gameTime, MainCamera);
         }
 
-        private void SelectSingleUnit(Unit unit)
+        private void SelectSingleUnit(UnitBase unit)
         {
             ClearSelectUnits();
             SelectedUnits.Add(unit);
@@ -150,7 +164,9 @@ namespace SnowballFight
 
         protected override void Draw(GameTime gameTime)
         {
-            Draw(DrawSelectedUnitStuffPre, DrawSelectedUnitStuffPost);
+            Draw(
+                u => DrawSelectedUnitStuffPre((u as Unit)!), 
+                u => DrawSelectedUnitStuffPost((u as Unit)!));
             SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             WindowManager.Draw(gameTime, SpriteBatch);
             SpriteBatch.End();
@@ -181,7 +197,7 @@ namespace SnowballFight
                                 CurrentMouseState.Position.Y / TileHeight * TileHeight);
             mouseCell /= TileSize;
 
-            var mousePath = FindPath(unitCell, mouseCell);
+            var mousePath = FindCellPath(unitCell, mouseCell);
             var mousePathCount = mousePath.Count();
             if (mousePathCount > 0 && mousePathCount <= selectedUnit.Speed)
             {

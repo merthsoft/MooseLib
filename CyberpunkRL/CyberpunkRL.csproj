@@ -26,34 +26,28 @@
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MooseLib\MooseLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended">
-      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended\bin\Debug\netstandard2.0\MonoGame.Extended.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Extended.Content.Pipeline">
-      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Content.Pipeline.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Extended.Graphics">
-      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Graphics\bin\Debug\netstandard2.0\MonoGame.Extended.Graphics.dll</HintPath>
+      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Extended.Tiled">
-      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Tiled\bin\Debug\netstandard2.0\MonoGame.Extended.Tiled.dll</HintPath>
+      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Tiled.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Update="Content\Characters\Bob.sf">
+    <None Update="Content\Animations\Bob.sf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Content\Characters\Alex.sf">
+    <None Update="Content\Animations\Alex.sf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Content\Characters\Adam.sf">
+    <None Update="Content\Animations\Adam.sf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -20,6 +20,8 @@ namespace MooseLib
             for (int layerIndex = 0; layerIndex < sourceMap.TileLayers.Count; layerIndex++)
             {
                 var sourceLayer = sourceMap.TileLayers[layerIndex];
+                if (layerIndex >= destMap.TileLayers.Count)
+                    destMap.AddLayer(new TiledMapTileLayer(sourceLayer.Name, destMap.Width, destMap.Height, destMap.TileWidth, destMap.TileHeight));
                 var destLayer = destMap.TileLayers[layerIndex];
                 for (ushort x = 0; x < sourceMap.Width; x++)
                     for (ushort y = 0; y < sourceMap.Height; y++)

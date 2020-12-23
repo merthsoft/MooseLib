@@ -1,10 +1,14 @@
-﻿namespace MooseLib
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MooseLib
 {
-    public enum State
+    public static class State
     {
-        Idle,
-        Walk,
-        Phone,
-        Attack
+        public const string Idle = "idle";
+        public const string Walk = "walk";
     }
 }

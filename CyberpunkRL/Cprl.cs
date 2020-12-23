@@ -1,11 +1,10 @@
-﻿using MonoGame.Extended.Content;
-using MonoGame.Extended.Serialization;
-using MonoGame.Extended.Sprites;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Tiled;
 using MooseLib;
-using System.Collections.Generic;
 
-namespace CyberbunkRl
+namespace CyberpunkRl
 {
     public class Cprl : MooseGame
     {
@@ -14,7 +13,7 @@ namespace CyberbunkRl
 
         public Cprl()
         {
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = nameof(Content);
             IsMouseVisible = true;
         }
 
@@ -34,13 +33,9 @@ namespace CyberbunkRl
             MainMap.CopyMap(Rooms[1], 11, 0);
             MainMap.CopyMap(Hallways[0], 0, 11);
 
-            Animations["Adam"] = Content.Load<SpriteSheet>("Characters/Adam.sf", new JsonContentLoader());
-            Animations["Alex"] = Content.Load<SpriteSheet>("Characters/Alex.sf", new JsonContentLoader());
-            Animations["Bob"] = Content.Load<SpriteSheet>("Characters/Bob.sf", new JsonContentLoader());
-
-            AddPlayerUnit("Adam", 5, 9);
-            AddPlayerUnit("Alex", 9, 4, Direction.Left);
-            AddPlayerUnit("Bob", 1, 3, Direction.Up);
+            AddUnit("Adam", 5, 9, Direction.Down);
+            AddUnit("Alex", 9, 4, Direction.Left);
+            AddUnit("Bob", 1, 3, Direction.Up);
 
             base.LoadContent();
         }
@@ -53,9 +48,9 @@ namespace CyberbunkRl
 
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                foreach (var unit in PlayerUnits)
+                foreach (var unit in Units)
                 {
-                    if (unit.Clicked(worldClick))
+                    if (unit.AtWorldLocation(worldClick))
                     {
                         SelectedUnits.Clear();
                         SelectedUnits.Add(unit);
@@ -66,7 +61,7 @@ namespace CyberbunkRl
 
             if (mouseState.RightButton == ButtonState.Pressed)
             {
-                if (SelectedUnits.Count == 1 && !SelectedUnits[0].Clicked(worldClick))
+                if ((SelectedUnits.Count == 1) && !SelectedUnits[0].AtWorldLocation(worldClick))
                     SelectedUnits.Clear();
             }
 

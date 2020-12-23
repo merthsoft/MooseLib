@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CyberbunkRl
+namespace CyberpunkRl
 {
     public static class Program
     {
