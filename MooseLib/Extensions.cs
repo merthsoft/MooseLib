@@ -100,5 +100,8 @@ namespace MooseLib
 
         public static Vector2 GetFloor(this Vector2 vector)
             => new((int)vector.X, (int)vector.Y);
+
+        public static void InvokeAtIndex(this Action<int>?[] actions, int index)
+            => actions.ElementAtOrDefault(index)?.Invoke(index);
     }
 }

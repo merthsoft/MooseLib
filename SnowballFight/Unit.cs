@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SnowballFight
 {
-    class Unit : UnitBase
+    class Unit : GameObject
     {
         public int Speed { get; set; }
 

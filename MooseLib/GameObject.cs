@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Sprites;
-using System.Collections.Generic;
 
 namespace MooseLib
 {
-    public class UnitBase
+    public class GameObject
     {
         public MooseGame ParentGame { get; set; }
 
@@ -28,7 +27,7 @@ namespace MooseLib
 
         private readonly Vector2 SpriteOffset;
 
-        public UnitBase(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction = MooseLib.Direction.Down, string state = "idle")
+        public GameObject(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction = MooseLib.Direction.Down, string state = "idle")
         {
             Sprite = new AnimatedSprite(spriteSheet);
             Position = new(cellX * 16, cellY * 16);

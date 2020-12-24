@@ -34,9 +34,9 @@ namespace CyberpunkRl
             MainMap.CopyMap(Rooms[1], 11, 0);
             MainMap.CopyMap(Hallways[0], 0, 11);
 
-            AddUnit("Adam", 5, 9, Direction.Down);
-            AddUnit("Alex", 9, 4, Direction.Left);
-            AddUnit("Bob", 1, 3, Direction.Up);
+            AddObject("Adam", 5, 9, Direction.Down);
+            AddObject("Alex", 9, 4, Direction.Left);
+            AddObject("Bob", 1, 3, Direction.Up);
 
             base.LoadContent();
 
@@ -46,42 +46,12 @@ namespace CyberpunkRl
         protected override void Update(GameTime gameTime)
         {
             var mouseState = Mouse.GetState();
-
             var worldClick = MainCamera.ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
-
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                foreach (var unit in Units)
-                {
-                    if (unit.AtWorldLocation(worldClick))
-                    {
-                        SelectedUnits.Clear();
-                        SelectedUnits.Add(unit);
-                        break;
-                    }
-                }
-            }
-
-            if (mouseState.RightButton == ButtonState.Pressed)
-            {
-                if ((SelectedUnits.Count == 1) && !SelectedUnits[0].AtWorldLocation(worldClick))
-                    SelectedUnits.Clear();
-            }
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
-            => Draw(DrawSelectedUnitStuffPre, DrawSelectedUnitStuffPost);
-
-        public void DrawSelectedUnitStuffPre(UnitBase obj)
-        {
-
-        }
-
-        private void DrawSelectedUnitStuffPost(UnitBase obj)
-        {
-
-        }
+            => Draw();
     }
 }

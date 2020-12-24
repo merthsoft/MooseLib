@@ -15,9 +15,10 @@ namespace SnowballFight
         private MouseState CurrentMouseState;
         private WindowManager WindowManager = null!;
 
-        private readonly Queue<UnitBase> SpawnQueue = new();
+        private readonly Queue<GameObject> SpawnQueue = new();
         private readonly List<(Vector2, Color)> SelectedUnitHintCells = new();
-        private UnitBase? TargettedUnit { get; set; }
+        private Unit? SelectedUnit { get; set; }
+        private Unit? TargettedUnit { get; set; }
 
         public SnowballFightGame()
         {
@@ -88,7 +89,7 @@ namespace SnowballFight
 
             if (CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
-                if (SelectedUnits.Count == 0)
+                if (SelectedUnit == null)
                 {
                     if (mouseOverUnit != null && mouseOverUnit.State == State.Idle)
                     {
@@ -111,12 +112,11 @@ namespace SnowballFight
                                     SelectedUnitHintCells.Add((worldDelta, color));
                                 }
                             }
-                    }    
+                    }
                 }
                 else
                 {
-                    var selectedUnit = (SelectedUnits[0] as Unit)!;
-                    var unitCell = selectedUnit.GetCell();
+                    var unitCell = SelectedUnit.GetCell();
                     var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,
                                 CurrentMouseState.Position.Y / TileHeight * TileHeight);
@@ -125,39 +125,39 @@ namespace SnowballFight
                     var path = FindCellPath(unitCell, mouseCell);
                     if (path.Any())
                     {
-                        path.ForEach(selectedUnit.MoveQueue.Enqueue);
-                        selectedUnit.State = State.Walk;
+                        path.ForEach(SelectedUnit.MoveQueue.Enqueue);
+                        SelectedUnit.State = State.Walk;
                         ClearSelectUnits();
                     }
                 }
             } 
             else if (CurrentMouseState.RightButton == ButtonState.Pressed)
             {
-                if (SelectedUnits.Count == 1 && !SelectedUnits[0].AtWorldLocation(worldClick))
+                if (!SelectedUnit?.AtWorldLocation(worldClick) ?? false)
                     ClearSelectUnits();
             }
             else
             {
-                if (SelectedUnits.Count == 1 && SelectedUnits[0] != mouseOverUnit)
+                if (SelectedUnit != mouseOverUnit)
                     TargettedUnit = mouseOverUnit;
             }
 
             if (SpawnQueue.Count > 0)
-                Units.Add(SpawnQueue.Dequeue());
+                Objects.Add(SpawnQueue.Dequeue());
 
             base.Update(gameTime);
             WindowManager.Update(gameTime, MainCamera);
         }
 
-        private void SelectSingleUnit(UnitBase unit)
+        private void SelectSingleUnit(Unit unit)
         {
             ClearSelectUnits();
-            SelectedUnits.Add(unit);
+            SelectedUnit = unit;
         }
 
         private void ClearSelectUnits()
         {
-            SelectedUnits.Clear();
+            SelectedUnit = null;
             SelectedUnitHintCells.Clear();
             TargettedUnit = null;
         }
@@ -165,54 +165,66 @@ namespace SnowballFight
         protected override void Draw(GameTime gameTime)
         {
             Draw(
-                u => DrawSelectedUnitStuffPre((u as Unit)!), 
-                u => DrawSelectedUnitStuffPost((u as Unit)!)
+                preGroundLayer: DrawGrid,
+                preGroundObjects: DrawSelectedUnit, 
+                postGroundObjects: DrawTargetLine
             );
+
             SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             WindowManager.Draw(gameTime, SpriteBatch);
             SpriteBatch.End();
         }
 
-        private void DrawSelectedUnitStuffPost(Unit selectedUnit)
+        private void DrawGrid()
         {
-            if (TargettedUnit != null)
-                SpriteBatch.DrawLine(selectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize, Color.DarkRed, 3);
-        }
+            if (SelectedUnit == null)
+                return;
 
-        private void DrawSelectedUnitStuffPre(Unit selectedUnit)
-        {
-            SpriteBatch.FillRectangle(selectedUnit.Position, TileSize, Color.Red.HalveAlphaChannel());
-
-            var unitCell = selectedUnit.GetCell();
-
-            SelectedUnitHintCells.ForEach(((Vector2 worldDelta, Color color) t) =>
-                        SpriteBatch.FillRectangle(t.worldDelta, TileSize, t.color));
-
+            SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
                     if (!MainMap.IsBlockedAt(x, y))
                         SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.LightGray);
+            SpriteBatch.End();
+        }
+
+        private void DrawTargetLine(SpriteBatch spriteBatch)
+        {
+            if (TargettedUnit != null && SelectedUnit != null)
+                spriteBatch.DrawLine(SelectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize, Color.DarkRed, 3);
+        }
+
+        private void DrawSelectedUnit(SpriteBatch spriteBatch)
+        {
+            if (SelectedUnit == null)
+                return;
+
+            spriteBatch.FillRectangle(SelectedUnit.Position, TileSize, Color.Red.HalveAlphaChannel());
+
+            SelectedUnitHintCells.ForEach(((Vector2 worldDelta, Color color) t) =>
+                        spriteBatch.FillRectangle(t.worldDelta, TileSize, t.color));
 
             var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,
                                 CurrentMouseState.Position.Y / TileHeight * TileHeight);
             mouseCell /= TileSize;
 
+            var unitCell = SelectedUnit.GetCell();
             var mousePath = FindCellPath(unitCell, mouseCell);
             var mousePathCount = mousePath.Count();
-            if (mousePathCount > 0 && mousePathCount <= selectedUnit.Speed)
+            if (mousePathCount > 0 && mousePathCount <= SelectedUnit.Speed)
             {
                 var lastCell = (unitCell * TileSize) + HalfTileSize;
                 var index = 0;
                 foreach (var p in mousePath)
                 {
                     var nextCell = new Vector2(p.X * TileWidth, p.Y * TileHeight) + HalfTileSize;
-                    SpriteBatch.DrawLine(lastCell, nextCell, Color.Black, 2);
-                    SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
+                    spriteBatch.DrawLine(lastCell, nextCell, Color.Black, 2);
+                    spriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
                     lastCell = nextCell;
                     index++;
                 }
-                SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
+                spriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
             }
         }
     }

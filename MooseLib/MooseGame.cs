@@ -24,9 +24,8 @@ namespace MooseLib
         protected OrthographicCamera MainCamera = null!;
         protected SpriteBatch SpriteBatch = null!;
 
-        protected readonly List<UnitBase> Units = new();
+        protected readonly List<GameObject> Objects = new();
         protected readonly Dictionary<string, SpriteSheet> Animations = new();
-        protected readonly List<UnitBase> SelectedUnits = new();
 
         protected static readonly int DefaultNumberOfLayers = 4;
         protected TiledMapTileLayer BaseLayer = null!;
@@ -92,7 +91,7 @@ namespace MooseLib
         protected override void Update(GameTime gameTime)
         {
             MapRenderer.Update(gameTime);
-            Units.ForEach(unit => unit.Update(gameTime));
+            Objects.ForEach(unit => unit.Update(gameTime));
 
             BuildGrid();
         }
@@ -101,54 +100,55 @@ namespace MooseLib
         {
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) || Units.Exists(u => u.InCell(x, y)) ? 100 : 1;
+                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) || Objects.Exists(u => u.InCell(x, y)) ? 100 : 1;
         }
 
         protected override void Draw(GameTime gameTime)
             => Draw();
 
-        protected void Draw(Action<UnitBase>? selectedUnitPreDraw = null, Action<UnitBase>? selectedUnitPostDraw = null)
+        protected void Draw(Action? preBaseLayer = null, 
+            Action? preUnderGroundLayer = null,
+            Action? preGroundLayer = null,
+            Action<SpriteBatch>? preGroundObjects = null,
+            Action<SpriteBatch>? postGroundObjects = null,
+            Action? preAboveGrounObjectsLayer = null,
+            params Action<int>?[] additionLayers)
         {
             GraphicsDevice.Clear(Color.Black);
 
             var transformMatrix = MainCamera.GetViewMatrix();
 
-            MapRenderer.Draw(BaseLayer, transformMatrix);
-            MapRenderer.Draw(UnderGroundUnitLayer, transformMatrix);
-
-            if (selectedUnitPreDraw != null)
+            void RenderLayer(TiledMapTileLayer layer, Action? preAction)
             {
-                SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-                
-                    foreach (var selectedUnit in SelectedUnits)
-                        selectedUnitPreDraw(selectedUnit);
-                
-                SpriteBatch.End();
+                preAction?.Invoke();
+                MapRenderer.Draw(layer, transformMatrix);
             }
 
-            MapRenderer.Draw(GroundUnitLayer, transformMatrix);
+            RenderLayer(BaseLayer, preBaseLayer);
+            RenderLayer(UnderGroundUnitLayer, preUnderGroundLayer);
+            RenderLayer(GroundUnitLayer, preGroundLayer);
 
             SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-            Units.ForEach(unit => unit.Draw(SpriteBatch));
-
-            if (selectedUnitPostDraw != null)
-                foreach (var selectedUnit in SelectedUnits)
-                    selectedUnitPostDraw(selectedUnit);
-
+            preGroundObjects?.Invoke(SpriteBatch);
+            Objects.ForEach(unit => unit.Draw(SpriteBatch));
+            postGroundObjects?.Invoke(SpriteBatch);
             SpriteBatch.End();
 
-            MapRenderer.Draw(AboveGroundUnitLayer, transformMatrix);
+            RenderLayer(AboveGroundUnitLayer, preAboveGrounObjectsLayer);
 
             for (var index = DefaultNumberOfLayers; index < MainMap.TileLayers.Count; index++)
+            {
+                additionLayers.InvokeAtIndex(index);
                 MapRenderer.Draw(MainMap.TileLayers[index], transformMatrix);
+            }
         }
 
-        protected UnitBase AddUnit(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle)
+        protected GameObject AddObject(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle)
         {
             if (!Animations.ContainsKey(animationKey))
                 LoadAnimation(animationKey);
-            var unit = new UnitBase(this, Animations[animationKey], cellX, cellY, direction, state);
-            Units.Add(unit);
+            var unit = new GameObject(this, Animations[animationKey], cellX, cellY, direction, state);
+            Objects.Add(unit);
             return unit;
         }
 
@@ -159,7 +159,7 @@ namespace MooseLib
             => cell.X > 0 && cell.X < MapWidth
             && cell.Y > 0 && cell.Y < MapHeight;
 
-        public IEnumerator<Vector2> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition)
+        public IEnumerator<(Vector2 worldPosition, bool hit)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition)
         {
             yield break;
         }
@@ -195,7 +195,7 @@ namespace MooseLib
                 .Distinct();
         }
 
-        public UnitBase? UnitAtWorldLocation(Vector2 worldLocation)
-            => Units.FirstOrDefault(unit => unit.AtWorldLocation(worldLocation));
+        public GameObject? UnitAtWorldLocation(Vector2 worldLocation)
+            => Objects.FirstOrDefault(unit => unit.AtWorldLocation(worldLocation));
     }
 }
