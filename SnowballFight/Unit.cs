@@ -13,8 +13,8 @@ namespace SnowballFight
         private Vector2 MoveDirection = Vector2.Zero;
         private Vector2 NextLocation = Vector2.Zero;
 
-        public Unit(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction, string state) 
-            : base(parentGame, spriteSheet, cellX, cellY, direction, state) { }
+        public Unit(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction, string state, int layer) 
+            : base(parentGame, spriteSheet, cellX, cellY, direction, state, layer) { }
 
         public override void Update(GameTime gameTime)
         {

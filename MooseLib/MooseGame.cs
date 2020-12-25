@@ -34,7 +34,7 @@ namespace MooseLib
         public Size2 TileSize => new(TileWidth, TileHeight); // TODO: Cache
         public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
 
-        protected byte[,] BlockingMap = null!;
+        protected List<byte>[,] BlockingMap = null!;
 
         public MooseGame()
         {
@@ -55,7 +55,7 @@ namespace MooseLib
         {
             MainMap = new TiledMap("map", width, height, tileWith, tileHeight, TiledMapTileDrawOrder.RightDown, TiledMapOrientation.Orthogonal);
             
-            BlockingMap = new byte[width, height];
+            BlockingMap = new List<byte>[width, height];
         }
 
         protected override void LoadContent()
@@ -80,11 +80,33 @@ namespace MooseLib
             BuildGrid();
         }
 
+        private IEnumerable<GameObject> ObjectsAtLayer(int layerIndex)
+            => Objects
+                .SkipWhile(o => o.Layer < layerIndex)
+                .TakeWhile(o => o.Layer == layerIndex);
+
         protected void BuildGrid()
         {
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) || Objects.Any(u => u.InCell(x, y)) ? 100 : 0;
+                {
+                    BlockingMap[x, y] = new List<byte>();
+                    for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
+                    {
+                        byte value = 0;
+                        var layer = MainMap.Layers[layerIndex];
+                        switch (layer)
+                        {
+                            case TiledMapObjectLayer:
+                                value = ObjectsAtLayer(layerIndex).Any(o => o.InCell(x, y)) ? 1 : 0;
+                                break;
+                            case TiledMapTileLayer tileLayer:
+                                value = tileLayer.IsBlockedAt(x, y, MainMap) ? 1 : 0;
+                                break;
+                        }
+                        BlockingMap[x, y].Add(value);
+                    }
+                }
         }
 
         protected override void Draw(GameTime gameTime)
@@ -110,9 +132,7 @@ namespace MooseLib
                     case TiledMapObjectLayer:
                         SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
                         hookTuple?.preHook?.Invoke(layerIndex);
-                        Objects
-                            .SkipWhile(unit => unit.Layer > layerIndex)
-                            .TakeWhile(unit => unit.Layer <= layerIndex)
+                        ObjectsAtLayer(layerIndex)
                             .ForEach(unit => unit.Draw(SpriteBatch));
                         hookTuple?.postHook?.Invoke(layerIndex);
                         SpriteBatch.End();
@@ -137,7 +157,7 @@ namespace MooseLib
             => cell.X > 0 && cell.X < MapWidth
             && cell.Y > 0 && cell.Y < MapHeight;
 
-        public IEnumerable<(Vector2 worldPosition, byte blocked)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false)
+        public IEnumerable<(Vector2 worldPosition, IList<byte> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false)
         {
             var (x1, y1) = endWorldPosition;
             var (x2, y2) = startWorldPosition;
@@ -149,7 +169,7 @@ namespace MooseLib
 
             int err = deltaX - deltaZ;
 
-            (Vector2, byte blocked) BuildReturnTuple(float x, float y)
+            (Vector2, List<byte> blocked) BuildReturnTuple(float x, float y)
             {
                 var cellX = (int)(x / TileWidth);
                 var cellY = (int)(y / TileHeight);
@@ -201,7 +221,7 @@ namespace MooseLib
 
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    if (BlockingMap[x, y] > 1 && !(x == startX && y == startY))
+                    if (BlockingMap[x, y].Sum() > 0 && !(x == startX && y == startY))
                         grid.DisconnectNode(new(x, y));
 
             var path = new PathFinder()

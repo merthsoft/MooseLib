@@ -5,7 +5,6 @@ using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,6 +12,8 @@ namespace SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
+        private const int UnitLayer = 2;
+
         private MouseState CurrentMouseState;
         private WindowManager WindowManager = null!;
 
@@ -39,7 +40,7 @@ namespace SnowballFight
         {
             if (!Animations.ContainsKey(animationKey))
                 LoadAnimation(animationKey);
-            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
+            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state, UnitLayer) { Speed = speed };
             SpawnQueue.Enqueue(unit);
             return unit;
         }
@@ -188,7 +189,7 @@ namespace SnowballFight
                     SpriteBatch.DrawPoint(pos.worldPosition, Color.Green, 2);
                     var cell = (pos.worldPosition / TileSize).GetFloor();
                     
-                    if (pos.blocked > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
+                    if (pos.blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
                         break;
                 }
             }

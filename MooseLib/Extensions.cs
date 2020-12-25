@@ -69,8 +69,8 @@ namespace MooseLib
             return ret.Value;
         }
 
-        public static bool IsBlockedAt(this TiledMapTileLayer layer, ushort x, ushort y, TiledMap map)
-            => layer.GetTile(x, y).IsBlocking(map);
+        public static bool IsBlockedAt(this TiledMapTileLayer layer, int x, int y, TiledMap map)
+            => layer.GetTile((ushort)x, (ushort)y).IsBlocking(map);
 
 
         public static bool IsBlockedAt(this TiledMap map, int x, int y)
@@ -122,5 +122,8 @@ namespace MooseLib
 
         public static float Round(this float f, int digits)
             => MathF.Round(f, digits);
+
+        public static long Sum(this IEnumerable<byte> set)
+            => set.Sum(b => (long)b);
     }
 }
