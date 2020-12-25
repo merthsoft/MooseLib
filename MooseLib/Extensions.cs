@@ -113,5 +113,14 @@ namespace MooseLib
 
         public static void InvokeAtIndex(this Action<int>?[] actions, int index)
             => actions.ElementAtOrDefault(index)?.Invoke(index);
+
+        public static (float, float) Floor(this (float X, float Y) vec)
+            => new(MathF.Floor(vec.X), MathF.Floor(vec.Y));
+
+        public static float Floor(this float f)
+            => MathF.Floor(f);
+
+        public static float Round(this float f, int digits)
+            => MathF.Round(f, digits);
     }
 }

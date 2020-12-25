@@ -84,7 +84,7 @@ namespace MooseLib
         {
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) || Objects.Any(u => u.InCell(x, y)) ? 100 : 1;
+                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) || Objects.Any(u => u.InCell(x, y)) ? 100 : 0;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -137,9 +137,51 @@ namespace MooseLib
             => cell.X > 0 && cell.X < MapWidth
             && cell.Y > 0 && cell.Y < MapHeight;
 
-        public IEnumerator<(Vector2 worldPosition, bool hit)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition)
+        public IEnumerable<(Vector2 worldPosition, byte blocked)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false)
         {
-            yield break;
+            var (x1, y1) = endWorldPosition;
+            var (x2, y2) = startWorldPosition;
+
+            int deltaX = (int)Math.Abs(x1 - x2);
+            int deltaZ = (int)Math.Abs(y1 - y2);
+            int stepX = x2 < x1 ? 1 : -1;
+            int stepZ = y2 < y1 ? 1 : -1;
+
+            int err = deltaX - deltaZ;
+
+            (Vector2, byte blocked) BuildReturnTuple(float x, float y)
+            {
+                var cellX = (int)(x / TileWidth);
+                var cellY = (int)(y / TileHeight);
+                var blocked = BlockingMap[cellX, cellY];
+                var ret = (new Vector2(x, y), blocked);
+                return ret;
+            }
+
+            while (true)
+            {
+                yield return BuildReturnTuple(x2, y2);
+                if (x2 == x1 && y2 == y1) { break; }
+
+                int e2 = 2 * err;
+
+                if (e2 > -deltaZ)
+                {
+                    err -= deltaZ;
+                    x2 += stepX;
+                }
+
+                if (x2 == x1 && y2 == y1) { break; }
+                
+                if (fillCorners)
+                    yield return BuildReturnTuple(x2, y2);
+
+                if (e2 < deltaX)
+                {
+                    err += deltaX;
+                    y2 += stepZ;
+                }
+            }
         }
 
         public IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell)

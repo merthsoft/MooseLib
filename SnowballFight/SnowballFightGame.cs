@@ -167,6 +167,7 @@ namespace SnowballFight
         {
             Draw(null, 
                 (_ => DrawSelectedUnitDetails(), null),
+                null,
                 (null, _ => DrawTargetLine())
             );
 
@@ -177,10 +178,20 @@ namespace SnowballFight
 
         private void DrawTargetLine()
         {
-            SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             if (TargettedUnit != null && SelectedUnit != null)
-                SpriteBatch.DrawLine(SelectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize, Color.DarkRed, 3);
-            SpriteBatch.End();
+            {
+                var selectedUnitCell = SelectedUnit.GetCell();
+                var targettedUnitCell = TargettedUnit.GetCell();
+
+                foreach (var pos in FindWorldRay(SelectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize))
+                {
+                    SpriteBatch.DrawPoint(pos.worldPosition, Color.Green, 2);
+                    var cell = (pos.worldPosition / TileSize).GetFloor();
+                    
+                    if (pos.blocked > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
+                        break;
+                }
+            }
         }
 
         private void DrawSelectedUnitDetails()

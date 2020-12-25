@@ -59,7 +59,7 @@ namespace MooseLib
             && worldLocation.Y >= Position.Y && worldLocation.Y < (Position.Y + 16);
 
         public Vector2 GetCell()
-            => new((int)(Position.X / ParentGame.TileWidth), (int)(Position.Y / ParentGame.TileHeight));
+            => new Vector2(Position.X / ParentGame.TileWidth, Position.Y / ParentGame.TileHeight).GetFloor();
 
         public bool InCell(int x, int y)
             => (Position / new Vector2(ParentGame.TileWidth, ParentGame.TileHeight)) == new Vector2(x, y);
