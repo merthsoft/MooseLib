@@ -125,5 +125,23 @@ namespace MooseLib
 
         public static long Sum(this IEnumerable<byte> set)
             => set.Sum(b => (long)b);
+
+        public static Vector2 RotateAround(this Vector2 point, Vector2 center, float angleInDegrees)
+        {
+            var rad = angleInDegrees * (MathF.PI / 180);
+            var s = MathF.Sin(rad);
+            var c = MathF.Cos(rad);
+
+            // translate point back to origin:
+            var oldX = point.X - center.X;
+            var oldY = point.Y - center.Y;
+
+            // rotate point
+            var newX = oldX * c - oldY * s;
+            var newY = oldX * s + oldY * c;
+
+            // translate point back:
+            return new(newX + center.X, newY + center.Y);
+        }
     }
 }

@@ -5,6 +5,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,6 +16,7 @@ namespace SnowballFight
         private const int UnitLayer = 2;
 
         private MouseState CurrentMouseState;
+        private Vector2 WorldMouse;
         private WindowManager WindowManager = null!;
 
         private readonly Queue<GameObject> SpawnQueue = new();
@@ -86,8 +88,9 @@ namespace SnowballFight
         protected override void Update(GameTime gameTime)
         {
             CurrentMouseState = Mouse.GetState();
-            var worldClick = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
-            var mouseOverUnit = (UnitAtWorldLocation(worldClick) as Unit)!;
+            WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
+
+            var mouseOverUnit = (UnitAtWorldLocation(WorldMouse) as Unit)!;
 
             if (CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
@@ -132,10 +135,10 @@ namespace SnowballFight
                         ClearSelectUnits();
                     }
                 }
-            } 
+            }
             else if (CurrentMouseState.RightButton == ButtonState.Pressed)
             {
-                if (!SelectedUnit?.AtWorldLocation(worldClick) ?? false)
+                if (!SelectedUnit?.AtWorldLocation(WorldMouse) ?? false)
                     ClearSelectUnits();
             }
             else
@@ -184,14 +187,26 @@ namespace SnowballFight
                 var selectedUnitCell = SelectedUnit.GetCell();
                 var targettedUnitCell = TargettedUnit.GetCell();
 
-                foreach (var pos in FindWorldRay(SelectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize))
+                var startWorldPosition = SelectedUnit.Position + HalfTileSize;
+                var endWorldPosition = TargettedUnit.Position + HalfTileSize;
+                var leftCone = endWorldPosition.RotateAround(startWorldPosition, 5);
+                var rightCone = endWorldPosition.RotateAround(startWorldPosition, -5);
+
+                void drawLineTo(Vector2 start, Vector2 end, Color color)
                 {
-                    SpriteBatch.DrawPoint(pos.worldPosition, Color.Green, 2);
-                    var cell = (pos.worldPosition / TileSize).GetFloor();
-                    
-                    if (pos.blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
-                        break;
+                    foreach (var pos in FindWorldRay(start, end))
+                    {
+                        SpriteBatch.DrawPoint(pos.worldPosition, color, 2);
+                        var cell = (pos.worldPosition / TileSize).GetFloor();
+
+                        if (pos.blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
+                            break;
+                    }
                 }
+
+                drawLineTo(startWorldPosition, endWorldPosition, Color.Green);
+                drawLineTo(startWorldPosition, leftCone, Color.Red);
+                drawLineTo(startWorldPosition, rightCone, Color.Red);
             }
         }
 

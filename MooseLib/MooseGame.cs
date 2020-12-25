@@ -157,17 +157,21 @@ namespace MooseLib
             => cell.X > 0 && cell.X < MapWidth
             && cell.Y > 0 && cell.Y < MapHeight;
 
+        public bool CellIsInBounds(int cellX, int cellY)
+            => cellX > 0 && cellX < MapWidth
+            && cellY > 0 && cellY < MapHeight;
+
         public IEnumerable<(Vector2 worldPosition, IList<byte> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false)
         {
             var (x1, y1) = endWorldPosition;
             var (x2, y2) = startWorldPosition;
 
-            int deltaX = (int)Math.Abs(x1 - x2);
-            int deltaZ = (int)Math.Abs(y1 - y2);
-            int stepX = x2 < x1 ? 1 : -1;
-            int stepZ = y2 < y1 ? 1 : -1;
-
-            int err = deltaX - deltaZ;
+            var deltaX = (int)Math.Abs(x1 - x2);
+            var deltaZ = (int)Math.Abs(y1 - y2);
+            var stepX = x2 < x1 ? 1 : -1;
+            var stepZ = y2 < y1 ? 1 : -1;
+            
+            var err = deltaX - deltaZ;
 
             (Vector2, List<byte> blocked) BuildReturnTuple(float x, float y)
             {
@@ -180,8 +184,12 @@ namespace MooseLib
 
             while (true)
             {
+                if (!WorldPositionIsInBounds(x2, y2))
+                    break;
+
                 yield return BuildReturnTuple(x2, y2);
-                if (x2 == x1 && y2 == y1) { break; }
+                if (x2 == x1 && y2 == y1) 
+                    break;
 
                 int e2 = 2 * err;
 
@@ -191,10 +199,14 @@ namespace MooseLib
                     x2 += stepX;
                 }
 
-                if (x2 == x1 && y2 == y1) { break; }
-                
+                if (!WorldPositionIsInBounds(x2, y2))
+                    break;
+
                 if (fillCorners)
                     yield return BuildReturnTuple(x2, y2);
+                
+                if (x2 == x1 && y2 == y1) 
+                    break;
 
                 if (e2 < deltaX)
                 {
@@ -237,5 +249,9 @@ namespace MooseLib
 
         public GameObject? UnitAtWorldLocation(Vector2 worldLocation)
             => Objects.FirstOrDefault(unit => unit.AtWorldLocation(worldLocation));
+
+        public bool WorldPositionIsInBounds(float worldX, float worldY)
+            => worldX > 0 && worldX < MapWidth * TileWidth
+            && worldY > 0 && worldY < MapHeight * TileHeight;
     }
 }
