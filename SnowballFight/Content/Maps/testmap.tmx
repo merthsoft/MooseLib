@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="2020.11.25" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="14">
+<map version="1.4" tiledversion="2020.11.25" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="14">
  <tileset firstgid="1" source="../Tilesets/ground.tsx"/>
  <tileset firstgid="1405" source="../Tilesets/blocking.tsx"/>
+ <tileset firstgid="2225" source="../Tilesets/passable.tsx"/>
  <layer id="1" name="Terrain" width="30" height="30">
   <data encoding="base64" compression="zlib">
    eJzt1E0OgjAQhuGGayhRUWP8WaNiTIyeQBdIdKH3P4Vfk5o0kzpqp7CaxRMWEF6mFDJjTKaUUh0ZQekUnmGLzQFsoBdwbqlXMk1r7a4ZJ1xPrhfqc+0FLGH+oflPK9QuvOd+7wXba2AGt0B3J2hyJnBw7VPibg59qMmxgrvXXpEmt2d/aVbMuz3CA6bwJOcuglkl31LsGttZr4Ju7LzS/0bsvHthN2beb/sp1bz0W5E26by5u3ftNVJ1qK3XkOxPpbryAuZ7KVQ=
   </data>
  </layer>
- <objectgroup id="11" name="Units"/>
- <layer id="2" name="Decoration" width="30" height="30">
+ <layer id="13" name="Lower Decoration" width="30" height="30">
   <data encoding="base64" compression="zlib">
-   eJztlttLVFEUxg/E7JlemslRobDL6GAIElnBOBXShQSzNJR8tYa8EmHZUz10I4iQXrr8A0UxFqN0eSv9FyQa1HrIF62/oZroW5xv0257zly8BdKCH3ufvc9Z3/rW3gPzPeA4t8BtMAXGwHWwQTnODY53ufeLzzf5zh3yA/wEdmwJOs5WsINjNdgZdPfakecTvqnFGFdublmr5vMu0AGeY/0lOIN5FuNH8ALElPvtqIfuUWgcA62gGRwBA6Am6OZw8F0rqKNOlv4k52nl+pHnE8r1p+c59knGVwV0t4FB6l8OujkyoB550swjNWQ4b6dXqUn8drA/H+hd5kKX+lszhtxV4DC4AI5T/yT7XEsNIc55mnPRyQb+nEWnlfsL1uY8fJpeB3iug5buuOE3TvRceinn2GbpvaFWCOsbffaG6VO4xNE83xqea5raGWOU8/3s48eMPSr//nZ6vkht8Sw9nA6497eOPp/x/GYszdcFavDav4+1IcOr9LvFuM85+pO7ovXynZ8dIwXeG2K/r/A+z+L9U8rbn9f5LSd2I9dVcK3EnPeK9J4vnkDz6Qp6+dexb4le3i6jlw3Q3LuOevg/iosHuDMPwSPweAV+i8XGO2i9BxNg0tLdX+I9LOXezkNrAXwF39bAb4K1bcIYBhGwmWuREOah1a9hUU3QjILKVdROGmeie3AutDbadpRD67yhXWrPkz73K6EWvxNG7gpqNFJPax9Yomet4/Wfp5x6Z0ETNXqp18317gL99vPnVUfY0hOS1A0b64eMGioMIj7P9rpNmaGlEY1++j3I/Shr0PsJ4zv9rL9vskY990O/E2W9EqKdspCa9F0XzR7egT4fUtZor6Wsvd9wUI6M
+   eJxjYBgFlICnHAPtgqEPLg2BMLxAIzduGwJ+pwY4QKY/t0L1VbExMFSzocqdpzDsHiPpxxUPi4F2LmHDLocOHgHN2MxBWZzeR9L7iIA524m05wGSOmMi/UJtYEQne7dwIDA6uIMm9oRA+F3FI38DTQ5mHzZ7aQnw+RcXuIhD7VkK3H4ZR3gMdYAt3V4ZYn5DjxsQANVnDwbAH6A0hs09xAJCeRYbuM0BsReU7kFxR6wZ6OUFtQAp6YfUOHo4iNLmVixuuTuI3DcKMAEAg4EsjA==
+  </data>
+ </layer>
+ <objectgroup id="11" name="Units"/>
+ <layer id="2" name="Upper Decoration" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztlt1LVEEYxg/Izq437dpqkFj5sRiCREGwboWUYlBWhlG31tKXEmHpfVYIEtFN2Z+grMYqfdz18S9EtGh1UTdpf0KUSs/LeYbGcY5n3Vgvqhd+zJyZc95nnvedRX9EPO8OuAveghlwC1QozxvhOMa9FT7f5juj5CdYAnZsj3peLdjFsRHUR/29HuT5iG+aMaaUn1vWGvm8G/SCSaw/AWcxL2B8D6ZBg/K/nXLodkCjE3SDo+AI6AdNUT+Hh++6QQt1CvQnOU8r3488H1e+Pz1fZp1kfBqiuwMMUP9m1M+RB63Ik2MeOUOe8x56lTOJ317W5x29y1w4p1ZrNiB3HTgMroEu6p9gnZupIaQ4z3EuOoXI716csXJ/xtoXh0/Taz/7OmDpzhp+U0TPpZbSx1OW3nNqxbBeGbA3RJ/CDY5mf5vY1xy188Yo/f0U4MeMvWr9/Z30fJ3a4llqOBfx728LfU6wf/OW5rOQM7j2H2Bt0PAq9T5m3Odl+pO7ovXW658d90PeG2S9h3mfP+D9k8rtz9U/Hd+LPI8Zexy5islzrwSt/+GOF39Qy30hv6e/Jfb/Iz6LjYe4M4/AOHi8ib/Fl9B6BV6DN5ZuOXv0FVoLYBF82wS/aXrZgjEOEqCKa4kY5rHyn2HNmaCZBNvKqJ0xeqhrcCG2WruUvzMbDdGohtZFQ3ujNc8E3Me0WvtOHLlrqNFGPa19oMR6ax3X/zzV1DsP2qlxmXp9XO8L6XWQP9c54paekKFu3Fg/ZJyhxiAR8Gyv22w1tDSicZV+D3I/yTPo/bTxnX7W37dbo54Hod9J8rwSop21kDPpuy6al3gHrgSQtUZ7LWvt/QLe0I+9
   </data>
  </layer>
  <objectgroup id="12" name="Snowballs"/>

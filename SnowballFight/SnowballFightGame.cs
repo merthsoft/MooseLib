@@ -165,7 +165,7 @@ namespace SnowballFight
 
         protected override void Draw(GameTime gameTime)
         {
-            Draw(null, 
+            Draw(null, null,
                 (_ => DrawSelectedUnitDetails(), null),
                 null,
                 (null, _ => DrawTargetLine())
