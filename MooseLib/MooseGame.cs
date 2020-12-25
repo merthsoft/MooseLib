@@ -90,36 +90,32 @@ namespace MooseLib
         protected override void Draw(GameTime gameTime)
             => Draw();
 
-        protected void Draw(params (Action<int>? preHook, Action<int>? postHook)?[] layerRenderHooks)
+        protected void Draw(params (Action<int>? preHook, Action<int>? postHook)?[] renderHooks)
         {
             GraphicsDevice.Clear(Color.Black);
 
             var transformMatrix = MainCamera.GetViewMatrix();
 
-            var objectLayer = 0;
-            var tileLayer = 0;
-            for (var i = 0; i < MainMap.Layers.Count; i++)
+            for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
             {
-                var hookTuple = layerRenderHooks.ElementAtOrDefault(i);
-                var layer = MainMap.Layers[i];
+                var hookTuple = renderHooks?.ElementAtOrDefault(layerIndex);
+                var layer = MainMap.Layers[layerIndex];
                 switch (layer)
                 {
                     case TiledMapTileLayer:
-                        hookTuple?.preHook?.Invoke(tileLayer);
+                        hookTuple?.preHook?.Invoke(layerIndex);
                         MapRenderer.Draw(layer, transformMatrix);
-                        hookTuple?.postHook?.Invoke(tileLayer);
-                        tileLayer++;
+                        hookTuple?.postHook?.Invoke(layerIndex);
                         break;
                     case TiledMapObjectLayer:
                         SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-                        hookTuple?.preHook?.Invoke(objectLayer);
+                        hookTuple?.preHook?.Invoke(layerIndex);
                         Objects
-                            .SkipWhile(unit => unit.Layer > objectLayer)
-                            .TakeWhile(unit => unit.Layer <= objectLayer)
+                            .SkipWhile(unit => unit.Layer > layerIndex)
+                            .TakeWhile(unit => unit.Layer <= layerIndex)
                             .ForEach(unit => unit.Draw(SpriteBatch));
-                        hookTuple?.postHook?.Invoke(objectLayer);
+                        hookTuple?.postHook?.Invoke(layerIndex);
                         SpriteBatch.End();
-                        objectLayer++;
                         break;
                 }
             }

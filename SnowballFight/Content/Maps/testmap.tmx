@@ -7,11 +7,11 @@
    eJzt1E0OgjAQhuGGayhRUWP8WaNiTIyeQBdIdKH3P4Vfk5o0kzpqp7CaxRMWEF6mFDJjTKaUUh0ZQekUnmGLzQFsoBdwbqlXMk1r7a4ZJ1xPrhfqc+0FLGH+oflPK9QuvOd+7wXba2AGt0B3J2hyJnBw7VPibg59qMmxgrvXXpEmt2d/aVbMuz3CA6bwJOcuglkl31LsGttZr4Ju7LzS/0bsvHthN2beb/sp1bz0W5E26by5u3ftNVJ1qK3XkOxPpbryAuZ7KVQ=
   </data>
  </layer>
- <layer id="2" name="Buildings" width="30" height="30">
+ <objectgroup id="11" name="Units"/>
+ <layer id="2" name="Decoration" width="30" height="30">
   <data encoding="base64" compression="zlib">
    eJztlttLVFEUxg/E7JlemslRobDL6GAIElnBOBXShQSzNJR8tYa8EmHZUz10I4iQXrr8A0UxFqN0eSv9FyQa1HrIF62/oZroW5xv0257zly8BdKCH3ufvc9Z3/rW3gPzPeA4t8BtMAXGwHWwQTnODY53ufeLzzf5zh3yA/wEdmwJOs5WsINjNdgZdPfakecTvqnFGFdublmr5vMu0AGeY/0lOIN5FuNH8ALElPvtqIfuUWgcA62gGRwBA6Am6OZw8F0rqKNOlv4k52nl+pHnE8r1p+c59knGVwV0t4FB6l8OujkyoB550swjNWQ4b6dXqUn8drA/H+hd5kKX+lszhtxV4DC4AI5T/yT7XEsNIc55mnPRyQb+nEWnlfsL1uY8fJpeB3iug5buuOE3TvRceinn2GbpvaFWCOsbffaG6VO4xNE83xqea5raGWOU8/3s48eMPSr//nZ6vkht8Sw9nA6497eOPp/x/GYszdcFavDav4+1IcOr9LvFuM85+pO7ovXynZ8dIwXeG2K/r/A+z+L9U8rbn9f5LSd2I9dVcK3EnPeK9J4vnkDz6Qp6+dexb4le3i6jlw3Q3LuOevg/iosHuDMPwSPweAV+i8XGO2i9BxNg0tLdX+I9LOXezkNrAXwF39bAb4K1bcIYBhGwmWuREOah1a9hUU3QjILKVdROGmeie3AutDbadpRD67yhXWrPkz73K6EWvxNG7gpqNFJPax9Yomet4/Wfp5x6Z0ETNXqp18317gL99vPnVUfY0hOS1A0b64eMGioMIj7P9rpNmaGlEY1++j3I/Shr0PsJ4zv9rL9vskY990O/E2W9EqKdspCa9F0XzR7egT4fUtZor6Wsvd9wUI6M
   </data>
  </layer>
- <objectgroup id="11" name="Units"/>
  <objectgroup id="12" name="Snowballs"/>
 </map>

@@ -5,6 +5,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -165,8 +166,8 @@ namespace SnowballFight
         protected override void Draw(GameTime gameTime)
         {
             Draw(null, 
-                (_ => DrawGrid(), null),
-                (_ => DrawSelectedUnitDetails(), _ => DrawTargetLine())
+                (_ => DrawSelectedUnitDetails(), null),
+                (null, _ => DrawTargetLine())
             );
 
             SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
@@ -174,23 +175,12 @@ namespace SnowballFight
             SpriteBatch.End();
         }
 
-        private void DrawGrid()
-        {
-            if (SelectedUnit == null)
-                return;
-
-            SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-            for (var x = 0; x < MapWidth; x++)
-                for (var y = 0; y < MapHeight; y++)
-                    if (!MainMap.IsBlockedAt(x, y))
-                        SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.LightGray);
-            SpriteBatch.End();
-        }
-
         private void DrawTargetLine()
         {
+            SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             if (TargettedUnit != null && SelectedUnit != null)
                 SpriteBatch.DrawLine(SelectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize, Color.DarkRed, 3);
+            SpriteBatch.End();
         }
 
         private void DrawSelectedUnitDetails()
@@ -202,6 +192,11 @@ namespace SnowballFight
 
             SelectedUnitHintCells.ForEach(((Vector2 worldDelta, Color color) t) =>
                         SpriteBatch.FillRectangle(t.worldDelta, TileSize, t.color));
+
+            for (var x = 0; x < MapWidth; x++)
+                for (var y = 0; y < MapHeight; y++)
+                    if (!MainMap.IsBlockedAt(x, y))
+                        SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.LightGray);
 
             var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,

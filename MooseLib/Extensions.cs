@@ -30,7 +30,7 @@ namespace MooseLib
                     case TiledMapTileLayer sourceLayer:
                         if (layerIndex >= destMap.TileLayers.Count)
                             destMap.AddLayer(new TiledMapTileLayer(sourceLayer.Name, destMap.Width, destMap.Height, destMap.TileWidth, destMap.TileHeight));
-                        var destLayer = destMap.TileLayers[layerIndex];
+                        var destLayer = (destMap.Layers[layerIndex] as TiledMapTileLayer)!;
                         for (ushort x = 0; x < sourceMap.Width; x++)
                             for (ushort y = 0; y < sourceMap.Height; y++)
                                 destLayer.SetTile((ushort)(x + destX), (ushort)(y + destY), (uint)sourceLayer.GetTile(x, y).GlobalIdentifier);
