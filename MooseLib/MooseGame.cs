@@ -24,14 +24,8 @@ namespace MooseLib
         protected OrthographicCamera MainCamera = null!;
         protected SpriteBatch SpriteBatch = null!;
 
-        protected readonly List<GameObject> Objects = new();
+        protected readonly SortedSet<GameObject> Objects = new();
         protected readonly Dictionary<string, SpriteSheet> Animations = new();
-
-        protected static readonly int DefaultNumberOfLayers = 4;
-        protected TiledMapTileLayer BaseLayer = null!;
-        protected TiledMapTileLayer UnderGroundUnitLayer = null!;
-        protected TiledMapTileLayer GroundUnitLayer = null!;
-        protected TiledMapTileLayer AboveGroundUnitLayer = null!;
 
         public int MapHeight => MainMap.Height;
         public int MapWidth => MainMap.Width;
@@ -61,16 +55,6 @@ namespace MooseLib
         {
             MainMap = new TiledMap("map", width, height, tileWith, tileHeight, TiledMapTileDrawOrder.RightDown, TiledMapOrientation.Orthogonal);
             
-            BaseLayer = new TiledMapTileLayer("Base Layer", width, height, tileWith, tileHeight);
-            UnderGroundUnitLayer = new TiledMapTileLayer("Under Ground Unit Layer", width, height, tileWith, tileHeight);
-            GroundUnitLayer = new TiledMapTileLayer("Ground Unit Layer", width, height, tileWith, tileHeight);
-            AboveGroundUnitLayer = new TiledMapTileLayer("Above Ground Unit Layer", width, height, tileWith, tileHeight);
-
-            MainMap.AddLayer(BaseLayer);
-            MainMap.AddLayer(UnderGroundUnitLayer);
-            MainMap.AddLayer(GroundUnitLayer);
-            MainMap.AddLayer(AboveGroundUnitLayer);
-
             BlockingMap = new byte[width, height];
         }
 
@@ -100,54 +84,52 @@ namespace MooseLib
         {
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) || Objects.Exists(u => u.InCell(x, y)) ? 100 : 1;
+                    BlockingMap[x, y] = MainMap.IsBlockedAt(x, y) || Objects.Any(u => u.InCell(x, y)) ? 100 : 1;
         }
 
         protected override void Draw(GameTime gameTime)
             => Draw();
 
-        protected void Draw(Action? preBaseLayer = null, 
-            Action? preUnderGroundLayer = null,
-            Action? preGroundLayer = null,
-            Action<SpriteBatch>? preGroundObjects = null,
-            Action<SpriteBatch>? postGroundObjects = null,
-            Action? preAboveGrounObjectsLayer = null,
-            params Action<int>?[] additionLayers)
+        protected void Draw(params (Action<int>? preHook, Action<int>? postHook)?[] layerRenderHooks)
         {
             GraphicsDevice.Clear(Color.Black);
 
             var transformMatrix = MainCamera.GetViewMatrix();
 
-            void RenderLayer(TiledMapTileLayer layer, Action? preAction)
+            var objectLayer = 0;
+            var tileLayer = 0;
+            for (var i = 0; i < MainMap.Layers.Count; i++)
             {
-                preAction?.Invoke();
-                MapRenderer.Draw(layer, transformMatrix);
-            }
-
-            RenderLayer(BaseLayer, preBaseLayer);
-            RenderLayer(UnderGroundUnitLayer, preUnderGroundLayer);
-            RenderLayer(GroundUnitLayer, preGroundLayer);
-
-            SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-            preGroundObjects?.Invoke(SpriteBatch);
-            Objects.ForEach(unit => unit.Draw(SpriteBatch));
-            postGroundObjects?.Invoke(SpriteBatch);
-            SpriteBatch.End();
-
-            RenderLayer(AboveGroundUnitLayer, preAboveGrounObjectsLayer);
-
-            for (var index = DefaultNumberOfLayers; index < MainMap.TileLayers.Count; index++)
-            {
-                additionLayers.InvokeAtIndex(index);
-                MapRenderer.Draw(MainMap.TileLayers[index], transformMatrix);
+                var hookTuple = layerRenderHooks.ElementAtOrDefault(i);
+                var layer = MainMap.Layers[i];
+                switch (layer)
+                {
+                    case TiledMapTileLayer:
+                        hookTuple?.preHook?.Invoke(tileLayer);
+                        MapRenderer.Draw(layer, transformMatrix);
+                        hookTuple?.postHook?.Invoke(tileLayer);
+                        tileLayer++;
+                        break;
+                    case TiledMapObjectLayer:
+                        SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+                        hookTuple?.preHook?.Invoke(objectLayer);
+                        Objects
+                            .SkipWhile(unit => unit.Layer > objectLayer)
+                            .TakeWhile(unit => unit.Layer <= objectLayer)
+                            .ForEach(unit => unit.Draw(SpriteBatch));
+                        hookTuple?.postHook?.Invoke(objectLayer);
+                        SpriteBatch.End();
+                        objectLayer++;
+                        break;
+                }
             }
         }
 
-        protected GameObject AddObject(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle)
+        protected GameObject AddObject(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle, int objectLayerIndex = 0)
         {
             if (!Animations.ContainsKey(animationKey))
                 LoadAnimation(animationKey);
-            var unit = new GameObject(this, Animations[animationKey], cellX, cellY, direction, state);
+            var unit = new GameObject(this, Animations[animationKey], cellX, cellY, direction, state, objectLayerIndex);
             Objects.Add(unit);
             return unit;
         }

@@ -17,15 +17,25 @@ namespace MooseLib
                 if (!destMap.Tilesets.Contains(tileset))
                     destMap.AddTileset(tileset, sourceMap.GetTilesetFirstGlobalIdentifier(tileset));
 
-            for (int layerIndex = 0; layerIndex < sourceMap.TileLayers.Count; layerIndex++)
+            for (int layerIndex = 0; layerIndex < sourceMap.Layers.Count; layerIndex++)
             {
-                var sourceLayer = sourceMap.TileLayers[layerIndex];
-                if (layerIndex >= destMap.TileLayers.Count)
-                    destMap.AddLayer(new TiledMapTileLayer(sourceLayer.Name, destMap.Width, destMap.Height, destMap.TileWidth, destMap.TileHeight));
-                var destLayer = destMap.TileLayers[layerIndex];
-                for (ushort x = 0; x < sourceMap.Width; x++)
-                    for (ushort y = 0; y < sourceMap.Height; y++)
-                        destLayer.SetTile((ushort)(x + destX), (ushort)(y + destY), (uint)sourceLayer.GetTile(x, y).GlobalIdentifier);
+                var layer = sourceMap.Layers[layerIndex];
+
+                switch (layer)
+                {
+                    case TiledMapObjectLayer objectLayer:
+                        // TODO: Convert tiled objects to game objects
+                        destMap.AddLayer(new TiledMapObjectLayer(objectLayer.Name, objectLayer.Objects.Clone() as TiledMapObject[]));
+                        break;
+                    case TiledMapTileLayer sourceLayer:
+                        if (layerIndex >= destMap.TileLayers.Count)
+                            destMap.AddLayer(new TiledMapTileLayer(sourceLayer.Name, destMap.Width, destMap.Height, destMap.TileWidth, destMap.TileHeight));
+                        var destLayer = destMap.TileLayers[layerIndex];
+                        for (ushort x = 0; x < sourceMap.Width; x++)
+                            for (ushort y = 0; y < sourceMap.Height; y++)
+                                destLayer.SetTile((ushort)(x + destX), (ushort)(y + destY), (uint)sourceLayer.GetTile(x, y).GlobalIdentifier);
+                        break;
+                }
             }
         }
 

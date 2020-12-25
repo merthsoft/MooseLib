@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Sprites;
+using System;
 
 namespace MooseLib
 {
-    public class GameObject
+    public class GameObject : IComparable<GameObject>
     {
         public MooseGame ParentGame { get; set; }
 
@@ -17,6 +18,7 @@ namespace MooseLib
         public SpriteEffects SpriteEffects { get; set; }
         public float Rotation { get; set; }
         public Vector2 Scale { get; set; } = Vector2.One;
+        public int Layer { get; set; }
 
         private string PlayKey
             => Direction == MooseLib.Direction.None
@@ -27,7 +29,7 @@ namespace MooseLib
 
         private readonly Vector2 SpriteOffset;
 
-        public GameObject(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction = MooseLib.Direction.Down, string state = "idle")
+        public GameObject(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction = MooseLib.Direction.Down, string state = "idle", int layer = 0)
         {
             Sprite = new AnimatedSprite(spriteSheet);
             Position = new(cellX * 16, cellY * 16);
@@ -35,6 +37,7 @@ namespace MooseLib
             Direction = direction;
             State = state;
             ParentGame = parentGame;
+            Layer = layer;
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
@@ -60,5 +63,9 @@ namespace MooseLib
 
         public bool InCell(int x, int y)
             => (Position / new Vector2(ParentGame.TileWidth, ParentGame.TileHeight)) == new Vector2(x, y);
+
+        public int CompareTo(GameObject? other)
+            => other == null ? 1 : Layer == other.Layer ? GetHashCode().CompareTo(other.GetHashCode()) : Layer.CompareTo(other.Layer);
+
     }
 }

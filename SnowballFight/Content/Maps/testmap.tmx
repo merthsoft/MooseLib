@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="2020.11.25" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="10">
+<map version="1.4" tiledversion="2020.11.25" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="14">
  <tileset firstgid="1" source="../Tilesets/ground.tsx"/>
  <tileset firstgid="1405" source="../Tilesets/blocking.tsx"/>
- <layer id="1" name="Tile Layer 1" width="30" height="30">
+ <layer id="1" name="Terrain" width="30" height="30">
   <data encoding="base64" compression="zlib">
    eJzt1E0OgjAQhuGGayhRUWP8WaNiTIyeQBdIdKH3P4Vfk5o0kzpqp7CaxRMWEF6mFDJjTKaUUh0ZQekUnmGLzQFsoBdwbqlXMk1r7a4ZJ1xPrhfqc+0FLGH+oflPK9QuvOd+7wXba2AGt0B3J2hyJnBw7VPibg59qMmxgrvXXpEmt2d/aVbMuz3CA6bwJOcuglkl31LsGttZr4Ju7LzS/0bsvHthN2beb/sp1bz0W5E26by5u3ftNVJ1qK3XkOxPpbryAuZ7KVQ=
   </data>
  </layer>
- <layer id="3" name="Tile Layer 3" width="30" height="30">
+ <layer id="2" name="Buildings" width="30" height="30">
   <data encoding="base64" compression="zlib">
-   eJztwQEBAAAAgiD/r25IQAEAAPBoDhAAAQ==
+   eJztlttLVFEUxg/E7JlemslRobDL6GAIElnBOBXShQSzNJR8tYa8EmHZUz10I4iQXrr8A0UxFqN0eSv9FyQa1HrIF62/oZroW5xv0257zly8BdKCH3ufvc9Z3/rW3gPzPeA4t8BtMAXGwHWwQTnODY53ufeLzzf5zh3yA/wEdmwJOs5WsINjNdgZdPfakecTvqnFGFdublmr5vMu0AGeY/0lOIN5FuNH8ALElPvtqIfuUWgcA62gGRwBA6Am6OZw8F0rqKNOlv4k52nl+pHnE8r1p+c59knGVwV0t4FB6l8OujkyoB550swjNWQ4b6dXqUn8drA/H+hd5kKX+lszhtxV4DC4AI5T/yT7XEsNIc55mnPRyQb+nEWnlfsL1uY8fJpeB3iug5buuOE3TvRceinn2GbpvaFWCOsbffaG6VO4xNE83xqea5raGWOU8/3s48eMPSr//nZ6vkht8Sw9nA6497eOPp/x/GYszdcFavDav4+1IcOr9LvFuM85+pO7ovXynZ8dIwXeG2K/r/A+z+L9U8rbn9f5LSd2I9dVcK3EnPeK9J4vnkDz6Qp6+dexb4le3i6jlw3Q3LuOevg/iosHuDMPwSPweAV+i8XGO2i9BxNg0tLdX+I9LOXezkNrAXwF39bAb4K1bcIYBhGwmWuREOah1a9hUU3QjILKVdROGmeie3AutDbadpRD67yhXWrPkz73K6EWvxNG7gpqNFJPax9Yomet4/Wfp5x6Z0ETNXqp18317gL99vPnVUfY0hOS1A0b64eMGioMIj7P9rpNmaGlEY1++j3I/Shr0PsJ4zv9rL9vskY990O/E2W9EqKdspCa9F0XzR7egT4fUtZor6Wsvd9wUI6M
   </data>
  </layer>
- <layer id="2" name="Tile Layer 2" width="30" height="30">
-  <data encoding="base64" compression="zlib">
-   eJztlV9LVEEYxg/Izq437daqUJSlLoYg4d26FZJFQWkZht5ai1aKiP25qotKEUTCm7QvUBSbskbpndVXEGnR6sJuSj+DpfS8nGdwHM/ZTdMFsRd+zJz58z7zvDPsLgccpw/0gxkwAR6BAuU4j9kOcm6V30+4ZoD8Ar+BHQeDjnMIHGVbDo4F3bkm5PmKPZVoY8rNLWPl/D4OmsFrjI+DFvQzaD+DMVCm3L1vPHTPQuMcaAAXQD3oBBVBN4eDfQ2gijoZ+pOcV5XrR74vKdef7q+wTtK+y6F7BHRR/27QzZEG1ciTYh45Q5r9JnqVM4nfZtZnlt6lL7Sq9ZplyH0YnAHd4Dz1G1nnSmoIMfZT7ItOJrB2F9es3AsY++7h0/TayXvtsnTfGn5jRPellnKPVyy9SWqFMF7oM3ePPoU7bM37reC9pqidNlq5328+fsyoUdnnS+m5h9riWWo4F3DfbxV9vuL9zVua73OcwWt+GGO9hlep90XjPa/Qn7wVrZft/ux4mmNdL+t9n+/5C9ZfVt7+vO7vX+IEcj0ADzeZc+gvvWeLF9B8uY1edmtMbUMt/8feimd4MyNgFDzP4/uZhtYH8BF8yqPuD2j9BItgKQ+6cf4u7UMbBhGwn2OREPqhnT/DhjNBMwpKdlA7Yfwe6xrcCOVH244iaLUb2putecLnvyWuNq4JI3cxNWqpp7VPbtFzPMt/WxH1roM6atykXhvH23LU28+f1znClp6QoG7YGD9tnKHYIOLzbY/bHDC0NKJxm35PcT7KM+j5uLFPf+v9dVar+37oNVGeV0K0kxZyJv3WRbODb+CWD0mrtceS1twforiNPA==
-  </data>
- </layer>
- <objectgroup id="4" name="Object Layer 1"/>
+ <objectgroup id="11" name="Units"/>
+ <objectgroup id="12" name="Snowballs"/>
 </map>

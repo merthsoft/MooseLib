@@ -164,10 +164,9 @@ namespace SnowballFight
 
         protected override void Draw(GameTime gameTime)
         {
-            Draw(
-                preGroundLayer: DrawGrid,
-                preGroundObjects: DrawSelectedUnit, 
-                postGroundObjects: DrawTargetLine
+            Draw(null, 
+                (_ => DrawGrid(), null),
+                (_ => DrawSelectedUnitDetails(), _ => DrawTargetLine())
             );
 
             SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
@@ -188,21 +187,21 @@ namespace SnowballFight
             SpriteBatch.End();
         }
 
-        private void DrawTargetLine(SpriteBatch spriteBatch)
+        private void DrawTargetLine()
         {
             if (TargettedUnit != null && SelectedUnit != null)
-                spriteBatch.DrawLine(SelectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize, Color.DarkRed, 3);
+                SpriteBatch.DrawLine(SelectedUnit.Position + HalfTileSize, TargettedUnit.Position + HalfTileSize, Color.DarkRed, 3);
         }
 
-        private void DrawSelectedUnit(SpriteBatch spriteBatch)
+        private void DrawSelectedUnitDetails()
         {
             if (SelectedUnit == null)
                 return;
 
-            spriteBatch.FillRectangle(SelectedUnit.Position, TileSize, Color.Red.HalveAlphaChannel());
+            SpriteBatch.FillRectangle(SelectedUnit.Position, TileSize, Color.Red.HalveAlphaChannel());
 
             SelectedUnitHintCells.ForEach(((Vector2 worldDelta, Color color) t) =>
-                        spriteBatch.FillRectangle(t.worldDelta, TileSize, t.color));
+                        SpriteBatch.FillRectangle(t.worldDelta, TileSize, t.color));
 
             var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,
@@ -219,12 +218,12 @@ namespace SnowballFight
                 foreach (var p in mousePath)
                 {
                     var nextCell = new Vector2(p.X * TileWidth, p.Y * TileHeight) + HalfTileSize;
-                    spriteBatch.DrawLine(lastCell, nextCell, Color.Black, 2);
-                    spriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
+                    SpriteBatch.DrawLine(lastCell, nextCell, Color.Black, 2);
+                    SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
                     lastCell = nextCell;
                     index++;
                 }
-                spriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
+                SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
             }
         }
     }
