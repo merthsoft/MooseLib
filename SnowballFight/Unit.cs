@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using MonoGame.Extended.Sprites;
 using MooseLib;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,8 @@ namespace SnowballFight
     class Unit : GameObject
     {
 
-        private readonly NormalDistribution AimDistribution = new NormalDistribution(0, 2);
+        private static readonly Vector2 spriteOffset = new(8, 8);
+        
 
         private class States
         {
@@ -23,9 +23,11 @@ namespace SnowballFight
         public Queue<Vector2> MoveQueue { get; } = new Queue<Vector2>();
         private Vector2 MoveDirection = Vector2.Zero;
         private Vector2 NextLocation = Vector2.Zero;
+        
+        private readonly NormalDistribution AimDistribution = new(0, 2);
 
         public Unit(MooseGame parentGame, string animationKey, int cellX, int cellY, string direction, string state) 
-            : base(parentGame, animationKey, new(cellX * 16, cellY * 16), new(8, 8), direction, state, SnowballFightGame.UnitLayer) { }
+            : base(parentGame, animationKey, new(cellX * 16, cellY * 16), spriteOffset, direction, state, SnowballFightGame.UnitLayer) { }
 
         public override void Update(GameTime gameTime)
         {

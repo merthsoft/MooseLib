@@ -17,14 +17,14 @@ namespace MooseLib
 {
     public class MooseGame : Game
     {
-        protected GraphicsDeviceManager Graphics { get; set; }
-        
-        protected TiledMap MainMap = null!;
-        protected TiledMapRenderer MapRenderer = null!;
-        protected OrthographicCamera MainCamera = null!;
-        protected SpriteBatch SpriteBatch = null!;
+        public GraphicsDeviceManager Graphics { get; set; }
 
-        protected readonly SortedSet<GameObject> Objects = new();
+        public TiledMap MainMap = null!;
+        public TiledMapRenderer MapRenderer = null!;
+        public OrthographicCamera MainCamera = null!;
+        public SpriteBatch SpriteBatch = null!;
+
+        public readonly SortedSet<GameObject> Objects = new();
         public readonly Queue<GameObject> UpdateObjects = new();
         public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = new();
 
@@ -35,7 +35,7 @@ namespace MooseLib
         public Size2 TileSize => new(TileWidth, TileHeight); // TODO: Cache
         public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
 
-        protected List<byte>[,] BlockingMap = null!;
+        public List<byte>[,] BlockingMap = null!;
 
         public MooseGame()
         {
@@ -55,7 +55,6 @@ namespace MooseLib
         protected void InitializeMap(int width, int height, int tileWith, int tileHeight)
         {
             MainMap = new TiledMap("map", width, height, tileWith, tileHeight, TiledMapTileDrawOrder.RightDown, TiledMapOrientation.Orthogonal);
-            
             BlockingMap = new List<byte>[width, height];
         }
 
@@ -76,14 +75,17 @@ namespace MooseLib
         protected override void Update(GameTime gameTime)
         {
             MapRenderer.Update(gameTime);
+
             Objects.ForEach(obj => obj.Update(gameTime));
             Objects.RemoveWhere(obj => obj.RemoveFlag);
+            
             UpdateObjects.ForEach(obj => Objects.Add(obj));
             UpdateObjects.Clear();
+            
             BuildGrid();
         }
 
-        private IEnumerable<GameObject> ObjectsAtLayer(int layerIndex)
+        public IEnumerable<GameObject> ObjectsAtLayer(int layerIndex)
             => Objects
                 .SkipWhile(o => o.Layer < layerIndex)
                 .TakeWhile(o => o.Layer == layerIndex);
@@ -144,7 +146,7 @@ namespace MooseLib
             }
         }
 
-        protected GameObject AddObject(string animationKey, Vector2 position, Vector2 spriteOffset, string direction = Direction.None, string state = State.Idle, int objectLayerIndex = 0)
+        public GameObject AddObject(string animationKey, Vector2 position, Vector2 spriteOffset, string direction = Direction.None, string state = State.Idle, int objectLayerIndex = 0)
         {
             var unit = new GameObject(this, animationKey, position, spriteOffset, direction, state, objectLayerIndex);
             Objects.Add(unit);

@@ -147,5 +147,8 @@ namespace MooseLib
 
         public static bool IsPressed(this ButtonState buttonState)
             => buttonState == ButtonState.Pressed;
+
+        public static bool IsReleased(this ButtonState buttonState)
+            => buttonState == ButtonState.Released;
     }
 }

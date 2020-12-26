@@ -84,22 +84,27 @@ namespace SnowballFight
                 new("Winter", windowTextures[1], 16, 16, fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon }
             });
 
-            LoadAnimatedSpriteSheet("snowball");
+            LoadAnimatedSpriteSheet(Snowball.AnimationKey);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            var newMouseState = Mouse.GetState();
+            var previousMouseState = CurrentMouseState;
+            CurrentMouseState = Mouse.GetState();
             WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
+            
+            if (previousMouseState.LeftButton.IsReleased() && previousMouseState.RightButton.IsReleased())
+                HandleMouseInput();
 
-            if ((CurrentMouseState.LeftButton.IsPressed() && newMouseState.LeftButton.IsPressed())
-                || (CurrentMouseState.RightButton.IsPressed() && newMouseState.RightButton.IsPressed()))
-            {
-                CurrentMouseState = newMouseState;
-                return;
-            }
+            if (SpawnQueue.Count > 0)
+                Objects.Add(SpawnQueue.Dequeue());
 
-            CurrentMouseState = newMouseState;
+            base.Update(gameTime);
+            WindowManager.Update(gameTime, MainCamera);
+        }
+
+        private void HandleMouseInput()
+        {
             var mouseOverUnit = (UnitAtWorldLocation(WorldMouse) as Unit)!;
 
             if (CurrentMouseState.LeftButton == ButtonState.Pressed)
@@ -161,12 +166,6 @@ namespace SnowballFight
                 if (SelectedUnit != mouseOverUnit)
                     TargettedUnit = mouseOverUnit;
             }
-
-            if (SpawnQueue.Count > 0)
-                Objects.Add(SpawnQueue.Dequeue());
-
-            base.Update(gameTime);
-            WindowManager.Update(gameTime, MainCamera);
         }
 
         private void SelectSingleUnit(Unit unit)
