@@ -6,12 +6,17 @@
   },
   "cycles": {
     "fly": {
-      "frames": [0,1,2,3,4,5,6,7],
+      "frames": [ 0, 1, 2, 3, 4, 5, 6, 7 ],
       "isLooping": true,
       "frameDuration": 0.0499999747
     },
     "hit": {
-      "frames": [8,9,10,11,12,13,14,15],
+      "frames": [ 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "isLooping": false,
+      "frameDuration": 0.0599999763
+    },
+    "dead": {
+      "frames": [ ],
       "isLooping": false,
       "frameDuration": 0.0599999763
     }

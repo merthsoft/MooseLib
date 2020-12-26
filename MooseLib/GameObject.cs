@@ -20,6 +20,10 @@ namespace MooseLib
         public Vector2 Scale { get; set; } = Vector2.One;
         public int Layer { get; set; }
 
+        public Action? StateCompleteAction { get; set; }
+
+        public bool RemoveFlag { get; set; }
+
         private string PlayKey
             => Direction == MooseLib.Direction.None
                 ? State.ToLower()
@@ -28,7 +32,7 @@ namespace MooseLib
         private string PreviousPlayKey = "";
 
         private readonly Vector2 SpriteOffset;
-        
+
         public GameObject(MooseGame parentGame, SpriteSheet spriteSheet, Vector2 position, Vector2 spriteOffset, string direction = MooseLib.Direction.None, string state = "idle", int layer = 0)
         {
             Sprite = new AnimatedSprite(spriteSheet);
@@ -47,7 +51,7 @@ namespace MooseLib
         {
             if (PlayKey != PreviousPlayKey)
             {
-                Sprite.Play(PlayKey);
+                Sprite.Play(PlayKey, StateCompleteAction);
                 PreviousPlayKey = PlayKey;
             }
 

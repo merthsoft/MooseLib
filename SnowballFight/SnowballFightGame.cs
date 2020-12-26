@@ -7,7 +7,6 @@ using MooseLib;
 using MooseLib.Ui;
 using System.Collections.Generic;
 using System.Linq;
-using Troschuetz.Random.Distributions.Continuous;
 
 namespace SnowballFight
 {
@@ -19,8 +18,6 @@ namespace SnowballFight
         private MouseState CurrentMouseState;
         private Vector2 WorldMouse;
         private WindowManager WindowManager = null!;
-
-        private readonly NormalDistribution AimDistribution = new NormalDistribution(0, 1);
 
         private readonly Queue<GameObject> SpawnQueue = new();
         private readonly List<(Vector2, Color)> SelectedUnitHintCells = new();
@@ -150,16 +147,7 @@ namespace SnowballFight
                 }
                 else
                 {
-                    var selectedUnitCell = SelectedUnit.GetCell();
-                    var targettedUnitCell = TargettedUnit.GetCell();
-
-                    var startWorldPosition = SelectedUnit.Position + HalfTileSize;
-                    var wiggle = AimDistribution.NextDouble();
-                    var endWorldPosition = (TargettedUnit.Position + HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
-                    var flightPath = FindWorldRay(startWorldPosition, endWorldPosition.GetFloor()).Select(t => t.worldPosition);
-                    var snowBall = new Snowball(this, Animations["snowball"], startWorldPosition, flightPath);
-                    Objects.Add(snowBall);
-
+                    SelectedUnit.Attack(TargettedUnit);
                     ClearSelectUnits();
                 }
             }
@@ -226,7 +214,7 @@ namespace SnowballFight
                         SpriteBatch.DrawPoint(pos.worldPosition, color, thickness);
                         var cell = (pos.worldPosition / TileSize).GetFloor();
 
-                        if (pos.blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell)
+                        if (pos.blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
                             break;
                     }
                 }

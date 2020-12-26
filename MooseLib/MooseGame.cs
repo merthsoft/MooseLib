@@ -25,7 +25,8 @@ namespace MooseLib
         protected SpriteBatch SpriteBatch = null!;
 
         protected readonly SortedSet<GameObject> Objects = new();
-        protected readonly Dictionary<string, SpriteSheet> Animations = new();
+        public readonly Queue<GameObject> UpdateObjects = new();
+        public readonly Dictionary<string, SpriteSheet> Animations = new();
 
         public int MapHeight => MainMap.Height;
         public int MapWidth => MainMap.Width;
@@ -75,8 +76,10 @@ namespace MooseLib
         protected override void Update(GameTime gameTime)
         {
             MapRenderer.Update(gameTime);
-            Objects.ForEach(unit => unit.Update(gameTime));
-
+            Objects.ForEach(obj => obj.Update(gameTime));
+            Objects.RemoveWhere(obj => obj.RemoveFlag);
+            UpdateObjects.ForEach(obj => Objects.Add(obj));
+            UpdateObjects.Clear();
             BuildGrid();
         }
 
@@ -150,7 +153,7 @@ namespace MooseLib
             return unit;
         }
 
-        protected void LoadAnimation(string animationKey) 
+        public void LoadAnimation(string animationKey) 
             => Animations[animationKey] = Content.Load<SpriteSheet>($"Animations/{animationKey}.sf", new JsonContentLoader());
 
         public bool CellIsInBounds(Vector2 cell)
