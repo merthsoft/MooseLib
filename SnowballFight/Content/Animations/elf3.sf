@@ -16,17 +16,17 @@
       "frameDuration": 0.2
     },
     "attack": {
-      "frames": [],
+      "frames": [115,116,117,118],
       "isLooping": false,
       "frameDuration": 0.2
     },
     "hit": {
-      "frames": [],
+      "frames": [119,120,121,122],
       "isLooping": false,
       "frameDuration": 0.2
     },
     "defeat": {
-      "frames": [],
+      "frames": [123,124,125,126],
       "isLooping": false,
       "frameDuration": 0.2
     }

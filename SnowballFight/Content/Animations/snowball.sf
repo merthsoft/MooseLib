@@ -16,7 +16,7 @@
       "frameDuration": 0.0599999763
     },
     "dead": {
-      "frames": [ ],
+      "frames": [ 15 ],
       "isLooping": false,
       "frameDuration": 0.0599999763
     }
