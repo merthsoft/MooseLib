@@ -33,9 +33,9 @@ namespace MooseLib
 
         private readonly Vector2 SpriteOffset;
 
-        public GameObject(MooseGame parentGame, SpriteSheet spriteSheet, Vector2 position, Vector2 spriteOffset, string direction = MooseLib.Direction.None, string state = "idle", int layer = 0)
+        public GameObject(MooseGame parentGame, string animationKey, Vector2 position, Vector2 spriteOffset, string direction = MooseLib.Direction.None, string state = "idle", int layer = 0)
         {
-            Sprite = new AnimatedSprite(spriteSheet);
+            Sprite = new AnimatedSprite(parentGame.LoadAnimatedSpriteSheet(animationKey));
             Position = position;
             SpriteOffset = spriteOffset;
             Direction = direction;

@@ -40,9 +40,9 @@ namespace SnowballFight
 
         private Unit AddUnitToSpawnQueue(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle, int speed = 0)
         {
-            if (!Animations.ContainsKey(animationKey))
-                LoadAnimation(animationKey);
-            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
+            if (!AnimationSpriteSheets.ContainsKey(animationKey))
+                LoadAnimatedSpriteSheet(animationKey);
+            var unit = new Unit(this, animationKey, cellX, cellY, direction, state) { Speed = speed };
             SpawnQueue.Enqueue(unit);
             return unit;
         }
@@ -84,7 +84,7 @@ namespace SnowballFight
                 new("Winter", windowTextures[1], 16, 16, fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon }
             });
 
-            LoadAnimation("snowball");
+            LoadAnimatedSpriteSheet("snowball");
         }
 
         protected override void Update(GameTime gameTime)

@@ -26,7 +26,7 @@ namespace MooseLib
 
         protected readonly SortedSet<GameObject> Objects = new();
         public readonly Queue<GameObject> UpdateObjects = new();
-        public readonly Dictionary<string, SpriteSheet> Animations = new();
+        public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = new();
 
         public int MapHeight => MainMap.Height;
         public int MapWidth => MainMap.Width;
@@ -146,15 +146,18 @@ namespace MooseLib
 
         protected GameObject AddObject(string animationKey, Vector2 position, Vector2 spriteOffset, string direction = Direction.None, string state = State.Idle, int objectLayerIndex = 0)
         {
-            if (!Animations.ContainsKey(animationKey))
-                LoadAnimation(animationKey);
-            var unit = new GameObject(this, Animations[animationKey], position, spriteOffset, direction, state, objectLayerIndex);
+            var unit = new GameObject(this, animationKey, position, spriteOffset, direction, state, objectLayerIndex);
             Objects.Add(unit);
             return unit;
         }
 
-        public void LoadAnimation(string animationKey) 
-            => Animations[animationKey] = Content.Load<SpriteSheet>($"Animations/{animationKey}.sf", new JsonContentLoader());
+        public SpriteSheet LoadAnimatedSpriteSheet(string animationKey, bool replace = false)
+        {
+            if (replace || !AnimationSpriteSheets.ContainsKey(animationKey))
+                AnimationSpriteSheets[animationKey] = Content.Load<SpriteSheet>($"Animations/{animationKey}.sf", new JsonContentLoader());
+            
+            return AnimationSpriteSheets[animationKey];
+        }
 
         public bool CellIsInBounds(Vector2 cell)
             => cell.X > 0 && cell.X < MapWidth
