@@ -69,7 +69,7 @@ namespace MooseLib.Ui
             }
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             var numXTiles = Rectangle.Width / Theme.TileWidth;
             var numYTiles = Rectangle.Height / Theme.TileHeight;

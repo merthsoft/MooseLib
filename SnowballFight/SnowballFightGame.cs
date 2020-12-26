@@ -124,7 +124,6 @@ namespace SnowballFight
                                 var pathCount = path.Count();
                                 if (pathCount > 0 && pathCount <= mouseOverUnit.Speed)
                                 {
-
                                     var color = pathCount - 1 <= mouseOverUnit.Speed / 2
                                        ? Color.Green.HalveAlphaChannel()
                                        : Color.DarkOrange.HalveAlphaChannel();
@@ -190,7 +189,7 @@ namespace SnowballFight
             );
 
             SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-            WindowManager.Draw(gameTime, SpriteBatch);
+            WindowManager.Draw(SpriteBatch);
             SpriteBatch.End();
         }
 
@@ -208,12 +207,12 @@ namespace SnowballFight
 
                 void drawLineTo(Vector2 start, Vector2 end, Color color, bool extend, int thickness)
                 {
-                    foreach (var pos in FindWorldRay(start, end, extend: extend))
+                    foreach (var (worldPosition, blockedVector) in FindWorldRay(start, end, extend: extend))
                     {
-                        SpriteBatch.DrawPoint(pos.worldPosition, color, thickness);
-                        var cell = (pos.worldPosition / TileSize).GetFloor();
+                        SpriteBatch.DrawPoint(worldPosition, color, thickness);
+                        var cell = (worldPosition / TileSize).GetFloor();
 
-                        if (pos.blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
+                        if (blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
                             break;
                     }
                 }

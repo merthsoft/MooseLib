@@ -45,8 +45,8 @@ namespace MooseLib.Ui
             PreviousMouseState = CurrentMouseState;
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-            => Windows.ForEach(w => w.Draw(gameTime, spriteBatch));
+        public void Draw(SpriteBatch spriteBatch)
+            => Windows.ForEach(w => w.Draw(spriteBatch));
 
         public Window NewWindow(int x, int y, int width, int height)
         {
