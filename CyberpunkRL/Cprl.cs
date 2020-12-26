@@ -34,9 +34,9 @@ namespace CyberpunkRl
             MainMap.CopyMap(Rooms[1], 11, 0);
             MainMap.CopyMap(Hallways[0], 0, 11);
 
-            AddObject("Adam", 5, 9, Direction.Down);
-            AddObject("Alex", 9, 4, Direction.Left);
-            AddObject("Bob", 1, 3, Direction.Up);
+            AddObject("Adam", new(5, 9), new(8, 8), Direction.Down);
+            AddObject("Alex", new(9, 4), new(8, 8), Direction.Left);
+            AddObject("Bob", new(1, 3), new(8, 8), Direction.Up);
 
             base.LoadContent();
 
