@@ -141,11 +141,11 @@ namespace MooseLib
             }
         }
 
-        protected GameObject AddObject(string animationKey, int cellX, int cellY, string direction = Direction.None, string state = State.Idle, int objectLayerIndex = 0)
+        protected GameObject AddObject(string animationKey, Vector2 position, Vector2 spriteOffset, string direction = Direction.None, string state = State.Idle, int objectLayerIndex = 0)
         {
             if (!Animations.ContainsKey(animationKey))
                 LoadAnimation(animationKey);
-            var unit = new GameObject(this, Animations[animationKey], cellX, cellY, direction, state, objectLayerIndex);
+            var unit = new GameObject(this, Animations[animationKey], position, spriteOffset, direction, state, objectLayerIndex);
             Objects.Add(unit);
             return unit;
         }
@@ -161,7 +161,7 @@ namespace MooseLib
             => cellX > 0 && cellX < MapWidth
             && cellY > 0 && cellY < MapHeight;
 
-        public IEnumerable<(Vector2 worldPosition, IList<byte> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false)
+        public IEnumerable<(Vector2 worldPosition, IList<byte> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
         {
             var (x1, y1) = endWorldPosition;
             var (x2, y2) = startWorldPosition;
@@ -188,7 +188,7 @@ namespace MooseLib
                     break;
 
                 yield return BuildReturnTuple(x2, y2);
-                if (x2 == x1 && y2 == y1) 
+                if (!extend && x2 == x1 && y2 == y1) 
                     break;
 
                 int e2 = 2 * err;
@@ -205,7 +205,7 @@ namespace MooseLib
                 if (fillCorners)
                     yield return BuildReturnTuple(x2, y2);
                 
-                if (x2 == x1 && y2 == y1) 
+                if (!extend && x2 == x1 && y2 == y1) 
                     break;
 
                 if (e2 < deltaX)

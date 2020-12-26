@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
 using System;
@@ -143,5 +144,8 @@ namespace MooseLib
             // translate point back:
             return new(newX + center.X, newY + center.Y);
         }
+
+        public static bool IsPressed(this ButtonState buttonState)
+            => buttonState == ButtonState.Pressed;
     }
 }

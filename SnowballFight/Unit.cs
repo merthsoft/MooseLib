@@ -7,14 +7,20 @@ namespace SnowballFight
 {
     class Unit : GameObject
     {
+        private class States
+        {
+            public const string Idle = "idle";
+            public const string Walk = "walk";
+        }
+
         public int Speed { get; set; }
 
         public Queue<Vector2> MoveQueue { get; } = new Queue<Vector2>();
         private Vector2 MoveDirection = Vector2.Zero;
         private Vector2 NextLocation = Vector2.Zero;
 
-        public Unit(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction, string state, int layer) 
-            : base(parentGame, spriteSheet, cellX, cellY, direction, state, layer) { }
+        public Unit(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction, string state) 
+            : base(parentGame, spriteSheet, new(cellX * 16, cellY * 16), new(8, 8), direction, state, SnowballFightGame.UnitLayer) { }
 
         public override void Update(GameTime gameTime)
         {

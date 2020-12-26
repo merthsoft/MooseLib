@@ -28,12 +28,12 @@ namespace MooseLib
         private string PreviousPlayKey = "";
 
         private readonly Vector2 SpriteOffset;
-
-        public GameObject(MooseGame parentGame, SpriteSheet spriteSheet, int cellX, int cellY, string direction = MooseLib.Direction.Down, string state = "idle", int layer = 0)
+        
+        public GameObject(MooseGame parentGame, SpriteSheet spriteSheet, Vector2 position, Vector2 spriteOffset, string direction = MooseLib.Direction.None, string state = "idle", int layer = 0)
         {
             Sprite = new AnimatedSprite(spriteSheet);
-            Position = new(cellX * 16, cellY * 16);
-            SpriteOffset = new Vector2(8, 8);
+            Position = position;
+            SpriteOffset = spriteOffset;
             Direction = direction;
             State = state;
             ParentGame = parentGame;

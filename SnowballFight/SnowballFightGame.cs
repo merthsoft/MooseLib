@@ -5,19 +5,22 @@ using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Troschuetz.Random.Distributions.Continuous;
 
 namespace SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
-        private const int UnitLayer = 2;
+        public const int UnitLayer = 2;
+        public const int SnowballLayer = 4;
 
         private MouseState CurrentMouseState;
         private Vector2 WorldMouse;
         private WindowManager WindowManager = null!;
+
+        private readonly NormalDistribution AimDistribution = new NormalDistribution(0, 1);
 
         private readonly Queue<GameObject> SpawnQueue = new();
         private readonly List<(Vector2, Color)> SelectedUnitHintCells = new();
@@ -42,7 +45,7 @@ namespace SnowballFight
         {
             if (!Animations.ContainsKey(animationKey))
                 LoadAnimation(animationKey);
-            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state, UnitLayer) { Speed = speed };
+            var unit = new Unit(this, Animations[animationKey], cellX, cellY, direction, state) { Speed = speed };
             SpawnQueue.Enqueue(unit);
             return unit;
         }
@@ -83,13 +86,23 @@ namespace SnowballFight
                 new("Candycane", windowTextures[0], 16, 16, fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
                 new("Winter", windowTextures[1], 16, 16, fonts[0]) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon }
             });
+
+            LoadAnimation("snowball");
         }
 
         protected override void Update(GameTime gameTime)
         {
-            CurrentMouseState = Mouse.GetState();
+            var newMouseState = Mouse.GetState();
             WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
 
+            if ((CurrentMouseState.LeftButton.IsPressed() && newMouseState.LeftButton.IsPressed())
+                || (CurrentMouseState.RightButton.IsPressed() && newMouseState.RightButton.IsPressed()))
+            {
+                CurrentMouseState = newMouseState;
+                return;
+            }
+
+            CurrentMouseState = newMouseState;
             var mouseOverUnit = (UnitAtWorldLocation(WorldMouse) as Unit)!;
 
             if (CurrentMouseState.LeftButton == ButtonState.Pressed)
@@ -119,7 +132,7 @@ namespace SnowballFight
                             }
                     }
                 }
-                else
+                else if (TargettedUnit == null)
                 {
                     var unitCell = SelectedUnit.GetCell();
                     var mouseCell = MainCamera.ScreenToWorld(
@@ -128,12 +141,26 @@ namespace SnowballFight
                     mouseCell /= TileSize;
 
                     var path = FindCellPath(unitCell, mouseCell);
-                    if (path.Any())
+                    if (path.Any() && path.Count() <= SelectedUnit.Speed)
                     {
                         path.ForEach(SelectedUnit.MoveQueue.Enqueue);
                         SelectedUnit.State = State.Walk;
                         ClearSelectUnits();
                     }
+                }
+                else
+                {
+                    var selectedUnitCell = SelectedUnit.GetCell();
+                    var targettedUnitCell = TargettedUnit.GetCell();
+
+                    var startWorldPosition = SelectedUnit.Position + HalfTileSize;
+                    var wiggle = AimDistribution.NextDouble();
+                    var endWorldPosition = (TargettedUnit.Position + HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
+                    var flightPath = FindWorldRay(startWorldPosition, endWorldPosition.GetFloor()).Select(t => t.worldPosition);
+                    var snowBall = new Snowball(this, Animations["snowball"], startWorldPosition, flightPath);
+                    Objects.Add(snowBall);
+
+                    ClearSelectUnits();
                 }
             }
             else if (CurrentMouseState.RightButton == ButtonState.Pressed)
@@ -189,24 +216,24 @@ namespace SnowballFight
 
                 var startWorldPosition = SelectedUnit.Position + HalfTileSize;
                 var endWorldPosition = TargettedUnit.Position + HalfTileSize;
-                var leftCone = endWorldPosition.RotateAround(startWorldPosition, 5);
-                var rightCone = endWorldPosition.RotateAround(startWorldPosition, -5);
+                var leftCone = endWorldPosition.RotateAround(startWorldPosition, 5).GetFloor();
+                var rightCone = endWorldPosition.RotateAround(startWorldPosition, -5).GetFloor();
 
-                void drawLineTo(Vector2 start, Vector2 end, Color color)
+                void drawLineTo(Vector2 start, Vector2 end, Color color, bool extend, int thickness)
                 {
-                    foreach (var pos in FindWorldRay(start, end))
+                    foreach (var pos in FindWorldRay(start, end, extend: extend))
                     {
-                        SpriteBatch.DrawPoint(pos.worldPosition, color, 2);
+                        SpriteBatch.DrawPoint(pos.worldPosition, color, thickness);
                         var cell = (pos.worldPosition / TileSize).GetFloor();
 
-                        if (pos.blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
+                        if (pos.blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell)
                             break;
                     }
                 }
 
-                drawLineTo(startWorldPosition, endWorldPosition, Color.Green);
-                drawLineTo(startWorldPosition, leftCone, Color.Red);
-                drawLineTo(startWorldPosition, rightCone, Color.Red);
+                drawLineTo(startWorldPosition, endWorldPosition, Color.Green, false, 3);
+                drawLineTo(startWorldPosition, leftCone, Color.Red, true, 1);
+                drawLineTo(startWorldPosition, rightCone, Color.Red, true, 1);
             }
         }
 
