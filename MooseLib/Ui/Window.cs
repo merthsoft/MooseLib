@@ -132,9 +132,8 @@ namespace MooseLib.Ui
             }) as TextList)!;
 
         public Picture AddPicture(int x, int y, Texture2D texture, Vector2? scale = null)
-            => (Controls.AddPassThrough(new Picture(this, texture)
+            => (Controls.AddPassThrough(new Picture(this, x, y, texture)
             {
-                Position = new(x, y),
                 Scale = scale ?? Vector2.One,
             }) as Picture)!;
 

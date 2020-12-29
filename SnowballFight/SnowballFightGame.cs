@@ -5,6 +5,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
+using Roy_T.AStar.Grids;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -88,7 +89,7 @@ namespace SnowballFight
                 ["elf2"] = MakeUnitDef("elf1", 4, 5, .2f, extractPortrait(4)),
                 ["elf3"] = MakeUnitDef("elf1", 4, 5, .2f, extractPortrait(5)),
                 ["krampus"] = MakeUnitDef("krampus", 8, 4, .1f, extractPortrait(8)),
-                ["mari"] = MakeUnitDef("mari", 3, 7, .4f, extractPortrait(1), "Mary Lwyd"),
+                ["mari"] = MakeUnitDef("mari", 3, 11, .4f, extractPortrait(1), "Mari Lwyd"),
                 ["santa"] = MakeUnitDef("santa", 8, 4, .1f, extractPortrait(9)),
                 ["snowman"] = MakeUnitDef("snowman", 8, 4, .1f, extractPortrait(2)),
             };
@@ -170,12 +171,13 @@ namespace SnowballFight
                     {
                         SelectSingleUnit(mouseOverUnit);
                         var unitCell = mouseOverUnit.GetCell();
+                        Grid? cachedGrid = BuildCollisionGrid(unitCell);
                         for (var deltaX = -mouseOverUnit.DisplaySpeed; deltaX <= mouseOverUnit.DisplaySpeed; deltaX++)
                             for (var deltaY = -mouseOverUnit.DisplaySpeed; deltaY <= mouseOverUnit.DisplaySpeed; deltaY++)
                             {
                                 var deltaCell = new Vector2(unitCell.X + deltaX, unitCell.Y + deltaY);
 
-                                var path = FindCellPath(unitCell, deltaCell);
+                                var path = FindCellPath(unitCell, deltaCell, cachedGrid);
                                 var pathCount = path.Count();
                                 if (pathCount > 0 && pathCount <= mouseOverUnit.DisplaySpeed)
                                 {

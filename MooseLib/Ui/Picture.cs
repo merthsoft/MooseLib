@@ -5,8 +5,15 @@ namespace MooseLib.Ui
 {
     public class Picture : Control
     {
-        public Texture2D Texture { get; }
-        private Rectangle SourceRectangle { get; }
+        public Texture2D Texture { get; set; }
+        
+        private Rectangle? sourceRectangle;
+        public Rectangle SourceRectangle 
+        { 
+            get => sourceRectangle ?? new(0, 0, Texture.Width, Texture.Height); 
+            set => sourceRectangle = value; 
+        }
+        
         public Vector2 Scale { get; set; } = Vector2.One;
 
         public float Rotation { get; set; }
@@ -14,10 +21,9 @@ namespace MooseLib.Ui
 
         public override Vector2 CalculateSize() => new(Texture.Width, Texture.Height);
         
-        public Picture(Window window, Texture2D texture) : base(window)
+        public Picture(Window window, int x, int y, Texture2D texture) : base(window, x, y)
         {
             Texture = texture;
-            SourceRectangle = new(0, 0, Texture.Width, Texture.Height);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

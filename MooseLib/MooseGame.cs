@@ -224,35 +224,42 @@ namespace MooseLib
             }
         }
 
-        public IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell)
+        public IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null)
         {
             if (!CellIsInBounds(startCell) || !CellIsInBounds(endCell))
                 return Enumerable.Empty<Vector2>();
+
+            grid ??= BuildCollisionGrid(startCell);
 
             var startX = (int)startCell.X;
             var startY = (int)startCell.Y;
             var endX = (int)endCell.X;
             var endY = (int)endCell.Y;
 
-            var grid = Grid.CreateGridWithLateralConnections(
-                    new GridSize(MapWidth, MapHeight),
-                    new Roy_T.AStar.Primitives.Size(Distance.FromMeters(1), Distance.FromMeters(1)),
-                    Velocity.FromMetersPerSecond(1));
-
-            for (var x = 0; x < MapWidth; x++)
-                for (var y = 0; y < MapHeight; y++)
-                    if (BlockingMap[x, y].Sum() > 0 && !(x == startX && y == startY))
-                        grid.DisconnectNode(new(x, y));
-
             var path = new PathFinder()
                 .FindPath(new GridPosition(startX, startY), new GridPosition(endX, endY), grid);
 
             if (path.Type != PathType.Complete)
                 return Enumerable.Empty<Vector2>();
-            
+
             return path.Edges
                 .Select(e => new Vector2((int)e.End.Position.X, (int)e.End.Position.Y))
                 .Distinct();
+        }
+
+        public Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
+        {
+            var grid = Grid.CreateGridWithLateralConnections(
+                                new GridSize(MapWidth, MapHeight),
+                                new Roy_T.AStar.Primitives.Size(Distance.FromMeters(1), Distance.FromMeters(1)),
+                                Velocity.FromMetersPerSecond(1));
+
+            for (var x = 0; x < MapWidth; x++)
+                for (var y = 0; y < MapHeight; y++)
+                    if (BlockingMap[x, y].Sum() > 0 && !(walkableOverrides.Contains(new(x, y))))
+                        grid.DisconnectNode(new(x, y));
+
+            return grid;
         }
 
         public GameObject? UnitAtWorldLocation(Vector2 worldLocation)
