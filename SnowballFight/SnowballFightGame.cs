@@ -219,10 +219,10 @@ namespace SnowballFight
             SelectedUnit = unit;
 
             var displayNameSize = StatsWindow.MeasureString(unit.DisplayName);
-            var smallFontHeight = (int)StatsWindow.MeasureString("m").Y / 2;
+            var smallFontHeight = (int)StatsWindow.MeasureString("|", 1).Y;
 
             StatsWindow.AddPicture(4, 4, unit.Portrait, scale: new(6, 6));
-            StatsWindow.AddLabel(113, 1, unit.DisplayName);
+            StatsWindow.AddLabel(113, 2, unit.DisplayName);
             var yOffset = (int)displayNameSize.Y - 4;
             StatsWindow.AddLine(112, yOffset, 112 + (int)displayNameSize.X, yOffset);
             StatsWindow.AddLabel(112, yOffset + 2, $"Speed: {unit.DisplaySpeed}", 1);
