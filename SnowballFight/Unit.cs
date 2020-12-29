@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MooseLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Troschuetz.Random.Distributions.Continuous;
@@ -18,7 +20,13 @@ namespace SnowballFight
             public const string Walk = "walk";
         }
 
-        public int Speed { get; set; }
+        public UnitDef UnitDef { get; }
+        public Texture2D Portrait => UnitDef.Portrait;
+        public int DisplaySpeed => UnitDef.Speed;
+        public string DisplayName => UnitDef.DisplayName;
+        public int DisplayHealth => UnitDef.MaxHealth;
+        public int DisplayMaxHealth => UnitDef.MaxHealth;
+        public float DisplayAccuracy => MathF.Round(10 - 5 * UnitDef.AccuracySigma, 1);
 
         public Queue<Vector2> MoveQueue { get; } = new Queue<Vector2>();
         private Vector2 MoveDirection = Vector2.Zero;
@@ -26,8 +34,11 @@ namespace SnowballFight
         
         private readonly NormalDistribution AimDistribution = new(0, 2);
 
-        public Unit(MooseGame parentGame, string animationKey, int cellX, int cellY, string direction, string state) 
-            : base(parentGame, animationKey, new(cellX * 16, cellY * 16), spriteOffset, direction, state, SnowballFightGame.UnitLayer) { }
+        public Unit(MooseGame parentGame, UnitDef unitDef, int cellX, int cellY, string direction, string state) 
+            : base(parentGame, unitDef.AnimationKey, new(cellX * 16, cellY * 16), spriteOffset, direction, state, SnowballFightGame.UnitLayer) 
+        {
+            UnitDef = unitDef;
+        }
 
         public override void Update(GameTime gameTime)
         {

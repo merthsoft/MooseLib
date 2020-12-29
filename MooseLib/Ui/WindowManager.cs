@@ -26,7 +26,6 @@ namespace MooseLib.Ui
 
         public void Update(GameTime gameTime, OrthographicCamera camera)
         {
-            Windows.RemoveAll(w => w.Close);
             CurrentMouseState = Mouse.GetState();
             foreach (var w in Windows)
             {
@@ -37,11 +36,12 @@ namespace MooseLib.Ui
                 if (w.Rectangle.Contains(worldClick))
                 {
                     updateParams.MouseOver = true;
-                    updateParams.LeftMouse = CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released;
-                    updateParams.RightMouse = CurrentMouseState.RightButton == ButtonState.Pressed && PreviousMouseState.RightButton == ButtonState.Released;
+                    updateParams.LeftMouse = CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton);
+                    updateParams.RightMouse = CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton);
                 }
                 w.Update(updateParams);
             }
+            Windows.RemoveAll(w => w.Close);
             PreviousMouseState = CurrentMouseState;
         }
 

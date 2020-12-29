@@ -6,21 +6,23 @@ namespace MooseLib.Ui
     public class Label : Control
     {
         public string? Text { get; set; }
+        public bool HighlightOnHover { get; set; }
 
-        public Label(Window window) : base(window)
+        public Label(Window window, int x, int y) : base(window, x, y)
         {
 
         }
 
         public override Vector2 CalculateSize()
-            => Window.Theme.Font.MeasureString(Text);
+            => Window.Theme.Fonts[FontIndex].MeasureString(Text);
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (Text == null || Window.Theme.Font == null)
+            if (Text == null)
                 return;
 
-            spriteBatch.DrawString(Window.Theme.Font, Text, GlobalPosition, UpdateParameters.MouseOver ? Theme.TextMouseOverColor : Theme.TextColor);
+            spriteBatch.DrawString(Window.Theme.Fonts[FontIndex], Text, GlobalPosition,
+                HighlightOnHover && UpdateParameters.MouseOver ? Theme.TextMouseOverColor : Theme.TextColor);
         }
 
         public override void Update(UpdateParameters updateParameters)

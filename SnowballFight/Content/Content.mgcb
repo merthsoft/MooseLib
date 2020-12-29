@@ -15,26 +15,19 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Fonts/gothic-pixel-font.spritefont
+#begin Fonts/Direct_Message_14.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Fonts/gothic-pixel-font.spritefont
+/build:Fonts/Direct_Message_14.spritefont
 
-#begin Fonts/Pixeled English Font.spritefont
+#begin Fonts/Whacky_Joe_18.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Fonts/Pixeled English Font.spritefont
-
-#begin Fonts/TheKingIsDead.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/TheKingIsDead.spritefont
+/build:Fonts/Whacky_Joe_18.spritefont
 
 #begin Images/blocking.png
 /importer:TextureImporter

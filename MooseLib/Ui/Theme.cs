@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MooseLib.Ui
@@ -11,7 +12,7 @@ namespace MooseLib.Ui
 
         private Texture2D windowTexture = null!;
 
-        public SpriteFont Font { get; set; }
+        public List<SpriteFont> Fonts { get; } = new();
         public Texture2D WindowTexture
         {
             get => windowTexture;
@@ -30,9 +31,12 @@ namespace MooseLib.Ui
         public Color TextMouseOverColor { get; set; } = Color.White;
         public Color SelectedColor { get; set; } = Color.Blue;
 
-        public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, SpriteFont font)
-            => (Name, TileWidth, TileHeight, WindowTexture, Font)
-             = (name, tileWidth, tileHeight, windowTexture, font);
+        public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts)
+        {
+               (Name, TileWidth, TileHeight, WindowTexture)
+             = (name, tileWidth, tileHeight, windowTexture);
+            Fonts.AddRange(fonts);
+        }
 
         internal void DrawWindowTexture(SpriteBatch spriteBatch, int index, Vector2 position, int x, int y)
         {

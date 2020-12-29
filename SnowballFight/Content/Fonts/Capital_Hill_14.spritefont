@@ -11,19 +11,19 @@ with.
     <!--
     Modify this string to change the font that will be imported.
     -->
-    <FontName>TheKingIsDead</FontName>
+    <FontName>Capital_Hill</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change
     the size of the font.
     -->
-    <Size>9</Size>
+    <Size>14</Size>
 
     <!--
     Spacing is a float value, measured in pixels. Modify this value to change
     the amount of spacing in between characters.
     -->
-    <Spacing>.5</Spacing>
+    <Spacing>0</Spacing>
 
     <!--
     UseKerning controls the layout of the font. If this value is true, kerning information

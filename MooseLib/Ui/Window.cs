@@ -100,57 +100,51 @@ namespace MooseLib.Ui
             Controls.ForEach(c => c.Draw(spriteBatch));
         }
 
-        public Label AddLabel(int x, int y, string text)
-        {
-            var ret = new Label(this)
+        public Line AddLine(int x1, int y1, int x2, int y2, int thickness = 1)
+            => (Controls.AddPassThrough(new Line(this, x1, y1, x2, y2, thickness)) as Line)!;
+
+        public Label AddLabel(int x, int y, string text, int fontIndex = 0)
+            => (Controls.AddPassThrough(new Label(this, x, y)
             {
-                Position = new(x, y),
                 Text = text,
-            };
-            Controls.Add(ret);
-            return ret;
-        }
+                FontIndex = fontIndex,
+            }) as Label)!;
 
         public Label AddActionLabel(int x, int y, string text, Action<Control, UpdateParameters> action)
-        {
-            var ret = new Label(this)
+            => (Controls.AddPassThrough(new Label(this, x, y)
             {
-                Position = new(x, y),
                 Text = text,
                 Action = action,
-            };
-            Controls.Add(ret);
-            return ret;
-        }
+            }) as Label)!;
 
         public TextList AddActionList(int x, int y, Action<Control, UpdateParameters> action, params string[] options)
-        {
-            var ret = new TextList(this, options)
+            => (Controls.AddPassThrough(new TextList(this, x, y, options)
             {
-                Position = new(x, y),
                 Action = action,
                 SelectMode = SelectMode.None,
-            };
-            Controls.Add(ret);
-            return ret;
-        }
+            }) as TextList)!;
 
         public TextList AddActionList(int x, int y, params (string text, Action<Control, UpdateParameters> action)[] options)
-        {
-            var ret = new TextList(this, options.Select(o => o.text))
+            => (Controls.AddPassThrough(new TextList(this, x, y, options.Select(o => o.text))
             {
-                Position = new(x, y),
                 Action = (c, u) => options[(c as TextList)!.MouseOverIndex].action(c, u),
                 SelectMode = SelectMode.None,
-            };
-            Controls.Add(ret);
-            return ret;
-        }
+            }) as TextList)!;
+
+        public Picture AddPicture(int x, int y, Texture2D texture, Vector2? scale = null)
+            => (Controls.AddPassThrough(new Picture(this, texture)
+            {
+                Position = new(x, y),
+                Scale = scale ?? Vector2.One,
+            }) as Picture)!;
 
         public void SetCellSize(int cellWidth, int cellHeight)
             => Size = new(cellWidth * Theme.TileWidth, cellHeight * Theme.TileHeight);
 
         public void SetCellPosition(int cellX, int cellY)
             => Position = new(cellX * Theme.TileWidth, cellY * Theme.TileHeight);
+
+        public Vector2 MeasureString(string s, int fontIndex = 0)
+            => Theme.Fonts[fontIndex].MeasureString(s);
     }
 }

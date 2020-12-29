@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace MooseLib.Ui
+﻿namespace MooseLib.Ui
 {
     public class TextListOption
     {
