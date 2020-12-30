@@ -170,24 +170,6 @@ namespace SnowballFight
                     if (mouseOverUnit != null && mouseOverUnit.State == Unit.States.Idle)
                     {
                         SelectSingleUnit(mouseOverUnit);
-                        var unitCell = mouseOverUnit.GetCell();
-                        Grid? cachedGrid = BuildCollisionGrid(unitCell);
-                        for (var deltaX = -mouseOverUnit.DisplaySpeed; deltaX <= mouseOverUnit.DisplaySpeed; deltaX++)
-                            for (var deltaY = -mouseOverUnit.DisplaySpeed; deltaY <= mouseOverUnit.DisplaySpeed; deltaY++)
-                            {
-                                var deltaCell = new Vector2(unitCell.X + deltaX, unitCell.Y + deltaY);
-
-                                var path = FindCellPath(unitCell, deltaCell, cachedGrid);
-                                var pathCount = path.Count();
-                                if (pathCount > 0 && pathCount <= mouseOverUnit.DisplaySpeed)
-                                {
-                                    var color = pathCount - 1 <= mouseOverUnit.DisplaySpeed / 2
-                                       ? Color.Green.HalveAlphaChannel()
-                                       : Color.DarkOrange.HalveAlphaChannel();
-                                    var worldDelta = mouseOverUnit.WorldPosition + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
-                                    SelectedUnitHintCells.Add((worldDelta, color));
-                                }
-                            }
                     }
                 }
                 else if (TargettedUnit == null)
@@ -230,6 +212,27 @@ namespace SnowballFight
             StatsWindow.AddLabel(112, yOffset + 2, $"Speed: {unit.DisplaySpeed}", 1);
             StatsWindow.AddLabel(112, yOffset + 2 + smallFontHeight * 1, $"HP: {unit.DisplayHealth}/{unit.DisplayMaxHealth}", 1);
             StatsWindow.AddLabel(112, yOffset + 2 + smallFontHeight * 2, $"Accuracy: {unit.DisplayAccuracy}", 1);
+
+            var unitCell = unit.GetCell();
+            Grid? cachedGrid = BuildCollisionGrid(unitCell);
+            for (var x = 0; x < MapWidth; x++)
+                for (var y = 0; y < MapHeight; y++)
+                {
+                    var deltaCell = new Vector2(x, y);
+                    var path = FindCellPath(unitCell, deltaCell, cachedGrid);
+                    var pathCount = path.Count();
+
+                    if (pathCount == 0)
+                        continue;
+
+                    var color = pathCount <= unit.DisplaySpeed
+                        ? pathCount - 1 <= unit.DisplaySpeed / 2
+                            ? Color.Green.HalveAlphaChannel()
+                            : Color.DarkOrange.HalveAlphaChannel()
+                        : Color.Transparent;
+                    
+                    SelectedUnitHintCells.Add((deltaCell * TileSize, color));
+                }
         }
 
         private void ClearSelectUnits()
@@ -277,12 +280,11 @@ namespace SnowballFight
 
             SpriteBatch.FillRectangle(SelectedUnit.WorldPosition, TileSize, Color.Red.HalveAlphaChannel());
 
-            SelectedUnitHintCells.ForEach(t => SpriteBatch.FillRectangle(t.worldPosition, TileSize, t.color));
-
-            for (var x = 0; x < MapWidth; x++)
-                for (var y = 0; y < MapHeight; y++)
-                    if (!MainMap.IsBlockedAt(x, y))
-                        SpriteBatch.DrawRectangle(x * TileWidth, y * TileHeight, TileWidth + 1, TileHeight + 1, Color.LightGray);
+            SelectedUnitHintCells.ForEach(t =>
+            {
+                SpriteBatch.DrawRectangle(new(t.worldPosition.X, t.worldPosition.Y, TileWidth + 1, TileHeight + 1), Color.LightGray);
+                SpriteBatch.FillRectangle(new(t.worldPosition.X + 1, t.worldPosition.Y + 1, TileWidth - 1, TileHeight - 1), t.color);
+            });
 
             var mouseCell = MainCamera.ScreenToWorld(
                                 CurrentMouseState.Position.X / TileWidth * TileWidth,
