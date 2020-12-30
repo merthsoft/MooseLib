@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace MooseLib.Ui
+namespace MooseLib.Ui.Controls
 {
     public enum SelectMode
     {

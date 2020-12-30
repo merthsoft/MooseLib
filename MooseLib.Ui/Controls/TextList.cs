@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MooseLib.Ui
+namespace MooseLib.Ui.Controls
 {
     public class TextList : Control
     {

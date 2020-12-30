@@ -1,4 +1,4 @@
-﻿namespace MooseLib.Ui
+﻿namespace MooseLib.Ui.Controls
 {
     public class TextListOption
     {

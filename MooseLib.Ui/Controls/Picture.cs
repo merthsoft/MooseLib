@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MooseLib.Ui
+namespace MooseLib.Ui.Controls
 {
     public class Picture : Control
     {

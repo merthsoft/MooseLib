@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace MooseLib.Ui
+namespace MooseLib.Ui.Controls
 {
     public abstract class Control
     {

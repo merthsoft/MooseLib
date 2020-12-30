@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
-namespace MooseLib.Ui
+namespace MooseLib.Ui.Controls
 {
     public class Line : Control
     {
