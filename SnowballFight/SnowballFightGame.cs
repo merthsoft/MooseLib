@@ -32,14 +32,6 @@ namespace SnowballFight
         {
         }
 
-        private static UnitDef MakeUnitDef(string name, int maxHealth, int speed, float accuracySigma, Texture2D portrait, string? displayNameOverride = null)
-            => new() {
-                AnimationKey = name, DefName = name,
-                DisplayName = displayNameOverride ?? name.UpperFirst(),
-                MaxHealth = maxHealth, Speed = speed, AccuracySigma = accuracySigma,
-                Portrait = portrait,
-            };
-
         protected override void Initialize()
         {
             base.Initialize();
@@ -47,16 +39,6 @@ namespace SnowballFight
             Graphics.PreferredBackBufferWidth = 960;
             Graphics.PreferredBackBufferHeight = 960;
             Graphics.ApplyChanges();
-        }
-
-        private Unit SpawnUnit(string unitDef, int cellX, int cellY, string direction = Direction.None, string state = State.Idle)
-        {
-            var def = UnitDefs[unitDef];
-            if (!AnimationSpriteSheets.ContainsKey(def.AnimationKey))
-                LoadAnimatedSpriteSheet(def.AnimationKey);
-            var unit = new Unit(this, def, cellX, cellY, direction, state);
-            Objects.Add(unit);
-            return unit;
         }
 
         protected override void LoadContent()
@@ -86,14 +68,14 @@ namespace SnowballFight
 
             UnitDefs = new Dictionary<string, UnitDef>()
             {
-                ["deer"] = MakeUnitDef("deer", 6, 6, 1, extractPortrait(10)),
-                ["elf1"] = MakeUnitDef("elf1", 4, 5, .2f, extractPortrait(3)),
-                ["elf2"] = MakeUnitDef("elf1", 4, 5, .2f, extractPortrait(4)),
-                ["elf3"] = MakeUnitDef("elf1", 4, 5, .2f, extractPortrait(5)),
-                ["krampus"] = MakeUnitDef("krampus", 8, 4, .1f, extractPortrait(8)),
-                ["mari"] = MakeUnitDef("mari", 3, 11, .4f, extractPortrait(1), "Mari Lwyd"),
-                ["santa"] = MakeUnitDef("santa", 8, 4, .1f, extractPortrait(9)),
-                ["snowman"] = MakeUnitDef("snowman", 8, 4, .1f, extractPortrait(2)),
+                ["deer"] = new("deer", 6, 6, 1, extractPortrait(10)),
+                ["elf1"] = new("elf1", 4, 5, .2f, extractPortrait(3)),
+                ["elf2"] = new("elf1", 4, 5, .2f, extractPortrait(4)),
+                ["elf3"] = new("elf1", 4, 5, .2f, extractPortrait(5)),
+                ["krampus"] = new("krampus", 8, 4, .1f, extractPortrait(8)),
+                ["mari"] = new("mari", 3, 11, .4f, extractPortrait(1), "Mari Lwyd"),
+                ["santa"] = new("santa", 8, 4, .1f, extractPortrait(9)),
+                ["snowman"] = new("snowman", 8, 4, .1f, extractPortrait(2)),
             };
 
             SpawnUnit("deer", 5, 9);
@@ -131,11 +113,35 @@ namespace SnowballFight
             LoadAnimatedSpriteSheet(Snowball.AnimationKey);
         }
 
+        private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)
+        {
+            var def = UnitDefs[unitDef];
+            if (!AnimationSpriteSheets.ContainsKey(def.AnimationKey))
+                LoadAnimatedSpriteSheet(def.AnimationKey);
+            var unit = new Unit(this, def, cellX, cellY, state: state);
+            Objects.Add(unit);
+            return unit;
+        }
+
         protected override void PreMapUpdate(GameTime gameTime)
             => HandleMouseInput();
 
-        protected override void PostUpdate(GameTime gameTime) 
+        protected override void PostUpdate(GameTime gameTime)
             => WindowManager.Update(gameTime, CurrentMouseState, WorldMouse);
+
+        protected override void Draw(GameTime gameTime)
+        {
+            Draw(null, null,
+                (_ => DrawSelectedUnitDetails(), null),
+                null,
+                (null, _ => DrawTargetLine())
+            );
+
+            SpriteBatch.Begin(transformMatrix: StatsWindowCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+            WindowManager.Draw(SpriteBatch);
+            SpriteBatch.End();
+        }
+
 
         private void HandleMouseInput()
         {
@@ -161,7 +167,7 @@ namespace SnowballFight
             {
                 if (SelectedUnit == null)
                 {
-                    if (mouseOverUnit != null && mouseOverUnit.State == State.Idle)
+                    if (mouseOverUnit != null && mouseOverUnit.State == Unit.States.Idle)
                     {
                         SelectSingleUnit(mouseOverUnit);
                         var unitCell = mouseOverUnit.GetCell();
@@ -196,7 +202,7 @@ namespace SnowballFight
                     if (path.Any() && path.Count() <= SelectedUnit.DisplaySpeed)
                     {
                         path.ForEach(SelectedUnit.MoveQueue.Enqueue);
-                        SelectedUnit.State = State.Walk;
+                        SelectedUnit.State = Unit.States.Walk;
                         ClearSelectUnits();
                     }
                 }
@@ -232,19 +238,6 @@ namespace SnowballFight
             SelectedUnitHintCells.Clear();
             TargettedUnit = null;
             StatsWindow.Controls.Clear();
-        }
-
-        protected override void Draw(GameTime gameTime)
-        {
-            Draw(null, null,
-                (_ => DrawSelectedUnitDetails(), null),
-                null,
-                (null, _ => DrawTargetLine())
-            );
-
-            SpriteBatch.Begin(transformMatrix: StatsWindowCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-            WindowManager.Draw(SpriteBatch);
-            SpriteBatch.End();
         }
 
         private void DrawTargetLine()

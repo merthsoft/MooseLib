@@ -203,9 +203,9 @@ namespace MooseLib
             }
         }
 
-        public GameObject AddObject(string animationKey, Vector2 position, Vector2 spriteOffset, string direction = Direction.None, string state = State.Idle, int objectLayerIndex = 0)
+        public GameObject AddObject(string animationKey, Vector2 position, Vector2 spriteOffset, string state = "", int objectLayerIndex = 0)
         {
-            var unit = new GameObject(this, animationKey, position, spriteOffset, direction, state, objectLayerIndex);
+            var unit = new GameObject(this, animationKey, position, spriteOffset, state, objectLayerIndex);
             Objects.Add(unit);
             return unit;
         }

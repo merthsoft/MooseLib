@@ -13,8 +13,7 @@ namespace SnowballFight
 
         private static readonly Vector2 spriteOffset = new(8, 8);
         
-
-        private class States
+        public class States
         {
             public const string Idle = "idle";
             public const string Walk = "walk";
@@ -36,8 +35,8 @@ namespace SnowballFight
         
         private readonly NormalDistribution AimDistribution = new(0, 2);
 
-        public Unit(SnowballFightGame parentGame, UnitDef unitDef, int cellX, int cellY, string direction, string state) 
-            : base(parentGame, unitDef.AnimationKey, new(cellX * 16, cellY * 16), spriteOffset, direction, state, parentGame.UnitLayer) 
+        public Unit(SnowballFightGame parentGame, UnitDef unitDef, int cellX, int cellY, string state) 
+            : base(parentGame, unitDef.AnimationKey, new(cellX * 16, cellY * 16), spriteOffset, state, parentGame.UnitLayer) 
         {
             UnitDef = unitDef;
             ParentGame = parentGame;

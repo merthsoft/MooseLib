@@ -11,7 +11,6 @@ namespace MooseLib
 
         public Vector2 Position { get; set; }
         public AnimatedSprite Sprite { get; set; }
-        public string Direction { get; set; }
 
         public string State { get; set; }
 
@@ -24,21 +23,17 @@ namespace MooseLib
 
         public bool RemoveFlag { get; set; }
 
-        private string PlayKey
-            => Direction == MooseLib.Direction.None
-                ? State.ToLower()
-                : $"{State.ToLower()}_{Direction.ToLower()}";
+        public virtual string PlayKey => State.ToLower();
         
         private string PreviousPlayKey = "";
 
         private readonly Vector2 SpriteOffset;
 
-        public GameObject(MooseGame parentGame, string animationKey, Vector2 position, Vector2 spriteOffset, string direction = MooseLib.Direction.None, string state = "idle", int layer = 0)
+        public GameObject(MooseGame parentGame, string animationKey, Vector2 position, Vector2 spriteOffset, string state = "idle", int layer = 0)
         {
             Sprite = new AnimatedSprite(parentGame.LoadAnimatedSpriteSheet(animationKey));
             Position = position;
             SpriteOffset = spriteOffset;
-            Direction = direction;
             State = state;
             ParentGame = parentGame;
             Layer = layer;
