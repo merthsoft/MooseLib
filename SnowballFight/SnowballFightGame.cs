@@ -16,8 +16,6 @@ namespace SnowballFight
         public const int UnitLayer = 2;
         public const int SnowballLayer = 4;
 
-        private MouseState CurrentMouseState;
-        private Vector2 WorldMouse;
         private WindowManager WindowManager = null!;
         
         private Window StatsWindow = null!;
@@ -63,7 +61,7 @@ namespace SnowballFight
             return unit;
         }
 
-        protected override void LoadContent()
+        protected override void Load()
         {
             MainMap.CopyMap(Content.Load<TiledMap>("Maps/testmap"), 0, 0);
 
@@ -105,8 +103,6 @@ namespace SnowballFight
             SpawnUnit("santa", 13, 12);
             SpawnUnit("snowman", 11, 13);
 
-            base.LoadContent();
-
             MainCamera.ZoomIn(1f);
 
             var fonts = new SpriteFont[]
@@ -131,25 +127,19 @@ namespace SnowballFight
             LoadAnimatedSpriteSheet(Snowball.AnimationKey);
         }
 
-        protected override void Update(GameTime gameTime)
-        {
-            var previousMouseState = CurrentMouseState;
-            CurrentMouseState = Mouse.GetState();
-            WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
-            
-            HandleMouseInput(previousMouseState);
+        protected override void PreMapUpdate(GameTime gameTime)
+            => HandleMouseInput();
 
-            base.Update(gameTime);
-            WindowManager.Update(gameTime, MainCamera);
-        }
+        protected override void PostUpdate(GameTime gameTime) 
+            => WindowManager.Update(gameTime, MainCamera);
 
-        private void HandleMouseInput(MouseState previousMouseState)
+        private void HandleMouseInput()
         {
             var mouseOverUnit = (UnitAtWorldLocation(WorldMouse) as Unit)!;
 
-            if (CurrentMouseState.LeftButton.JustPressed(previousMouseState.LeftButton))
+            if (CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton))
                 HandleLeftClick();
-            else if (CurrentMouseState.RightButton.JustPressed(previousMouseState.RightButton))
+            else if (CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton))
                 HandleRightClick();
             else
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Content;
 using MonoGame.Extended.Serialization;
@@ -15,7 +16,7 @@ using System.Linq;
 
 namespace MooseLib
 {
-    public class MooseGame : Game
+    public abstract class MooseGame : Game
     {
         public GraphicsDeviceManager Graphics { get; set; }
 
@@ -23,6 +24,10 @@ namespace MooseLib
         public TiledMapRenderer MapRenderer = null!;
         public OrthographicCamera MainCamera = null!;
         public SpriteBatch SpriteBatch = null!;
+
+        public MouseState PreviousMouseState { get; private set; }
+        public MouseState CurrentMouseState { get; private set; }
+        public Vector2 WorldMouse { get; private set; }
 
         public readonly SortedSet<GameObject> Objects = new();
         public readonly Queue<GameObject> UpdateObjects = new();
@@ -63,26 +68,45 @@ namespace MooseLib
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             MainCamera = new OrthographicCamera(GraphicsDevice) { Origin = new(0, 0) };
             MapRenderer = new TiledMapRenderer(GraphicsDevice);
+            Load();
             LoadMap();
         }
+
+        protected abstract void Load();
+
 
         protected void LoadMap()
         {
             MapRenderer.LoadMap(MainMap);
-            BuildGrid();
+            BuildBlockingMap();
         }
+
+        protected virtual void PreMapUpdate(GameTime gameTime) { return; }
+        protected virtual void PreObjectsUpdate(GameTime gameTime) { return; }
+        protected virtual void PreUpdateBlockingMap(GameTime gameTime) { return; }
+        protected virtual void PostUpdate(GameTime gameTime) { return; }
+
 
         protected override void Update(GameTime gameTime)
         {
+            PreviousMouseState = CurrentMouseState;
+            CurrentMouseState = Mouse.GetState();
+            WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
+
+            PreMapUpdate(gameTime);
             MapRenderer.Update(gameTime);
 
+            PreObjectsUpdate(gameTime);
             Objects.ForEach(obj => obj.Update(gameTime));
             Objects.RemoveWhere(obj => obj.RemoveFlag);
             
             UpdateObjects.ForEach(obj => Objects.Add(obj));
             UpdateObjects.Clear();
-            
-            BuildGrid();
+
+            PreUpdateBlockingMap(gameTime);
+            BuildBlockingMap();
+
+            PostUpdate(gameTime);
         }
 
         public IEnumerable<GameObject> ObjectsAtLayer(int layerIndex)
@@ -90,7 +114,7 @@ namespace MooseLib
                 .SkipWhile(o => o.Layer < layerIndex)
                 .TakeWhile(o => o.Layer == layerIndex);
 
-        protected void BuildGrid()
+        protected void BuildBlockingMap()
         {
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
