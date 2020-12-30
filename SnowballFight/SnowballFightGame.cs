@@ -20,7 +20,7 @@ namespace SnowballFight
         private Window StatsWindow = null!;
         public OrthographicCamera StatsWindowCamera = null!;
 
-        private readonly List<(Vector2 worldPosition, Color color)> SelectedUnitHintCells = new();
+        private readonly Dictionary<Vector2, Color> SelectedUnitHintCells = new();
         private Unit? SelectedUnit { get; set; }
         private Unit? TargettedUnit { get; set; }
 
@@ -215,23 +215,36 @@ namespace SnowballFight
 
             var unitCell = unit.GetCell();
             Grid? cachedGrid = BuildCollisionGrid(unitCell);
-            for (var x = 0; x < MapWidth; x++)
-                for (var y = 0; y < MapHeight; y++)
+            for (var x = 1; x < MapWidth - 1; x++)
+                for (var y = 1; y < MapHeight - 1; y++)
                 {
                     var deltaCell = new Vector2(x, y);
+                    var deltaWorld = deltaCell * TileSize;
+
+                    if (SelectedUnitHintCells.ContainsKey(deltaWorld))
+                        continue;
+
+                    if (BlockingMap[x, y].Any(b => b > 0))
+                        continue;
+
                     var path = FindCellPath(unitCell, deltaCell, cachedGrid);
                     var pathCount = path.Count();
 
                     if (pathCount == 0)
                         continue;
 
-                    var color = pathCount <= unit.DisplaySpeed
-                        ? pathCount - 1 <= unit.DisplaySpeed / 2
-                            ? Color.Green.HalveAlphaChannel()
-                            : Color.DarkOrange.HalveAlphaChannel()
-                        : Color.Transparent;
-                    
-                    SelectedUnitHintCells.Add((deltaCell * TileSize, color));
+                    pathCount = 0;
+                    foreach (var p in path)
+                    {
+                        pathCount++;
+                        var color = pathCount <= unit.DisplaySpeed
+                            ? pathCount - 1 <= unit.DisplaySpeed / 2
+                                ? Color.Green.HalveAlphaChannel()
+                                : Color.DarkOrange.HalveAlphaChannel()
+                            : Color.Transparent;
+                        
+                        SelectedUnitHintCells[deltaWorld] = color;
+                    }
                 }
         }
 
@@ -282,8 +295,8 @@ namespace SnowballFight
 
             SelectedUnitHintCells.ForEach(t =>
             {
-                SpriteBatch.DrawRectangle(new(t.worldPosition.X, t.worldPosition.Y, TileWidth + 1, TileHeight + 1), Color.LightGray);
-                SpriteBatch.FillRectangle(new(t.worldPosition.X + 1, t.worldPosition.Y + 1, TileWidth - 1, TileHeight - 1), t.color);
+                SpriteBatch.DrawRectangle(new(t.Key.X, t.Key.Y, TileWidth + 1, TileHeight + 1), Color.LightGray);
+                SpriteBatch.FillRectangle(new(t.Key.X + 1, t.Key.Y + 1, TileWidth - 1, TileHeight - 1), t.Value);
             });
 
             var mouseCell = MainCamera.ScreenToWorld(
