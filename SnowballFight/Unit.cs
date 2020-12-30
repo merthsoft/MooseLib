@@ -89,7 +89,7 @@ namespace SnowballFight
             var snowBall = new Snowball(ParentGame, startWorldPosition,
                 flightPath
                     .SkipWhile(pos => (pos.worldPosition / ParentGame.TileSize).GetFloor() == selectedUnitCell)
-                    .TakeWhile(pos => pos.blockedVector.Skip(2).Sum() == 0 || (pos.worldPosition / ParentGame.TileSize).GetFloor() == targettedUnitCell)
+                    .TakeWhile(pos => pos.blockedVector.Skip(2).All(b => b == 0) || (pos.worldPosition / ParentGame.TileSize).GetFloor() == targettedUnitCell)
                     .Select(pos => pos.worldPosition)
             );
             ParentGame.UpdateObjects.Enqueue(snowBall);

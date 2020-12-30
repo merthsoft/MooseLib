@@ -273,7 +273,7 @@ namespace SnowballFight
                         SpriteBatch.DrawPoint(worldPosition, color, thickness);
                         var cell = (worldPosition / TileSize).GetFloor();
 
-                        if (blockedVector.Skip(2).Sum() > 0 && cell != selectedUnitCell && cell != targettedUnitCell)
+                        if (blockedVector.Skip(2).Any(b => b > 0) && cell != selectedUnitCell && cell != targettedUnitCell)
                             break;
                     }
                 }
