@@ -20,6 +20,8 @@ namespace SnowballFight
             public const string Walk = "walk";
         }
 
+        public new SnowballFightGame ParentGame { get; private set; }
+
         public UnitDef UnitDef { get; }
         public Texture2D Portrait => UnitDef.Portrait;
         public int DisplaySpeed => UnitDef.Speed;
@@ -34,10 +36,11 @@ namespace SnowballFight
         
         private readonly NormalDistribution AimDistribution = new(0, 2);
 
-        public Unit(MooseGame parentGame, UnitDef unitDef, int cellX, int cellY, string direction, string state) 
-            : base(parentGame, unitDef.AnimationKey, new(cellX * 16, cellY * 16), spriteOffset, direction, state, SnowballFightGame.UnitLayer) 
+        public Unit(SnowballFightGame parentGame, UnitDef unitDef, int cellX, int cellY, string direction, string state) 
+            : base(parentGame, unitDef.AnimationKey, new(cellX * 16, cellY * 16), spriteOffset, direction, state, parentGame.UnitLayer) 
         {
             UnitDef = unitDef;
+            ParentGame = parentGame;
         }
 
         public override void Update(GameTime gameTime)

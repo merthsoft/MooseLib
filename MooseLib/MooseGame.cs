@@ -40,8 +40,16 @@ namespace MooseLib
         public Size2 TileSize => new(TileWidth, TileHeight); // TODO: Cache
         public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
 
-        public List<byte>[,] BlockingMap = null!;
 
+        protected readonly HashSet<int> objectLayerIndices = new();
+        public IEnumerable<int> ObjectLayerIndices => objectLayerIndices;
+
+        protected readonly HashSet<int> tileLayerIndices = new();
+        public IEnumerable<int> TileLayerIndices => tileLayerIndices;
+
+        private List<int>[,] blockingMap = new List<int>[0, 0];
+        public List<int>[,] BlockingMap => blockingMap;
+        
         public MooseGame()
         {
             Content.RootDirectory = "Content";
@@ -60,7 +68,7 @@ namespace MooseLib
         protected void InitializeMap(int width, int height, int tileWith, int tileHeight)
         {
             MainMap = new TiledMap("map", width, height, tileWith, tileHeight, TiledMapTileDrawOrder.RightDown, TiledMapOrientation.Orthogonal);
-            BlockingMap = new List<byte>[width, height];
+            blockingMap = new List<int>[width, height];
         }
 
         protected override void LoadContent()
@@ -68,17 +76,12 @@ namespace MooseLib
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             MainCamera = new OrthographicCamera(GraphicsDevice) { Origin = new(0, 0) };
             MapRenderer = new TiledMapRenderer(GraphicsDevice);
-            Load();
-            LoadMap();
         }
-
-        protected abstract void Load();
-
 
         protected void LoadMap()
         {
             MapRenderer.LoadMap(MainMap);
-            BuildBlockingMap();
+            BuildFullBlockingMap();
         }
 
         protected virtual void PreMapUpdate(GameTime gameTime) { return; }
@@ -104,7 +107,7 @@ namespace MooseLib
             UpdateObjects.Clear();
 
             PreUpdateBlockingMap(gameTime);
-            BuildBlockingMap();
+            UpdateBlockingMap();
 
             PostUpdate(gameTime);
         }
@@ -114,12 +117,40 @@ namespace MooseLib
                 .SkipWhile(o => o.Layer < layerIndex)
                 .TakeWhile(o => o.Layer == layerIndex);
 
-        protected void BuildBlockingMap()
+        protected virtual void UpdateBlockingMap()
         {
+            var layerGroups = new Dictionary<int, HashSet<GameObject>>();
+            foreach (var obj in Objects)
+            {
+                layerGroups.TryAdd(obj.Layer, new());
+                layerGroups[obj.Layer].Add(obj);
+            }
+
+            foreach (var layerIndex in ObjectLayerIndices)
+            {
+                var layer = MainMap.Layers[layerIndex];
+                switch (layer)
+                {
+                    case TiledMapObjectLayer:
+                        for (var x = 0; x < MapWidth; x++)
+                            for (var y = 0; y < MapHeight; y++)
+                                BlockingMap[x, y][layerIndex] 
+                                    = layerGroups.TryGetValue(layerIndex, out var set)
+                                        ? set.Count(o => o.InCell(x, y))
+                                        : 0;
+                    break;
+                }
+            }
+        }
+
+        protected virtual void BuildFullBlockingMap()
+        {
+            objectLayerIndices.Clear();
+            tileLayerIndices.Clear();
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
                 {
-                    BlockingMap[x, y] = new List<byte>();
+                    BlockingMap[x, y] = new List<int>();
                     for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
                     {
                         byte value = 0;
@@ -128,9 +159,11 @@ namespace MooseLib
                         {
                             case TiledMapObjectLayer:
                                 value = ObjectsAtLayer(layerIndex).Any(o => o.InCell(x, y)) ? 1 : 0;
+                                objectLayerIndices.Add(layerIndex);
                                 break;
                             case TiledMapTileLayer tileLayer:
                                 value = tileLayer.IsBlockedAt(x, y, MainMap) ? 1 : 0;
+                                tileLayerIndices.Add(layerIndex);
                                 break;
                         }
                         BlockingMap[x, y].Add(value);
@@ -193,7 +226,7 @@ namespace MooseLib
             => cellX > 0 && cellX < MapWidth
             && cellY > 0 && cellY < MapHeight;
 
-        public IEnumerable<(Vector2 worldPosition, IList<byte> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
+        public IEnumerable<(Vector2 worldPosition, IList<int> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
         {
             var (x1, y1) = endWorldPosition;
             var (x2, y2) = startWorldPosition;
@@ -205,7 +238,7 @@ namespace MooseLib
             
             var err = deltaX - deltaZ;
 
-            (Vector2, List<byte> blocked) BuildReturnTuple(float x, float y)
+            (Vector2, List<int> blocked) BuildReturnTuple(float x, float y)
             {
                 var cellX = (int)(x / TileWidth);
                 var cellY = (int)(y / TileHeight);

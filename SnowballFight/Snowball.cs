@@ -19,8 +19,8 @@ namespace SnowballFight
         
         public Queue<Vector2> FlightPath { get; } = new Queue<Vector2>();
 
-        public Snowball(MooseGame parentGame, Vector2 startPosition, IEnumerable<Vector2> flightPath) 
-            : base(parentGame, AnimationKey, startPosition, spriteOffset, state: States.Fly, layer: SnowballFightGame.SnowballLayer) 
+        public Snowball(SnowballFightGame parentGame, Vector2 startPosition, IEnumerable<Vector2> flightPath) 
+            : base(parentGame, AnimationKey, startPosition, spriteOffset, state: States.Fly, layer: parentGame.SnowballLayer) 
         {
             FlightPath = new(flightPath.Where((v, i) => i % 3 == 0));
             if (FlightPath.Count == 0)

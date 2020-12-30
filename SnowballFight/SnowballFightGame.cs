@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
@@ -13,8 +12,8 @@ namespace SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
-        public const int UnitLayer = 2;
-        public const int SnowballLayer = 4;
+        public int UnitLayer { get; private set; } = 2;
+        public int SnowballLayer { get; private set; } = 4;
 
         private WindowManager WindowManager = null!;
         
@@ -43,12 +42,11 @@ namespace SnowballFight
 
         protected override void Initialize()
         {
+            base.Initialize();
+            
             Graphics.PreferredBackBufferWidth = 960;
             Graphics.PreferredBackBufferHeight = 960;
             Graphics.ApplyChanges();
-
-            InitializeMap(30, 30, 16, 16);
-            base.Initialize();
         }
 
         private Unit SpawnUnit(string unitDef, int cellX, int cellY, string direction = Direction.None, string state = State.Idle)
@@ -61,9 +59,15 @@ namespace SnowballFight
             return unit;
         }
 
-        protected override void Load()
+        protected override void LoadContent()
         {
+            base.LoadContent();
+
+            InitializeMap(30, 30, 16, 16);
             MainMap.CopyMap(Content.Load<TiledMap>("Maps/testmap"), 0, 0);
+            LoadMap();
+            UnitLayer = ObjectLayerIndices.First();
+            SnowballLayer = ObjectLayerIndices.Last();
 
             UnitsTexture = Content.Load<Texture2D>("Images/units");
             var unitsTextureData = new Color[UnitsTexture.Width * UnitsTexture.Height];
