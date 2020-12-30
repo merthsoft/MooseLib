@@ -184,7 +184,7 @@ namespace SnowballFight
                                     var color = pathCount - 1 <= mouseOverUnit.DisplaySpeed / 2
                                        ? Color.Green.HalveAlphaChannel()
                                        : Color.DarkOrange.HalveAlphaChannel();
-                                    var worldDelta = mouseOverUnit.Position + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
+                                    var worldDelta = mouseOverUnit.WorldPosition + new Vector2(deltaX * TileHeight, deltaY * TileWidth);
                                     SelectedUnitHintCells.Add((worldDelta, color));
                                 }
                             }
@@ -247,8 +247,8 @@ namespace SnowballFight
                 var selectedUnitCell = SelectedUnit.GetCell();
                 var targettedUnitCell = TargettedUnit.GetCell();
 
-                var startWorldPosition = SelectedUnit.Position + HalfTileSize;
-                var endWorldPosition = TargettedUnit.Position + HalfTileSize;
+                var startWorldPosition = SelectedUnit.WorldPosition + HalfTileSize;
+                var endWorldPosition = TargettedUnit.WorldPosition + HalfTileSize;
                 var leftCone = endWorldPosition.RotateAround(startWorldPosition, 5).GetFloor();
                 var rightCone = endWorldPosition.RotateAround(startWorldPosition, -5).GetFloor();
 
@@ -275,7 +275,7 @@ namespace SnowballFight
             if (SelectedUnit == null)
                 return;
 
-            SpriteBatch.FillRectangle(SelectedUnit.Position, TileSize, Color.Red.HalveAlphaChannel());
+            SpriteBatch.FillRectangle(SelectedUnit.WorldPosition, TileSize, Color.Red.HalveAlphaChannel());
 
             SelectedUnitHintCells.ForEach(t => SpriteBatch.FillRectangle(t.worldPosition, TileSize, t.color));
 

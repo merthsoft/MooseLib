@@ -31,10 +31,6 @@ namespace CyberpunkRl
             MainMap.CopyMap(Rooms[1], 11, 0);
             MainMap.CopyMap(Hallways[0], 0, 11);
 
-            AddObject("Adam", new(5, 9), new(8, 8));
-            AddObject("Alex", new(9, 4), new(8, 8));
-            AddObject("Bob", new(1, 3), new(8, 8));
-
             MainCamera.ZoomIn(1f);
         }
     }

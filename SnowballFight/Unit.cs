@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MooseLib;
+using MooseLib.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using Troschuetz.Random.Distributions.Continuous;
 
 namespace SnowballFight
 {
-    class Unit : GameObject
+    class Unit : AnimatedGameObject
     {
 
         private static readonly Vector2 spriteOffset = new(8, 8);
@@ -49,8 +50,8 @@ namespace SnowballFight
             {
                 if (MoveDirection != Vector2.Zero)
                 {
-                    Position += MoveDirection;
-                    if (Position == NextLocation)
+                    WorldPosition += MoveDirection;
+                    if (WorldPosition == NextLocation)
                         MoveDirection = Vector2.Zero;
                 }
                 else if (MoveQueue.Count == 0)
@@ -81,9 +82,9 @@ namespace SnowballFight
             var selectedUnitCell = GetCell();
             var targettedUnitCell = TargettedUnit.GetCell();
 
-            var startWorldPosition = Position + ParentGame.HalfTileSize;
+            var startWorldPosition = WorldPosition + ParentGame.HalfTileSize;
             var wiggle = AimDistribution.NextDouble();
-            var endWorldPosition = (TargettedUnit.Position + ParentGame.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
+            var endWorldPosition = (TargettedUnit.WorldPosition + ParentGame.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
             var flightPath = ParentGame.FindWorldRay(startWorldPosition, endWorldPosition.GetFloor());
             var snowBall = new Snowball(ParentGame, startWorldPosition,
                 flightPath

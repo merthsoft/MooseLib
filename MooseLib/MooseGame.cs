@@ -7,6 +7,7 @@ using MonoGame.Extended.Serialization;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
+using MooseLib.GameObjects;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
@@ -29,8 +30,8 @@ namespace MooseLib
         public MouseState CurrentMouseState { get; private set; }
         public Vector2 WorldMouse { get; private set; }
 
-        public readonly SortedSet<GameObject> Objects = new();
-        public readonly Queue<GameObject> UpdateObjects = new();
+        public readonly SortedSet<AnimatedGameObject> Objects = new();
+        public readonly Queue<AnimatedGameObject> UpdateObjects = new();
         public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = new();
 
         public int MapHeight => MainMap.Height;
@@ -112,14 +113,14 @@ namespace MooseLib
             PostUpdate(gameTime);
         }
 
-        public IEnumerable<GameObject> ObjectsAtLayer(int layerIndex)
+        public IEnumerable<AnimatedGameObject> ObjectsAtLayer(int layerIndex)
             => Objects
                 .SkipWhile(o => o.Layer < layerIndex)
                 .TakeWhile(o => o.Layer == layerIndex);
 
         protected virtual void UpdateBlockingMap()
         {
-            var layerGroups = new Dictionary<int, HashSet<GameObject>>();
+            var layerGroups = new Dictionary<int, HashSet<AnimatedGameObject>>();
             foreach (var obj in Objects)
             {
                 layerGroups.TryAdd(obj.Layer, new());
@@ -203,13 +204,6 @@ namespace MooseLib
             }
         }
 
-        public GameObject AddObject(string animationKey, Vector2 position, Vector2 spriteOffset, string state = "", int objectLayerIndex = 0)
-        {
-            var unit = new GameObject(this, animationKey, position, spriteOffset, state, objectLayerIndex);
-            Objects.Add(unit);
-            return unit;
-        }
-
         public SpriteSheet LoadAnimatedSpriteSheet(string animationKey, bool replace = false)
         {
             if (replace || !AnimationSpriteSheets.ContainsKey(animationKey))
@@ -238,14 +232,8 @@ namespace MooseLib
             
             var err = deltaX - deltaZ;
 
-            (Vector2, List<int> blocked) BuildReturnTuple(float x, float y)
-            {
-                var cellX = (int)(x / TileWidth);
-                var cellY = (int)(y / TileHeight);
-                var blocked = BlockingMap[cellX, cellY];
-                var ret = (new Vector2(x, y), blocked);
-                return ret;
-            }
+            (Vector2, List<int> blocked) BuildReturnTuple(float x, float y) 
+                => (new Vector2(x, y), BlockingMap[(int)(x / TileWidth), (int)(y / TileHeight)]);
 
             while (true)
             {
@@ -304,7 +292,7 @@ namespace MooseLib
                 .Distinct();
         }
 
-        public Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
+        protected virtual Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
         {
             var grid = Grid.CreateGridWithLateralConnections(
                                 new GridSize(MapWidth, MapHeight),
@@ -319,7 +307,7 @@ namespace MooseLib
             return grid;
         }
 
-        public GameObject? UnitAtWorldLocation(Vector2 worldLocation)
+        public AnimatedGameObject? UnitAtWorldLocation(Vector2 worldLocation)
             => Objects.FirstOrDefault(unit => unit.AtWorldLocation(worldLocation));
 
         public bool WorldPositionIsInBounds(float worldX, float worldY)

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using MooseLib;
+using MooseLib.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SnowballFight
 {
-    class Snowball : GameObject
+    class Snowball : AnimatedGameObject
     {
         public const string AnimationKey = "snowball";
         private static readonly Vector2 spriteOffset = new(4f, 4f);
@@ -31,7 +31,7 @@ namespace SnowballFight
         {
             if (State == States.Fly)
             {
-                Position = FlightPath.Dequeue();
+                WorldPosition = FlightPath.Dequeue();
                 if (FlightPath.Count == 0)
                 {
                     State = States.Hit;
