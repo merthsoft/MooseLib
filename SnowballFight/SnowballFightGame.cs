@@ -214,26 +214,24 @@ namespace SnowballFight
             StatsWindow.AddLabel(112, yOffset + 2 + smallFontHeight * 2, $"Accuracy: {unit.DisplayAccuracy}", 1);
 
             var unitCell = unit.GetCell();
-            Grid? cachedGrid = BuildCollisionGrid(unitCell);
+            var cachedGrid = BuildCollisionGrid(unitCell);
             for (var x = 1; x < MapWidth - 1; x++)
                 for (var y = 1; y < MapHeight - 1; y++)
                 {
                     var deltaCell = new Vector2(x, y);
-                    var deltaWorld = deltaCell * TileSize;
 
-                    if (SelectedUnitHintCells.ContainsKey(deltaWorld))
+                    if (SelectedUnitHintCells.ContainsKey(deltaCell * TileSize))
                         continue;
 
                     if (BlockingMap[x, y].Any(b => b > 0))
                         continue;
 
                     var path = FindCellPath(unitCell, deltaCell, cachedGrid);
-                    var pathCount = path.Count();
 
-                    if (pathCount == 0)
+                    if (!path.Any())
                         continue;
 
-                    pathCount = 0;
+                    var pathCount = 0;
                     foreach (var p in path)
                     {
                         pathCount++;
@@ -243,7 +241,7 @@ namespace SnowballFight
                                 : Color.DarkOrange.HalveAlphaChannel()
                             : Color.Transparent;
                         
-                        SelectedUnitHintCells[deltaWorld] = color;
+                        SelectedUnitHintCells[p * TileSize] = color;
                     }
                 }
         }
