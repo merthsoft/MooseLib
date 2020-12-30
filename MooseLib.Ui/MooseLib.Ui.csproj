@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -13,9 +13,6 @@
   <ItemGroup>
     <Reference Include="MonoGame.Extended">
       <HintPath>..\lib\MonoGame.Extended.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Extended.Graphics">
-      <HintPath>..\lib\MonoGame.Extended.Graphics.dll</HintPath>
     </Reference>
   </ItemGroup>
 

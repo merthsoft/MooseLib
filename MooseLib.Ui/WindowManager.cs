@@ -1,22 +1,24 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
 using MooseLib.Ui.Controls;
-using System;
-using System.Collections.Generic;
 
 namespace MooseLib.Ui
 {
     public class WindowManager
     {
         public List<Theme> Themes { get; } = new();
+
         public int DefaultThemeIndex { get; set; }
+
         public Theme DefaultTheme => Themes[DefaultThemeIndex];
 
         public List<Window> Windows { get; } = new();
 
         internal MouseState CurrentMouseState { get; set; }
+
         internal MouseState PreviousMouseState { get; set; }
 
         public WindowManager(Theme theme)
@@ -31,7 +33,6 @@ namespace MooseLib.Ui
             var mousePosition = worldMouse ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
             foreach (var w in Windows)
             {
-
                 var updateParams = new UpdateParameters(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset);
 
                 if (w.Rectangle.Contains(mousePosition))

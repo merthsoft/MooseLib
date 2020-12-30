@@ -1,15 +1,15 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace MooseLib.Ui.Controls
 {
     public class TextList : Control
     {
-
         public List<TextListOption> Options = new();
+
         public SelectMode SelectMode { get; set; } = SelectMode.None;
 
         public int MouseOverIndex { get; protected set; } = -1;
@@ -21,16 +21,16 @@ namespace MooseLib.Ui.Controls
         public TextList(Window window, int x, int y, params TextListOption[] options) : this(window, x, y)
             => Options.AddRange(options);
 
-        public TextList(Window window, int x, int y, IEnumerable <string> options) : this(window, x, y)
+        public TextList(Window window, int x, int y, IEnumerable<string> options) : this(window, x, y)
             => Options.AddRange(options.Select(o => new TextListOption { Text = o }));
 
         public override Vector2 CalculateSize()
             => Options.Aggregate(Vector2.Zero, (acc, o) =>
-            {
-                var textSize = Window.Theme.Fonts[FontIndex].MeasureString(o.Text);
-                return new Vector2(Math.Max(acc.X, textSize.X), acc.Y + Window.Theme.TileHeight);
-            });
-                
+        {
+            var textSize = Window.Theme.Fonts[FontIndex].MeasureString(o.Text);
+            return new Vector2(Math.Max(acc.X, textSize.X), acc.Y + Window.Theme.TileHeight);
+        });
+
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -42,8 +42,7 @@ namespace MooseLib.Ui.Controls
                     Window.Theme.Fonts[FontIndex], 
                     Options[index].Text, 
                     GlobalPosition + new Vector2(0, index * Window.Theme.TileHeight), 
-                    index == MouseOverIndex ? Theme.TextMouseOverColor : Theme.TextColor
-                );
+                    index == MouseOverIndex ? Theme.TextMouseOverColor : Theme.TextColor);
         }
 
         public override void Update(UpdateParameters updateParameters)

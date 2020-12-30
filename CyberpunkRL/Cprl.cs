@@ -1,6 +1,6 @@
-﻿using MonoGame.Extended.Tiled;
+﻿using System.Collections.Generic;
+using MonoGame.Extended.Tiled;
 using MooseLib;
-using System.Collections.Generic;
 
 namespace CyberpunkRl
 {
@@ -15,10 +15,7 @@ namespace CyberpunkRl
             IsMouseVisible = true;
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-        }
+        protected override void Initialize() => base.Initialize();
 
         protected override void LoadContent()
         {

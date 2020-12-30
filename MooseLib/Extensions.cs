@@ -1,11 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Sprites;
-using MonoGame.Extended.Tiled;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Sprites;
+using MonoGame.Extended.Tiled;
 
 namespace MooseLib
 {
@@ -13,12 +12,11 @@ namespace MooseLib
     {
         public static void CopyMap(this TiledMap destMap, TiledMap sourceMap, int destX, int destY)
         {
-
             foreach (var tileset in sourceMap.Tilesets)
                 if (!destMap.Tilesets.Contains(tileset))
                     destMap.AddTileset(tileset, sourceMap.GetTilesetFirstGlobalIdentifier(tileset));
 
-            for (int layerIndex = 0; layerIndex < sourceMap.Layers.Count; layerIndex++)
+            for (var layerIndex = 0; layerIndex < sourceMap.Layers.Count; layerIndex++)
             {
                 var layer = sourceMap.Layers[layerIndex];
 
@@ -47,11 +45,11 @@ namespace MooseLib
         {
             if (poperties == null)
                 return false;
-            
+
             var property = poperties.FirstOrDefault(p => p.Key == name).Value;
             if (property == null)
                 return null;
-            
+
             return bool.TryParse(property, out var result) && result;
         }
 
@@ -80,10 +78,8 @@ namespace MooseLib
         public static bool IsBlockedAt(this TiledMap map, ushort x, ushort y)
         {
             foreach (var layer in map.TileLayers)
-            {
                 if (layer.IsBlockedAt(x, y, map))
                     return true;
-            }
             return false;
         }
 

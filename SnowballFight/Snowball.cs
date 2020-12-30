@@ -1,26 +1,26 @@
-﻿using Microsoft.Xna.Framework;
-using MooseLib.GameObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using MooseLib.GameObjects;
 
 namespace SnowballFight
 {
-    class Snowball : AnimatedGameObject
+    internal class Snowball : AnimatedGameObject
     {
-        public const string AnimationKey = "snowball";
-        private static readonly Vector2 spriteOffset = new(4f, 4f);
-
-        private class States
+        public class States
         {
             public const string Fly = "fly";
             public const string Hit = "hit";
             public const string Dead = "dead";
         }
-        
+
+        public const string AnimationKey = "snowball";
+        private static readonly Vector2 spriteOffset = new(4f, 4f);
+
         public Queue<Vector2> FlightPath { get; } = new Queue<Vector2>();
 
         public Snowball(SnowballFightGame parentGame, Vector2 startPosition, IEnumerable<Vector2> flightPath) 
-            : base(parentGame, AnimationKey, startPosition, spriteOffset, state: States.Fly, layer: parentGame.SnowballLayer) 
+            : base(parentGame, AnimationKey, startPosition, spriteOffset, state: States.Fly, layer: parentGame.SnowballLayer)
         {
             FlightPath = new(flightPath.Where((v, i) => i % 3 == 0));
             if (FlightPath.Count == 0)

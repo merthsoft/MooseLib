@@ -1,18 +1,20 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MooseLib.Ui.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MooseLib.Ui.Controls;
 
 namespace MooseLib.Ui
 {
     public class Window
     {
         public WindowManager WindowManager { get; set; }
+
         public Theme Theme { get; set; }
 
         public bool Close { get; set; }
+
         public Rectangle Rectangle { get; set; }
 
         public Vector2 Position
@@ -30,7 +32,9 @@ namespace MooseLib.Ui
         public List<Control> Controls { get; } = new();
 
         public Window(WindowManager windowManager, int x, int y, int w, int h)
-            : this(windowManager, new(x, y, w, h)) { }
+            : this(windowManager, new(x, y, w, h))
+        {
+        }
 
         public Window(WindowManager windowManager, Rectangle rectangle)
             => (WindowManager, Rectangle, Theme)

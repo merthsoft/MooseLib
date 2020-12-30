@@ -13,6 +13,7 @@ namespace MooseLib.Ui
         private Texture2D windowTexture = null!;
 
         public List<SpriteFont> Fonts { get; } = new();
+
         public Texture2D WindowTexture
         {
             get => windowTexture;
@@ -20,20 +21,25 @@ namespace MooseLib.Ui
             {
                 windowTexture = value;
                 for (var index = 0; index < 9; index++)
-                    TextureRects[index] = new Rectangle(index % 3 * TileWidth, index / 3 * TileHeight, TileWidth, TileHeight);
+                    TextureRects[index] = new Rectangle((index % 3) * TileWidth, index / 3 * TileHeight, TileWidth, TileHeight);
             }
         }
+
         public Vector2 ControlDrawOffset { get; set; }
+
         public int TileWidth { get; private set; }
+
         public int TileHeight { get; private set; }
 
         public Color TextColor { get; set; } = Color.Black;
+
         public Color TextMouseOverColor { get; set; } = Color.White;
+
         public Color SelectedColor { get; set; } = Color.Blue;
 
         public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts)
         {
-               (Name, TileWidth, TileHeight, WindowTexture)
+            (Name, TileWidth, TileHeight, WindowTexture)
              = (name, tileWidth, tileHeight, windowTexture);
             Fonts.AddRange(fonts);
         }

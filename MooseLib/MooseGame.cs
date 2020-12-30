@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -11,9 +14,6 @@ using MooseLib.GameObjects;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MooseLib
 {
@@ -27,7 +27,9 @@ namespace MooseLib
         public SpriteBatch SpriteBatch = null!;
 
         public MouseState PreviousMouseState { get; private set; }
+
         public MouseState CurrentMouseState { get; private set; }
+
         public Vector2 WorldMouse { get; private set; }
 
         public readonly SortedSet<AnimatedGameObject> Objects = new();
@@ -35,25 +37,31 @@ namespace MooseLib
         public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = new();
 
         public int MapHeight => MainMap.Height;
+
         public int MapWidth => MainMap.Width;
+
         public int TileWidth => MainMap.TileWidth;
+
         public int TileHeight => MainMap.TileHeight;
+
         public Size2 TileSize => new(TileWidth, TileHeight); // TODO: Cache
+
         public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
 
 
         protected readonly HashSet<int> objectLayerIndices = new();
+
         public IEnumerable<int> ObjectLayerIndices => objectLayerIndices;
 
         protected readonly HashSet<int> tileLayerIndices = new();
+
         public IEnumerable<int> TileLayerIndices => tileLayerIndices;
 
-        private List<int>[,] blockingMap = new List<int>[0, 0];
-        public List<int>[,] BlockingMap => blockingMap;
-        
+        public List<int>[,] BlockingMap { get; private set; } = new List<int>[0, 0];
+
         public MooseGame()
         {
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = nameof(Content);
             IsMouseVisible = true;
             Graphics = new GraphicsDeviceManager(this);
         }
@@ -69,7 +77,7 @@ namespace MooseLib
         protected void InitializeMap(int width, int height, int tileWith, int tileHeight)
         {
             MainMap = new TiledMap("map", width, height, tileWith, tileHeight, TiledMapTileDrawOrder.RightDown, TiledMapOrientation.Orthogonal);
-            blockingMap = new List<int>[width, height];
+            BlockingMap = new List<int>[width, height];
         }
 
         protected override void LoadContent()
@@ -103,7 +111,7 @@ namespace MooseLib
             PreObjectsUpdate(gameTime);
             Objects.ForEach(obj => obj.Update(gameTime));
             Objects.RemoveWhere(obj => obj.RemoveFlag);
-            
+
             UpdateObjects.ForEach(obj => Objects.Add(obj));
             UpdateObjects.Clear();
 
@@ -139,7 +147,7 @@ namespace MooseLib
                                     = layerGroups.TryGetValue(layerIndex, out var set)
                                         ? set.Count(o => o.InCell(x, y))
                                         : 0;
-                    break;
+                        break;
                 }
             }
         }
@@ -208,7 +216,7 @@ namespace MooseLib
         {
             if (replace || !AnimationSpriteSheets.ContainsKey(animationKey))
                 AnimationSpriteSheets[animationKey] = Content.Load<SpriteSheet>($"Animations/{animationKey}.sf", new JsonContentLoader());
-            
+
             return AnimationSpriteSheets[animationKey];
         }
 
@@ -229,7 +237,7 @@ namespace MooseLib
             var deltaZ = (int)Math.Abs(y1 - y2);
             var stepX = x2 < x1 ? 1 : -1;
             var stepZ = y2 < y1 ? 1 : -1;
-            
+
             var err = deltaX - deltaZ;
 
             (Vector2, List<int> blocked) BuildReturnTuple(float x, float y) 
@@ -241,10 +249,10 @@ namespace MooseLib
                     break;
 
                 yield return BuildReturnTuple(x2, y2);
-                if (!extend && x2 == x1 && y2 == y1) 
+                if (!extend && x2 == x1 && y2 == y1)
                     break;
 
-                int e2 = 2 * err;
+                var e2 = 2 * err;
 
                 if (e2 > -deltaZ)
                 {
@@ -257,8 +265,8 @@ namespace MooseLib
 
                 if (fillCorners)
                     yield return BuildReturnTuple(x2, y2);
-                
-                if (!extend && x2 == x1 && y2 == y1) 
+
+                if (!extend && x2 == x1 && y2 == y1)
                     break;
 
                 if (e2 < deltaX)
@@ -301,7 +309,7 @@ namespace MooseLib
 
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
-                    if (BlockingMap[x, y].Sum() > 0 && !(walkableOverrides.Contains(new(x, y))))
+                    if (BlockingMap[x, y].Sum() > 0 && !walkableOverrides.Contains(new(x, y)))
                         grid.DisconnectNode(new(x, y));
 
             return grid;

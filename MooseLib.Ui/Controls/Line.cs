@@ -7,6 +7,7 @@ namespace MooseLib.Ui.Controls
     public class Line : Control
     {
         public Vector2 End { get; set; }
+
         public int Thickness { get; set; } = 1;
 
         public override Vector2 CalculateSize() => new(Position.X - End.X, Position.Y - End.Y);

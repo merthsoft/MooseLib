@@ -1,15 +1,19 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace MooseLib.Ui.Controls
 {
     public abstract class Control
     {
         public object? Object { get; set; }
+
         public Window Window { get; }
+
         public Theme Theme => Window.Theme;
+
         public Vector2 Position { get; set; }
+
         public int FontIndex { get; set; }
 
         protected UpdateParameters UpdateParameters { get; set; } = null!;
@@ -24,6 +28,7 @@ namespace MooseLib.Ui.Controls
         }
 
         protected Vector2 GlobalPosition => GetGlobalPosition(Position);
+
         protected Vector2 GetGlobalPosition(Vector2 position) => position + Window.Position + Window.Theme.ControlDrawOffset;
 
         public Action<Control, UpdateParameters>? Action { get; set; }

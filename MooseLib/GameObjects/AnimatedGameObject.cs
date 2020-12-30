@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Sprites;
-using System;
 
 namespace MooseLib.GameObjects
 {
@@ -10,12 +10,15 @@ namespace MooseLib.GameObjects
         public AnimatedSprite Sprite { get; set; }
 
         public SpriteEffects SpriteEffects { get; set; }
+
         public float Rotation { get; set; }
+
         public Vector2 Scale { get; set; } = Vector2.One;
+
         public Vector2 DrawOffset { get; set; } = Vector2.Zero;
 
         public virtual string PlayKey => State.ToLower();
-        
+
         private string PreviousPlayKey = "";
 
 

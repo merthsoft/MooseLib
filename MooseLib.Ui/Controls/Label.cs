@@ -6,11 +6,11 @@ namespace MooseLib.Ui.Controls
     public class Label : Control
     {
         public string? Text { get; set; }
+
         public bool HighlightOnHover { get; set; }
 
         public Label(Window window, int x, int y) : base(window, x, y)
         {
-
         }
 
         public override Vector2 CalculateSize()

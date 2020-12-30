@@ -1,27 +1,29 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
-using Roy_T.AStar.Grids;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
         public int UnitLayer { get; private set; } = 2;
+
         public int SnowballLayer { get; private set; } = 4;
 
         private WindowManager WindowManager = null!;
-        
+
         private Window StatsWindow = null!;
         public OrthographicCamera StatsWindowCamera = null!;
 
         private readonly Dictionary<Vector2, Color> SelectedUnitHintCells = new();
+
         private Unit? SelectedUnit { get; set; }
+
         private Unit? TargettedUnit { get; set; }
 
         private Texture2D UnitsTexture = null!;
@@ -35,7 +37,7 @@ namespace SnowballFight
         protected override void Initialize()
         {
             base.Initialize();
-            
+
             Graphics.PreferredBackBufferWidth = 960;
             Graphics.PreferredBackBufferHeight = 960;
             Graphics.ApplyChanges();
@@ -66,7 +68,7 @@ namespace SnowballFight
                 return t;
             }
 
-            UnitDefs = new Dictionary<string, UnitDef>()
+            UnitDefs = new Dictionary<string, UnitDef>
             {
                 ["deer"] = new("deer", 6, 6, 1, extractPortrait(10)),
                 ["elf1"] = new("elf1", 4, 5, .2f, extractPortrait(3)),
@@ -134,8 +136,7 @@ namespace SnowballFight
             Draw(null, null,
                 (_ => DrawSelectedUnitDetails(), null),
                 null,
-                (null, _ => DrawTargetLine())
-            );
+                (null, _ => DrawTargetLine()));
 
             SpriteBatch.Begin(transformMatrix: StatsWindowCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             WindowManager.Draw(SpriteBatch);
@@ -151,11 +152,8 @@ namespace SnowballFight
                 HandleLeftClick();
             else if (CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton))
                 HandleRightClick();
-            else
-            {
-                if (SelectedUnit != mouseOverUnit)
-                    TargettedUnit = mouseOverUnit;
-            }
+            else if (SelectedUnit != mouseOverUnit)
+                TargettedUnit = mouseOverUnit;
 
             void HandleRightClick()
             {
@@ -168,9 +166,7 @@ namespace SnowballFight
                 if (SelectedUnit == null)
                 {
                     if (mouseOverUnit != null && mouseOverUnit.State == Unit.States.Idle)
-                    {
                         SelectSingleUnit(mouseOverUnit);
-                    }
                 }
                 else if (TargettedUnit == null)
                 {
@@ -194,7 +190,6 @@ namespace SnowballFight
                     ClearSelectUnits();
                 }
             }
-
         }
 
         private void SelectSingleUnit(Unit unit)
@@ -240,7 +235,7 @@ namespace SnowballFight
                                 ? Color.Green.HalveAlphaChannel()
                                 : Color.DarkOrange.HalveAlphaChannel()
                             : Color.Transparent;
-                        
+
                         SelectedUnitHintCells[p * TileSize] = color;
                     }
                 }
@@ -307,7 +302,7 @@ namespace SnowballFight
             var mousePathCount = mousePath.Count();
             if (mousePathCount > 0 && mousePathCount <= SelectedUnit.DisplaySpeed)
             {
-                var lastCell = (unitCell * TileSize) + HalfTileSize;
+                var lastCell = unitCell * TileSize + HalfTileSize;
                 var index = 0;
                 foreach (var p in mousePath)
                 {
