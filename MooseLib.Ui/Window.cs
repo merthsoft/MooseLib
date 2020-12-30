@@ -13,37 +13,18 @@ namespace MooseLib.Ui
         public Theme Theme { get; set; }
 
         public bool Close { get; set; }
-
-        private Rectangle rectangle;
-        public Rectangle Rectangle
-        { 
-            get => rectangle; 
-            set
-            {
-                rectangle = new(
-                    value.X, value.Y, 
-                    value.Width,
-                    value.Height
-                );
-            }
-        }
+        public Rectangle Rectangle { get; set; }
 
         public Vector2 Position
         {
             get => new(Rectangle.X, Rectangle.Y);
-            set
-            {
-                Rectangle = new Rectangle((int)value.X, (int)value.Y, Rectangle.Width, Rectangle.Height);
-            }
+            set => Rectangle = new Rectangle((int)value.X, (int)value.Y, Rectangle.Width, Rectangle.Height);
         }
 
         public Vector2 Size
         {
             get => new(Rectangle.Width, Rectangle.Height);
-            set
-            {
-                Rectangle = new Rectangle(Rectangle.X, Rectangle.Y, (int)value.X, (int)value.Y);
-            }
+            set => Rectangle = new Rectangle(Rectangle.X, Rectangle.Y, (int)value.X, (int)value.Y);
         }
 
         public List<Control> Controls { get; } = new();
