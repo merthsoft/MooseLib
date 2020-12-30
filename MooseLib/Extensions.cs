@@ -11,12 +11,6 @@ namespace MooseLib
 {
     public static class Extensions
     {
-        public static T AddPassThrough<T>(this IList<T> list, T item)
-        {
-            list.Add(item);
-            return item;
-        }
-
         public static void CopyMap(this TiledMap destMap, TiledMap sourceMap, int destX, int destY)
         {
 
@@ -150,12 +144,6 @@ namespace MooseLib
             // translate point back:
             return new(newX + center.X, newY + center.Y);
         }
-
-        public static bool JustPressed(this ButtonState buttonState, ButtonState previousButtonState)
-            => buttonState == ButtonState.Pressed && previousButtonState == ButtonState.Released;
-
-        public static bool JustReleased(this ButtonState buttonState, ButtonState previousButtonState)
-            => buttonState == ButtonState.Released && previousButtonState == ButtonState.Pressed;
 
         public static string UpperFirst(this string s)
             => $"{char.ToUpper(s[0])}{new string(s.Skip(1).ToArray())}";

@@ -12,10 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended">
-      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended\bin\Debug\netstandard2.0\MonoGame.Extended.dll</HintPath>
+      <HintPath>..\lib\MonoGame.Extended.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Extended.Tiled">
-      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Tiled.dll</HintPath>
+      <HintPath>..\lib\MonoGame.Extended.Tiled.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

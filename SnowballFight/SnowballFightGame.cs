@@ -131,7 +131,7 @@ namespace SnowballFight
             => HandleMouseInput();
 
         protected override void PostUpdate(GameTime gameTime) 
-            => WindowManager.Update(gameTime, MainCamera);
+            => WindowManager.Update(gameTime, CurrentMouseState, WorldMouse);
 
         private void HandleMouseInput()
         {

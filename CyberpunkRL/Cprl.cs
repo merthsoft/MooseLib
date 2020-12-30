@@ -23,7 +23,7 @@ namespace CyberpunkRl
             base.Initialize();
         }
 
-        protected override void LoadContent()
+        protected override void Load()
         {
             Rooms.Add(Content.Load<TiledMap>("Maps/room1"));
             Rooms.Add(Content.Load<TiledMap>("Maps/room2"));
@@ -37,20 +37,7 @@ namespace CyberpunkRl
             AddObject("Alex", new(9, 4), new(8, 8), Direction.Left);
             AddObject("Bob", new(1, 3), new(8, 8), Direction.Up);
 
-            base.LoadContent();
-
             MainCamera.ZoomIn(1f);
         }
-
-        protected override void Update(GameTime gameTime)
-        {
-            var mouseState = Mouse.GetState();
-            var worldClick = MainCamera.ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
-
-            base.Update(gameTime);
-        }
-
-        protected override void Draw(GameTime gameTime)
-            => Draw();
     }
 }

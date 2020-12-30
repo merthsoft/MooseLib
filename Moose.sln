@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MooseLib", "MooseLib\MooseL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowballFight", "SnowballFight\SnowballFight.csproj", "{72AE64E7-2B72-4261-A38D-610B93B5583B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MooseLib.Ui", "MooseLib.Ui\MooseLib.Ui.csproj", "{46A081EE-8F02-460A-8514-DD51F3979D83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{72AE64E7-2B72-4261-A38D-610B93B5583B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72AE64E7-2B72-4261-A38D-610B93B5583B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72AE64E7-2B72-4261-A38D-610B93B5583B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46A081EE-8F02-460A-8514-DD51F3979D83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46A081EE-8F02-460A-8514-DD51F3979D83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46A081EE-8F02-460A-8514-DD51F3979D83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46A081EE-8F02-460A-8514-DD51F3979D83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

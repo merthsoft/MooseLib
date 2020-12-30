@@ -24,16 +24,16 @@ namespace MooseLib.Ui
         public WindowManager(IEnumerable<Theme> themes)
             => Themes.AddRange(themes);
 
-        public void Update(GameTime gameTime, OrthographicCamera camera)
+        public void Update(GameTime gameTime, MouseState currentMouseState, Vector2? worldMouse = null)
         {
-            CurrentMouseState = Mouse.GetState();
+            CurrentMouseState = currentMouseState;
+            var mousePosition = worldMouse ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
             foreach (var w in Windows)
             {
-                var worldClick = camera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
 
-                var updateParams = new UpdateParameters(gameTime, worldClick - w.Position - w.Theme.ControlDrawOffset);
+                var updateParams = new UpdateParameters(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset);
 
-                if (w.Rectangle.Contains(worldClick))
+                if (w.Rectangle.Contains(mousePosition))
                 {
                     updateParams.MouseOver = true;
                     updateParams.LeftMouse = CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton);
