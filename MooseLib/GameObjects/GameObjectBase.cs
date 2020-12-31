@@ -13,7 +13,7 @@ namespace MooseLib.GameObjects
 
         public Vector2 WorldPosition { get; set; }
         public Vector2 WorldSize { get; set; }
-        public RectangleF WorldRectangle => new(WorldPosition.X, WorldPosition.Y, WorldSize.X, WorldSize.Y);
+        public virtual RectangleF WorldRectangle => new(WorldPosition.X, WorldPosition.Y, WorldSize.X, WorldSize.Y);
 
         public bool RemoveFlag { get; set; }
 
@@ -21,9 +21,13 @@ namespace MooseLib.GameObjects
 
         public Action? StateCompleteAction { get; set; }
 
-        public GameObjectBase(MooseGame parentGame, int layer = 0, Vector2? position = null)
-            => (ParentGame, Layer, WorldPosition)
-             = (parentGame, layer, position ?? Vector2.Zero);
+        public GameObjectBase(MooseGame parentGame, int layer = 0, Vector2? position = null, Vector2? size = null)
+        {
+            (ParentGame, Layer)
+             = (parentGame, layer);
+            WorldPosition = position ?? Vector2.Zero;
+            WorldSize = size ?? Vector2.One;
+        }
 
         public abstract void Update(GameTime gameTime);
 
@@ -31,9 +35,6 @@ namespace MooseLib.GameObjects
 
         public virtual bool AtWorldPosition(Vector2 worldPosition)
             => WorldRectangle.Contains(worldPosition);
-
-        public virtual bool AtDrawnWorldPosition(Vector2 worldPosition)
-            => AtWorldPosition(worldPosition);
 
         public Vector2 GetCell()
             => new Vector2(WorldPosition.X / ParentGame.TileWidth, WorldPosition.Y / ParentGame.TileHeight).GetFloor();

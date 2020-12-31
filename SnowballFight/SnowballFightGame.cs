@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
-using Roy_T.AStar.Grids;
-using Roy_T.AStar.Primitives;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SnowballFight
 {
@@ -148,7 +146,7 @@ namespace SnowballFight
 
         private void HandleMouseInput()
         {
-            var mouseOverUnit = (UnitAtDrawnWorldLocation(WorldMouse) as Unit)!;
+            var mouseOverUnit = (UnitAtWorldLocation(WorldMouse) as Unit)!;
 
             if (CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton))
                 HandleLeftClick();

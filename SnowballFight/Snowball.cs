@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using MonoGame.Extended;
+﻿using Microsoft.Xna.Framework;
 using MooseLib.GameObjects;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SnowballFight
 {
@@ -16,7 +15,6 @@ namespace SnowballFight
         }
 
         public const string AnimationKey = "snowball";
-        private static readonly Vector2 spriteOffset = new(4f, 4f);
 
         public Queue<Vector2> FlightPath { get; } = new Queue<Vector2>();
 

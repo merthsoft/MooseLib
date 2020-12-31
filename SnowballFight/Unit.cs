@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using MooseLib;
 using MooseLib.GameObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Troschuetz.Random.Distributions.Continuous;
 
 namespace SnowballFight
 {
     internal class Unit : AnimatedGameObject
     {
-        private static readonly Vector2 spriteOffset = new(0, 0);
-
         public class States
         {
             public const string Idle = "idle";

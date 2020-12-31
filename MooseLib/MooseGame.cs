@@ -312,9 +312,6 @@ namespace MooseLib
         public GameObjectBase? UnitAtWorldLocation(Vector2 worldLocation)
             => Objects.FirstOrDefault(unit => unit.AtWorldPosition(worldLocation));
 
-        public GameObjectBase? UnitAtDrawnWorldLocation(Vector2 worldLocation)
-            => Objects.FirstOrDefault(unit => unit.AtDrawnWorldPosition(worldLocation));
-
         public bool WorldPositionIsInBounds(float worldX, float worldY)
             => worldX > 0 && worldX < MapWidth * TileWidth
             && worldY > 0 && worldY < MapHeight * TileHeight;

@@ -17,6 +17,8 @@ namespace MooseLib.GameObjects
 
         private string PreviousPlayKey = "";
 
+        public override RectangleF WorldRectangle 
+            => Sprite.GetBoundingRectangle(WorldPosition + SpriteTransform.WorldPosition, SpriteTransform.WorldRotation, SpriteTransform.WorldScale);
 
         public AnimatedGameObject(MooseGame parentGame, string animationKey, Vector2 position, string state = "idle", int layer = 0, float rotation = 0, Vector2? scale = null)
             : base(parentGame, layer, position)
@@ -42,12 +44,6 @@ namespace MooseLib.GameObjects
             }
 
             Sprite.Update(gameTime);
-        }
-
-        public override bool AtDrawnWorldPosition(Vector2 worldPosition)
-        { 
-            var drawRectangle = Sprite.GetBoundingRectangle(WorldPosition + SpriteTransform.WorldPosition, SpriteTransform.WorldRotation, SpriteTransform.WorldScale);
-            return drawRectangle.Contains(new(worldPosition.X, worldPosition.Y));
         }
     }
 }
