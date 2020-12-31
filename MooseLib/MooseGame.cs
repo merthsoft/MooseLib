@@ -33,7 +33,7 @@ namespace MooseLib
         public Vector2 WorldMouse { get; private set; }
 
         public readonly SortedSet<AnimatedGameObject> Objects = new();
-        public readonly Queue<AnimatedGameObject> UpdateObjects = new();
+        public readonly Queue<AnimatedGameObject> ObjectsToAdd = new();
         public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = new();
 
         public int MapHeight => MainMap.Height;
@@ -112,8 +112,8 @@ namespace MooseLib
             Objects.ForEach(obj => obj.Update(gameTime));
             Objects.RemoveWhere(obj => obj.RemoveFlag);
 
-            UpdateObjects.ForEach(obj => Objects.Add(obj));
-            UpdateObjects.Clear();
+            ObjectsToAdd.ForEach(obj => Objects.Add(obj));
+            ObjectsToAdd.Clear();
 
             PreUpdateBlockingMap(gameTime);
             UpdateBlockingMap();
@@ -228,10 +228,10 @@ namespace MooseLib
             => cellX > 0 && cellX < MapWidth
             && cellY > 0 && cellY < MapHeight;
 
-        public IEnumerable<(Vector2 worldPosition, IList<int> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
+        public virtual IEnumerable<(Vector2 worldPosition, IList<int> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
         {
-            var (x1, y1) = endWorldPosition;
-            var (x2, y2) = startWorldPosition;
+            var (x1, y1) = (endWorldPosition.X, endWorldPosition.Y);
+            var (x2, y2) = (startWorldPosition.X, startWorldPosition.Y);
 
             var deltaX = (int)Math.Abs(x1 - x2);
             var deltaZ = (int)Math.Abs(y1 - y2);
@@ -277,7 +277,7 @@ namespace MooseLib
             }
         }
 
-        public IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null)
+        public virtual IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null)
         {
             if (!CellIsInBounds(startCell) || !CellIsInBounds(endCell))
                 return Enumerable.Empty<Vector2>();
@@ -300,23 +300,20 @@ namespace MooseLib
                 .Distinct();
         }
 
+        public virtual Grid BaseGrid 
+            => Grid.CreateGridWithLateralConnections(
+                new GridSize(MapWidth, MapHeight), 
+                new Roy_T.AStar.Primitives.Size(Distance.FromMeters(1), Distance.FromMeters(1)),
+                Velocity.FromMetersPerSecond(1));
+
         protected virtual Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
-        {
-            var grid = Grid.CreateGridWithLateralConnections(
-                                new GridSize(MapWidth, MapHeight),
-                                new Roy_T.AStar.Primitives.Size(Distance.FromMeters(1), Distance.FromMeters(1)),
-                                Velocity.FromMetersPerSecond(1));
+            => BaseGrid.DisconnectWhere((x, y) => BlockingMap[x, y].Sum() > 0 && !walkableOverrides.Contains(new(x, y)));
 
-            for (var x = 0; x < MapWidth; x++)
-                for (var y = 0; y < MapHeight; y++)
-                    if (BlockingMap[x, y].Sum() > 0 && !walkableOverrides.Contains(new(x, y)))
-                        grid.DisconnectNode(new(x, y));
+        public GameObjectBase? UnitAtWorldLocation(Vector2 worldLocation)
+            => Objects.FirstOrDefault(unit => unit.AtWorldPosition(worldLocation));
 
-            return grid;
-        }
-
-        public AnimatedGameObject? UnitAtWorldLocation(Vector2 worldLocation)
-            => Objects.FirstOrDefault(unit => unit.AtWorldLocation(worldLocation));
+        public GameObjectBase? UnitAtDrawnWorldLocation(Vector2 worldLocation)
+            => Objects.FirstOrDefault(unit => unit.AtDrawnWorldPosition(worldLocation));
 
         public bool WorldPositionIsInBounds(float worldX, float worldY)
             => worldX > 0 && worldX < MapWidth * TileWidth

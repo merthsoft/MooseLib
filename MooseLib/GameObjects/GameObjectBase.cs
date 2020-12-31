@@ -1,16 +1,19 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
+using System;
 
 namespace MooseLib.GameObjects
 {
-    public abstract class GameObjectBase
+    public abstract class GameObjectBase : IComparable<GameObjectBase>
     {
         public MooseGame ParentGame { get; set; }
 
         public int Layer { get; set; }
 
         public Vector2 WorldPosition { get; set; }
+        public Vector2 WorldSize { get; set; }
+        public RectangleF WorldRectangle => new(WorldPosition.X, WorldPosition.Y, WorldSize.X, WorldSize.Y);
 
         public bool RemoveFlag { get; set; }
 
@@ -26,26 +29,27 @@ namespace MooseLib.GameObjects
 
         public abstract void Draw(SpriteBatch spriteBatch);
 
-        public bool AtWorldLocation(Vector2 worldLocation)
-            => worldLocation.X >= WorldPosition.X && worldLocation.X < WorldPosition.X + 16
-            && worldLocation.Y >= WorldPosition.Y && worldLocation.Y < WorldPosition.Y + 16;
+        public virtual bool AtWorldPosition(Vector2 worldPosition)
+            => WorldRectangle.Contains(worldPosition);
 
-        public int CompareTo(AnimatedGameObject? other)
-            => other != null 
-                ? Layer == other.Layer 
-                    ? WorldPosition.Y == other.WorldPosition.Y
-                        ? WorldPosition.X == other.WorldPosition.X
-                            ? GetHashCode().CompareTo(other.GetHashCode()) 
-                            : WorldPosition.X.CompareTo(other.WorldPosition.X)
-                        : WorldPosition.Y.CompareTo(other.WorldPosition.Y)
-                    : Layer.CompareTo(other.Layer) 
-                : 1;
-
+        public virtual bool AtDrawnWorldPosition(Vector2 worldPosition)
+            => AtWorldPosition(worldPosition);
 
         public Vector2 GetCell()
             => new Vector2(WorldPosition.X / ParentGame.TileWidth, WorldPosition.Y / ParentGame.TileHeight).GetFloor();
 
         public bool InCell(int x, int y)
-            => WorldPosition / new Vector2(ParentGame.TileWidth, ParentGame.TileHeight) == new Vector2(x, y);
+            => WorldPosition.X / ParentGame.TileWidth == x
+            && WorldPosition.Y / ParentGame.TileHeight == y;
+
+        public int CompareTo(GameObjectBase? other)
+            => (IsNull: other == null, Layer: Layer == other?.Layer, Y: WorldPosition.Y == other?.WorldPosition.Y, X: WorldPosition.X == other?.WorldPosition.X) switch
+            {
+                { IsNull: true } => 1,
+                { Layer: false } => Layer.CompareTo(other!.Layer),
+                { Y: false } => WorldPosition.Y.CompareTo(other!.WorldPosition.Y),
+                { X: false } => WorldPosition.X.CompareTo(other!.WorldPosition.X),
+                _ => GetHashCode().CompareTo(other!.GetHashCode()),
+            };
     }
 }

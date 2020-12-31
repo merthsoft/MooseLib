@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
+using Roy_T.AStar.Grids;
 
 namespace MooseLib
 {
@@ -83,7 +86,7 @@ namespace MooseLib
             return false;
         }
 
-        public static void Draw(this Sprite sprite, SpriteBatch spriteBatch, Vector2 position, float rotation, Vector2 scale, SpriteEffects spriteEffects)
+        public static void Draw(this Sprite sprite, SpriteBatch spriteBatch, Vector2 position, Transform2 transform, SpriteEffects spriteEffects)
         {
             _ = sprite ?? throw new ArgumentNullException(nameof(sprite));
             _ = spriteBatch ?? throw new ArgumentNullException(nameof(spriteBatch));
@@ -92,7 +95,7 @@ namespace MooseLib
             {
                 var texture = sprite.TextureRegion.Texture;
                 var sourceRectangle = sprite.TextureRegion.Bounds;
-                spriteBatch.Draw(texture, position, sourceRectangle, sprite.Color * sprite.Alpha, rotation, sprite.Origin, scale, spriteEffects, sprite.Depth);
+                spriteBatch.Draw(texture, position + transform.WorldPosition, sourceRectangle, sprite.Color * sprite.Alpha, transform.WorldRotation, sprite.Origin, transform.WorldScale, spriteEffects, sprite.Depth);
             }
         }
 
@@ -143,5 +146,15 @@ namespace MooseLib
 
         public static string UpperFirst(this string s)
             => $"{char.ToUpper(s[0])}{new string(s.Skip(1).ToArray())}";
+
+        public static Grid DisconnectWhere(this Grid grid, Func<int, int, bool> func)
+        {
+            for (var x = 0; x < grid.Columns; x++)
+                for (var y = 0; y < grid.Rows; y++)
+                    if (func(x, y))
+                        grid.DisconnectNode(new(x, y));
+
+            return grid;
+        }
     }
 }

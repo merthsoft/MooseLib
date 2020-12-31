@@ -1,40 +1,37 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 
 namespace MooseLib.GameObjects
 {
-    public class AnimatedGameObject : GameObjectBase, IComparable<AnimatedGameObject>
+    public class AnimatedGameObject : GameObjectBase
     {
         public AnimatedSprite Sprite { get; set; }
 
         public SpriteEffects SpriteEffects { get; set; }
 
-        public float Rotation { get; set; }
-
-        public Vector2 Scale { get; set; } = Vector2.One;
-
-        public Vector2 DrawOffset { get; set; } = Vector2.Zero;
+        public Transform2 SpriteTransform { get; set; }
 
         public virtual string PlayKey => State.ToLower();
 
         private string PreviousPlayKey = "";
 
 
-        public AnimatedGameObject(MooseGame parentGame, string animationKey, Vector2 position, Vector2 spriteOffset, string state = "idle", int layer = 0)
+        public AnimatedGameObject(MooseGame parentGame, string animationKey, Vector2 position, string state = "idle", int layer = 0, float rotation = 0, Vector2? scale = null)
             : base(parentGame, layer, position)
         {
             Sprite = new AnimatedSprite(parentGame.LoadAnimatedSpriteSheet(animationKey));
+            SpriteTransform = new(Sprite.Origin, rotation, scale);
             WorldPosition = position;
-            DrawOffset = spriteOffset;
+            WorldSize = new(Sprite.TextureRegion.Width, Sprite.TextureRegion.Height);
             State = state;
             ParentGame = parentGame;
             Layer = layer;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
-            => Sprite.Draw(spriteBatch, WorldPosition + DrawOffset, Rotation, Scale, SpriteEffects);
+            => Sprite.Draw(spriteBatch, WorldPosition, SpriteTransform, SpriteEffects);
 
         public override void Update(GameTime gameTime)
         {
@@ -45,6 +42,12 @@ namespace MooseLib.GameObjects
             }
 
             Sprite.Update(gameTime);
+        }
+
+        public override bool AtDrawnWorldPosition(Vector2 worldPosition)
+        { 
+            var drawRectangle = Sprite.GetBoundingRectangle(WorldPosition + SpriteTransform.WorldPosition, SpriteTransform.WorldRotation, SpriteTransform.WorldScale);
+            return drawRectangle.Contains(new(worldPosition.X, worldPosition.Y));
         }
     }
 }

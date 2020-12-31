@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MooseLib;
 using MooseLib.GameObjects;
 using Troschuetz.Random.Distributions.Continuous;
@@ -11,7 +12,7 @@ namespace SnowballFight
 {
     internal class Unit : AnimatedGameObject
     {
-        private static readonly Vector2 spriteOffset = new(8, 8);
+        private static readonly Vector2 spriteOffset = new(0, 0);
 
         public class States
         {
@@ -42,7 +43,7 @@ namespace SnowballFight
         private readonly NormalDistribution AimDistribution = new(0, 2);
 
         public Unit(SnowballFightGame parentGame, UnitDef unitDef, int cellX, int cellY, string state) 
-            : base(parentGame, unitDef.AnimationKey, new(cellX * 16, cellY * 16), spriteOffset, state, parentGame.UnitLayer)
+            : base(parentGame, unitDef.AnimationKey, new(cellX * 16, cellY * 16), state, parentGame.UnitLayer)
         {
             UnitDef = unitDef;
             ParentGame = parentGame;
@@ -90,7 +91,7 @@ namespace SnowballFight
                     .SkipWhile(pos => (pos.worldPosition / ParentGame.TileSize).GetFloor() == selectedUnitCell)
                     .TakeWhile(pos => pos.blockedVector.Skip(2).All(b => b == 0) || (pos.worldPosition / ParentGame.TileSize).GetFloor() == targettedUnitCell)
                     .Select(pos => pos.worldPosition));
-            ParentGame.UpdateObjects.Enqueue(snowBall);
+            ParentGame.ObjectsToAdd.Enqueue(snowBall);
             State = "idle";
             StateCompleteAction = null;
         }

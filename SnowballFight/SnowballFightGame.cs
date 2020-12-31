@@ -6,6 +6,8 @@ using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
 using MooseLib.Ui;
+using Roy_T.AStar.Grids;
+using Roy_T.AStar.Primitives;
 
 namespace SnowballFight
 {
@@ -146,7 +148,7 @@ namespace SnowballFight
 
         private void HandleMouseInput()
         {
-            var mouseOverUnit = (UnitAtWorldLocation(WorldMouse) as Unit)!;
+            var mouseOverUnit = (UnitAtDrawnWorldLocation(WorldMouse) as Unit)!;
 
             if (CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton))
                 HandleLeftClick();
@@ -156,10 +158,7 @@ namespace SnowballFight
                 TargettedUnit = mouseOverUnit;
 
             void HandleRightClick()
-            {
-                if (!SelectedUnit?.AtWorldLocation(WorldMouse) ?? false)
-                    ClearSelectUnits();
-            }
+                => ClearSelectUnits();
 
             void HandleLeftClick()
             {
@@ -210,8 +209,8 @@ namespace SnowballFight
 
             var unitCell = unit.GetCell();
             var cachedGrid = BuildCollisionGrid(unitCell);
-            for (var x = 1; x < MapWidth - 1; x++)
-                for (var y = 1; y < MapHeight - 1; y++)
+            for (var x = 0; x < MapWidth; x++)
+                for (var y = 0; y < MapHeight; y++)
                 {
                     var deltaCell = new Vector2(x, y);
 
@@ -251,32 +250,32 @@ namespace SnowballFight
 
         private void DrawTargetLine()
         {
-            if (TargettedUnit != null && SelectedUnit != null)
+            if (TargettedUnit == null || SelectedUnit == null)
+                return;
+
+            var selectedUnitCell = SelectedUnit.GetCell();
+            var targettedUnitCell = TargettedUnit.GetCell();
+
+            var startWorldPosition = SelectedUnit.WorldPosition + HalfTileSize;
+            var endWorldPosition = TargettedUnit.WorldPosition + HalfTileSize;
+            var leftCone = endWorldPosition.RotateAround(startWorldPosition, 5).GetFloor();
+            var rightCone = endWorldPosition.RotateAround(startWorldPosition, -5).GetFloor();
+
+            void drawLineTo(Vector2 start, Vector2 end, Color color, bool extend, int thickness)
             {
-                var selectedUnitCell = SelectedUnit.GetCell();
-                var targettedUnitCell = TargettedUnit.GetCell();
-
-                var startWorldPosition = SelectedUnit.WorldPosition + HalfTileSize;
-                var endWorldPosition = TargettedUnit.WorldPosition + HalfTileSize;
-                var leftCone = endWorldPosition.RotateAround(startWorldPosition, 5).GetFloor();
-                var rightCone = endWorldPosition.RotateAround(startWorldPosition, -5).GetFloor();
-
-                void drawLineTo(Vector2 start, Vector2 end, Color color, bool extend, int thickness)
+                foreach (var (worldPosition, blockedVector) in FindWorldRay(start, end, extend: extend))
                 {
-                    foreach (var (worldPosition, blockedVector) in FindWorldRay(start, end, extend: extend))
-                    {
-                        SpriteBatch.DrawPoint(worldPosition, color, thickness);
-                        var cell = (worldPosition / TileSize).GetFloor();
+                    SpriteBatch.DrawPoint(worldPosition, color, thickness);
+                    var cell = (worldPosition / TileSize).GetFloor();
 
-                        if (blockedVector.Skip(2).Any(b => b > 0) && cell != selectedUnitCell && cell != targettedUnitCell)
-                            break;
-                    }
+                    if (blockedVector.Skip(2).Any(b => b > 0) && cell != selectedUnitCell && cell != targettedUnitCell)
+                        break;
                 }
-
-                drawLineTo(startWorldPosition, endWorldPosition, Color.Green, false, 3);
-                drawLineTo(startWorldPosition, leftCone, Color.Red, true, 1);
-                drawLineTo(startWorldPosition, rightCone, Color.Red, true, 1);
             }
+
+            drawLineTo(startWorldPosition, endWorldPosition, Color.Green, false, 3);
+            drawLineTo(startWorldPosition, leftCone, Color.Red, true, 1);
+            drawLineTo(startWorldPosition, rightCone, Color.Red, true, 1);
         }
 
         private void DrawSelectedUnitDetails()
