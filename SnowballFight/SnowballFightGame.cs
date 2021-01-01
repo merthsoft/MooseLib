@@ -30,6 +30,8 @@ namespace SnowballFight
 
         private Dictionary<string, UnitDef> UnitDefs = null!;
 
+        private IEnumerable<Unit> Units => Objects.OfType<Unit>();
+
         public SnowballFightGame()
         {
         }
@@ -146,7 +148,7 @@ namespace SnowballFight
 
         private void HandleMouseInput()
         {
-            var mouseOverUnit = (UnitAtWorldLocation(WorldMouse) as Unit)!;
+            var mouseOverUnit = Units.FirstOrDefault(unit => unit.AtWorldPosition(WorldMouse));
 
             if (CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton))
                 HandleLeftClick();

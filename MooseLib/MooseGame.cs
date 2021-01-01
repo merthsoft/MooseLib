@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -14,6 +11,9 @@ using MooseLib.GameObjects;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MooseLib
 {
@@ -308,9 +308,6 @@ namespace MooseLib
 
         protected virtual Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
             => BaseGrid.DisconnectWhere((x, y) => BlockingMap[x, y].Sum() > 0 && !walkableOverrides.Contains(new(x, y)));
-
-        public GameObjectBase? UnitAtWorldLocation(Vector2 worldLocation)
-            => Objects.FirstOrDefault(unit => unit.AtWorldPosition(worldLocation));
 
         public bool WorldPositionIsInBounds(float worldX, float worldY)
             => worldX > 0 && worldX < MapWidth * TileWidth
