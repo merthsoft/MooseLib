@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MooseLib.Defs;
 using MooseLib.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +19,8 @@ namespace SnowballFight
 
         public Queue<Vector2> FlightPath { get; } = new Queue<Vector2>();
 
-        public Snowball(SnowballFightGame parentGame, Vector2 startPosition, IEnumerable<Vector2> flightPath) 
-            : base(parentGame, AnimationKey, startPosition, States.Fly, parentGame.SnowballLayer, scale: new(.75f))
+        public Snowball(SnowballFightGame parentGame, AnimatedGameObjectDef def, Vector2 startPosition, IEnumerable<Vector2> flightPath) 
+            : base(parentGame, def, startPosition, parentGame.SnowballLayer, state: States.Fly, scale: new(.75f))
         {
             FlightPath = new(flightPath.Where((v, i) => i % 3 == 0));
             if (FlightPath.Count == 0)

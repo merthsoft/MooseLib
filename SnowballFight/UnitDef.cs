@@ -1,33 +1,32 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using MooseLib;
+using MooseLib.Defs;
 
 namespace SnowballFight
 {
-    public record UnitDef
+    public record UnitDef : AnimatedGameObjectDef
     {
-        public string DefName { get; init; } = "";
+        public int Speed { get; }
+        public string DisplayName { get; }
+        public int MaxHealth { get; }
+        public float AccuracySigma { get; }
 
-        public string AnimationKey { get; init; } = "";
-
-        public int Speed { get; init; }
-
-        public string DisplayName { get; init; } = "";
-
-        public int MaxHealth { get; init; }
-
-        public float AccuracySigma { get; init; }
-
-        public Texture2D Portrait { get; init; } = null!;
+        public Texture2D Portrait { get; } = null!;
 
         public UnitDef(string name, int maxHealth, int speed, float accuracySigma, Texture2D portrait, string? displayNameOverride = null)
+            : base(name)
         {
-            AnimationKey = name;
             DefName = name;
             DisplayName = displayNameOverride ?? name.UpperFirst();
             MaxHealth = maxHealth;
             Speed = speed;
             AccuracySigma = accuracySigma;
             Portrait = portrait;
+        }
+
+        public override void LoadContent(MooseGame parentGame)
+        {
+            SpriteSheet = parentGame.LoadAnimatedSpriteSheet(AnimationKey);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace SnowballFight
         private readonly NormalDistribution AimDistribution = new(0, 2);
 
         public Unit(SnowballFightGame parentGame, UnitDef unitDef, int cellX, int cellY, string state) 
-            : base(parentGame, unitDef.AnimationKey, new(cellX * 16, cellY * 16), state, parentGame.UnitLayer)
+            : base(parentGame, unitDef, new(cellX * parentGame.TileWidth, cellY * parentGame.TileHeight), parentGame.UnitLayer, state: state)
         {
             UnitDef = unitDef;
             ParentGame = parentGame;
@@ -83,7 +83,7 @@ namespace SnowballFight
             var wiggle = AimDistribution.NextDouble();
             var endWorldPosition = (TargettedUnit.WorldPosition + ParentGame.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
             var flightPath = ParentGame.FindWorldRay(startWorldPosition, endWorldPosition.GetFloor());
-            var snowBall = new Snowball(ParentGame, startWorldPosition,
+            var snowBall = new Snowball(ParentGame, ParentGame.SnowballDef, startWorldPosition,
                 flightPath
                     .SkipWhile(pos => (pos.worldPosition / ParentGame.TileSize).GetFloor() == selectedUnitCell)
                     .TakeWhile(pos => pos.blockedVector.Skip(2).All(b => b == 0) || (pos.worldPosition / ParentGame.TileSize).GetFloor() == targettedUnitCell)

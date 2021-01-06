@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MooseLib;
+using MooseLib.Defs;
 using MooseLib.Ui;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,8 @@ namespace SnowballFight
         private Dictionary<string, UnitDef> UnitDefs = null!;
 
         private IEnumerable<Unit> Units => Objects.OfType<Unit>();
+
+        public AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
 
         public SnowballFightGame()
         {
@@ -81,6 +84,8 @@ namespace SnowballFight
                 ["santa"] = new("santa", 8, 4, .1f, extractPortrait(9)),
                 ["snowman"] = new("snowman", 8, 4, .1f, extractPortrait(2)),
             };
+
+            UnitDefs.Values.AsParallel().ForEach(def => def.LoadContent(this));
 
             SpawnUnit("deer", 5, 9);
             SpawnUnit("elf1", 10, 5);

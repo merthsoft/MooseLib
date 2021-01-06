@@ -7,6 +7,7 @@ using MonoGame.Extended.Serialization;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
+using MooseLib.Defs;
 using MooseLib.GameObjects;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
@@ -25,6 +26,8 @@ namespace MooseLib
         public TiledMapRenderer MapRenderer = null!;
         public OrthographicCamera MainCamera = null!;
         public SpriteBatch SpriteBatch = null!;
+
+        public IDictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
 
         public MouseState PreviousMouseState { get; private set; }
 
@@ -48,13 +51,10 @@ namespace MooseLib
 
         public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
 
-
         protected readonly HashSet<int> objectLayerIndices = new();
-
         public IEnumerable<int> ObjectLayerIndices => objectLayerIndices;
 
         protected readonly HashSet<int> tileLayerIndices = new();
-
         public IEnumerable<int> TileLayerIndices => tileLayerIndices;
 
         public List<int>[,] BlockingMap { get; private set; } = new List<int>[0, 0];
@@ -98,7 +98,6 @@ namespace MooseLib
         protected virtual void PreUpdateBlockingMap(GameTime gameTime) { return; }
         protected virtual void PostUpdate(GameTime gameTime) { return; }
 
-
         protected override void Update(GameTime gameTime)
         {
             PreviousMouseState = CurrentMouseState;
@@ -128,6 +127,23 @@ namespace MooseLib
 
         protected virtual void UpdateBlockingMap()
         {
+            var layerGroups = BuildObjectLayerGroups();
+
+            foreach (var layerIndex in ObjectLayerIndices)
+            {
+                var layer = MainMap.Layers[layerIndex];
+                if (!(layer is TiledMapObjectLayer))
+                    continue;
+
+                for (var x = 0; x < MapWidth; x++)
+                    for (var y = 0; y < MapHeight; y++)
+                        BlockingMap[x, y][layerIndex] =
+                            layerGroups.TryGetValue(layerIndex, out var set) ? set.Count(o => o.InCell(x, y)) : 0;
+            }
+        }
+
+        private Dictionary<int, HashSet<AnimatedGameObject>> BuildObjectLayerGroups()
+        {
             var layerGroups = new Dictionary<int, HashSet<AnimatedGameObject>>();
             foreach (var obj in Objects)
             {
@@ -135,21 +151,7 @@ namespace MooseLib
                 layerGroups[obj.Layer].Add(obj);
             }
 
-            foreach (var layerIndex in ObjectLayerIndices)
-            {
-                var layer = MainMap.Layers[layerIndex];
-                switch (layer)
-                {
-                    case TiledMapObjectLayer:
-                        for (var x = 0; x < MapWidth; x++)
-                            for (var y = 0; y < MapHeight; y++)
-                                BlockingMap[x, y][layerIndex] 
-                                    = layerGroups.TryGetValue(layerIndex, out var set)
-                                        ? set.Count(o => o.InCell(x, y))
-                                        : 0;
-                        break;
-                }
-            }
+            return layerGroups;
         }
 
         protected virtual void BuildFullBlockingMap()
@@ -189,6 +191,8 @@ namespace MooseLib
 
             var transformMatrix = MainCamera.GetViewMatrix();
 
+            var objectGroups = BuildObjectLayerGroups();
+
             for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
             {
                 var hookTuple = renderHooks?.ElementAtOrDefault(layerIndex);
@@ -203,8 +207,8 @@ namespace MooseLib
                     case TiledMapObjectLayer:
                         SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
                         hookTuple?.preHook?.Invoke(layerIndex);
-                        ObjectsAtLayer(layerIndex)
-                            .ForEach(unit => unit.Draw(SpriteBatch));
+                        objectGroups.GetValueOrDefault(layerIndex)
+                            ?.ForEach(unit => unit.Draw(SpriteBatch));
                         hookTuple?.postHook?.Invoke(layerIndex);
                         SpriteBatch.End();
                         break;
@@ -212,6 +216,7 @@ namespace MooseLib
             }
         }
 
+        // TODO: Create content manager
         public SpriteSheet LoadAnimatedSpriteSheet(string animationKey, bool replace = false)
         {
             if (replace || !AnimationSpriteSheets.ContainsKey(animationKey))

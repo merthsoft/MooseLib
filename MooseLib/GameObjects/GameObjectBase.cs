@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MooseLib.Defs;
 using System;
 
 namespace MooseLib.GameObjects
@@ -8,6 +9,7 @@ namespace MooseLib.GameObjects
     public abstract class GameObjectBase : IComparable<GameObjectBase>
     {
         public MooseGame ParentGame { get; set; }
+        public GameObjectDef Def { get; set; }
 
         public int Layer { get; set; }
 
@@ -21,12 +23,13 @@ namespace MooseLib.GameObjects
 
         public Action? StateCompleteAction { get; set; }
 
-        public GameObjectBase(MooseGame parentGame, int layer = 0, Vector2? position = null, Vector2? size = null)
+        public GameObjectBase(MooseGame parentGame, GameObjectDef def, Vector2? position = null, int? layer = null, Vector2? size = null)
         {
-            (ParentGame, Layer)
-             = (parentGame, layer);
-            WorldPosition = position ?? Vector2.Zero;
-            WorldSize = size ?? Vector2.One;
+            ParentGame = parentGame;
+            Def = def;
+            Layer = layer ?? Def.DefaultLayer;
+            WorldPosition = position ?? Def.DefaultPosition;
+            WorldSize = size ?? Def.DefaultSize;
         }
 
         public abstract void Update(GameTime gameTime);
