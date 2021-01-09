@@ -2,9 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using MonoGame.Extended.Content;
-using MonoGame.Extended.Serialization;
-using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
 using MooseLib.Defs;
@@ -20,12 +17,15 @@ namespace MooseLib
 {
     public abstract class MooseGame : Game
     {
-        public GraphicsDeviceManager Graphics { get; set; }
+        public MooseContentManager ContentManager { get; set; }
 
-        public TiledMap MainMap = null!;
         public TiledMapRenderer MapRenderer = null!;
         public OrthographicCamera MainCamera = null!;
         public SpriteBatch SpriteBatch = null!;
+
+        public GraphicsDeviceManager Graphics { get; set; }
+
+        public TiledMap MainMap = null!;
 
         public IDictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
 
@@ -37,7 +37,6 @@ namespace MooseLib
 
         public readonly SortedSet<AnimatedGameObject> Objects = new();
         public readonly Queue<AnimatedGameObject> ObjectsToAdd = new();
-        public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = new();
 
         public int MapHeight => MainMap.Height;
 
@@ -61,7 +60,7 @@ namespace MooseLib
 
         public MooseGame()
         {
-            Content.RootDirectory = nameof(Content);
+            ContentManager = new MooseContentManager(Content);
             IsMouseVisible = true;
             Graphics = new GraphicsDeviceManager(this);
         }
@@ -80,11 +79,17 @@ namespace MooseLib
             BlockingMap = new List<int>[width, height];
         }
 
+        protected abstract void Load();
+
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             MainCamera = new OrthographicCamera(GraphicsDevice) { Origin = new(0, 0) };
             MapRenderer = new TiledMapRenderer(GraphicsDevice);
+
+            Load();
+
+            Defs.AsParallel().ForEach(kvp => kvp.Value.LoadContent(ContentManager));
         }
 
         protected void LoadMap()
@@ -92,6 +97,14 @@ namespace MooseLib
             MapRenderer.LoadMap(MainMap);
             BuildFullBlockingMap();
         }
+
+        public void AddDef<TDef>(TDef def) where TDef : Def
+        {
+            Defs[def.DefName] = def;
+        }
+
+        public TDef GetDef<TDef>(string defName) where TDef : Def
+            => ((Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
 
         protected virtual void PreMapUpdate(GameTime gameTime) { return; }
         protected virtual void PreObjectsUpdate(GameTime gameTime) { return; }
@@ -214,15 +227,6 @@ namespace MooseLib
                         break;
                 }
             }
-        }
-
-        // TODO: Create content manager
-        public SpriteSheet LoadAnimatedSpriteSheet(string animationKey, bool replace = false)
-        {
-            if (replace || !AnimationSpriteSheets.ContainsKey(animationKey))
-                AnimationSpriteSheets[animationKey] = Content.Load<SpriteSheet>($"Animations/{animationKey}.sf", new JsonContentLoader());
-
-            return AnimationSpriteSheets[animationKey];
         }
 
         public bool CellIsInBounds(Vector2 cell)

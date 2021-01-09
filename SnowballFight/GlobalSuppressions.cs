@@ -5,4 +5,5 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Spellchecker", "CRRSP06:A misspelled word has been found", Scope = "member", Target = "~M:SnowballFight.SnowballFightGame.LoadContent")]
+[assembly: SuppressMessage("Spellchecker", "CRRSP06:A misspelled word has been found", Scope = "member", Target = "~M:SnowballFight.SnowballFightGame.Load")]
+[assembly: SuppressMessage("Spellchecker", "CRRSP06:A misspelled word has been found", Scope = "member", Target = "~M:SnowballFight.SnowballFightGame.Update(Microsoft.Xna.Framework.GameTime)")]

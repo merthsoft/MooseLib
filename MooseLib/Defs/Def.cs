@@ -1,9 +1,14 @@
 ﻿namespace MooseLib.Defs
 {
-    public abstract record Def
+    public record Def
     {
-        public string DefName { get; init; } = "";
+        public static readonly Def Empty = new("EMPTY_DEF");
 
-        public virtual void LoadContent(MooseGame parentGame) { }
+        public string DefName { get; }
+
+        public virtual void LoadContent(MooseContentManager contentManager) { }
+
+        protected Def(string defName) 
+            => DefName = defName;
     }
 }

@@ -14,19 +14,13 @@ namespace SnowballFight
         public Texture2D Portrait { get; } = null!;
 
         public UnitDef(string name, int maxHealth, int speed, float accuracySigma, Texture2D portrait, string? displayNameOverride = null)
-            : base(name)
+            : base(name, name)
         {
-            DefName = name;
             DisplayName = displayNameOverride ?? name.UpperFirst();
             MaxHealth = maxHealth;
             Speed = speed;
             AccuracySigma = accuracySigma;
             Portrait = portrait;
-        }
-
-        public override void LoadContent(MooseGame parentGame)
-        {
-            SpriteSheet = parentGame.LoadAnimatedSpriteSheet(AnimationKey);
         }
     }
 }

@@ -29,8 +29,6 @@ namespace SnowballFight
 
         private Texture2D UnitsTexture = null!;
 
-        private Dictionary<string, UnitDef> UnitDefs = null!;
-
         private IEnumerable<Unit> Units => Objects.OfType<Unit>();
 
         public AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
@@ -48,10 +46,8 @@ namespace SnowballFight
             Graphics.ApplyChanges();
         }
 
-        protected override void LoadContent()
+        protected override void Load()
         {
-            base.LoadContent();
-
             InitializeMap(30, 30, 16, 16);
             MainMap.CopyMap(Content.Load<TiledMap>("Maps/testmap"), 0, 0);
             LoadMap();
@@ -73,30 +69,15 @@ namespace SnowballFight
                 return t;
             }
 
-            UnitDefs = new Dictionary<string, UnitDef>
-            {
-                ["deer"] = new("deer", 6, 6, 1, extractPortrait(10)),
-                ["elf1"] = new("elf1", 4, 5, .2f, extractPortrait(3)),
-                ["elf2"] = new("elf1", 4, 5, .2f, extractPortrait(4)),
-                ["elf3"] = new("elf1", 4, 5, .2f, extractPortrait(5)),
-                ["krampus"] = new("krampus", 8, 4, .1f, extractPortrait(8)),
-                ["mari"] = new("mari", 3, 11, .4f, extractPortrait(1), "Mari Lwyd"),
-                ["santa"] = new("santa", 8, 4, .1f, extractPortrait(9)),
-                ["snowman"] = new("snowman", 8, 4, .1f, extractPortrait(2)),
-            };
-
-            UnitDefs.Values.AsParallel().ForEach(def => def.LoadContent(this));
-
-            SpawnUnit("deer", 5, 9);
-            SpawnUnit("elf1", 10, 5);
-            SpawnUnit("elf2", 3, 10);
-            SpawnUnit("elf3", 11, 11);
-
-            SpawnUnit("krampus", 12, 14);
-            SpawnUnit("mari", 13, 14);
-
-            SpawnUnit("santa", 13, 12);
-            SpawnUnit("snowman", 11, 13);
+            AddDef(new UnitDef("deer", 6, 6, 1, extractPortrait(10)));
+            AddDef(new UnitDef("elf1", 4, 5, .2f, extractPortrait(3)));
+            AddDef(new UnitDef("elf2", 4, 5, .2f, extractPortrait(4)));
+            AddDef(new UnitDef("elf3", 4, 5, .2f, extractPortrait(5)));
+            AddDef(new UnitDef("krampus", 8, 4, .1f, extractPortrait(8)));
+            AddDef(new UnitDef("mari", 3, 11, .4f, extractPortrait(1), "Mari Lwyd"));
+            AddDef(new UnitDef("santa", 8, 4, .1f, extractPortrait(9)));
+            AddDef(new UnitDef("snowman", 8, 4, .1f, extractPortrait(2)));
+            AddDef(new AnimatedGameObjectDef("snowball", "snowball"));
 
             MainCamera.ZoomIn(1f);
 
@@ -119,17 +100,33 @@ namespace SnowballFight
             StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2);
             StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
 
-            LoadAnimatedSpriteSheet(Snowball.AnimationKey);
+            ContentManager.LoadAnimatedSpriteSheet(Snowball.AnimationKey);
         }
 
         private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)
         {
-            var def = UnitDefs[unitDef];
-            if (!AnimationSpriteSheets.ContainsKey(def.AnimationKey))
-                LoadAnimatedSpriteSheet(def.AnimationKey);
-            var unit = new Unit(this, def, cellX, cellY, state: state);
+            var unit = new Unit(this, GetDef<UnitDef>(unitDef), cellX, cellY, state: state);
             Objects.Add(unit);
             return unit;
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (!Units.Any())
+            {
+                SpawnUnit("deer", 5, 9);
+                SpawnUnit("elf1", 10, 5);
+                SpawnUnit("elf2", 3, 10);
+                SpawnUnit("elf3", 11, 11);
+
+                SpawnUnit("krampus", 12, 14);
+                SpawnUnit("mari", 13, 14);
+
+                SpawnUnit("santa", 13, 12);
+                SpawnUnit("snowman", 11, 13);
+            }
+
+            base.Update(gameTime);
         }
 
         protected override void PreMapUpdate(GameTime gameTime)

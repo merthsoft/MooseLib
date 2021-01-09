@@ -7,6 +7,10 @@ namespace MooseLib.Defs
         public string AnimationKey { get; init; }
         public SpriteSheet? SpriteSheet { get; set; }
 
-        public AnimatedGameObjectDef(string animationKey) => AnimationKey = animationKey;
+        public AnimatedGameObjectDef(string defName, string animationKey) : base(defName)
+            => AnimationKey = animationKey;
+
+        public override void LoadContent(MooseContentManager contentManager)
+            => SpriteSheet = contentManager.LoadAnimatedSpriteSheet(AnimationKey);
     }
 }
