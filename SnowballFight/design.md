@@ -1,4 +1,5 @@
-﻿***Snowball Fight!***
+****Snowball Fight!****
+ 
 Snowballs are the only source of damage in the game! No destructive magic! No swords! Just snowballs! 
 
 The objective is simple: knock out all your enemies by beaning them with snowballs and try not to get knocked out yourself. Remember to use cover and terrain gain a tactical advantage.
