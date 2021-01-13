@@ -38,6 +38,7 @@ namespace SnowballFight
         private Vector2 NextLocation = Vector2.Zero;
 
         private readonly NormalDistribution AimDistribution = new(0, 2);
+        private Unit? targettedUnit;
 
         public Unit(SnowballFightGame parentGame, UnitDef unitDef, int cellX, int cellY, string state) 
             : base(parentGame, unitDef, new(cellX * parentGame.TileWidth, cellY * parentGame.TileHeight), parentGame.UnitLayer, state: state)
@@ -68,29 +69,38 @@ namespace SnowballFight
             base.Update(gameTime);
         }
 
-        public void Attack(Unit TargettedUnit)
+        public void Attack(Unit targettedUnit)
         {
+            this.targettedUnit = targettedUnit;
             State = "attack";
-            StateCompleteAction = () => AttackComplete(TargettedUnit);
+            StateCompleteAction = AttackComplete;
         }
 
-        private void AttackComplete(Unit TargettedUnit)
+        private void AttackComplete()
         {
+            if (targettedUnit == null)
+                return;
+
             var selectedUnitCell = GetCell();
-            var targettedUnitCell = TargettedUnit.GetCell();
+            var targettedUnitCell = targettedUnit.GetCell();
 
             var startWorldPosition = WorldPosition + ParentGame.HalfTileSize;
             var wiggle = AimDistribution.NextDouble();
-            var endWorldPosition = (TargettedUnit.WorldPosition + ParentGame.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
-            var flightPath = ParentGame.FindWorldRay(startWorldPosition, endWorldPosition.GetFloor());
-            var snowBall = new Snowball(ParentGame, ParentGame.SnowballDef, startWorldPosition,
-                flightPath
-                    .SkipWhile(pos => (pos.worldPosition / ParentGame.TileSize).GetFloor() == selectedUnitCell)
-                    .TakeWhile(pos => pos.blockedVector.Skip(2).All(b => b == 0) || (pos.worldPosition / ParentGame.TileSize).GetFloor() == targettedUnitCell)
-                    .Select(pos => pos.worldPosition));
+            var endWorldPosition = (targettedUnit.WorldPosition + ParentGame.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
+            var flightPath = ParentGame
+                                .FindWorldRay(startWorldPosition, endWorldPosition.GetFloor())
+                                .SkipWhile(inSelectedUnitCell)
+                                .TakeWhile(notBlocked)
+                                .Select(pos => pos.worldPosition);
+            var snowBall = new Snowball(ParentGame, ParentGame.SnowballDef, startWorldPosition, flightPath);
             ParentGame.ObjectsToAdd.Enqueue(snowBall);
             State = "idle";
             StateCompleteAction = null;
+            targettedUnit = null;
+
+            bool inSelectedUnitCell((Vector2 worldPosition, IList<int> blockedVector) pos) => (pos.worldPosition / ParentGame.TileSize).GetFloor() == selectedUnitCell;
+
+            bool notBlocked((Vector2, IList<int> blockedVector) pos) => pos.blockedVector.Skip(2).All(b => b == 0);
         }
     }
 }
