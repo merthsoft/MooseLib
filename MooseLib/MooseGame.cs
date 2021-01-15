@@ -35,8 +35,8 @@ namespace MooseLib
 
         public Vector2 WorldMouse { get; private set; }
 
-        public readonly SortedSet<AnimatedGameObject> Objects = new();
-        public readonly Queue<AnimatedGameObject> ObjectsToAdd = new();
+        public readonly SortedSet<GameObjectBase> Objects = new();
+        private readonly Queue<GameObjectBase> ObjectsToAdd = new();
 
         public int MapHeight => MainMap.Height;
 
@@ -98,10 +98,11 @@ namespace MooseLib
             BuildFullBlockingMap();
         }
 
+        public void AddObject(GameObjectBase gameObject)
+            => ObjectsToAdd.Enqueue(gameObject);
+
         public void AddDef<TDef>(TDef def) where TDef : Def
-        {
-            Defs[def.DefName] = def;
-        }
+            => Defs[def.DefName] = def;
 
         public TDef GetDef<TDef>(string defName) where TDef : Def
             => ((Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
@@ -133,7 +134,7 @@ namespace MooseLib
             PostUpdate(gameTime);
         }
 
-        public IEnumerable<AnimatedGameObject> ObjectsAtLayer(int layerIndex)
+        public IEnumerable<GameObjectBase> ObjectsAtLayer(int layerIndex)
             => Objects
                 .SkipWhile(o => o.Layer < layerIndex)
                 .TakeWhile(o => o.Layer == layerIndex);
@@ -143,21 +144,15 @@ namespace MooseLib
             var layerGroups = BuildObjectLayerGroups();
 
             foreach (var layerIndex in ObjectLayerIndices)
-            {
-                var layer = MainMap.Layers[layerIndex];
-                if (!(layer is TiledMapObjectLayer))
-                    continue;
-
                 for (var x = 0; x < MapWidth; x++)
                     for (var y = 0; y < MapHeight; y++)
                         BlockingMap[x, y][layerIndex] =
                             layerGroups.TryGetValue(layerIndex, out var set) ? set.Count(o => o.InCell(x, y)) : 0;
-            }
         }
 
-        private Dictionary<int, HashSet<AnimatedGameObject>> BuildObjectLayerGroups()
+        private Dictionary<int, HashSet<GameObjectBase>> BuildObjectLayerGroups()
         {
-            var layerGroups = new Dictionary<int, HashSet<AnimatedGameObject>>();
+            var layerGroups = new Dictionary<int, HashSet<GameObjectBase>>();
             foreach (var obj in Objects)
             {
                 layerGroups.TryAdd(obj.Layer, new());
@@ -237,7 +232,7 @@ namespace MooseLib
             => cellX > 0 && cellX < MapWidth
             && cellY > 0 && cellY < MapHeight;
 
-        public virtual IEnumerable<(Vector2 worldPosition, IList<int> blockedVector)> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
+        public virtual IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
         {
             var (x1, y1) = (endWorldPosition.X, endWorldPosition.Y);
             var (x2, y2) = (startWorldPosition.X, startWorldPosition.Y);
@@ -249,8 +244,8 @@ namespace MooseLib
 
             var err = deltaX - deltaZ;
 
-            (Vector2, List<int> blocked) BuildReturnTuple(float x, float y) 
-                => (new Vector2(x, y), BlockingMap[(int)(x / TileWidth), (int)(y / TileHeight)]);
+            RayCell BuildReturnTuple(float x, float y) 
+                => new(new Vector2(x, y), BlockingMap[(int)(x / TileWidth), (int)(y / TileHeight)]);
 
             while (true)
             {
@@ -321,5 +316,8 @@ namespace MooseLib
         public bool WorldPositionIsInBounds(float worldX, float worldY)
             => worldX > 0 && worldX < MapWidth * TileWidth
             && worldY > 0 && worldY < MapHeight * TileHeight;
+
+        public List<int> GetBlockingVector(Vector2 worldPosition)
+            => BlockingMap[(int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight)];
     }
 }

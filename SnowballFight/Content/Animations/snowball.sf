@@ -1,22 +1,22 @@
 {
   "textureAtlas": {
     "texture": "..\\Images\\snowball.png",
-    "regionWidth": 9,
-    "regionHeight": 9
+    "regionWidth": 16,
+    "regionHeight": 16
   },
   "cycles": {
     "fly": {
-      "frames": [ 0, 1, 2, 3, 4, 5, 6, 7 ],
+      "frames": [0,1,2,3],
       "isLooping": true,
-      "frameDuration": 0.0499999747
+      "frameDuration": 0.09999997
     },
     "hit": {
-      "frames": [ 8, 9, 10, 11, 12, 13, 14 ],
+      "frames": [4,5,6,7],
       "isLooping": false,
-      "frameDuration": 0.0599999763
+      "frameDuration": 0.149999976
     },
     "dead": {
-      "frames": [ 15 ],
+      "frames": [],
       "isLooping": false,
       "frameDuration": 0.0599999763
     }

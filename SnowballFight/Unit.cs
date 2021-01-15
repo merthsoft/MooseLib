@@ -81,26 +81,14 @@ namespace SnowballFight
             if (targettedUnit == null)
                 return;
 
-            var selectedUnitCell = GetCell();
-            var targettedUnitCell = targettedUnit.GetCell();
-
             var startWorldPosition = WorldPosition + ParentGame.HalfTileSize;
             var wiggle = AimDistribution.NextDouble();
             var endWorldPosition = (targettedUnit.WorldPosition + ParentGame.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
-            var flightPath = ParentGame
-                                .FindWorldRay(startWorldPosition, endWorldPosition.GetFloor())
-                                .SkipWhile(inSelectedUnitCell)
-                                .TakeWhile(notBlocked)
-                                .Select(pos => pos.worldPosition);
-            var snowBall = new Snowball(ParentGame, ParentGame.SnowballDef, startWorldPosition, flightPath);
-            ParentGame.ObjectsToAdd.Enqueue(snowBall);
+            var snowBall = new Snowball(ParentGame, ParentGame.SnowballDef, startWorldPosition, endWorldPosition);
+            ParentGame.AddObject(snowBall);
             State = "idle";
             StateCompleteAction = null;
             targettedUnit = null;
-
-            bool inSelectedUnitCell((Vector2 worldPosition, IList<int> blockedVector) pos) => (pos.worldPosition / ParentGame.TileSize).GetFloor() == selectedUnitCell;
-
-            bool notBlocked((Vector2, IList<int> blockedVector) pos) => pos.blockedVector.Skip(2).All(b => b == 0);
         }
     }
 }

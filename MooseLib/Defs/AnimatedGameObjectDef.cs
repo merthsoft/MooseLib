@@ -1,11 +1,14 @@
-﻿using MonoGame.Extended.Sprites;
+﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended.Sprites;
 
 namespace MooseLib.Defs
 {
     public record AnimatedGameObjectDef : GameObjectDef
     {
-        public string AnimationKey { get; init; }
-        public SpriteSheet? SpriteSheet { get; set; }
+        public string AnimationKey { get; set; }
+        public Vector2 Origin { get; set; } = Vector2.Zero;
+        
+        public SpriteSheet? SpriteSheet { get; private set; }
 
         public AnimatedGameObjectDef(string defName, string animationKey) : base(defName)
             => AnimationKey = animationKey;

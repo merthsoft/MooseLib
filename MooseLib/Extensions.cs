@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Transactions;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
 using Roy_T.AStar.Grids;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MooseLib
 {
     public static class Extensions
     {
+        public static Vector2 ToCell(this Vector2 worldPosition, MooseGame game)
+            => new Vector2(worldPosition.X / game.TileWidth, worldPosition.Y / game.TileHeight).GetFloor();
+
         public static void CopyMap(this TiledMap destMap, TiledMap sourceMap, int destX, int destY)
         {
             foreach (var tileset in sourceMap.Tilesets)

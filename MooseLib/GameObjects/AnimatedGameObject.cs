@@ -29,7 +29,7 @@ namespace MooseLib.GameObjects
         public AnimatedGameObject(MooseGame parentGame, AnimatedGameObjectDef def, Vector2? position = null, int layer = 0, float rotation = 0, Vector2? scale = null, string state = "")
             : base(parentGame, def, position, layer)
         {
-            Sprite = new AnimatedSprite(def.SpriteSheet);
+            Sprite = new AnimatedSprite(def.SpriteSheet) { Origin = def.Origin };
             SpriteTransform = new(Sprite.Origin, rotation, scale);
             WorldSize = new(Sprite.TextureRegion.Width, Sprite.TextureRegion.Height);
             State = state;

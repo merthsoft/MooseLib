@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MooseLib;
 using MooseLib.Defs;
 using MooseLib.GameObjects;
 using System.Collections.Generic;
@@ -17,14 +18,23 @@ namespace SnowballFight
 
         public const string AnimationKey = "snowball";
 
-        public Queue<Vector2> FlightPath { get; } = new Queue<Vector2>();
+        private Queue<Vector2> FlightPath { get; }
+        private Vector2 StartCell { get; }
 
-        public Snowball(SnowballFightGame parentGame, AnimatedGameObjectDef def, Vector2 startPosition, IEnumerable<Vector2> flightPath) 
-            : base(parentGame, def, startPosition, parentGame.SnowballLayer, state: States.Fly, scale: new(.75f))
+        public Snowball(SnowballFightGame parentGame, AnimatedGameObjectDef def, Vector2 startWorldPosition, Vector2 endWorldPosition) 
+            : base(parentGame, def, startWorldPosition, parentGame.SnowballLayer, state: States.Fly)
         {
-            FlightPath = new(flightPath.Where((v, i) => i % 3 == 0));
+            var flightPath = ParentGame
+                                .FindWorldRay(startWorldPosition, endWorldPosition.GetFloor())
+                                .Select(pos => pos.WorldPosition);
+            FlightPath = new(flightPath.Where((v, i) => i % 2 == 0));
+
             if (FlightPath.Count == 0)
                 State = States.Dead;
+            
+            SpriteTransform = new(new(-8, -8), SpriteTransform.Rotation, SpriteTransform.Scale);
+
+            StartCell = GetCell();
         }
 
         public override void Update(GameTime gameTime)
@@ -32,7 +42,7 @@ namespace SnowballFight
             if (State == States.Fly)
             {
                 WorldPosition = FlightPath.Dequeue();
-                if (FlightPath.Count == 0)
+                if (IsBlocked())
                 {
                     State = States.Hit;
                     StateCompleteAction = () => State = States.Dead;
@@ -44,5 +54,10 @@ namespace SnowballFight
 
             base.Update(gameTime);
         }
+
+        private bool IsBlocked()
+            => FlightPath.Count == 0
+            || (GetCell() != StartCell 
+                && ParentGame.GetBlockingVector(WorldPosition).Skip(2).Take(1).Any(b => b != 0));
     }
 }
