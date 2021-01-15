@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended;
 using MooseLib;
 using MooseLib.Defs;
 using MooseLib.GameObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,8 +33,9 @@ namespace SnowballFight
 
             if (FlightPath.Count == 0)
                 State = States.Dead;
-            
-            SpriteTransform = new(new(-8, -8), SpriteTransform.Rotation, SpriteTransform.Scale);
+
+            var rand = new Random();
+            SpriteTransform = new(new(-8, -8), 0, Vector2.One);
 
             StartCell = GetCell();
         }
@@ -58,6 +61,6 @@ namespace SnowballFight
         private bool IsBlocked()
             => FlightPath.Count == 0
             || (GetCell() != StartCell 
-                && ParentGame.GetBlockingVector(WorldPosition).Skip(2).Take(1).Any(b => b != 0));
+                && ParentGame.GetBlockingVector(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
     }
 }
