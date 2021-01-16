@@ -29,14 +29,12 @@ namespace SnowballFight
             var flightPath = ParentGame
                                 .FindWorldRay(startWorldPosition, endWorldPosition.GetFloor())
                                 .Select(pos => pos.WorldPosition);
-            FlightPath = new(flightPath.Where((v, i) => i % 2 == 0));
+            FlightPath = new(flightPath.Where((v, i) => i % 3 == 0));
 
             if (FlightPath.Count == 0)
                 State = States.Dead;
 
-            var rand = new Random();
             SpriteTransform = new(new(-8, -8), 0, Vector2.One);
-
             StartCell = GetCell();
         }
 

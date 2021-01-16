@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MooseLib;
 using MooseLib.GameObjects;
 using System;
@@ -39,6 +40,7 @@ namespace SnowballFight
 
         private readonly NormalDistribution AimDistribution = new(0, 2);
         private Unit? targettedUnit;
+        private bool stepFlag;
 
         public Unit(SnowballFightGame parentGame, UnitDef unitDef, int cellX, int cellY, string state) 
             : base(parentGame, unitDef, new(cellX * parentGame.TileWidth, cellY * parentGame.TileHeight), parentGame.UnitLayer, state: state)
@@ -52,9 +54,10 @@ namespace SnowballFight
             if (State == "walk")
                 if (MoveDirection != Vector2.Zero)
                 {
-                    WorldPosition += MoveDirection;
-                    if (WorldPosition == NextLocation)
-                        MoveDirection = Vector2.Zero;
+                    takeStep();
+                    if (stepFlag) 
+                        takeStep();
+                    stepFlag = !stepFlag;
                 }
                 else if (MoveQueue.Count == 0)
                     State = "idle";
@@ -67,6 +70,13 @@ namespace SnowballFight
                 }
 
             base.Update(gameTime);
+
+            void takeStep()
+            {
+                WorldPosition += MoveDirection;
+                if (WorldPosition.GetFloor() == NextLocation.GetFloor())
+                    MoveDirection = Vector2.Zero;
+            }
         }
 
         public void Attack(Unit targettedUnit)

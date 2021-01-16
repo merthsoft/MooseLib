@@ -13,12 +13,12 @@
     "walk": {
       "frames": [26,27,28,29],
       "isLooping": true,
-      "frameDuration": 0.2
+      "frameDuration": 0.1
     },
     "attack": {
       "frames": [30,31,32,33],
       "isLooping": false,
-      "frameDuration": 0.2
+      "frameDuration": 0.15
     },
     "hit": {
       "frames": [34,35,36,37],
