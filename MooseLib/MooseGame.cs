@@ -3,9 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
-using MonoGame.Extended.Tiled.Renderers;
 using MooseLib.Defs;
 using MooseLib.GameObjects;
+using MooseLib.Interface;
+using MooseLib.Tiled;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
@@ -19,19 +20,23 @@ namespace MooseLib
     {
         public MooseContentManager ContentManager { get; set; }
 
-        public TiledMapRenderer MapRenderer = null!;
+        public IMapRenderer MapRenderer = null!;
         public OrthographicCamera MainCamera = null!;
         public SpriteBatch SpriteBatch = null!;
 
         public GraphicsDeviceManager Graphics { get; set; }
 
-        public TiledMap MainMap = null!;
+        public IMap MainMap = null!;
 
         public IDictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
 
         public MouseState PreviousMouseState { get; private set; }
 
         public MouseState CurrentMouseState { get; private set; }
+
+        public KeyboardState PreviousKeyState { get; private set; }
+
+        public KeyboardState CurrentKeyState { get; private set; }
 
         public Vector2 WorldMouse { get; private set; }
 
@@ -75,7 +80,7 @@ namespace MooseLib
 
         protected void InitializeMap(int width, int height, int tileWith, int tileHeight)
         {
-            MainMap = new TiledMap("map", width, height, tileWith, tileHeight, TiledMapTileDrawOrder.RightDown, TiledMapOrientation.Orthogonal);
+            MainMap = new TiledMooseMap("map", width, height, tileWith, tileHeight);
             BlockingMap = new List<int>[width, height];
         }
 
@@ -85,7 +90,7 @@ namespace MooseLib
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             MainCamera = new OrthographicCamera(GraphicsDevice) { Origin = new(0, 0) };
-            MapRenderer = new TiledMapRenderer(GraphicsDevice);
+            MapRenderer = new TiledMooseMapRenderer(GraphicsDevice);
 
             Load();
 
@@ -116,6 +121,9 @@ namespace MooseLib
         {
             PreviousMouseState = CurrentMouseState;
             CurrentMouseState = Mouse.GetState();
+            PreviousKeyState = CurrentKeyState;
+            CurrentKeyState = Keyboard.GetState();
+
             WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
 
             PreMapUpdate(gameTime);
@@ -147,7 +155,7 @@ namespace MooseLib
                 for (var x = 0; x < MapWidth; x++)
                     for (var y = 0; y < MapHeight; y++)
                         BlockingMap[x, y][layerIndex] =
-                            layerGroups.TryGetValue(layerIndex, out var set) ? set.Count(o => o.InCell(x, y)) : 0;
+                            layerGroups.TryGetValue(layerIndex, out var set) ? set.Count(o => o.InCell(x, y, MainMap)) : 0;
         }
 
         private Dictionary<int, HashSet<GameObjectBase>> BuildObjectLayerGroups()
@@ -172,15 +180,15 @@ namespace MooseLib
                     BlockingMap[x, y] = new List<int>();
                     for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
                     {
-                        byte value = 0;
+                        var value = 0;
                         var layer = MainMap.Layers[layerIndex];
                         switch (layer)
                         {
-                            case TiledMapObjectLayer:
-                                value = ObjectsAtLayer(layerIndex).Any(o => o.InCell(x, y)) ? 1 : 0;
+                            case IObjectLayer objectLayer:
+                                value = objectLayer.ObjectsAt(x, y, MainMap).Any(o => o.InCell(x, y, MainMap)) ? 1 : 0;
                                 objectLayerIndices.Add(layerIndex);
                                 break;
-                            case TiledMapTileLayer tileLayer:
+                            case ITileLayer tileLayer:
                                 value = tileLayer.IsBlockedAt(x, y, MainMap) ? 1 : 0;
                                 tileLayerIndices.Add(layerIndex);
                                 break;
@@ -239,6 +247,10 @@ namespace MooseLib
 
             var deltaX = (int)Math.Abs(x1 - x2);
             var deltaZ = (int)Math.Abs(y1 - y2);
+
+            if (deltaX == 0 && deltaZ == 0)
+                yield break;
+
             var stepX = x2 < x1 ? 1 : -1;
             var stepZ = y2 < y1 ? 1 : -1;
 
@@ -317,7 +329,7 @@ namespace MooseLib
             => worldX > 0 && worldX < MapWidth * TileWidth
             && worldY > 0 && worldY < MapHeight * TileHeight;
 
-        public List<int> GetBlockingVector(Vector2 worldPosition)
+        public List<int> GetBlockingVectorFromWorldPosition(Vector2 worldPosition)
             => BlockingMap[(int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight)];
     }
 }

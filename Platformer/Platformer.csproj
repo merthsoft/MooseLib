@@ -4,8 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
-    <LangVersion>preview</LangVersion>
-    <Nullable>enable</Nullable>
+	  <LangVersion>preview</LangVersion>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -26,29 +26,26 @@
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MooseLib\MooseLib.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="MonoGame.Extended">
-      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Extended.Tiled">
-      <HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Tiled.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Content\Animations\Bob.sf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Animations\Alex.sf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Animations\Adam.sf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="MonoGame.Extended">
+			<HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.dll</HintPath>
+		</Reference>
+		<Reference Include="MonoGame.Extended.Tiled">
+			<HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Tiled.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Content\Animations\Hero.sf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Animations\Mush.sf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

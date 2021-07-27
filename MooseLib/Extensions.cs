@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
+using MooseLib.Interface;
 using Roy_T.AStar.Grids;
 using System;
 using System.Collections.Generic;
@@ -12,36 +13,17 @@ namespace MooseLib
 {
     public static class Extensions
     {
+        public static IEnumerable<T> Select<T>(this Range range, Func<int, T> func)
+        {
+            for (int index = range.Start.Value; index < range.End.Value; index++)
+                yield return func(index);       
+        }
+
+        public static Vector2 Round(this Vector2 vector, int digits)
+            => new(vector.X.Round(digits), vector.Y.Round(digits));
+
         public static Vector2 ToCell(this Vector2 worldPosition, MooseGame game)
             => new Vector2(worldPosition.X / game.TileWidth, worldPosition.Y / game.TileHeight).GetFloor();
-
-        public static void CopyMap(this TiledMap destMap, TiledMap sourceMap, int destX, int destY)
-        {
-            foreach (var tileset in sourceMap.Tilesets)
-                if (!destMap.Tilesets.Contains(tileset))
-                    destMap.AddTileset(tileset, sourceMap.GetTilesetFirstGlobalIdentifier(tileset));
-
-            for (var layerIndex = 0; layerIndex < sourceMap.Layers.Count; layerIndex++)
-            {
-                var layer = sourceMap.Layers[layerIndex];
-
-                switch (layer)
-                {
-                    case TiledMapObjectLayer objectLayer:
-                        // TODO: Convert tiled objects to game objects
-                        destMap.AddLayer(new TiledMapObjectLayer(objectLayer.Name, objectLayer.Objects.Clone() as TiledMapObject[]));
-                        break;
-                    case TiledMapTileLayer sourceLayer:
-                        if (layerIndex >= destMap.TileLayers.Count)
-                            destMap.AddLayer(new TiledMapTileLayer(sourceLayer.Name, destMap.Width, destMap.Height, destMap.TileWidth, destMap.TileHeight));
-                        var destLayer = (destMap.Layers[layerIndex] as TiledMapTileLayer)!;
-                        for (ushort x = 0; x < sourceMap.Width; x++)
-                            for (ushort y = 0; y < sourceMap.Height; y++)
-                                destLayer.SetTile((ushort)(x + destX), (ushort)(y + destY), (uint)sourceLayer.GetTile(x, y).GlobalIdentifier);
-                        break;
-                }
-            }
-        }
 
         public static Color HalveAlphaChannel(this Color c)
             => new(c, c.A / 2);
@@ -56,36 +38,6 @@ namespace MooseLib
                 return null;
 
             return bool.TryParse(property, out var result) && result;
-        }
-
-        public static bool IsBlocking(this TiledMapTile tile, TiledMap map)
-        {
-            var tileSet = map.GetTilesetByTileGlobalIdentifier(tile.GlobalIdentifier);
-            if (tileSet == null)
-                return false;
-
-            var firstTile = map.GetTilesetFirstGlobalIdentifier(tileSet);
-            var tileSetTile = tileSet.Tiles.FirstOrDefault(t => t.LocalTileIdentifier == tile.GlobalIdentifier - firstTile);
-
-            var ret = tileSetTile?.Properties.GetBoolProperty("blocking");
-            ret ??= tileSet.Properties.GetBoolProperty("blocking");
-            ret ??= false;
-            return ret.Value;
-        }
-
-        public static bool IsBlockedAt(this TiledMapTileLayer layer, int x, int y, TiledMap map)
-            => layer.GetTile((ushort)x, (ushort)y).IsBlocking(map);
-
-
-        public static bool IsBlockedAt(this TiledMap map, int x, int y)
-            => map.IsBlockedAt((ushort)x, (ushort)y);
-
-        public static bool IsBlockedAt(this TiledMap map, ushort x, ushort y)
-        {
-            foreach (var layer in map.TileLayers)
-                if (layer.IsBlockedAt(x, y, map))
-                    return true;
-            return false;
         }
 
         public static void Draw(this Sprite sprite, SpriteBatch spriteBatch, Vector2 position, Transform2 transform, SpriteEffects spriteEffects)

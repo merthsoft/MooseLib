@@ -1,0 +1,49 @@
+{
+  "textureAtlas": {
+    "texture": "../Images/Enemies.png",
+    "regionWidth": 16,
+    "regionHeight": 16
+  },
+  "cycles": {
+    "idle_right": {
+      "frames": [216,217,218,219],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "run_right": {
+      "frames": [225,226,227,228],
+      "isLooping": true,
+      "frameDuration": 0.149999976
+    },
+    "idle_left": {
+      "frames": [243,244,245,246],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "run_left": {
+      "frames": [252,253,254,255],
+      "isLooping": true,
+      "frameDuration": 0.149999976
+    },
+    "jump_right": {
+      "frames": [225,226],
+      "isLooping": false,
+      "frameDuration": 0.2
+    },
+    "jump_left": {
+      "frames": [252,253],
+      "isLooping": false,
+      "frameDuration": 0.2
+    },
+    "fall_right": {
+      "frames": [227,228],
+      "isLooping": false,
+      "frameDuration": 0.2
+    },
+    "fall_left": {
+      "frames": [254,255],
+      "isLooping": false,
+      "frameDuration": 0.2
+    }
+  }
+}

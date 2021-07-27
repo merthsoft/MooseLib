@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using MooseLib;
 using MooseLib.GameObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Troschuetz.Random.Distributions.Continuous;
 
 namespace SnowballFight
