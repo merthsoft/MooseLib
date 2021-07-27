@@ -49,11 +49,11 @@ namespace Platformer
             if (player == null)
             {
                 player = new Player(GetDef<PlayerDef>("player"), position: new(32, 32), layer: 4, transformLocation: new(-8, -15) );
-                Objects.Add(player);
+                AddObject(player);
             }
             
 
-            foreach (var obj in Objects.Cast<PlatformerGameObject>())
+            foreach (var obj in ReadObjects.Cast<PlatformerGameObject>())
             {
                 var cachedPosition = obj.WorldPosition;
                 var cachedVelocity = obj.Veclocity;

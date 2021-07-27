@@ -7,6 +7,8 @@ namespace MooseLib.Tiled
 {
     public record TiledMooseObjectLayer(TiledMapObjectLayer Layer) : IObjectLayer
     {
+        public SortedSet<GameObjectBase> Objects { get; } = new();
+
         public string Name => Layer.Name;
         
         public bool IsVisible
@@ -19,11 +21,6 @@ namespace MooseLib.Tiled
         {
             get => Layer.Opacity;
             set => Layer.Opacity = value;
-        }
-
-        public IEnumerable<GameObjectBase> ObjectsAt(int x, int y, IMap map)
-        {
-            yield break;
         }
     }
 }

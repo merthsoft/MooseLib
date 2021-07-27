@@ -6,7 +6,7 @@ namespace MooseLib.Interface
     {
         void LoadMap(IMap map);
         void Update(GameTime gameTime);
-        public void Draw(ILayer layer, Matrix? viewMatrix = null);
+        public void Draw(ITileLayer layer, Matrix? viewMatrix = null);
         public void Draw(int layerIndex, Matrix? viewMatrix = null);
     }
 }

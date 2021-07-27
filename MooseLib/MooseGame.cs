@@ -40,7 +40,8 @@ namespace MooseLib
 
         public Vector2 WorldMouse { get; private set; }
 
-        public readonly SortedSet<GameObjectBase> Objects = new();
+        private readonly SortedSet<GameObjectBase> Objects = new();
+        public IReadOnlyList<GameObjectBase> ReadObjects => Objects.ToList().AsReadOnly();
         private readonly Queue<GameObjectBase> ObjectsToAdd = new();
 
         public int MapHeight => MainMap.Height;
@@ -133,7 +134,8 @@ namespace MooseLib
             Objects.ForEach(obj => obj.Update(gameTime));
             Objects.RemoveWhere(obj => obj.RemoveFlag);
 
-            ObjectsToAdd.ForEach(obj => Objects.Add(obj));
+            ObjectsToAdd.ForEach(obj =>Objects.Add(obj));
+
             ObjectsToAdd.Clear();
 
             PreUpdateBlockingMap(gameTime);
@@ -184,8 +186,8 @@ namespace MooseLib
                         var layer = MainMap.Layers[layerIndex];
                         switch (layer)
                         {
-                            case IObjectLayer objectLayer:
-                                value = objectLayer.ObjectsAt(x, y, MainMap).Any(o => o.InCell(x, y, MainMap)) ? 1 : 0;
+                            case IObjectLayer:
+                                value = Objects.Any(o => o.InCell(layerIndex, x, y, MainMap)) ? 1 : 0;
                                 objectLayerIndices.Add(layerIndex);
                                 break;
                             case ITileLayer tileLayer:
@@ -215,16 +217,15 @@ namespace MooseLib
                 var layer = MainMap.Layers[layerIndex];
                 switch (layer)
                 {
-                    case TiledMapTileLayer:
+                    case ITileLayer tileLayer:
                         hookTuple?.preHook?.Invoke(layerIndex);
-                        MapRenderer.Draw(layer, transformMatrix);
+                        MapRenderer.Draw(tileLayer, transformMatrix);
                         hookTuple?.postHook?.Invoke(layerIndex);
                         break;
-                    case TiledMapObjectLayer:
-                        SpriteBatch.Begin(transformMatrix: MainCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+                    case IObjectLayer:
+                        SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
                         hookTuple?.preHook?.Invoke(layerIndex);
-                        objectGroups.GetValueOrDefault(layerIndex)
-                            ?.ForEach(unit => unit.Draw(SpriteBatch));
+                        objectGroups[layerIndex]?.ForEach(unit => unit.Draw(SpriteBatch));
                         hookTuple?.postHook?.Invoke(layerIndex);
                         SpriteBatch.End();
                         break;

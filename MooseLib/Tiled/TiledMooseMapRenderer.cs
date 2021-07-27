@@ -14,13 +14,8 @@ namespace MooseLib.Tiled
         public TiledMooseMapRenderer(GraphicsDevice graphicsDevice)
             => MapRenderer = new(graphicsDevice);
 
-        private static TiledMapLayer GetLayer(ILayer layer)
-            => ((layer as TiledMooseTileLayer)?.Layer as TiledMapLayer)
-            ?? ((layer as TiledMooseObjectLayer)?.Layer as TiledMapLayer)
-            ?? throw new Exception("Unsupported layer typed.");
-
-        public void Draw(ILayer layer, Matrix? viewMatrix = null)
-            => MapRenderer.Draw(GetLayer(layer), viewMatrix);
+        public void Draw(ITileLayer layer, Matrix? viewMatrix = null)
+            => MapRenderer.Draw((layer as TiledMooseTileLayer)?.Layer, viewMatrix);
 
         public void Draw(int layerIndex, Matrix? viewMatrix = null)
             => MapRenderer.Draw(layerIndex, viewMatrix);

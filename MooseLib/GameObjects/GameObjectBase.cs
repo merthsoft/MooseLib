@@ -51,6 +51,9 @@ namespace MooseLib.GameObjects
             => WorldPosition.X / parentMap.TileWidth == x
             && WorldPosition.Y / parentMap.TileHeight == y;
 
+        public bool InCell(int layer, int x, int y, IMap parentMap)
+            => layer == Layer && InCell(x, y, parentMap);
+
         public int CompareTo(GameObjectBase? other)
             => (IsNull: other == null, Layer: Layer == other?.Layer, Y: WorldPosition.Y == other?.WorldPosition.Y, X: WorldPosition.X == other?.WorldPosition.X) switch
             {
