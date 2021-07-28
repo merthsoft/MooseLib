@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using MonoGame.Extended.Tiled;
 using MooseLib.Defs;
 using MooseLib.GameObjects;
 using MooseLib.Interface;
@@ -19,8 +18,7 @@ namespace MooseLib
     public abstract class MooseGame : Game
     {
         public MooseContentManager ContentManager { get; set; }
-
-        public IMapRenderer MapRenderer = null!;
+        
         public OrthographicCamera MainCamera = null!;
         public SpriteBatch SpriteBatch = null!;
 
@@ -43,6 +41,8 @@ namespace MooseLib
         private readonly SortedSet<GameObjectBase> Objects = new();
         public IReadOnlyList<GameObjectBase> ReadObjects => Objects.ToList().AsReadOnly();
         private readonly Queue<GameObjectBase> ObjectsToAdd = new();
+
+        private readonly Dictionary<string, ILayerRenderer> Renderers = new();
 
         public int MapHeight => MainMap.Height;
 
@@ -91,7 +91,6 @@ namespace MooseLib
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             MainCamera = new OrthographicCamera(GraphicsDevice) { Origin = new(0, 0) };
-            MapRenderer = new TiledMooseMapRenderer(GraphicsDevice);
 
             Load();
 
@@ -100,9 +99,14 @@ namespace MooseLib
 
         protected void LoadMap()
         {
-            MapRenderer.LoadMap(MainMap);
+            foreach (var renderer in Renderers.Values)
+                renderer.Load(MainMap);
+
             BuildFullBlockingMap();
         }
+
+        public void AddRenderer(string rendererKey, ILayerRenderer renderer)
+            => Renderers[rendererKey] = renderer;
 
         public void AddObject(GameObjectBase gameObject)
             => ObjectsToAdd.Enqueue(gameObject);
@@ -115,6 +119,7 @@ namespace MooseLib
 
         protected virtual void PreMapUpdate(GameTime gameTime) { return; }
         protected virtual void PreObjectsUpdate(GameTime gameTime) { return; }
+        protected virtual void PostObjectsUpdate(GameTime gameTime) { return; }
         protected virtual void PreUpdateBlockingMap(GameTime gameTime) { return; }
         protected virtual void PostUpdate(GameTime gameTime) { return; }
 
@@ -128,13 +133,27 @@ namespace MooseLib
             WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
 
             PreMapUpdate(gameTime);
-            MapRenderer.Update(gameTime);
+            foreach (var renderer in Renderers.Values)
+                renderer.Update(gameTime);
 
             PreObjectsUpdate(gameTime);
-            Objects.ForEach(obj => obj.Update(gameTime));
+            foreach (var obj in Objects)
+                obj.Update(gameTime);
+            PostObjectsUpdate(gameTime);
+
+            foreach (var obj in Objects)
+                if (obj.RemoveFlag)
+                    (MainMap.Layers[obj.Layer] as IObjectLayer)?.RemoveObject(obj);
+
             Objects.RemoveWhere(obj => obj.RemoveFlag);
 
-            ObjectsToAdd.ForEach(obj =>Objects.Add(obj));
+            foreach (var obj in ObjectsToAdd)
+            {
+                if (MainMap.Layers[obj.Layer] is not IObjectLayer layer)
+                    throw new Exception("Cannot add object to non-object layer");
+                layer.AddObject(obj);
+                Objects.Add(obj);
+            }
 
             ObjectsToAdd.Clear();
 
@@ -215,21 +234,13 @@ namespace MooseLib
             {
                 var hookTuple = renderHooks?.ElementAtOrDefault(layerIndex);
                 var layer = MainMap.Layers[layerIndex];
-                switch (layer)
-                {
-                    case ITileLayer tileLayer:
-                        hookTuple?.preHook?.Invoke(layerIndex);
-                        MapRenderer.Draw(tileLayer, transformMatrix);
-                        hookTuple?.postHook?.Invoke(layerIndex);
-                        break;
-                    case IObjectLayer:
-                        SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-                        hookTuple?.preHook?.Invoke(layerIndex);
-                        objectGroups[layerIndex]?.ForEach(unit => unit.Draw(SpriteBatch));
-                        hookTuple?.postHook?.Invoke(layerIndex);
-                        SpriteBatch.End();
-                        break;
-                }
+                var renderer = Renderers[layer.RendererKey];
+
+                renderer.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+                hookTuple?.preHook?.Invoke(layerIndex);
+                renderer.Draw(layer);
+                hookTuple?.postHook?.Invoke(layerIndex);
+                renderer.End();
             }
         }
 

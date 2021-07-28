@@ -1,16 +1,11 @@
 ﻿using MonoGame.Extended.Tiled;
-using MooseLib.GameObjects;
 using MooseLib.Interface;
-using System.Collections.Generic;
 
 namespace MooseLib.Tiled
 {
-    public record TiledMooseObjectLayer(TiledMapObjectLayer Layer) : IObjectLayer
+    public record TiledMooseTileLayer(TiledMapTileLayer Layer) : ITileLayer
     {
-        public SortedSet<GameObjectBase> Objects { get; } = new();
-
         public string Name => Layer.Name;
-        
         public bool IsVisible
         {
             get => Layer.IsVisible;
@@ -22,5 +17,9 @@ namespace MooseLib.Tiled
             get => Layer.Opacity;
             set => Layer.Opacity = value;
         }
+        public string RendererKey { get; set; } = TiledMooseMapRenderer.DefaultRenderKey;
+
+        public ITile GetTile(int x, int y)
+            => new TiledMooseTile(Layer.GetTile((ushort)x, (ushort)y));
     }
 }

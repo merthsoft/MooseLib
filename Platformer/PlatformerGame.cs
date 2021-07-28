@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Tiled;
 using MooseLib;
+using MooseLib.BaseDriver;
+using MooseLib.Interface;
 using MooseLib.Tiled;
 using Platformer.PlatformerGameObjects;
 using System;
@@ -12,16 +14,7 @@ namespace Platformer
 {
     public class PlatformerGame : MooseGame
     {
-#pragma warning disable CA2211 // Non-constant fields should not be visible
-        public static PlatformerGame Instance = null!;
-#pragma warning restore CA2211 // Non-constant fields should not be visible
-
         Player player = null!;
-
-        public PlatformerGame()
-        {
-            PlatformerGame.Instance = this;
-        }
 
         protected override void Initialize()
         {
@@ -34,9 +27,22 @@ namespace Platformer
 
         protected override void Load()
         {
+            AddRenderer(TiledMooseMapRenderer.DefaultRenderKey, new TiledMooseMapRenderer(GraphicsDevice));
+            AddRenderer(SpriteBatchRenderer.DefaultRenderKey, new SpriteBatchRenderer(SpriteBatch));
+
             InitializeMap(30, 30, 16, 16);
             MainMap.CopyFromMap(new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap")));
             LoadMap();
+
+            foreach (var layer in MainMap.Layers)
+            {
+                layer.RendererKey = layer switch
+                {
+                    ITileLayer => TiledMooseMapRenderer.DefaultRenderKey,
+                    IObjectLayer => SpriteBatchRenderer.DefaultRenderKey,
+                    _ => throw new Exception("Unsupported layer type"),
+                };
+            }
 
             MainCamera.ZoomIn(2f);
             MainCamera.Move(Direction.South * 160);

@@ -14,18 +14,28 @@ namespace MooseLib.Tiled
         public int TileWidth => Map.TileWidth;
         public int TileHeight => Map.TileHeight;
 
-        public IReadOnlyList<ILayer> Layers => Map.Layers.Select((l, _) => l switch
-        {
-            TiledMapTileLayer tileLayer => new TiledMooseTileLayer(tileLayer) as ILayer,
-            TiledMapObjectLayer objectLayer => new TiledMooseObjectLayer(objectLayer) as ILayer,
-            _ => throw new Exception("Can't handle this type of layer"),
-        }).ToList().AsReadOnly();
+        private readonly List<ILayer> layerCache = new();
+        public IReadOnlyList<ILayer> Layers => layerCache.AsReadOnly();
 
         public TiledMooseMap(string name, int width, int height, int tileWidth, int tileHeight, 
             TiledMapTileDrawOrder renderOrder = TiledMapTileDrawOrder.RightDown, 
             TiledMapOrientation orientation = TiledMapOrientation.Orthogonal, 
             Color? backgroundColor = null)
-            : this(new TiledMap(name, width, height, tileWidth, tileHeight, renderOrder, orientation, backgroundColor)) { }
+            : this(new TiledMap(name, width, height, tileWidth, tileHeight, renderOrder, orientation, backgroundColor)) 
+        {
+            BuildLayerCache();
+        }
+
+        private void BuildLayerCache()
+        {
+            layerCache.Clear();
+            layerCache.AddRange(Map.Layers.Select((l, _) => l switch
+            {
+                TiledMapTileLayer tileLayer => new TiledMooseTileLayer(tileLayer) as ILayer,
+                TiledMapObjectLayer objectLayer => new TiledMooseObjectLayer(objectLayer) as ILayer,
+                _ => throw new Exception("Can't handle this type of layer"),
+            }));
+        }
 
         public void CopyFromMap(IMap fromMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null)
         {
@@ -59,6 +69,8 @@ namespace MooseLib.Tiled
                         break;
                 }
             }
+
+            BuildLayerCache();
         }
     }
 }
