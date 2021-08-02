@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended;
+using Roy_T.AStar.Grids;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace MooseLib.Interface
 {
@@ -25,5 +28,10 @@ namespace MooseLib.Interface
         IEnumerable<int> GetBlockingMap(int cellX, int cellY);
         IEnumerable<int> GetBlockingMap(Vector2 worldPosition)
             => GetBlockingMap((int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight));
+
+        Grid BuildCollisionGrid(params Vector2[] walkableOverrides);
+        IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false);
+        IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null);
+        ReadOnlyCollection<int> GetBlockingVectorFromWorldPosition(Vector2 worldPosition);
     }
 }

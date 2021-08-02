@@ -10,7 +10,7 @@ namespace MooseLib.Interface
         void Load(IMap map);
 
         void Begin(
-            SpriteSortMode? sortMode = null, 
+            SpriteSortMode sortMode = SpriteSortMode.Deferred, 
             BlendState? blendState = null,
             SamplerState? samplerState = null, 
             DepthStencilState? depthStencilState = null, 

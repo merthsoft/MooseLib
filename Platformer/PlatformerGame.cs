@@ -66,7 +66,7 @@ namespace Platformer
 
                 if (obj.IsEffectedByGravity)
                 {
-                    var blockValue = GetBlockingVectorFromWorldPosition(obj.WorldPosition + Direction.South)[1];
+                    var blockValue = MainMap.GetBlockingVectorFromWorldPosition(obj.WorldPosition + Direction.South)[1];
                     if (blockValue == 0)
                     {
                         obj.Veclocity += Direction.South;
@@ -85,7 +85,7 @@ namespace Platformer
                     var newPosition = (obj.WorldPosition + obj.Veclocity).Round(0);
                     var blocked = false;
                     var prevPosition = obj.WorldPosition;
-                    foreach (var cell in FindWorldRay(cachedPosition, newPosition, true))
+                    foreach (var cell in MainMap.FindWorldRay(cachedPosition, newPosition, true))
                     {
                         var normal = (prevPosition.X - cell.WorldPosition.X,
                                       prevPosition.Y - cell.WorldPosition.Y);

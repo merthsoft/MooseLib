@@ -16,8 +16,14 @@ namespace MooseLib.BaseDriver
             SpriteBatch = spriteBatch;
         }
 
-        public void Begin(SpriteSortMode? sortMode = null, BlendState? blendState = null, SamplerState? samplerState = null, DepthStencilState? depthStencilState = null, RasterizerState? rasterizerState = null, Effect? effect = null, Matrix? transformMatrix = null)
-            => SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+        public void Begin(
+            SpriteSortMode sortMode = SpriteSortMode.Deferred,
+            BlendState? blendState = null, SamplerState? samplerState = null,
+            DepthStencilState? depthStencilState = null,
+            RasterizerState? rasterizerState = null,
+            Effect? effect = null,
+            Matrix? transformMatrix = null)
+            => SpriteBatch.Begin(sortMode, blendState, samplerState, depthStencilState, rasterizerState, effect, transformMatrix);
 
         public void Draw(ILayer layer)
         {

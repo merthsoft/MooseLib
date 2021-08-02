@@ -183,7 +183,7 @@ namespace SnowballFight
                                 CurrentMouseState.Position.Y / TileHeight * TileHeight);
                     mouseCell /= TileSize;
 
-                    var path = FindCellPath(unitCell, mouseCell);
+                    var path = MainMap.FindCellPath(unitCell, mouseCell);
                     if (path.Any() && path.Count() <= SelectedUnit.DisplaySpeed)
                     {
                         path.ForEach(SelectedUnit.MoveQueue.Enqueue);
@@ -216,7 +216,7 @@ namespace SnowballFight
             StatsWindow.AddLabel(112, yOffset + 2 + smallFontHeight * 2, $"Accuracy: {unit.DisplayAccuracy}", 1);
 
             var unitCell = unit.GetCell();
-            var cachedGrid = BuildCollisionGrid(unitCell);
+            var cachedGrid = MainMap.BuildCollisionGrid(unitCell);
             for (var x = 0; x < MapWidth; x++)
                 for (var y = 0; y < MapHeight; y++)
                 {
@@ -225,10 +225,10 @@ namespace SnowballFight
                     if (SelectedUnitHintCells.ContainsKey(deltaCell * TileSize))
                         continue;
 
-                    if (BlockingMap[x, y].Any(b => b > 0))
+                    if (MainMap.GetBlockingMap(x, y).Any(b => b > 0))
                         continue;
 
-                    var path = FindCellPath(unitCell, deltaCell, cachedGrid);
+                    var path = MainMap.FindCellPath(unitCell, deltaCell, cachedGrid);
 
                     if (!path.Any())
                         continue;
@@ -271,7 +271,7 @@ namespace SnowballFight
 
             void drawLineTo(Vector2 start, Vector2 end, Color color, bool extend, int thickness)
             {
-                foreach (var (worldPosition, blockedVector) in FindWorldRay(start, end, extend: extend))
+                foreach (var (worldPosition, blockedVector) in MainMap.FindWorldRay(start, end, extend: extend))
                 {
                     SpriteBatch.DrawPoint(worldPosition, color, thickness);
                     var cell = (worldPosition / TileSize).GetFloor();
@@ -305,7 +305,7 @@ namespace SnowballFight
             mouseCell /= TileSize;
 
             var unitCell = SelectedUnit.GetCell();
-            var mousePath = FindCellPath(unitCell, mouseCell);
+            var mousePath = MainMap.FindCellPath(unitCell, mouseCell);
             var mousePathCount = mousePath.Count();
             if (mousePathCount > 0 && mousePathCount <= SelectedUnit.DisplaySpeed)
             {

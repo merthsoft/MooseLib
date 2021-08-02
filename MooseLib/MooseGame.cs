@@ -52,11 +52,9 @@ namespace MooseLib
 
         public int TileHeight => MainMap.TileHeight;
 
-        public Size2 TileSize => new(TileWidth, TileHeight); // TODO: Cache
+        public Size2 TileSize => MainMap.TileSize; // TODO: Cache
 
-        public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
-
-        public List<int>[,] BlockingMap { get; private set; } = new List<int>[0, 0];
+        public Vector2 HalfTileSize => MainMap.HalfTileSize; // TODO: Cache
 
         public MooseGame()
         {
@@ -186,105 +184,5 @@ namespace MooseLib
                 renderer.End();
             }
         }
-
-        public bool CellIsInBounds(Vector2 cell)
-            => cell.X > 0 && cell.X < MapWidth
-            && cell.Y > 0 && cell.Y < MapHeight;
-
-        public bool CellIsInBounds(int cellX, int cellY)
-            => cellX > 0 && cellX < MapWidth
-            && cellY > 0 && cellY < MapHeight;
-
-        public virtual IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
-        {
-            var (x1, y1) = (endWorldPosition.X, endWorldPosition.Y);
-            var (x2, y2) = (startWorldPosition.X, startWorldPosition.Y);
-
-            var deltaX = (int)Math.Abs(x1 - x2);
-            var deltaZ = (int)Math.Abs(y1 - y2);
-
-            if (deltaX == 0 && deltaZ == 0)
-                yield break;
-
-            var stepX = x2 < x1 ? 1 : -1;
-            var stepZ = y2 < y1 ? 1 : -1;
-
-            var err = deltaX - deltaZ;
-
-            RayCell BuildReturnTuple(float x, float y) 
-                => new(new Vector2(x, y), BlockingMap[(int)(x / TileWidth), (int)(y / TileHeight)]);
-
-            while (true)
-            {
-                if (!WorldPositionIsInBounds(x2, y2))
-                    break;
-
-                yield return BuildReturnTuple(x2, y2);
-                if (!extend && x2 == x1 && y2 == y1)
-                    break;
-
-                var e2 = 2 * err;
-
-                if (e2 > -deltaZ)
-                {
-                    err -= deltaZ;
-                    x2 += stepX;
-                }
-
-                if (!WorldPositionIsInBounds(x2, y2))
-                    break;
-
-                if (fillCorners)
-                    yield return BuildReturnTuple(x2, y2);
-
-                if (!extend && x2 == x1 && y2 == y1)
-                    break;
-
-                if (e2 < deltaX)
-                {
-                    err += deltaX;
-                    y2 += stepZ;
-                }
-            }
-        }
-
-        public virtual IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null)
-        {
-            if (!CellIsInBounds(startCell) || !CellIsInBounds(endCell))
-                return Enumerable.Empty<Vector2>();
-
-            grid ??= BuildCollisionGrid(startCell);
-
-            var startX = (int)startCell.X;
-            var startY = (int)startCell.Y;
-            var endX = (int)endCell.X;
-            var endY = (int)endCell.Y;
-
-            var path = new PathFinder()
-                .FindPath(new GridPosition(startX, startY), new GridPosition(endX, endY), grid);
-
-            if (path.Type != PathType.Complete)
-                return Enumerable.Empty<Vector2>();
-
-            return path.Edges
-                .Select(e => new Vector2((int)e.End.Position.X, (int)e.End.Position.Y))
-                .Distinct();
-        }
-
-        public virtual Grid BaseGrid 
-            => Grid.CreateGridWithLateralConnections(
-                new GridSize(MapWidth, MapHeight), 
-                new Roy_T.AStar.Primitives.Size(Distance.FromMeters(1), Distance.FromMeters(1)),
-                Velocity.FromMetersPerSecond(1));
-
-        protected virtual Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
-            => BaseGrid.DisconnectWhere((x, y) => BlockingMap[x, y].Sum() > 0 && !walkableOverrides.Contains(new(x, y)));
-
-        public bool WorldPositionIsInBounds(float worldX, float worldY)
-            => worldX > 0 && worldX < MapWidth * TileWidth
-            && worldY > 0 && worldY < MapHeight * TileHeight;
-
-        public List<int> GetBlockingVectorFromWorldPosition(Vector2 worldPosition)
-            => BlockingMap[(int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight)];
     }
 }
