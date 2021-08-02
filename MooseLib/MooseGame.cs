@@ -56,12 +56,6 @@ namespace MooseLib
 
         public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2); // TODO: Cache
 
-        protected readonly HashSet<int> objectLayerIndices = new();
-        public IEnumerable<int> ObjectLayerIndices => objectLayerIndices;
-
-        protected readonly HashSet<int> tileLayerIndices = new();
-        public IEnumerable<int> TileLayerIndices => tileLayerIndices;
-
         public List<int>[,] BlockingMap { get; private set; } = new List<int>[0, 0];
 
         public MooseGame()
@@ -82,7 +76,6 @@ namespace MooseLib
         protected void InitializeMap(int width, int height, int tileWith, int tileHeight)
         {
             MainMap = new TiledMooseMap("map", width, height, tileWith, tileHeight);
-            BlockingMap = new List<int>[width, height];
         }
 
         protected abstract void Load();
@@ -101,26 +94,31 @@ namespace MooseLib
         {
             foreach (var renderer in Renderers.Values)
                 renderer.Load(MainMap);
-
-            BuildFullBlockingMap();
         }
 
         public void AddRenderer(string rendererKey, ILayerRenderer renderer)
             => Renderers[rendererKey] = renderer;
 
-        public void AddObject(GameObjectBase gameObject)
-            => ObjectsToAdd.Enqueue(gameObject);
+        public TObject AddObject<TObject>(TObject gameObject, IMap? parentMap = null) where TObject : GameObjectBase
+        {
+            ObjectsToAdd.Enqueue(gameObject);
+            gameObject.ParentMap = parentMap ?? MainMap;
+            return gameObject;
+        }
 
-        public void AddDef<TDef>(TDef def) where TDef : Def
-            => Defs[def.DefName] = def;
+        public TDef AddDef<TDef>(TDef def) where TDef : Def
+        {
+            Defs[def.DefName] = def;
+            return def;
+        }
 
         public TDef GetDef<TDef>(string defName) where TDef : Def
             => ((Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
 
-        protected virtual void PreMapUpdate(GameTime gameTime) { return; }
+        protected virtual void PreRenderUpdate(GameTime gameTime) { return; }
         protected virtual void PreObjectsUpdate(GameTime gameTime) { return; }
         protected virtual void PostObjectsUpdate(GameTime gameTime) { return; }
-        protected virtual void PreUpdateBlockingMap(GameTime gameTime) { return; }
+        protected virtual void PreMapUpdate(GameTime gameTime) { return; }
         protected virtual void PostUpdate(GameTime gameTime) { return; }
 
         protected override void Update(GameTime gameTime)
@@ -132,7 +130,7 @@ namespace MooseLib
 
             WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
 
-            PreMapUpdate(gameTime);
+            PreRenderUpdate(gameTime);
             foreach (var renderer in Renderers.Values)
                 renderer.Update(gameTime);
 
@@ -142,8 +140,11 @@ namespace MooseLib
             PostObjectsUpdate(gameTime);
 
             foreach (var obj in Objects)
-                if (obj.RemoveFlag)
-                    (MainMap.Layers[obj.Layer] as IObjectLayer)?.RemoveObject(obj);
+                if (obj.RemoveFlag && obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
+                {
+                    layer.RemoveObject(obj);
+                    obj.ParentMap = null;
+                }
 
             Objects.RemoveWhere(obj => obj.RemoveFlag);
 
@@ -157,66 +158,10 @@ namespace MooseLib
 
             ObjectsToAdd.Clear();
 
-            PreUpdateBlockingMap(gameTime);
-            UpdateBlockingMap();
+            PreMapUpdate(gameTime);
+            MainMap.Update(gameTime);
 
             PostUpdate(gameTime);
-        }
-
-        public IEnumerable<GameObjectBase> ObjectsAtLayer(int layerIndex)
-            => Objects
-                .SkipWhile(o => o.Layer < layerIndex)
-                .TakeWhile(o => o.Layer == layerIndex);
-
-        protected virtual void UpdateBlockingMap()
-        {
-            var layerGroups = BuildObjectLayerGroups();
-
-            foreach (var layerIndex in ObjectLayerIndices)
-                for (var x = 0; x < MapWidth; x++)
-                    for (var y = 0; y < MapHeight; y++)
-                        BlockingMap[x, y][layerIndex] =
-                            layerGroups.TryGetValue(layerIndex, out var set) ? set.Count(o => o.InCell(x, y, MainMap)) : 0;
-        }
-
-        private Dictionary<int, HashSet<GameObjectBase>> BuildObjectLayerGroups()
-        {
-            var layerGroups = new Dictionary<int, HashSet<GameObjectBase>>();
-            foreach (var obj in Objects)
-            {
-                layerGroups.TryAdd(obj.Layer, new());
-                layerGroups[obj.Layer].Add(obj);
-            }
-
-            return layerGroups;
-        }
-
-        protected virtual void BuildFullBlockingMap()
-        {
-            objectLayerIndices.Clear();
-            tileLayerIndices.Clear();
-            for (var x = 0; x < MapWidth; x++)
-                for (var y = 0; y < MapHeight; y++)
-                {
-                    BlockingMap[x, y] = new List<int>();
-                    for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
-                    {
-                        var value = 0;
-                        var layer = MainMap.Layers[layerIndex];
-                        switch (layer)
-                        {
-                            case IObjectLayer:
-                                value = Objects.Any(o => o.InCell(layerIndex, x, y, MainMap)) ? 1 : 0;
-                                objectLayerIndices.Add(layerIndex);
-                                break;
-                            case ITileLayer tileLayer:
-                                value = tileLayer.IsBlockedAt(x, y, MainMap) ? 1 : 0;
-                                tileLayerIndices.Add(layerIndex);
-                                break;
-                        }
-                        BlockingMap[x, y].Add(value);
-                    }
-                }
         }
 
         protected override void Draw(GameTime gameTime)
@@ -227,8 +172,6 @@ namespace MooseLib
             GraphicsDevice.Clear(Color.Black);
 
             var transformMatrix = MainCamera.GetViewMatrix();
-
-            var objectGroups = BuildObjectLayerGroups();
 
             for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
             {

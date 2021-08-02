@@ -25,6 +25,8 @@ namespace MooseLib.GameObjects
 
         public Action? StateCompleteAction { get; set; }
 
+        public IMap? ParentMap { get; set; }
+
         public GameObjectBase(GameObjectDef def, Vector2? position = null, int? layer = null, Vector2? size = null, string? direction = null)
         {
             Def = def;
@@ -44,12 +46,15 @@ namespace MooseLib.GameObjects
         public virtual bool AtWorldPosition(Vector2 worldPosition)
             => WorldRectangle.Contains(worldPosition);
 
-        public Vector2 GetCell(IMap parentMap)
-            => new Vector2(WorldPosition.X / parentMap.TileWidth, WorldPosition.Y / parentMap.TileHeight).GetFloor();
+        public Vector2 GetCell(IMap? parentMap = null)
+            => new Vector2(
+                WorldPosition.X / (parentMap ?? ParentMap)!.TileWidth, 
+                WorldPosition.Y / (parentMap ?? ParentMap)!.TileHeight
+            ).GetFloor();
 
-        public bool InCell(int x, int y, IMap parentMap)
-            => WorldPosition.X / parentMap.TileWidth == x
-            && WorldPosition.Y / parentMap.TileHeight == y;
+        public bool InCell(int x, int y, IMap? parentMap = null)
+            => WorldPosition.X / (parentMap ?? ParentMap)!.TileWidth == x
+            && WorldPosition.Y / (parentMap ?? ParentMap)!.TileHeight == y;
 
         public bool InCell(int layer, int x, int y, IMap parentMap)
             => layer == Layer && InCell(x, y, parentMap);

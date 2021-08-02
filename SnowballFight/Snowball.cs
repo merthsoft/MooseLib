@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using MooseLib;
 using MooseLib.Defs;
 using MooseLib.GameObjects;
 using System.Collections.Generic;
@@ -21,12 +20,9 @@ namespace SnowballFight
         private Queue<Vector2> FlightPath { get; }
         private Vector2 StartCell { get; }
 
-        public Snowball(SnowballFightGame parentGame, AnimatedGameObjectDef def, Vector2 startWorldPosition, Vector2 endWorldPosition) 
-            : base(parentGame, def, startWorldPosition, parentGame.SnowballLayer, state: States.Fly)
+        public Snowball(AnimatedGameObjectDef def, IEnumerable<Vector2> flightPath) 
+            : base(def, flightPath.First(), SnowballFightGame.SnowballLayer, state: States.Fly)
         {
-            var flightPath = ParentGame
-                                .FindWorldRay(startWorldPosition, endWorldPosition.GetFloor())
-                                .Select(pos => pos.WorldPosition);
             FlightPath = new(flightPath.Where((v, i) => i % 3 == 0));
 
             if (FlightPath.Count == 0)
@@ -56,7 +52,7 @@ namespace SnowballFight
 
         private bool IsBlocked()
             => FlightPath.Count == 0
-            || (GetCell() != StartCell 
-                && ParentGame.GetBlockingVectorFromWorldPosition(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
+            || (GetCell(ParentMap!) != StartCell 
+                && ParentMap.GetBlockingMap(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
     }
 }

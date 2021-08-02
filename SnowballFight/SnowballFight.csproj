@@ -31,8 +31,8 @@
     <PackageReference Include="Troschuetz.Random" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MooseLib.Ui\MooseLib.Ui.csproj" />
-    <ProjectReference Include="..\MooseLib\MooseLib.csproj" />
+    <ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
+    <ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended">

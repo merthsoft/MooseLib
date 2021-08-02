@@ -8,14 +8,17 @@ using MooseLib.Defs;
 using MooseLib.Ui;
 using System.Collections.Generic;
 using System.Linq;
+using MooseLib.Tiled;
+using MooseLib.BaseDriver;
 
 namespace SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
-        public int UnitLayer { get; private set; } = 2;
+        // TODO: Move layer values into something else
+        public static int UnitLayer { get; private set; } = 2;
 
-        public int SnowballLayer { get; private set; } = 4;
+        public static int SnowballLayer { get; private set; } = 4;
 
         private WindowManager WindowManager = null!;
 
@@ -30,7 +33,7 @@ namespace SnowballFight
 
         private Texture2D UnitsTexture = null!;
 
-        private IEnumerable<Unit> Units => Objects.OfType<Unit>();
+        private IEnumerable<Unit> Units => ReadObjects.OfType<Unit>();
 
         public AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
 
@@ -49,11 +52,13 @@ namespace SnowballFight
 
         protected override void Load()
         {
-            InitializeMap(30, 30, 16, 16);
-            MainMap.CopyMap(Content.Load<TiledMap>("Maps/testmap"), 0, 0);
+            AddRenderer(TiledMooseMapRenderer.DefaultRenderKey, new TiledMooseMapRenderer(GraphicsDevice));
+            AddRenderer(SpriteBatchRenderer.DefaultRenderKey, new SpriteBatchRenderer(SpriteBatch));
+
+            MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap"));
             LoadMap();
-            UnitLayer = ObjectLayerIndices.First();
-            SnowballLayer = ObjectLayerIndices.Last();
+            UnitLayer = MainMap.ObjectLayerIndices.First();
+            SnowballLayer = MainMap.ObjectLayerIndices.Last();
 
             UnitsTexture = Content.Load<Texture2D>("Images/units");
             var unitsTextureData = new Color[UnitsTexture.Width * UnitsTexture.Height];
@@ -106,8 +111,8 @@ namespace SnowballFight
 
         private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)
         {
-            var unit = new Unit(this, GetDef<UnitDef>(unitDef), cellX, cellY, state: state);
-            Objects.Add(unit);
+            var unit = new Unit(GetDef<UnitDef>(unitDef), cellX * TileWidth, cellY * TileHeight, state, SnowballDef);
+            AddObject(unit);
             return unit;
         }
 
@@ -130,7 +135,7 @@ namespace SnowballFight
             base.Update(gameTime);
         }
 
-        protected override void PreMapUpdate(GameTime gameTime)
+        protected override void PreRenderUpdate(GameTime gameTime)
             => HandleMouseInput();
 
         protected override void PostUpdate(GameTime gameTime)

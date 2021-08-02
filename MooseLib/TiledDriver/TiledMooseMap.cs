@@ -7,15 +7,31 @@ using System.Linq;
 
 namespace MooseLib.Tiled
 {
-    public record TiledMooseMap(TiledMap Map) : IMap
+    public record TiledMooseMap : IMap
     {
+        public TiledMap Map { get; protected set; }
+
         public int Height => Map.Height;
         public int Width => Map.Width;
         public int TileWidth => Map.TileWidth;
         public int TileHeight => Map.TileHeight;
 
-        private readonly List<ILayer> layerCache = new();
+        protected readonly List<ILayer> layerCache = new();
         public IReadOnlyList<ILayer> Layers => layerCache.AsReadOnly();
+        
+        private List<int>[,] blockingMap = new List<int>[0, 0];
+
+        protected readonly HashSet<int> objectLayerIndices = new();
+        public IEnumerable<int> ObjectLayerIndices => objectLayerIndices;
+
+        protected readonly HashSet<int> tileLayerIndices = new();
+        public IEnumerable<int> TileLayerIndices => tileLayerIndices;
+
+        public TiledMooseMap(TiledMap map)
+        {
+            Map = map;
+            BuildLayerCache();
+        }
 
         public TiledMooseMap(string name, int width, int height, int tileWidth, int tileHeight, 
             TiledMapTileDrawOrder renderOrder = TiledMapTileDrawOrder.RightDown, 
@@ -26,18 +42,40 @@ namespace MooseLib.Tiled
             BuildLayerCache();
         }
 
-        private void BuildLayerCache()
+        protected virtual void BuildLayerCache()
         {
             layerCache.Clear();
+            objectLayerIndices.Clear();
+            tileLayerIndices.Clear();
+
             layerCache.AddRange(Map.Layers.Select((l, _) => l switch
             {
                 TiledMapTileLayer tileLayer => new TiledMooseTileLayer(tileLayer) as ILayer,
                 TiledMapObjectLayer objectLayer => new TiledMooseObjectLayer(objectLayer) as ILayer,
                 _ => throw new Exception("Can't handle this type of layer"),
             }));
+            
+            for (var layerIndex = 0; layerIndex < Map.Layers.Count; layerIndex++)
+            {
+                var layer = Map.Layers[layerIndex];
+                switch (layer)
+                {
+                    case TiledMapTileLayer tileLayer:
+                        layerCache.Add(new TiledMooseTileLayer(tileLayer));
+                        tileLayerIndices.Add(layerIndex);
+                        break;
+
+                    case TiledMapObjectLayer objectLayer:
+                        layerCache.Add(new TiledMooseObjectLayer(objectLayer));
+                        objectLayerIndices.Add(layerIndex);
+                        break;
+                }
+            }
+
+            BuildFullBlockingMap();
         }
 
-        public void CopyFromMap(IMap fromMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null)
+        public virtual void CopyFromMap(IMap fromMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null)
         {
             var sourceMap = (fromMap as TiledMooseMap)?.Map;
             if (sourceMap == null)
@@ -71,6 +109,50 @@ namespace MooseLib.Tiled
             }
 
             BuildLayerCache();
+        }
+
+        protected virtual void BuildFullBlockingMap()
+        {
+            blockingMap = new List<int>[Width, Height];
+
+            for (var x = 0; x < Width; x++)
+                for (var y = 0; y < Height; y++)
+                {
+                    blockingMap[x, y] = new List<int>();
+                    for (var layerIndex = 0; layerIndex < layerCache.Count; layerIndex++)
+                    {
+                        var value = 0;
+                        var layer = layerCache[layerIndex];
+                        switch (layer)
+                        {
+                            case IObjectLayer objectLayer:
+                                value = objectLayer.Objects.Any(o => o.InCell(layerIndex, x, y, this)) ? 1 : 0;
+                                break;
+                            case ITileLayer tileLayer:
+                                value = tileLayer.IsBlockedAt(x, y, this) ? 1 : 0;
+                                break;
+                        }
+                        blockingMap[x, y].Add(value);
+                    }
+                }
+        }
+
+        public virtual void Update(GameTime gameTime)
+        {
+            UpdateBlockingMap();
+        }
+
+        public virtual IEnumerable<int> GetBlockingMap(int x, int y)
+            => blockingMap[x, y].AsEnumerable();
+
+
+        protected virtual void UpdateBlockingMap()
+        {
+            foreach (var layerIndex in ObjectLayerIndices)
+                for (var x = 0; x < Width; x++)
+                    for (var y = 0; y < Height; y++)
+                        blockingMap[x, y][layerIndex] = 
+                            (layerCache[layerIndex] as IObjectLayer)!.Objects.Count(o => o.InCell(x, y, this));
         }
     }
 }

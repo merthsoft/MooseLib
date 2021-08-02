@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MooseLib;
+using MooseLib.Defs;
 using MooseLib.GameObjects;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,6 @@ namespace SnowballFight
             public const string Idle = "idle";
             public const string Walk = "walk";
         }
-
-        public new SnowballFightGame ParentGame { get; private set; }
 
         public UnitDef UnitDef { get; }
 
@@ -39,12 +38,13 @@ namespace SnowballFight
         private readonly NormalDistribution AimDistribution = new(0, 2);
         private Unit? targettedUnit;
         private bool stepFlag;
+        private AnimatedGameObjectDef weaponDef;
 
-        public Unit(SnowballFightGame parentGame, UnitDef unitDef, int cellX, int cellY, string state) 
-            : base(parentGame, unitDef, new(cellX * parentGame.TileWidth, cellY * parentGame.TileHeight), parentGame.UnitLayer, state: state)
+        public Unit(UnitDef unitDef, int worldX, int worldY, string state, AnimatedGameObjectDef weaponDef) 
+            : base(unitDef, new(worldX, worldY), SnowballFightGame.UnitLayer, state: state)
         {
             UnitDef = unitDef;
-            ParentGame = parentGame;
+            this.weaponDef = weaponDef;
         }
 
         public override void Update(GameTime gameTime)
@@ -64,7 +64,7 @@ namespace SnowballFight
                     var nextCell = MoveQueue.Dequeue();
                     var cell = GetCell();
                     MoveDirection = new(nextCell.X - cell.X, nextCell.Y - cell.Y);
-                    NextLocation = nextCell * ParentGame.TileSize;
+                    NextLocation = nextCell * ParentMap.TileSize;
                 }
 
             base.Update(gameTime);
@@ -89,11 +89,12 @@ namespace SnowballFight
             if (targettedUnit == null)
                 return;
 
-            var startWorldPosition = WorldPosition + ParentGame.HalfTileSize;
+            var startWorldPosition = WorldPosition + ParentMap!.HalfTileSize;
             var wiggle = AimDistribution.NextDouble();
-            var endWorldPosition = (targettedUnit.WorldPosition + ParentGame.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
-            var snowBall = new Snowball(ParentGame, ParentGame.SnowballDef, startWorldPosition, endWorldPosition);
-            ParentGame.AddObject(snowBall);
+            var endWorldPosition = (targettedUnit.WorldPosition + ParentMap!.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
+            //var flightPath = startWorldPosition, endWorldPosition);
+            //var snowBall = new Snowball(weaponDef, flightPath);
+                        
             State = "idle";
             StateCompleteAction = null;
             targettedUnit = null;
