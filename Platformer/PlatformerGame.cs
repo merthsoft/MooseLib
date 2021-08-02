@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Tiled;
-using MooseLib;
-using MooseLib.BaseDriver;
-using MooseLib.Interface;
-using MooseLib.Tiled;
+using Merthsoft.MooseEngine;
+using Merthsoft.MooseEngine.BaseDriver;
+using Merthsoft.MooseEngine.Interface;
+using Merthsoft.MooseEngine.Tiled;
 using Platformer.PlatformerGameObjects;
 using System;
 using System.Diagnostics;

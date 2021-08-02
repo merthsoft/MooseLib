@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using MooseLib.Defs;
-using MooseLib.GameObjects;
+using Merthsoft.MooseEngine.Defs;
+using Merthsoft.MooseEngine.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
 

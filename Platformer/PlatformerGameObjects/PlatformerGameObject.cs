@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using MooseLib.GameObjects;
+using Merthsoft.MooseEngine.GameObjects;
 
 namespace Platformer.PlatformerGameObjects
 {

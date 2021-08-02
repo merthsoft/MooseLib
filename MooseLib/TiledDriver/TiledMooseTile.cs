@@ -1,8 +1,8 @@
 ﻿using MonoGame.Extended.Tiled;
-using MooseLib.Interface;
+using Merthsoft.MooseEngine.Interface;
 using System.Linq;
 
-namespace MooseLib.Tiled
+namespace Merthsoft.MooseEngine.Tiled
 {
     public record TiledMooseTile(TiledMapTile Tile) : ITile
     {

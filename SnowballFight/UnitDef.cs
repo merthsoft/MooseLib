@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using MooseLib;
-using MooseLib.Defs;
+using Merthsoft.MooseEngine;
+using Merthsoft.MooseEngine.Defs;
 
 namespace SnowballFight
 {

@@ -1,7 +1,7 @@
-﻿using MooseLib.GameObjects;
+﻿using Merthsoft.MooseEngine.GameObjects;
 using System.Collections.Generic;
 
-namespace MooseLib.Interface
+namespace Merthsoft.MooseEngine.Interface
 {
     public interface IObjectLayer : ILayer
     {

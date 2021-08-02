@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace MooseLib.Ui.Controls
+namespace Merthsoft.MooseEngine.Ui.Controls
 {
     public enum SelectMode
     {

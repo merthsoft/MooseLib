@@ -1,4 +1,4 @@
-﻿using MooseLib.Defs;
+﻿using Merthsoft.MooseEngine.Defs;
 
 namespace Platformer.PlatformerGameObjects
 {

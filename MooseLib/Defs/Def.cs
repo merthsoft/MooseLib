@@ -1,4 +1,4 @@
-﻿namespace MooseLib.Defs
+﻿namespace Merthsoft.MooseEngine.Defs
 {
     public record Def(string DefName)
     {

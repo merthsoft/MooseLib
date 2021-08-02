@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace MooseLib.Interface
+namespace Merthsoft.MooseEngine.Interface
 {
     public interface IMap
     {

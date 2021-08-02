@@ -4,9 +4,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using MooseLib.Ui.Controls;
+using Merthsoft.MooseEngine.Ui.Controls;
 
-namespace MooseLib.Ui
+namespace Merthsoft.MooseEngine.Ui
 {
     public class WindowManager
     {

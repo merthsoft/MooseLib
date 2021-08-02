@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended.Tiled;
-using MooseLib.Interface;
+using Merthsoft.MooseEngine.Interface;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace MooseLib.Tiled
+namespace Merthsoft.MooseEngine.Tiled
 {
     public record TiledMooseMap : IMap
     {

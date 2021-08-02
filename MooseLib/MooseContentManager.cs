@@ -4,7 +4,7 @@ using MonoGame.Extended.Serialization;
 using MonoGame.Extended.Sprites;
 using System.Collections.Generic;
 
-namespace MooseLib
+namespace Merthsoft.MooseEngine
 {
     public class MooseContentManager
     {

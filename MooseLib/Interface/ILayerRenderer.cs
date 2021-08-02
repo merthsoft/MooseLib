@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MooseLib.Interface
+namespace Merthsoft.MooseEngine.Interface
 {
     public interface ILayerRenderer
     {

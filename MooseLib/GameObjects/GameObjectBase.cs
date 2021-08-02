@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MooseLib.Defs;
-using MooseLib.Interface;
+using Merthsoft.MooseEngine.Defs;
+using Merthsoft.MooseEngine.Interface;
 using System;
 
-namespace MooseLib.GameObjects
+namespace Merthsoft.MooseEngine.GameObjects
 {
     public abstract class GameObjectBase : IComparable<GameObjectBase>
     {

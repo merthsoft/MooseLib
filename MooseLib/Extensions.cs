@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
-using MooseLib.Interface;
+using Merthsoft.MooseEngine.Interface;
 using Roy_T.AStar.Grids;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MooseLib
+namespace Merthsoft.MooseEngine
 {
     public static class Extensions
     {

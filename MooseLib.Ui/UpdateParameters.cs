@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 
-namespace MooseLib.Ui
+namespace Merthsoft.MooseEngine.Ui
 {
     public class UpdateParameters
     {

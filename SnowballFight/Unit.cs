@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MooseLib;
-using MooseLib.Defs;
-using MooseLib.GameObjects;
+using Merthsoft.MooseEngine;
+using Merthsoft.MooseEngine.Defs;
+using Merthsoft.MooseEngine.GameObjects;
 using System;
 using System.Collections.Generic;
 using Troschuetz.Random.Distributions.Continuous;

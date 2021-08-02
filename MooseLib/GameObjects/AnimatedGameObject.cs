@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
-using MooseLib.Defs;
+using Merthsoft.MooseEngine.Defs;
 
-namespace MooseLib.GameObjects
+namespace Merthsoft.MooseEngine.GameObjects
 {
     public class AnimatedGameObject : GameObjectBase
     {

@@ -1,4 +1,4 @@
-﻿namespace MooseLib.Interface
+﻿namespace Merthsoft.MooseEngine.Interface
 {
     public interface ITileLayer : ILayer
     {

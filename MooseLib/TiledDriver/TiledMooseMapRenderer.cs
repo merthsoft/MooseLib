@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled.Renderers;
-using MooseLib.Interface;
+using Merthsoft.MooseEngine.Interface;
 
-namespace MooseLib.Tiled
+namespace Merthsoft.MooseEngine.Tiled
 {
     public record TiledMooseMapRenderer : ILayerRenderer
     {

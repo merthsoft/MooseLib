@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MooseLib.Interface;
+using Merthsoft.MooseEngine.Interface;
 using System;
 
-namespace MooseLib.BaseDriver
+namespace Merthsoft.MooseEngine.BaseDriver
 {
     public class SpriteBatchRenderer : ILayerRenderer
     {

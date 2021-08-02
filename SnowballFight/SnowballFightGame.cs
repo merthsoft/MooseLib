@@ -1,15 +1,14 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
-using MooseLib;
-using MooseLib.Defs;
-using MooseLib.Ui;
+using Merthsoft.MooseEngine;
+using Merthsoft.MooseEngine.BaseDriver;
+using Merthsoft.MooseEngine.Defs;
+using Merthsoft.MooseEngine.Tiled;
+using Merthsoft.MooseEngine.Ui;
 using System.Collections.Generic;
 using System.Linq;
-using MooseLib.Tiled;
-using MooseLib.BaseDriver;
 
 namespace SnowballFight
 {

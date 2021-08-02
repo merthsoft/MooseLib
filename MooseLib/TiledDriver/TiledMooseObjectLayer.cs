@@ -1,11 +1,11 @@
 ﻿using MonoGame.Extended.Tiled;
-using MooseLib.BaseDriver;
-using MooseLib.GameObjects;
-using MooseLib.Interface;
+using Merthsoft.MooseEngine.BaseDriver;
+using Merthsoft.MooseEngine.GameObjects;
+using Merthsoft.MooseEngine.Interface;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MooseLib.Tiled
+namespace Merthsoft.MooseEngine.Tiled
 {
     public record TiledMooseObjectLayer(TiledMapObjectLayer Layer) : IObjectLayer
     {

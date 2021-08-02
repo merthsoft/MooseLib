@@ -2,10 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using MooseLib.Defs;
-using MooseLib.GameObjects;
-using MooseLib.Interface;
-using MooseLib.Tiled;
+using Merthsoft.MooseEngine.Defs;
+using Merthsoft.MooseEngine.GameObjects;
+using Merthsoft.MooseEngine.Interface;
+using Merthsoft.MooseEngine.Tiled;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MooseLib
+namespace Merthsoft.MooseEngine
 {
     public abstract class MooseGame : Game
     {

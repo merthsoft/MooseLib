@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
-namespace MooseLib.Ui.Controls
+namespace Merthsoft.MooseEngine.Ui.Controls
 {
     public class TextList : Control
     {

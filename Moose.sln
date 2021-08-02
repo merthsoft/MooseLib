@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.31512.422
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyberpunkRL", "CyberpunkRL\CyberpunkRL.csproj", "{9164FDF8-5777-457B-B47B-87D3D5D162D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MooseEngine", "MooseLib\MooseEngine.csproj", "{FF85E572-1165-41AE-AAF5-3922C362D09B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merthsoft.MooseEngine", "MooseLib\Merthsoft.MooseEngine.csproj", "{FF85E572-1165-41AE-AAF5-3922C362D09B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowballFight", "SnowballFight\SnowballFight.csproj", "{72AE64E7-2B72-4261-A38D-610B93B5583B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merthsoft.SnowballFight", "SnowballFight\Merthsoft.SnowballFight.csproj", "{72AE64E7-2B72-4261-A38D-610B93B5583B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MooseEngine.Ui", "MooseLib.Ui\MooseEngine.Ui.csproj", "{46A081EE-8F02-460A-8514-DD51F3979D83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merthsoft.MooseEngine.Ui", "MooseLib.Ui\Merthsoft.MooseEngine.Ui.csproj", "{46A081EE-8F02-460A-8514-DD51F3979D83}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platformer", "Platformer\Platformer.csproj", "{EC444063-D0D5-45D1-8E96-3A4366E0AFE6}"
 EndProject

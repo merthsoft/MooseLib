@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-namespace MooseLib.Ui
+namespace Merthsoft.MooseEngine.Ui
 {
     public static class Extensions
     {
