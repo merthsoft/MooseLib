@@ -3,10 +3,11 @@ using Merthsoft.MooseEngine.Defs;
 using Merthsoft.MooseEngine.GameObjects;
 using System.Collections.Generic;
 using System.Linq;
+using Merthsoft.MooseEngine.Interface;
 
 namespace SnowballFight
 {
-    internal class Snowball : AnimatedGameObject
+    public class Snowball : AnimatedGameObject
     {
         public class States
         {
@@ -18,7 +19,7 @@ namespace SnowballFight
         public const string AnimationKey = "snowball";
 
         private Queue<Vector2> FlightPath { get; }
-        private Vector2 StartCell { get; }
+        private Vector2 StartCell { get; set; }
 
         public Snowball(AnimatedGameObjectDef def, IEnumerable<Vector2> flightPath) 
             : base(def, flightPath.First(), SnowballFightGame.SnowballLayer, state: States.Fly)
@@ -29,6 +30,12 @@ namespace SnowballFight
                 State = States.Dead;
 
             SpriteTransform = new(new(-8, -8), 0, Vector2.One);
+        }
+
+        public override void OnAdd(IMap map)
+        {
+            base.OnAdd(map);
+
             StartCell = GetCell();
         }
 
@@ -53,6 +60,6 @@ namespace SnowballFight
         private bool IsBlocked()
             => FlightPath.Count == 0
             || (GetCell(ParentMap!) != StartCell 
-                && ParentMap.GetBlockingMap(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
+                && ParentMap!.GetBlockingMap(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
     }
 }

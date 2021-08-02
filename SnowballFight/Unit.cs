@@ -6,6 +6,7 @@ using Merthsoft.MooseEngine.GameObjects;
 using System;
 using System.Collections.Generic;
 using Troschuetz.Random.Distributions.Continuous;
+using System.Linq;
 
 namespace SnowballFight
 {
@@ -38,13 +39,11 @@ namespace SnowballFight
         private readonly NormalDistribution AimDistribution = new(0, 2);
         private Unit? targettedUnit;
         private bool stepFlag;
-        private AnimatedGameObjectDef weaponDef;
 
-        public Unit(UnitDef unitDef, int worldX, int worldY, string state, AnimatedGameObjectDef weaponDef) 
+        public Unit(UnitDef unitDef, int worldX, int worldY, string state) 
             : base(unitDef, new(worldX, worldY), SnowballFightGame.UnitLayer, state: state)
         {
             UnitDef = unitDef;
-            this.weaponDef = weaponDef;
         }
 
         public override void Update(GameTime gameTime)
@@ -64,7 +63,7 @@ namespace SnowballFight
                     var nextCell = MoveQueue.Dequeue();
                     var cell = GetCell();
                     MoveDirection = new(nextCell.X - cell.X, nextCell.Y - cell.Y);
-                    NextLocation = nextCell * ParentMap.TileSize;
+                    NextLocation = nextCell * ParentMap!.TileSize;
                 }
 
             base.Update(gameTime);
@@ -92,9 +91,9 @@ namespace SnowballFight
             var startWorldPosition = WorldPosition + ParentMap!.HalfTileSize;
             var wiggle = AimDistribution.NextDouble();
             var endWorldPosition = (targettedUnit.WorldPosition + ParentMap!.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
-            //var flightPath = startWorldPosition, endWorldPosition);
-            //var snowBall = new Snowball(weaponDef, flightPath);
-                        
+            var flightPath = ParentMap!.FindWorldRay(startWorldPosition, endWorldPosition);
+            SnowballFightGame.SpawnSnowball(flightPath.Select(p => p.WorldPosition));
+
             State = "idle";
             StateCompleteAction = null;
             targettedUnit = null;

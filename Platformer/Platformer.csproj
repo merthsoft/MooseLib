@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MooseLib\Merthsoft.MooseEngine.csproj" />
+    <ProjectReference Include="..\SnowballFight\Merthsoft.SnowballFight.csproj" />
   </ItemGroup>
 	<ItemGroup>
 		<Reference Include="MonoGame.Extended">

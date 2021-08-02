@@ -42,6 +42,12 @@ namespace Merthsoft.MooseEngine.GameObjects
         }
 
         public abstract void Draw(SpriteBatch spriteBatch);
+        
+        public virtual void OnAdd(IMap map)
+            => ParentMap = map;
+
+        public virtual void OnRemove()
+            => ParentMap = null;
 
         public virtual bool AtWorldPosition(Vector2 worldPosition)
             => WorldRectangle.Contains(worldPosition);

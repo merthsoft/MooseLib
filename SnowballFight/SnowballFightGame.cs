@@ -14,6 +14,8 @@ namespace SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
+        public static SnowballFightGame Instance { get; private set; } = null!;
+
         // TODO: Move layer values into something else
         public static int UnitLayer { get; private set; } = 2;
 
@@ -38,6 +40,7 @@ namespace SnowballFight
 
         public SnowballFightGame()
         {
+            Instance = this;
         }
 
         protected override void Initialize()
@@ -110,9 +113,16 @@ namespace SnowballFight
 
         private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)
         {
-            var unit = new Unit(GetDef<UnitDef>(unitDef), cellX * TileWidth, cellY * TileHeight, state, SnowballDef);
+            var unit = new Unit(GetDef<UnitDef>(unitDef), cellX * TileWidth, cellY * TileHeight, state);
             AddObject(unit);
             return unit;
+        }
+
+        public static Snowball SpawnSnowball(IEnumerable<Vector2> flightPath)
+        {     
+            var snowBall = new Snowball(Instance.SnowballDef, flightPath);
+            Instance.AddObject(snowBall);
+            return snowBall;
         }
 
         protected override void Update(GameTime gameTime)

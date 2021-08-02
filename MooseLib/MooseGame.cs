@@ -6,9 +6,6 @@ using Merthsoft.MooseEngine.Defs;
 using Merthsoft.MooseEngine.GameObjects;
 using Merthsoft.MooseEngine.Interface;
 using Merthsoft.MooseEngine.Tiled;
-using Roy_T.AStar.Grids;
-using Roy_T.AStar.Paths;
-using Roy_T.AStar.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,7 +97,7 @@ namespace Merthsoft.MooseEngine
         public TObject AddObject<TObject>(TObject gameObject, IMap? parentMap = null) where TObject : GameObjectBase
         {
             ObjectsToAdd.Enqueue(gameObject);
-            gameObject.ParentMap = parentMap ?? MainMap;
+            gameObject.OnAdd(parentMap ?? MainMap);
             return gameObject;
         }
 
@@ -141,15 +138,18 @@ namespace Merthsoft.MooseEngine
                 if (obj.RemoveFlag && obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
                 {
                     layer.RemoveObject(obj);
-                    obj.ParentMap = null;
+                    obj.OnRemove();
                 }
 
             Objects.RemoveWhere(obj => obj.RemoveFlag);
 
             foreach (var obj in ObjectsToAdd)
             {
-                if (MainMap.Layers[obj.Layer] is not IObjectLayer layer)
-                    throw new Exception("Cannot add object to non-object layer");
+                var map = obj.ParentMap
+                    ?? throw new Exception("Object not added to a map.");
+                var layer = map.Layers[obj.Layer] as IObjectLayer
+                    ?? throw new Exception("Cannot add object to non-object layer");
+                
                 layer.AddObject(obj);
                 Objects.Add(obj);
             }
