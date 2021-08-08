@@ -9,11 +9,14 @@ using Merthsoft.MooseEngine.Tiled;
 using Merthsoft.MooseEngine.Ui;
 using System.Collections.Generic;
 using System.Linq;
+using Merthsoft.MooseEngine.Ui.Controls;
 
-namespace SnowballFight
+namespace Merthsoft.SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
+        public const int WindowSize = 960;
+
         public static SnowballFightGame Instance { get; private set; } = null!;
 
         // TODO: Move layer values into something else
@@ -22,8 +25,9 @@ namespace SnowballFight
         public static int SnowballLayer { get; private set; } = 4;
 
         private WindowManager WindowManager = null!;
-
         private Window StatsWindow = null!;
+        private SimpleMenu MainMenu = null!;
+
         public OrthographicCamera StatsWindowCamera = null!;
 
         private readonly Dictionary<Vector2, Color> SelectedUnitHintCells = new();
@@ -47,8 +51,8 @@ namespace SnowballFight
         {
             base.Initialize();
 
-            Graphics.PreferredBackBufferWidth = 960;
-            Graphics.PreferredBackBufferHeight = 960;
+            Graphics.PreferredBackBufferWidth = WindowSize;
+            Graphics.PreferredBackBufferHeight = WindowSize;
             Graphics.ApplyChanges();
         }
 
@@ -102,13 +106,34 @@ namespace SnowballFight
             };
 
             WindowManager = new WindowManager(new Theme[] {
-                new("Candycane", windowTextures[0], 32, 32, fonts) { ControlDrawOffset = new(6, 6), TextColor = Color.Gold, TextMouseOverColor = Color.Maroon },
+                new("Candycane", windowTextures[0], 32, 32, fonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Maroon },
             });
+
+            MainMenu = new SimpleMenu(WindowManager.DefaultTheme, "New Game", "Exit");
+            WindowManager.AddWindow(MainMenu);
+
+            MainMenu.Center(WindowSize, WindowSize);
+            MainMenu.Clicked = MainMenu_Clicked;
 
             StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2);
             StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
+            StatsWindow.Hide();
 
             ContentManager.LoadAnimatedSpriteSheet(Snowball.AnimationKey);
+        }
+
+        private void MainMenu_Clicked(string option)
+        {
+            switch (option)
+            {
+                case "New Game":
+                    MainMenu.Hide();
+                    NewGame();
+                    break;
+                case "Exit":
+                    ShouldQuit = true;
+                    break;
+            }
         }
 
         private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)
@@ -116,6 +141,20 @@ namespace SnowballFight
             var unit = new Unit(GetDef<UnitDef>(unitDef), cellX * TileWidth, cellY * TileHeight, state);
             AddObject(unit);
             return unit;
+        }
+
+        private void NewGame()
+        {
+            SpawnUnit("deer", 5, 9);
+            SpawnUnit("elf1", 10, 5);
+            SpawnUnit("elf2", 3, 10);
+            SpawnUnit("elf3", 11, 11);
+
+            SpawnUnit("krampus", 12, 14);
+            SpawnUnit("mari", 13, 14);
+
+            SpawnUnit("santa", 13, 12);
+            SpawnUnit("snowman", 11, 13);
         }
 
         public static Snowball SpawnSnowball(IEnumerable<Vector2> flightPath)
@@ -127,20 +166,6 @@ namespace SnowballFight
 
         protected override void Update(GameTime gameTime)
         {
-            if (!Units.Any())
-            {
-                SpawnUnit("deer", 5, 9);
-                SpawnUnit("elf1", 10, 5);
-                SpawnUnit("elf2", 3, 10);
-                SpawnUnit("elf3", 11, 11);
-
-                SpawnUnit("krampus", 12, 14);
-                SpawnUnit("mari", 13, 14);
-
-                SpawnUnit("santa", 13, 12);
-                SpawnUnit("snowman", 11, 13);
-            }
-
             base.Update(gameTime);
         }
 
@@ -157,7 +182,7 @@ namespace SnowballFight
                 null,
                 (null, _ => DrawTargetLine()));
 
-            SpriteBatch.Begin(transformMatrix: StatsWindowCamera.GetViewMatrix(), blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+            SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             WindowManager.Draw(SpriteBatch);
             SpriteBatch.End();
         }
@@ -211,6 +236,7 @@ namespace SnowballFight
         private void SelectSingleUnit(Unit unit)
         {
             ClearSelectUnits();
+            StatsWindow.Show();
             SelectedUnit = unit;
 
             var displayNameSize = StatsWindow.MeasureString(unit.DisplayName);
@@ -263,6 +289,7 @@ namespace SnowballFight
             SelectedUnitHintCells.Clear();
             TargettedUnit = null;
             StatsWindow.Controls.Clear();
+            StatsWindow.Hide();
         }
 
         private void DrawTargetLine()

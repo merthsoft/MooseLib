@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SnowballFight
+namespace Merthsoft.SnowballFight
 {
     public static class Program
     {

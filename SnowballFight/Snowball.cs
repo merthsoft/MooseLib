@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Merthsoft.MooseEngine.Interface;
 
-namespace SnowballFight
+namespace Merthsoft.SnowballFight
 {
     public class Snowball : AnimatedGameObject
     {

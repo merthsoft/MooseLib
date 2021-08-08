@@ -14,6 +14,8 @@ namespace Merthsoft.MooseEngine
 {
     public abstract class MooseGame : Game
     {
+        protected bool ShouldQuit { get; set; } = false;
+
         public MooseContentManager ContentManager { get; set; }
         
         public OrthographicCamera MainCamera = null!;
@@ -160,6 +162,9 @@ namespace Merthsoft.MooseEngine
             MainMap.Update(gameTime);
 
             PostUpdate(gameTime);
+
+            if (ShouldQuit)
+                base.Exit();
         }
 
         protected override void Draw(GameTime gameTime)

@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Merthsoft.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
-using Merthsoft.MooseEngine.Ui.Controls;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Merthsoft.MooseEngine.Ui
 {
     public class Window
     {
-        public WindowManager WindowManager { get; set; }
-
         public Theme Theme { get; set; }
 
-        public bool Close { get; set; }
+        public bool ShouldClose { get; protected set; }
+
+        public bool Visible { get; set; } = true;
 
         public Rectangle Rectangle { get; set; }
 
@@ -30,23 +29,23 @@ namespace Merthsoft.MooseEngine.Ui
             set => Rectangle = new Rectangle(Rectangle.X, Rectangle.Y, (int)value.X, (int)value.Y);
         }
 
+        public int Width => Rectangle.Width;
+        public int Height => Rectangle.Height;
+        public int X => Rectangle.X;
+        public int Y => Rectangle.Y;
+
         public List<Control> Controls { get; } = new();
 
-        public Window(WindowManager windowManager, int x, int y, int w, int h)
-            : this(windowManager, new(x, y, w, h))
-        {
-        }
+        public Window(Rectangle rectangle, Theme theme)
+            => (Rectangle, Theme)
+             = (rectangle, theme);
 
-        public Window(WindowManager windowManager, Rectangle rectangle)
-            => (WindowManager, Rectangle, Theme)
-             = (windowManager, rectangle, windowManager.DefaultTheme);
-
-        public void Update(UpdateParameters updateParameters)
+        public virtual void Update(UpdateParameters updateParameters)
         {
             foreach (var c in Controls)
             {
                 var controlUpdateParameters = new UpdateParameters(updateParameters.GameTime, updateParameters.LocalMousePosition - c.Position);
-                if (c.Rectangle.Contains(updateParameters.LocalMousePosition))
+                if (Visible && c.Rectangle.Contains(updateParameters.LocalMousePosition))
                 {
                     controlUpdateParameters.MouseOver = true;
                     controlUpdateParameters.LeftMouse = updateParameters.LeftMouse;
@@ -56,8 +55,11 @@ namespace Merthsoft.MooseEngine.Ui
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
+            if (!Visible)
+                return;
+
             var numXTiles = Rectangle.Width / Theme.TileWidth;
             var numYTiles = Rectangle.Height / Theme.TileHeight;
 
@@ -87,6 +89,9 @@ namespace Merthsoft.MooseEngine.Ui
             Controls.ForEach(c => c.Draw(spriteBatch));
         }
 
+        public void Center(int width, int height)
+            => Position = new(width / 2 - Width / 2, height / 2 - Height / 2);
+
         public Line AddLine(int x1, int y1, int x2, int y2, int thickness = 1)
             => (Controls.AddPassThrough(new Line(this, x1, y1, x2, y2, thickness)) as Line)!;
 
@@ -104,11 +109,12 @@ namespace Merthsoft.MooseEngine.Ui
                 Action = action,
             }) as Label)!;
 
-        public TextList AddActionList(int x, int y, Action<Control, UpdateParameters> action, params string[] options)
+        public TextList AddActionList(int x, int y, int fontIndex, Action<Control, UpdateParameters> action, params string[] options)
             => (Controls.AddPassThrough(new TextList(this, x, y, options)
             {
                 Action = action,
                 SelectMode = SelectMode.None,
+                FontIndex = fontIndex,
             }) as TextList)!;
 
         public TextList AddActionList(int x, int y, params (string text, Action<Control, UpdateParameters> action)[] options)
@@ -132,5 +138,14 @@ namespace Merthsoft.MooseEngine.Ui
 
         public Vector2 MeasureString(string s, int fontIndex = 0)
             => Theme.Fonts[fontIndex].MeasureString(s);
+
+        public void Close()
+            => ShouldClose = true;
+
+        public void Hide()
+            => Visible = false;
+
+        public void Show()
+            => Visible = true;
     }
 }

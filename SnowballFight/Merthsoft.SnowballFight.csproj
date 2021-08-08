@@ -10,7 +10,7 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
-    <StartupObject>SnowballFight.Program</StartupObject>
+    <StartupObject>Merthsoft.SnowballFight.Program</StartupObject>
     <AssemblyName>Snowfight Tactics</AssemblyName>
   </PropertyGroup>
 	<ItemGroup>

@@ -2,7 +2,7 @@
 using Merthsoft.MooseEngine;
 using Merthsoft.MooseEngine.Defs;
 
-namespace SnowballFight
+namespace Merthsoft.SnowballFight
 {
     public record UnitDef : AnimatedGameObjectDef
     {

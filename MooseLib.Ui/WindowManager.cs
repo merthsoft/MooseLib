@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Merthsoft.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
-using Merthsoft.MooseEngine.Ui.Controls;
+using System;
+using System.Collections.Generic;
 
 namespace Merthsoft.MooseEngine.Ui
 {
@@ -16,7 +15,9 @@ namespace Merthsoft.MooseEngine.Ui
 
         public Theme DefaultTheme => Themes[DefaultThemeIndex];
 
-        public List<Window> Windows { get; } = new();
+        private List<Window> windowsToAdd = new();
+        private List<Window> windows = new();
+        public IReadOnlyCollection<Window> Windows => windows;
 
         internal MouseState CurrentMouseState { get; set; }
 
@@ -44,27 +45,35 @@ namespace Merthsoft.MooseEngine.Ui
                 }
                 w.Update(updateParams);
             }
-            Windows.RemoveAll(w => w.Close);
+            windows.RemoveAll(w => w.ShouldClose);
+            windows.AddRange(windowsToAdd);
+            windowsToAdd.Clear();
             PreviousMouseState = CurrentMouseState;
         }
 
         public void Draw(SpriteBatch spriteBatch)
-            => Windows.ForEach(w => w.Draw(spriteBatch));
+            => windows.ForEach(w => w.Draw(spriteBatch));
 
         public Window NewWindow(int x, int y, int width, int height)
         {
-            var ret = new Window(this, x, y, width, height);
-            Windows.Add(ret);
+            var ret = new Window(new(x, y, width, height), DefaultTheme);
+            windowsToAdd.Add(ret);
             return ret;
         }
 
         public Window NewActionListWindow(int x, int y, Action<Control, UpdateParameters> action, params string[] options)
         {
-            var ret = new Window(this, x, y, 0, 0);
-            var list = ret.AddActionList(0, 0, action, options);
+            var ret = new Window(new(x, y, 0, 0), DefaultTheme);
+            var list = ret.AddActionList(0, 0, 0, action, options);
             ret.Size = list.CalculateSize() + new Vector2(DefaultTheme.TileWidth * 2, DefaultTheme.TileHeight);
-            Windows.Add(ret);
+            windowsToAdd.Add(ret);
             return ret;
+        }
+
+        public Window AddWindow(Window window)
+        {
+            windowsToAdd.Add(window);
+            return window;
         }
     }
 }

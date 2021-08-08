@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Troschuetz.Random.Distributions.Continuous;
 using System.Linq;
 
-namespace SnowballFight
+namespace Merthsoft.SnowballFight
 {
     internal class Unit : AnimatedGameObject
     {
