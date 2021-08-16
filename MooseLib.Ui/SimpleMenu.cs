@@ -16,10 +16,10 @@ namespace Merthsoft.MooseEngine.Ui
 
         private void MainMenu_Clicked(Control owner, UpdateParameters @params)
         {
-            if (owner is not TextList textList)
+            if (owner is not TextList textList || textList.MouseOverOption == null)
                 return;
 
-            Clicked?.Invoke(textList.Options[textList.MouseOverIndex].Text);
+            Clicked?.Invoke(textList.MouseOverOption.Text);
         }
     }
 }

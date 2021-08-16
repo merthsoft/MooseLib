@@ -1,12 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.Defs;
+﻿using Merthsoft.MooseEngine;
 using Merthsoft.MooseEngine.GameObjects;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using Troschuetz.Random.Distributions.Continuous;
 using System.Linq;
+using Troschuetz.Random.Distributions.Continuous;
 
 namespace Merthsoft.SnowballFight
 {

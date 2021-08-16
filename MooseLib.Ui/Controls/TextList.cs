@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 
 namespace Merthsoft.MooseEngine.Ui.Controls
 {
@@ -14,6 +13,7 @@ namespace Merthsoft.MooseEngine.Ui.Controls
         public SelectMode SelectMode { get; set; } = SelectMode.None;
 
         public int MouseOverIndex { get; protected set; } = -1;
+        public TextListOption? MouseOverOption => MouseOverIndex == -1 ? null : Options[MouseOverIndex];
 
         public TextList(Window window, int x, int y) : base(window, x, y)
         {

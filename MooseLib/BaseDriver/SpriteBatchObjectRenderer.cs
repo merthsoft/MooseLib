@@ -5,13 +5,13 @@ using System;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {
-    public class SpriteBatchRenderer : ILayerRenderer
+    public class SpriteBatchObjectRenderer : ILayerRenderer
     {
-        public const string DefaultRenderKey = "SpriteBatchRenderer_Default";
+        public static string DefaultRenderKey = "SpriteBatchObjectRenderer_Default";
 
         public SpriteBatch SpriteBatch { get; }
 
-        public SpriteBatchRenderer(SpriteBatch spriteBatch)
+        public SpriteBatchObjectRenderer(SpriteBatch spriteBatch)
         {
             SpriteBatch = spriteBatch;
         }
@@ -25,9 +25,8 @@ namespace Merthsoft.MooseEngine.BaseDriver
             Matrix? transformMatrix = null)
             => SpriteBatch.Begin(sortMode, blendState, samplerState, depthStencilState, rasterizerState, effect, transformMatrix);
 
-        public void Draw(ILayer layer)
+        public virtual void Draw(ILayer layer, int layerNumber)
         {
-            // TODO: Handle a tile layer if you can
             if (layer is not IObjectLayer objectLayer)
                 throw new Exception("Object layer expected");
 

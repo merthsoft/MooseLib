@@ -1,11 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Merthsoft.MooseEngine.Defs;
+using Merthsoft.MooseEngine.GameObjects;
+using Merthsoft.MooseEngine.Interface;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using Merthsoft.MooseEngine.Defs;
-using Merthsoft.MooseEngine.GameObjects;
-using Merthsoft.MooseEngine.Interface;
-using Merthsoft.MooseEngine.Tiled;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,11 +67,6 @@ namespace Merthsoft.MooseEngine
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             base.Initialize();
-        }
-
-        protected void InitializeMap(int width, int height, int tileWith, int tileHeight)
-        {
-            MainMap = new TiledMooseMap("map", width, height, tileWith, tileHeight);
         }
 
         protected abstract void Load();
@@ -172,7 +166,7 @@ namespace Merthsoft.MooseEngine
 
         protected void Draw(params (Action<int>? preHook, Action<int>? postHook)?[] renderHooks)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.DarkGray);
 
             var transformMatrix = MainCamera.GetViewMatrix();
 
@@ -189,5 +183,20 @@ namespace Merthsoft.MooseEngine
                 renderer.End();
             }
         }
+
+        public bool WasKeyJustPressed(Keys key)
+            => CurrentKeyState.IsKeyDown(key) && PreviousKeyState.IsKeyUp(key);
+
+        public bool WasKeyJustReleased(Keys key)
+            => CurrentKeyState.IsKeyUp(key) && PreviousKeyState.IsKeyDown(key);
+
+        public bool IsKeyDown(Keys key)
+            => CurrentKeyState.IsKeyDown(key);
+
+        public bool WasKeyDown(Keys key)
+            => PreviousKeyState.IsKeyDown(key);
+
+        public bool IsKeyHeld(Keys key)
+            => CurrentKeyState.IsKeyDown(key) && PreviousKeyState.IsKeyDown(key);
     }
 }

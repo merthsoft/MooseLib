@@ -60,6 +60,6 @@ namespace Merthsoft.SnowballFight
         private bool IsBlocked()
             => FlightPath.Count == 0
             || (GetCell(ParentMap!) != StartCell 
-                && ParentMap!.GetBlockingMap(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
+                && ParentMap!.GetBlockingVector(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
     }
 }

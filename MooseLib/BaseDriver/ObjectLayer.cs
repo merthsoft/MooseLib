@@ -1,4 +1,5 @@
-﻿using Merthsoft.MooseEngine.GameObjects;
+﻿using System;
+using Merthsoft.MooseEngine.GameObjects;
 using Merthsoft.MooseEngine.Interface;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,11 @@ namespace Merthsoft.MooseEngine.BaseDriver
         public bool IsVisible { get; set; }
         public float Opacity { get; set; }
         public string RendererKey { get; set; }
+        public int Number { get; }
 
-        public ObjectLayer(string name, string rendererKey)
-            => (Name, RendererKey)
-             = (name, rendererKey);
+        public ObjectLayer(string name, string rendererKey, int number)
+            => (Name, RendererKey, Number)
+             = (name, rendererKey, number);
 
         public void AddObject(GameObjectBase obj)
             => objects.Add(obj);

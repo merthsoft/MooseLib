@@ -4,7 +4,7 @@ using MonoGame.Extended.Tiled;
 using Merthsoft.MooseEngine;
 using Merthsoft.MooseEngine.BaseDriver;
 using Merthsoft.MooseEngine.Interface;
-using Merthsoft.MooseEngine.Tiled;
+using Merthsoft.MooseEngine.TiledDriver;
 using Platformer.PlatformerGameObjects;
 using System;
 using System.Diagnostics;
@@ -28,9 +28,9 @@ namespace Platformer
         protected override void Load()
         {
             AddRenderer(TiledMooseMapRenderer.DefaultRenderKey, new TiledMooseMapRenderer(GraphicsDevice));
-            AddRenderer(SpriteBatchRenderer.DefaultRenderKey, new SpriteBatchRenderer(SpriteBatch));
+            AddRenderer(SpriteBatchObjectRenderer.DefaultRenderKey, new SpriteBatchObjectRenderer(SpriteBatch));
 
-            InitializeMap(30, 30, 16, 16);
+            MainMap = new TiledMooseMap("map", 30, 30, 16, 16);
             MainMap.CopyFromMap(new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap")));
             LoadMap();
 
@@ -39,7 +39,7 @@ namespace Platformer
                 layer.RendererKey = layer switch
                 {
                     ITileLayer => TiledMooseMapRenderer.DefaultRenderKey,
-                    IObjectLayer => SpriteBatchRenderer.DefaultRenderKey,
+                    IObjectLayer => SpriteBatchObjectRenderer.DefaultRenderKey,
                     _ => throw new Exception("Unsupported layer type"),
                 };
             }
@@ -66,7 +66,7 @@ namespace Platformer
 
                 if (obj.IsEffectedByGravity)
                 {
-                    var blockValue = MainMap.GetBlockingVectorFromWorldPosition(obj.WorldPosition + Direction.South)[1];
+                    var blockValue = MainMap.GetBlockingVector(obj.WorldPosition + Direction.South).ElementAt(1);
                     if (blockValue == 0)
                     {
                         obj.Veclocity += Direction.South;
@@ -94,7 +94,7 @@ namespace Platformer
                         if (cell.BlockedVector[1] == 0 || normal == (0, 0))
                             continue;
 
-                        // TODO: Handle jumping up betrter
+                        // TODO: Handle jumping up better
                         if (normal == (0, 1))
                             continue;
 

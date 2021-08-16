@@ -1,15 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Merthsoft.MooseEngine;
+using Merthsoft.MooseEngine.BaseDriver;
+using Merthsoft.MooseEngine.Defs;
+using Merthsoft.MooseEngine.TiledDriver;
+using Merthsoft.MooseEngine.Ui;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
-using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.BaseDriver;
-using Merthsoft.MooseEngine.Defs;
-using Merthsoft.MooseEngine.Tiled;
-using Merthsoft.MooseEngine.Ui;
 using System.Collections.Generic;
 using System.Linq;
-using Merthsoft.MooseEngine.Ui.Controls;
 
 namespace Merthsoft.SnowballFight
 {
@@ -59,7 +58,7 @@ namespace Merthsoft.SnowballFight
         protected override void Load()
         {
             AddRenderer(TiledMooseMapRenderer.DefaultRenderKey, new TiledMooseMapRenderer(GraphicsDevice));
-            AddRenderer(SpriteBatchRenderer.DefaultRenderKey, new SpriteBatchRenderer(SpriteBatch));
+            AddRenderer(SpriteBatchObjectRenderer.DefaultRenderKey, new SpriteBatchObjectRenderer(SpriteBatch));
 
             MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap"));
             LoadMap();
@@ -164,11 +163,6 @@ namespace Merthsoft.SnowballFight
             return snowBall;
         }
 
-        protected override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-
         protected override void PreRenderUpdate(GameTime gameTime)
             => HandleMouseInput();
 
@@ -260,7 +254,7 @@ namespace Merthsoft.SnowballFight
                     if (SelectedUnitHintCells.ContainsKey(deltaCell * TileSize))
                         continue;
 
-                    if (MainMap.GetBlockingMap(x, y).Any(b => b > 0))
+                    if (MainMap.GetBlockingVector(x, y).Any(b => b > 0))
                         continue;
 
                     var path = MainMap.FindCellPath(unitCell, deltaCell, cachedGrid);

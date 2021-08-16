@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled.Renderers;
 using Merthsoft.MooseEngine.Interface;
 
-namespace Merthsoft.MooseEngine.Tiled
+namespace Merthsoft.MooseEngine.TiledDriver
 {
     public record TiledMooseMapRenderer : ILayerRenderer
     {

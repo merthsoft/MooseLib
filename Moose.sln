@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merthsoft.MooseEngine.Ui", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platformer", "Platformer\Platformer.csproj", "{EC444063-D0D5-45D1-8E96-3A4366E0AFE6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Builder", "Builder\Builder.csproj", "{7ED17F39-855E-4FF8-A2A4-D1AF3CF44BF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merthsoft.BusRl", "Builder\Merthsoft.BusRl.csproj", "{7ED17F39-855E-4FF8-A2A4-D1AF3CF44BF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

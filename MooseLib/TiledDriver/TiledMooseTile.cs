@@ -2,7 +2,7 @@
 using Merthsoft.MooseEngine.Interface;
 using System.Linq;
 
-namespace Merthsoft.MooseEngine.Tiled
+namespace Merthsoft.MooseEngine.TiledDriver
 {
     public record TiledMooseTile(TiledMapTile Tile) : ITile
     {
