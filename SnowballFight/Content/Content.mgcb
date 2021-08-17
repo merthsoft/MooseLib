@@ -22,12 +22,33 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Direct_Message_14.spritefont
 
+#begin Fonts/Whacky_Joe_14.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Whacky_Joe_14.spritefont
+
+#begin Fonts/Whacky_Joe_15.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Whacky_Joe_15.spritefont
+
 #begin Fonts/Whacky_Joe_18.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Whacky_Joe_18.spritefont
+
+#begin Fonts/Whacky_Joe_Nospace_Cutout.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Whacky_Joe_Nospace_Cutout.spritefont
 
 #begin Images/blocking.png
 /importer:TextureImporter

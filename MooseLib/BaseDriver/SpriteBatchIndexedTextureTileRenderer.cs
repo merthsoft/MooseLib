@@ -16,14 +16,18 @@ namespace Merthsoft.MooseEngine.BaseDriver
         public float Rotation { get; set; }
         public SpriteEffects SpriteEffects { get; set; } = SpriteEffects.None;
 
-        public int TileWidth { get; private set; }
-        public int TileHeight { get; private set; }
+        public int TileWidth { get; }
+        public int TileHeight { get; }
+        public int TileMargin { get; }
+        public int TilePadding { get; }
 
-        public SpriteBatchIndexedTextureTileRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D sprites) : base(spriteBatch)
+        public SpriteBatchIndexedTextureTileRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D sprites, int tileMargin = 0, int tilePadding = 0) : base(spriteBatch)
         {
             SpriteSheet = sprites;
             TileWidth = tileWidth;
             TileHeight = tileHeight;
+            TileMargin = tileMargin;
+            TilePadding = tilePadding;
         }
 
 

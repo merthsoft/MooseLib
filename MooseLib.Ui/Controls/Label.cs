@@ -21,8 +21,8 @@ namespace Merthsoft.MooseEngine.Ui.Controls
             if (Text == null)
                 return;
 
-            spriteBatch.DrawString(Window.Theme.Fonts[FontIndex], Text, GlobalPosition,
-                HighlightOnHover && UpdateParameters.MouseOver ? Theme.TextMouseOverColor : Theme.TextColor);
+            spriteBatch.DrawString(Window.Theme.Fonts[FontIndex], Text, GlobalPosition, Color ?? 
+                (HighlightOnHover && UpdateParameters.MouseOver ? Theme.TextMouseOverColor : Theme.TextColor));
         }
 
         public override void Update(UpdateParameters updateParameters)

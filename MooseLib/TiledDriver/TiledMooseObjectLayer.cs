@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Merthsoft.MooseEngine.TiledDriver
 {
-    public record TiledMooseObjectLayer(int Number, TiledMapObjectLayer Layer) : IObjectLayer
+    public record TiledMooseObjectLayer(TiledMapObjectLayer Layer) : IObjectLayer
     {
         readonly SortedSet<GameObjectBase> objects = new();
         public IReadOnlyList<GameObjectBase> Objects => objects.ToList().AsReadOnly();

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
+using C = Microsoft.Xna.Framework.Color;
 
 namespace Merthsoft.MooseEngine.Ui.Controls
 {
@@ -27,6 +27,6 @@ namespace Merthsoft.MooseEngine.Ui.Controls
         public Picture(Window window, int x, int y, Texture2D texture) : base(window, x, y) => Texture = texture;
 
         public override void Draw(SpriteBatch spriteBatch)
-            => spriteBatch.Draw(Texture, GlobalPosition, SourceRectangle, Color.White, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
+            => spriteBatch.Draw(Texture, GlobalPosition, SourceRectangle, Color ?? C.White, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
     }
 }

@@ -26,6 +26,7 @@ namespace Merthsoft.SnowballFight
         private WindowManager WindowManager = null!;
         private Window StatsWindow = null!;
         private SimpleMenu MainMenu = null!;
+        private Window Logo = null!;
 
         public OrthographicCamera StatsWindowCamera = null!;
 
@@ -94,7 +95,7 @@ namespace Merthsoft.SnowballFight
 
             var fonts = new SpriteFont[]
             {
-                Content.Load<SpriteFont>("Fonts/Whacky_Joe_18"),
+                Content.Load<SpriteFont>("Fonts/Whacky_Joe_15"),
                 Content.Load<SpriteFont>("Fonts/Direct_Message_14"),
             };
 
@@ -114,6 +115,12 @@ namespace Merthsoft.SnowballFight
             MainMenu.Center(WindowSize, WindowSize);
             MainMenu.Clicked = MainMenu_Clicked;
 
+            var logoText = "Snowfight Tactics";
+            var logoSize = fonts[0].MeasureString(logoText);
+            Logo = WindowManager.NewWindow((int)(MainMenu.X + MainMenu.Width / 2.0 - logoSize.X / 2.0), (int)(MainMenu.Y - logoSize.Y), MainMenu.Width, 25);
+            var logoLabel = Logo.AddLabel(0, 0, logoText, 0);
+            logoLabel.Color = new Color(59, 23, 37);
+
             StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2);
             StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
             StatsWindow.Hide();
@@ -126,13 +133,19 @@ namespace Merthsoft.SnowballFight
             switch (option)
             {
                 case "New Game":
-                    MainMenu.Hide();
+                    HideMenu();
                     NewGame();
                     break;
                 case "Exit":
                     ShouldQuit = true;
                     break;
             }
+        }
+
+        private void HideMenu()
+        {
+            MainMenu.Hide();
+            Logo.Hide();
         }
 
         private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)

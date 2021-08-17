@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
+using System;
 
 namespace Merthsoft.MooseEngine.Ui.Controls
 {
@@ -12,6 +11,8 @@ namespace Merthsoft.MooseEngine.Ui.Controls
         public Window Window { get; }
 
         public Theme Theme => Window.Theme;
+
+        public Color? Color { get; set; }
 
         public Vector2 Position { get; set; }
 

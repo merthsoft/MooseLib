@@ -178,7 +178,7 @@ namespace Merthsoft.MooseEngine
 
                 renderer.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
                 hookTuple?.preHook?.Invoke(layerIndex);
-                renderer.Draw(layer);
+                renderer.Draw(layer, layerIndex);
                 hookTuple?.postHook?.Invoke(layerIndex);
                 renderer.End();
             }

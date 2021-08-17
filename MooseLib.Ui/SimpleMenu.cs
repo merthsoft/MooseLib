@@ -6,6 +6,7 @@ namespace Merthsoft.MooseEngine.Ui
 {
     public class SimpleMenu : Window
     {
+        public string? Title { get; set; }
         public Action<string>? Clicked { get; set; }
 
         public SimpleMenu(Theme theme, params string[] options) : base(new(0, 0, 0, 0), theme)
