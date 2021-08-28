@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CyberpunkRl
+﻿namespace Merthsoft.CyberpunkRl
 {
     public static class Program
     {

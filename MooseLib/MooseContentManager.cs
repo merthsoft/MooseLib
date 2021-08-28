@@ -2,7 +2,6 @@
 using MonoGame.Extended.Content;
 using MonoGame.Extended.Serialization;
 using MonoGame.Extended.Sprites;
-using System.Collections.Generic;
 
 namespace Merthsoft.MooseEngine
 {

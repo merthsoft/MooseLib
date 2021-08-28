@@ -2,8 +2,6 @@
 using Merthsoft.MooseEngine.GameObjects;
 using Merthsoft.MooseEngine.Interface;
 using MonoGame.Extended.Tiled;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.MooseEngine.TiledDriver
 {

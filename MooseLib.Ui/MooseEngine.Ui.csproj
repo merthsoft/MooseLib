@@ -4,15 +4,17 @@
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
+    <RootNamespace>Merthsoft.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>Merthsoft.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2005-develop" />
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2005-develop" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MooseLib\Merthsoft.MooseEngine.csproj" />
+    <ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>

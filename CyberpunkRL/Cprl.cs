@@ -1,32 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using Merthsoft.MooseEngine;
+using Merthsoft.MooseEngine.BaseDriver;
+using Merthsoft.MooseEngine.TiledDriver;
 using MonoGame.Extended.Tiled;
-using MooseLib;
 
-namespace CyberpunkRl
+namespace Merthsoft.CyberpunkRl
 {
     public class Cprl : MooseGame
     {
-        protected readonly List<TiledMap> Rooms = new();
-        protected readonly List<TiledMap> Hallways = new();
+        protected readonly List<TiledMooseMap> Rooms = new();
+        protected readonly List<TiledMooseMap> Hallways = new();
 
         public Cprl()
         {
-            Content.RootDirectory = nameof(Content);
-            IsMouseVisible = true;
         }
 
-        protected override void Initialize() => base.Initialize();
-
-        protected override void LoadContent()
+        protected override void Load()
         {
-            Rooms.Add(Content.Load<TiledMap>("Maps/room1"));
-            Rooms.Add(Content.Load<TiledMap>("Maps/room2"));
-            Hallways.Add(Content.Load<TiledMap>("Maps/hall1"));
+            AddRenderer(TiledMooseMapRenderer.DefaultRenderKey, new TiledMooseMapRenderer(GraphicsDevice));
+            AddRenderer(SpriteBatchObjectRenderer.DefaultRenderKey, new SpriteBatchObjectRenderer(SpriteBatch));
 
-            InitializeMap(22, 16, 16, 16);
-            MainMap.CopyMap(Rooms[0], 0, 0);
-            MainMap.CopyMap(Rooms[1], 11, 0);
-            MainMap.CopyMap(Hallways[0], 0, 11);
+            Rooms.Add(new(Content.Load<TiledMap>("Maps/room1")));
+            Rooms.Add(new(Content.Load<TiledMap>("Maps/room2")));
+            Hallways.Add(new(Content.Load<TiledMap>("Maps/hall1")));
+
+            MainMap = new TiledMooseMap("map", 22, 16, 16, 16);
+            MainMap.CopyFromMap(Rooms[0], destX: 0, destY: 0);
+            MainMap.CopyFromMap(Rooms[1], destX: 11, destY: 0);
+            MainMap.CopyFromMap(Hallways[0], destX: 0, destY: 11);
 
             MainCamera.ZoomIn(1f);
         }

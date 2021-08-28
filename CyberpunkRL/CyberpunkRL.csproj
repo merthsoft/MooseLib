@@ -30,7 +30,7 @@
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MooseLib\MooseLib.csproj" />
+    <ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended">

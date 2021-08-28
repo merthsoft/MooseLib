@@ -1,8 +1,5 @@
-﻿using System;
-using Merthsoft.MooseEngine.GameObjects;
+﻿using Merthsoft.MooseEngine.GameObjects;
 using Merthsoft.MooseEngine.Interface;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {

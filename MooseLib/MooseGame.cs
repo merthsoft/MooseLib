@@ -14,12 +14,12 @@ namespace Merthsoft.MooseEngine
 
         protected bool ShouldQuit { get; set; } = false;
 
-        public MooseContentManager ContentManager { get; set; }
+        public MooseContentManager ContentManager { get; set; } = null!;
         
-        public OrthographicCamera MainCamera = null!;
-        public SpriteBatch SpriteBatch = null!;
+        public OrthographicCamera MainCamera = null!; // Set in load content
+        public SpriteBatch SpriteBatch = null!; // Set in load content
 
-        public GraphicsDeviceManager Graphics { get; set; }
+        public GraphicsDeviceManager Graphics { get; set; } = null!;
 
         public IMap MainMap = null!;
 
@@ -264,7 +264,7 @@ namespace Merthsoft.MooseEngine
             => CurrentKeyState.IsKeyDown(key) && PreviousKeyState.IsKeyDown(key);
 
         public void ZoomIn(float deltaZoom)
-            => MainCamera.ZoomIn(1f);
+            => MainCamera.ZoomIn(deltaZoom);
 
         public void ZoomOut(float deltaZoom)
             => MainCamera.ZoomOut(deltaZoom);

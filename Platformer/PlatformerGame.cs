@@ -32,17 +32,6 @@ namespace Platformer
 
             MainMap = new TiledMooseMap("map", 30, 30, 16, 16);
             MainMap.CopyFromMap(new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap")));
-            LoadMap();
-
-            foreach (var layer in MainMap.Layers)
-            {
-                layer.RendererKey = layer switch
-                {
-                    ITileLayer => TiledMooseMapRenderer.DefaultRenderKey,
-                    IObjectLayer => SpriteBatchObjectRenderer.DefaultRenderKey,
-                    _ => throw new Exception("Unsupported layer type"),
-                };
-            }
 
             MainCamera.ZoomIn(2f);
             MainCamera.Move(Direction.South * 160);
@@ -180,11 +169,6 @@ namespace Platformer
 
             if (player.Veclocity == Vector2.Zero)
                 player.State = PlatformerGameObject.States.Idle;
-        }
-
-        protected override void Draw(GameTime gameTime)
-        {
-            Draw();
         }
     }
 }

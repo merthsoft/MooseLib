@@ -12,6 +12,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <StartupObject>Merthsoft.SnowballFight.Program</StartupObject>
     <AssemblyName>Snowfight Tactics</AssemblyName>
+    <RootNamespace>Merthsoft.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 	<ItemGroup>
 		<None Remove="Icon.ico" />
@@ -28,14 +29,14 @@
 		<TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2005-develop" />
-		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2005-develop" />
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
 		<PackageReference Include="MonoGame.StrokeEffect" Version="1.0.7" />
 		<PackageReference Include="Troschuetz.Random" Version="5.0.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\MooseLib.Ui\Merthsoft.MooseEngine.Ui.csproj" />
-		<ProjectReference Include="..\MooseLib\Merthsoft.MooseEngine.csproj" />
+		<ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
+		<ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="MonoGame.Extended">
