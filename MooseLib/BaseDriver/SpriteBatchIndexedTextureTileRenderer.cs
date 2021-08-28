@@ -1,8 +1,6 @@
 ﻿using Merthsoft.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Sprites;
-using System;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {
@@ -12,7 +10,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
 
         private Texture2D SpriteSheet { get; }
 
-        public Color Color { get; set; }
+        public Color Color { get; set; } = Color.White;
         public float Rotation { get; set; }
         public SpriteEffects SpriteEffects { get; set; } = SpriteEffects.None;
 
@@ -31,7 +29,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
         }
 
 
-        public override void Draw(ILayer layer, int layerNumber)
+        public override void Draw(GameTime _, ILayer layer, int layerNumber)
         {
             if (layer is not TileLayer<int> tileLayer)
                 throw new Exception("TileLayer<int> layer expected");
@@ -49,10 +47,10 @@ namespace Merthsoft.MooseEngine.BaseDriver
             var sourceY = (spriteIndex / columns) * TileHeight;
 
             SpriteBatch.Draw(SpriteSheet, 
-                destinationRectangle: new(i * TileWidth, i * TileHeight, TileWidth, TileHeight),
+                destinationRectangle: new(i * TileWidth, j * TileHeight, TileWidth, TileHeight),
                 sourceRectangle: new(sourceX, sourceY, TileWidth, TileHeight),
                 color: Color, rotation: Rotation, effects: SpriteEffects,
-                origin: Vector2.Zero, layerDepth: layer);
+                origin: Vector2.Zero, layerDepth: 0);
         }
     }
 }

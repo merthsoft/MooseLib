@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Merthsoft.MooseEngine.Defs;
+using Merthsoft.MooseEngine.Interface;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using Merthsoft.MooseEngine.Defs;
-using Merthsoft.MooseEngine.Interface;
-using System;
 
 namespace Merthsoft.MooseEngine.GameObjects
 {

@@ -23,7 +23,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
             Palette.AddRange(colors);
         }
 
-        public override void Draw(ILayer layer, int layerNumber)
+        public override void Draw(GameTime _, ILayer layer, int layerNumber)
         {
             if (layer is not TileLayer<int> tileLayer)
                 throw new Exception("TileLayer<int> layer expected");

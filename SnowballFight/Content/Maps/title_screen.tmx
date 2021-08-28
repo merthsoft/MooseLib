@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="1">
+ <tileset firstgid="1" source="../Tilesets/ground.tsx"/>
+ <tileset firstgid="1405" source="../Tilesets/blocking.tsx"/>
+ <tileset firstgid="2225" source="../Tilesets/passable.tsx"/>
+ <tileset firstgid="2449" source="../Tilesets/weather effects 3.tsx"/>
+ <layer id="1" name="Terrain" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztzbENgCAURdEf1tAE4xBGIQ6hBfuP4isoDAO8gtzi1CdFRAKACWU5ZJfNeJ6ydLfpfX+n863D+5jeS1ZpXTG9AADM5gMvoQsy
+  </data>
+ </layer>
+ <layer id="2" name="Lower Decoration" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzVVMlOAkEQnQvMcFd/Q0/qt4iERedLMBjB5UdcwnZGVK7iBpK4JuoFvYuerM5Uh7KobgYIJlby0j3V1fWqXxUkXcdJAHyE3h8CjojPBHWeId8ZstI9zZMFrBI/vX8L6LCafCEnP6dnPstL94tCPQnhm3Mk2JohZyuApCGea8PvSnr57qCeXFu1LgE22H0ar+qKE7/P4kxv88n9AmAXkMO1QNak0B8f+7uOPj1HGaYT50qR3JsAyfbBfwDYIdxcn7Q7OEdZ1InXmrJwUWtBTBvj9Luotuo7jxoVEDnyrVet43YITm46/5YbzLDWVWsyrvU8x3lHfHu/zz7Jdxq107pSTUbh0PBi/fMI2StO+p1nMyOZusM5vgBzscFYmjsa68fPxgKo/Qfg2AvmLC7wUi7OERE4uV/ti16AMq413JcAyzivK8jbNbyn48n5bbx1L0CJcGuf/l2tufJ9bkUvPG8JOcr41hpqXMe96vOeG7xT90OaSZpzPmrmXYjaa7fV2yP8HG4IvylGgubtGuZVqs/kH/be5pB5uWZaX4To7wuJaQm9auGsha1Rijs33Oe5SgK/tpmQPTH1nfptfZJq/i92CjU/hKj7bYy3Nce4o/4b2hPqWIX7FcxRmVJPVN6qJfcdnD0J59z3OqX6HkfMeybEh5mLSU3p9Iw8NwKfVJf6f1H3rtjZPfb9kvkblvwmO2Gxtl5Pao0/0NlmP/5t6lw=
+  </data>
+ </layer>
+ <objectgroup id="3" name="Units"/>
+ <layer id="4" name="Upper Decoration" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztlGkOgjAQhfsHIpq4XESN4TZewAt4Bf+IW1xOglGQRU/ikrgcw0cCsXFtqVSNvOQLkHbmzbS0hKRK9VxDhZARGIOJIs/XgZcLPOAn7Nul8u/xfgBHcJLUrwmfvEpIARRBSb2MTQVq6CG2/yA+yjvDsxr6GYq4Z6A54i0qL4vK1FzzSewaYxugh+O2pD3KwE/j6CdQjXN+HBkJ9F9Rb/Nu8b2TeP4jZVFLjlpHnn8q6MMCNlgAB7jAAz5YghWVb/CB/mgFvbUFamhohNQZoNW58ouzBk3t9Zx7+UXPLo/vO8Xqy7IXPLQ4+9Ul3D//piTu21+UyD2V6jt1BkBKMxM=
+  </data>
+ </layer>
+ <objectgroup id="5" name="Snowballs"/>
+</map>

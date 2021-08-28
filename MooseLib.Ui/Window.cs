@@ -1,9 +1,6 @@
 ﻿using Merthsoft.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.MooseEngine.Ui
 {
@@ -14,6 +11,8 @@ namespace Merthsoft.MooseEngine.Ui
         public bool ShouldClose { get; protected set; }
 
         public bool Visible { get; set; } = true;
+        
+        public bool DrawBackground { get; set; } = true;
 
         public Rectangle Rectangle { get; set; }
 
@@ -60,31 +59,8 @@ namespace Merthsoft.MooseEngine.Ui
             if (!Visible)
                 return;
 
-            var numXTiles = Rectangle.Width / Theme.TileWidth;
-            var numYTiles = Rectangle.Height / Theme.TileHeight;
-
-            for (var x = 0; x < numXTiles; x++)
-                for (var y = 0; y < numYTiles; y++)
-                {
-                    var index = 4;
-                    if ((x, y) == (0, 0))
-                        index = 0;
-                    else if ((x, y) == (0, numYTiles - 1))
-                        index = 6;
-                    else if (x == 0)
-                        index = 3;
-                    else if ((x, y) == (numXTiles - 1, 0))
-                        index = 2;
-                    else if (y == 0)
-                        index = 1;
-                    else if ((x, y) == (numXTiles - 1, numYTiles - 1))
-                        index = 8;
-                    else if (y == numYTiles - 1)
-                        index = 7;
-                    else if (x == numXTiles - 1)
-                        index = 5;
-                    Theme.DrawWindowTexture(spriteBatch, index, Position, x, y);
-                }
+            if (DrawBackground)
+                Theme.DrawWindowTexture(spriteBatch, Rectangle);
 
             Controls.ForEach(c => c.Draw(spriteBatch));
         }

@@ -5,14 +5,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.MooseEngine
 {
     public abstract class MooseGame : Game
     {
+        protected Random Random = new();
+
         protected bool ShouldQuit { get; set; } = false;
 
         public MooseContentManager ContentManager { get; set; }
@@ -42,17 +41,24 @@ namespace Merthsoft.MooseEngine
 
         private readonly Dictionary<string, ILayerRenderer> Renderers = new();
 
-        public int MapHeight => MainMap.Height;
+        public virtual int MapHeight => MainMap.Height;
+               
+        public virtual int MapWidth => MainMap.Width;
+               
+        public virtual int TileWidth => MainMap.TileWidth;
+               
+        public virtual int TileHeight => MainMap.TileHeight;
+               
+        public virtual Size2 TileSize => MainMap.TileSize; // TODO: Cache
+               
+        public virtual Vector2 HalfTileSize => MainMap.HalfTileSize; // TODO: Cache
 
-        public int MapWidth => MainMap.Width;
+        public Dictionary<int, RenderHook>? DefaultRenderHooks { get; } = new();
 
-        public int TileWidth => MainMap.TileWidth;
+        public int ScreenWidth => GraphicsDevice.Viewport.Width;
+        public int ScreenHeight => GraphicsDevice.Viewport.Height;
 
-        public int TileHeight => MainMap.TileHeight;
-
-        public Size2 TileSize => MainMap.TileSize; // TODO: Cache
-
-        public Vector2 HalfTileSize => MainMap.HalfTileSize; // TODO: Cache
+        public Color DefaultBackgroundColor { get; set; } = Color.DarkCyan;
 
         public MooseGame()
         {
@@ -61,15 +67,44 @@ namespace Merthsoft.MooseEngine
             Graphics = new GraphicsDeviceManager(this);
         }
 
+        protected virtual StartupParameters Startup()
+            => new()
+            {
+                BlendState = BlendState.AlphaBlend,
+                SamplerState = SamplerState.PointClamp,
+                ScreenWidth = 800,
+                ScreenHeight = 800,
+                Fullscreen = false,
+                RandomSeed = null,
+            };
+
         protected override void Initialize()
         {
-            GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            var initialization = Startup();
+            GraphicsDevice.BlendState = initialization.BlendState ?? BlendState.AlphaBlend;
+            GraphicsDevice.SamplerStates[0] = initialization.SamplerState ?? SamplerState.PointClamp;
+            
+            Graphics.PreferredBackBufferWidth = initialization.ScreenWidth;
+            Graphics.PreferredBackBufferHeight = initialization.ScreenHeight;
+            Graphics.IsFullScreen = initialization.Fullscreen;
+            Graphics.ApplyChanges();
+
+            if (initialization.RandomSeed != null)
+                Random = new(initialization.RandomSeed.Value);
 
             base.Initialize();
         }
 
-        protected abstract void Load();
+        protected void SetScreenSize(int? width = null, int? height = null, bool? isFullScreen = null)
+        {
+            Graphics.PreferredBackBufferWidth = width ?? Graphics.PreferredBackBufferWidth;
+            Graphics.PreferredBackBufferHeight = height ?? Graphics.PreferredBackBufferHeight;
+            Graphics.IsFullScreen = isFullScreen ?? Graphics.IsFullScreen;
+            Graphics.ApplyChanges();
+        }
+
+        protected virtual void Load() { }
+        protected virtual void PostLoad() { }
 
         protected override void LoadContent()
         {
@@ -79,12 +114,11 @@ namespace Merthsoft.MooseEngine
             Load();
 
             Defs.AsParallel().ForEach(kvp => kvp.Value.LoadContent(ContentManager));
-        }
-
-        protected void LoadMap()
-        {
+            
             foreach (var renderer in Renderers.Values)
                 renderer.Load(MainMap);
+
+            PostLoad();
         }
 
         public void AddRenderer(string rendererKey, ILayerRenderer renderer)
@@ -153,7 +187,7 @@ namespace Merthsoft.MooseEngine
             ObjectsToAdd.Clear();
 
             PreMapUpdate(gameTime);
-            MainMap.Update(gameTime);
+            MainMap?.Update(gameTime);
 
             PostUpdate(gameTime);
 
@@ -161,28 +195,58 @@ namespace Merthsoft.MooseEngine
                 base.Exit();
         }
 
-        protected override void Draw(GameTime gameTime)
-            => Draw();
+        protected void MarkAllObjectsForRemoval()
+            => Objects.ForEach(o => o.RemoveFlag = true);
 
-        protected void Draw(params (Action<int>? preHook, Action<int>? postHook)?[] renderHooks)
+        protected override void Draw(GameTime gameTime)
+            => Draw(gameTime, DefaultRenderHooks);
+
+        protected void Draw(GameTime gameTime, IDictionary<int,  RenderHook>? renderHooks)
         {
-            GraphicsDevice.Clear(Color.DarkGray);
+            GraphicsDevice.Clear(DefaultBackgroundColor);
+
+            if (MainMap == null)
+                return;
 
             var transformMatrix = MainCamera.GetViewMatrix();
 
             for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
             {
-                var hookTuple = renderHooks?.ElementAtOrDefault(layerIndex);
+                var hookTuple = renderHooks?.GetValueOrDefault(layerIndex);
                 var layer = MainMap.Layers[layerIndex];
                 var renderer = Renderers[layer.RendererKey];
 
                 renderer.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-                hookTuple?.preHook?.Invoke(layerIndex);
-                renderer.Draw(layer, layerIndex);
-                hookTuple?.postHook?.Invoke(layerIndex);
+                hookTuple?.PreHook?.Invoke(layerIndex);
+                renderer.Draw(gameTime, layer, layerIndex);
+                hookTuple?.PostHook?.Invoke(layerIndex);
                 renderer.End();
             }
         }
+
+        public bool WasLeftMouseJustPressed()
+            => CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released;
+
+        public bool WasRightMouseJustPressed()
+            => CurrentMouseState.RightButton == ButtonState.Pressed && PreviousMouseState.RightButton == ButtonState.Released;
+
+        public bool IsLeftMouseDown()
+            => CurrentMouseState.LeftButton == ButtonState.Pressed;
+
+        public bool IsRightMouseDown()
+            => CurrentMouseState.RightButton == ButtonState.Pressed;
+
+        public int GetPressedKeyCount()
+            => CurrentKeyState.GetPressedKeyCount();
+
+        public Keys[] GetPressedKeys()
+            => CurrentKeyState.GetPressedKeys();
+
+        public int GetPreviousPressedKeyCount()
+            => PreviousKeyState.GetPressedKeyCount();
+
+        public Keys[] GetPreviousPressedKeys()
+            => PreviousKeyState.GetPressedKeys();
 
         public bool WasKeyJustPressed(Keys key)
             => CurrentKeyState.IsKeyDown(key) && PreviousKeyState.IsKeyUp(key);
@@ -198,5 +262,20 @@ namespace Merthsoft.MooseEngine
 
         public bool IsKeyHeld(Keys key)
             => CurrentKeyState.IsKeyDown(key) && PreviousKeyState.IsKeyDown(key);
+
+        public void ZoomIn(float deltaZoom)
+            => MainCamera.ZoomIn(1f);
+
+        public void ZoomOut(float deltaZoom)
+            => MainCamera.ZoomOut(deltaZoom);
+
+        public void MoveCamera(Vector2 direction)
+            => MainCamera.Move(direction);
+
+        public void Rotate(float deltaRadians)
+            => MainCamera.Rotate(deltaRadians);
+
+        public void MoveCameraTo(Vector2 destination)
+            => MainCamera.LookAt(destination);
     }
 }

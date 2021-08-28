@@ -2,7 +2,7 @@
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {
-    public record SimpleTileContainer<T>(T Value, bool Blocking = false) : ITile
+    public record SimpleTileReference<TTile>(TTile Tile, bool Blocking = false) : ITile<TTile>
     {
         public bool IsBlocking(IMap map)
             => Blocking;

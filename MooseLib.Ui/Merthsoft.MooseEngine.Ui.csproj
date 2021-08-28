@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2005-develop" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2005-develop" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MooseLib\Merthsoft.MooseEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>

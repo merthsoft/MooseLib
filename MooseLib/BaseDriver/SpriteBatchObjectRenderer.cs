@@ -1,7 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Merthsoft.MooseEngine.Interface;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Merthsoft.MooseEngine.Interface;
-using System;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {
@@ -25,7 +24,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
             Matrix? transformMatrix = null)
             => SpriteBatch.Begin(sortMode, blendState, samplerState, depthStencilState, rasterizerState, effect, transformMatrix);
 
-        public virtual void Draw(ILayer layer, int layerNumber)
+        public virtual void Draw(GameTime _, ILayer layer, int layerNumber)
         {
             if (layer is not IObjectLayer objectLayer)
                 throw new Exception("Object layer expected");

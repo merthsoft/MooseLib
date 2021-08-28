@@ -3,11 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
-using Merthsoft.MooseEngine.Interface;
 using Roy_T.AStar.Grids;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.MooseEngine
 {
@@ -111,8 +107,10 @@ namespace Merthsoft.MooseEngine
             return grid;
         }
 
-        public static TValue? GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        public static TValue? GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey? key)
         {
+            if (key == null)
+                return default;
             if (dictionary.ContainsKey(key))
                 return dictionary[key];
             return default;

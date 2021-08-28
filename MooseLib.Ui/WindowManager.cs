@@ -2,21 +2,32 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
 
 namespace Merthsoft.MooseEngine.Ui
 {
     public class WindowManager
     {
-        public List<Theme> Themes { get; } = new();
+        private readonly List<Window> windowsToAdd = new();
+        private readonly List<Window> windows = new();
 
-        public int DefaultThemeIndex { get; set; }
+        public Dictionary<string, Theme> ThemeDictionary { get; } = new();
 
-        public Theme DefaultTheme => Themes[DefaultThemeIndex];
+        public IReadOnlyCollection<Theme> Themes => ThemeDictionary.Values;
 
-        private List<Window> windowsToAdd = new();
-        private List<Window> windows = new();
+        private string defaultThemeName;
+        public string DefaultThemeName 
+        { 
+            get => defaultThemeName;
+            set
+            {
+                defaultThemeName = value;
+                defaultTheme = ThemeDictionary[value];
+            }
+        }
+
+        private Theme? defaultTheme;
+        public Theme DefaultTheme => defaultTheme ??= ThemeDictionary[DefaultThemeName];
+
         public IReadOnlyCollection<Window> Windows => windows;
 
         internal MouseState CurrentMouseState { get; set; }
@@ -24,10 +35,10 @@ namespace Merthsoft.MooseEngine.Ui
         internal MouseState PreviousMouseState { get; set; }
 
         public WindowManager(Theme theme)
-            => Themes.Add(theme);
+            => AddTheme(theme);
 
         public WindowManager(IEnumerable<Theme> themes)
-            => Themes.AddRange(themes);
+            => themes.ForEach(AddTheme);
 
         public void Update(GameTime gameTime, MouseState currentMouseState, Vector2? worldMouse = null)
         {
@@ -54,9 +65,9 @@ namespace Merthsoft.MooseEngine.Ui
         public void Draw(SpriteBatch spriteBatch)
             => windows.ForEach(w => w.Draw(spriteBatch));
 
-        public Window NewWindow(int x, int y, int width, int height)
+        public Window NewWindow(int x, int y, int width, int height, string? theme = null)
         {
-            var ret = new Window(new(x, y, width, height), DefaultTheme);
+            var ret = new Window(new(x, y, width, height), ThemeDictionary.GetValueOrDefault(theme) ?? DefaultTheme);
             windowsToAdd.Add(ret);
             return ret;
         }
@@ -75,5 +86,8 @@ namespace Merthsoft.MooseEngine.Ui
             windowsToAdd.Add(window);
             return window;
         }
+
+        public void AddTheme(Theme theme)
+            => ThemeDictionary[theme.Name] = theme;
     }
 }

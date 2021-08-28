@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using Roy_T.AStar.Grids;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Merthsoft.MooseEngine.Interface
 {
@@ -31,5 +29,8 @@ namespace Merthsoft.MooseEngine.Interface
         Grid BuildCollisionGrid(params Vector2[] walkableOverrides);
         IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false);
         IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null);
+
+        public bool CellIsInBounds(Vector2 cell);
+        public bool CellIsInBounds(int cellX, int cellY);
     }
 }

@@ -47,5 +47,11 @@ namespace Merthsoft.MooseEngine.Ui.Controls
             => UpdateParameters = updateParameters;
 
         public abstract void Draw(SpriteBatch spriteBatch);
+
+        public Vector2 CenterInWindow()
+        {
+            var size = CalculateSize();
+            return Position = new(Window.Width / 2 - size.X / 2, Window.Height / 2 - size.Y / 2);
+        }
     }
 }

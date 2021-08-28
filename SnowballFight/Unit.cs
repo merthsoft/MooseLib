@@ -2,9 +2,6 @@
 using Merthsoft.MooseEngine.GameObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Troschuetz.Random.Distributions.Continuous;
 
 namespace Merthsoft.SnowballFight
@@ -15,6 +12,7 @@ namespace Merthsoft.SnowballFight
         {
             public const string Idle = "idle";
             public const string Walk = "walk";
+            public const string Attack = "attack";
         }
 
         public UnitDef UnitDef { get; }
@@ -47,7 +45,7 @@ namespace Merthsoft.SnowballFight
 
         public override void Update(GameTime gameTime)
         {
-            if (State == "walk")
+            if (State == States.Walk)
                 if (MoveDirection != Vector2.Zero)
                 {
                     takeStep();
@@ -56,7 +54,7 @@ namespace Merthsoft.SnowballFight
                     stepFlag = !stepFlag;
                 }
                 else if (MoveQueue.Count == 0)
-                    State = "idle";
+                    State = States.Idle;
                 else
                 {
                     var nextCell = MoveQueue.Dequeue();
@@ -78,7 +76,7 @@ namespace Merthsoft.SnowballFight
         public void Attack(Unit targettedUnit)
         {
             this.targettedUnit = targettedUnit;
-            State = "attack";
+            State = States.Attack;
             StateCompleteAction = AttackComplete;
         }
 
@@ -93,7 +91,7 @@ namespace Merthsoft.SnowballFight
             var flightPath = ParentMap!.FindWorldRay(startWorldPosition, endWorldPosition);
             SnowballFightGame.SpawnSnowball(flightPath.Select(p => p.WorldPosition));
 
-            State = "idle";
+            State = States.Idle;
             StateCompleteAction = null;
             targettedUnit = null;
         }

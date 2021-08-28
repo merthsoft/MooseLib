@@ -134,6 +134,18 @@
 /processorParam:TextureFormat=Color
 /build:Images/units.png
 
+#begin Images/weather effects 3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/weather effects 3.png
+
 #begin Images/window1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -158,10 +170,15 @@
 /processorParam:TextureFormat=Color
 /build:Images/window2.png
 
-#begin Maps/testmap.tmx
+#begin Maps/map1.tmx
 /importer:TiledMapImporter
 /processor:TiledMapProcessor
-/build:Maps/testmap.tmx
+/build:Maps/map1.tmx
+
+#begin Maps/title_screen.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:Maps/title_screen.tmx
 
 #begin Tilesets/blocking.tsx
 /importer:TiledMapTilesetImporter

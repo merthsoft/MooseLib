@@ -18,7 +18,7 @@ namespace Merthsoft.MooseEngine.Interface
             Effect? effect = null, 
             Matrix? transformMatrix = null);
 
-        void Draw(ILayer layer, int layerNumber);
+        void Draw(GameTime gameTime, ILayer layer, int layerNumber);
 
         void End();
     }

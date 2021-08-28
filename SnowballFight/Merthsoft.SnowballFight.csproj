@@ -28,8 +28,9 @@
 		<TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
-		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2005-develop" />
+		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2005-develop" />
+		<PackageReference Include="MonoGame.StrokeEffect" Version="1.0.7" />
 		<PackageReference Include="Troschuetz.Random" Version="5.0.1" />
 	</ItemGroup>
 	<ItemGroup>
@@ -77,6 +78,9 @@
 		</None>
 		<None Update="Content\Animations\Skeleton.sf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Animations\snow.sf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Content\Animations\snowball.sf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

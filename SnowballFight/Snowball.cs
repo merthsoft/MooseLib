@@ -1,9 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Merthsoft.MooseEngine.Defs;
+﻿using Merthsoft.MooseEngine.Defs;
 using Merthsoft.MooseEngine.GameObjects;
-using System.Collections.Generic;
-using System.Linq;
 using Merthsoft.MooseEngine.Interface;
+using Microsoft.Xna.Framework;
 
 namespace Merthsoft.SnowballFight
 {
@@ -58,7 +56,7 @@ namespace Merthsoft.SnowballFight
         }
 
         private bool IsBlocked()
-            => FlightPath.Count == 0
+            => FlightPath.Count == 0 || !ParentMap!.CellIsInBounds(GetCell())
             || (GetCell(ParentMap!) != StartCell 
                 && ParentMap!.GetBlockingVector(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
     }

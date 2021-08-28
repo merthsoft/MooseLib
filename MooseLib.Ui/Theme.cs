@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 
 namespace Merthsoft.MooseEngine.Ui
 {
@@ -9,9 +7,12 @@ namespace Merthsoft.MooseEngine.Ui
     {
         public string Name { get; private set; }
 
-        internal Rectangle[] TextureRects = new Rectangle[9];
+        internal Rectangle[] TextureRects = new Rectangle[16];
 
-        private Texture2D windowTexture = null!;
+        private Texture2D windowTexture;
+        private Point textureOffset;
+        private int tileWidth;
+        private int tileHeight;
 
         public List<SpriteFont> Fonts { get; } = new();
 
@@ -21,16 +22,46 @@ namespace Merthsoft.MooseEngine.Ui
             set
             {
                 windowTexture = value;
-                for (var index = 0; index < 9; index++)
-                    TextureRects[index] = new Rectangle((index % 3) * TileWidth, index / 3 * TileHeight, TileWidth, TileHeight);
+                CalculateTextureRectangles();
             }
         }
 
+        public Point TextureOffset
+        {
+            get => textureOffset;
+            set
+            {
+                textureOffset = value;
+                CalculateTextureRectangles();
+            }
+        }
+
+        public Vector2 TileScale { get; set; } = new(1, 1);
+
         public Vector2 ControlDrawOffset { get; set; }
 
-        public int TileWidth { get; private set; }
+        public int TileWidth
+        {
+            get => tileWidth;
+            set
+            {
+                tileWidth = value;
+                CalculateTextureRectangles();
+            }
+        }
 
-        public int TileHeight { get; private set; }
+        public int TileHeight
+        {
+            get => tileHeight;
+            set
+            {
+                tileHeight = value; 
+                CalculateTextureRectangles();
+            }
+        }
+
+        public int TileDrawWidth  => (int)(TileWidth * TileScale.X);
+        public int TileDrawHeight => (int)(TileHeight * TileScale.Y);
 
         public Color TextColor { get; set; } = Color.Black;
 
@@ -38,18 +69,87 @@ namespace Merthsoft.MooseEngine.Ui
 
         public Color SelectedColor { get; set; } = Color.Blue;
 
-        public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts)
+        public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Point textureOffset = default)
         {
-            (Name, TileWidth, TileHeight, WindowTexture)
-             = (name, tileWidth, tileHeight, windowTexture);
+            (Name, TileWidth, TileHeight, this.windowTexture, this.textureOffset)
+             = (name, tileWidth, tileHeight, windowTexture, textureOffset);
             Fonts.AddRange(fonts);
         }
 
-        internal void DrawWindowTexture(SpriteBatch spriteBatch, int index, Vector2 position, int x, int y)
+        protected void DrawWindowTexture(SpriteBatch spriteBatch, int index, Point position, int xTileOffset, int yTileOffet)
         {
-            var sourceRect = TextureRects[index];
-            var destRect = new Rectangle((int)position.X + x * TileWidth, (int)position.Y + y * TileHeight, TileWidth, TileHeight);
-            spriteBatch.Draw(WindowTexture, destRect, sourceRect, Color.White);
+            var destRect = new Rectangle(position.X + xTileOffset * TileDrawWidth, position.Y + yTileOffet * TileDrawHeight, TileDrawWidth, TileDrawHeight);
+            spriteBatch.Draw(WindowTexture, destRect, TextureRects[index], Color.White);
+        }
+
+        public void DrawWindowTexture(SpriteBatch spriteBatch, Rectangle rectangle)
+        {
+            var numXTiles = rectangle.Width / TileDrawWidth;
+            var numYTiles = rectangle.Height / TileDrawHeight;
+
+            var upperLeftIndex = 0;
+            var upperIndex = 1;
+            var upperRightIndex = 2;
+            var leftIndex = 3;
+            var middleIndex = 4;
+            var rightIndex = 5;
+            var bottomLeftIndex = 6;
+            var bottomIndex = 7;
+            var bottomRightIndex = 8;
+
+            var heightOneLeftIndex = 9;
+            var heightOneMiddleIndex = 10;
+            var heightOneRightIndex = 11;
+
+            if (numYTiles == 1)
+            {
+                upperLeftIndex = heightOneLeftIndex;
+                upperIndex = heightOneMiddleIndex;
+                upperRightIndex = heightOneRightIndex;
+                leftIndex = heightOneLeftIndex;
+                middleIndex = heightOneMiddleIndex;
+                rightIndex = heightOneRightIndex;
+                bottomLeftIndex = heightOneLeftIndex;
+                bottomIndex = heightOneMiddleIndex;
+                bottomRightIndex = heightOneRightIndex;
+            }
+
+            for (var x = 0; x < numXTiles; x++)
+                for (var y = 0; y < numYTiles; y++)
+                {
+                    var index = middleIndex;
+                    if ((x, y) == (0, 0))
+                        index = upperLeftIndex;
+                    else if ((x, y) == (0, numYTiles - 1))
+                        index = bottomLeftIndex;
+                    else if (x == 0)
+                        index = leftIndex;
+                    else if ((x, y) == (numXTiles - 1, 0))
+                        index = upperRightIndex;
+                    else if (y == 0)
+                        index = upperIndex;
+                    else if ((x, y) == (numXTiles - 1, numYTiles - 1))
+                        index = bottomRightIndex;
+                    else if (y == numYTiles - 1)
+                        index = bottomIndex;
+                    else if (x == numXTiles - 1)
+                        index = rightIndex;
+                    DrawWindowTexture(spriteBatch, index, rectangle.Location, x, y);
+                }
+        }
+
+        protected void CalculateTextureRectangles()
+        {
+            for (var index = 0; index < 9; index++)
+                TextureRects[index] = new Rectangle((index % 3) * TileWidth + TextureOffset.X, index / 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
+
+            for (var index = 0; index < 3; index++)
+            {
+                TextureRects[index + 9] = new Rectangle(index * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
+                TextureRects[index + 12] = new Rectangle(3 * TileWidth + TextureOffset.X, index * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
+            }
+
+            TextureRects[15] = new Rectangle(3 * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
         }
     }
 }

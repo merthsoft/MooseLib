@@ -1,8 +1,9 @@
 ﻿namespace Merthsoft.MooseEngine.Interface
 {
-    public interface ITileLayer : ILayer
+    public interface ITileLayer<TTile> : ILayer
     {
-        ITile GetTile(int x, int y);
+        ITile<TTile> GetTile(int x, int y);
+        TTile GetTileValue(int x, int y);
 
         bool IsBlockedAt(int x, int y, IMap map)
             => GetTile(x, y).IsBlocking(map);

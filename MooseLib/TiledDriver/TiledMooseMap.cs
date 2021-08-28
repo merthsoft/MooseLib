@@ -2,9 +2,6 @@
 using Merthsoft.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Tiled;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.MooseEngine.TiledDriver
 {
@@ -106,10 +103,9 @@ namespace Merthsoft.MooseEngine.TiledDriver
         protected override int IsBlockedAt(int layer, int x, int y)
             => layerCache[layer] switch
             {
-                IObjectLayer objectLayer => objectLayer.Objects.Any(o => o.InCell(layer, x, y, this)) ? 1 : 0,
-                ITileLayer tileLayer => tileLayer.IsBlockedAt(x, y, this) ? 1 : 0,
+                TiledMooseObjectLayer objectLayer => objectLayer.Objects.Any(o => o.InCell(layer, x, y, this)) ? 1 : 0,
+                TiledMooseTileLayer tileLayer => tileLayer.IsBlockedAt(x, y, this) ? 1 : 0,
                 _ => 0,
             };
-                
     }
 }

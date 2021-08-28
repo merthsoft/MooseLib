@@ -1,9 +1,8 @@
-﻿using System;
-using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.MooseEngine.Interface;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {
-    public class TileLayer<TTile> : ITileLayer 
+    public class TileLayer<TTile> : ITileLayer<TTile>
     {
         public int Height { get; }
         public int Width { get; }
@@ -27,7 +26,16 @@ namespace Merthsoft.MooseEngine.BaseDriver
             Tiles = new TTile[Width, Height];
         }
 
-        public ITile GetTile(int x, int y)
-            => new SimpleTileContainer<TTile>(Tiles[x, y]);
+        public ITile<TTile> GetTile(int x, int y)
+            => new SimpleTileReference<TTile>(Tiles[x, y]);
+
+        public TTile GetTileValue(int x, int y)
+            => Tiles[x, y];
+
+        public ITile<TTile> SetTile(int x, int y, TTile value)
+        {
+            Tiles[x, y] = value;
+            return GetTile(x, y);
+        }
     }
 }

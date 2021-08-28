@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merthsoft.MooseEngine.Ui", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platformer", "Platformer\Platformer.csproj", "{EC444063-D0D5-45D1-8E96-3A4366E0AFE6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merthsoft.Islands", "Islands\Merthsoft.Islands.csproj", "{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merthsoft.MicroGames", "MicroGames\Merthsoft.MicroGames.csproj", "{0CAA5B13-6264-4295-9BA8-5EA5D072C386}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{EC444063-D0D5-45D1-8E96-3A4366E0AFE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC444063-D0D5-45D1-8E96-3A4366E0AFE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC444063-D0D5-45D1-8E96-3A4366E0AFE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CAA5B13-6264-4295-9BA8-5EA5D072C386}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CAA5B13-6264-4295-9BA8-5EA5D072C386}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CAA5B13-6264-4295-9BA8-5EA5D072C386}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CAA5B13-6264-4295-9BA8-5EA5D072C386}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

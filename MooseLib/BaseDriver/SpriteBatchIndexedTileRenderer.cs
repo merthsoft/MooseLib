@@ -1,10 +1,8 @@
 ﻿using Merthsoft.MooseEngine.Interface;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {
@@ -28,7 +26,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
         }
 
 
-        public override void Draw(ILayer layer, int layerNumber)
+        public override void Draw(GameTime _, ILayer layer, int layerNumber)
         {
             if (layer is not TileLayer<int> tileLayer)
                 throw new Exception("TileLayer<int> layer expected");

@@ -1,10 +1,9 @@
-﻿using MonoGame.Extended.Tiled;
-using Merthsoft.MooseEngine.Interface;
-using System.Linq;
+﻿using Merthsoft.MooseEngine.Interface;
+using MonoGame.Extended.Tiled;
 
 namespace Merthsoft.MooseEngine.TiledDriver
 {
-    public record TiledMooseTile(TiledMapTile Tile) : ITile
+    public record TiledMooseTile(TiledMapTile Tile) : ITile<TiledMapTile>
     {
         public bool IsBlocking(IMap map)
         {

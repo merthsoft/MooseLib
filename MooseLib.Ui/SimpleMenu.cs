@@ -1,6 +1,5 @@
 ﻿using Merthsoft.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
-using System;
 
 namespace Merthsoft.MooseEngine.Ui
 {

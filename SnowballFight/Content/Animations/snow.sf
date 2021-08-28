@@ -1,0 +1,19 @@
+{
+  "textureAtlas": {
+    "texture": "..\\Images\\weather effects 3.png",
+    "regionWidth": 32,
+    "regionHeight": 128
+  },
+  "cycles": {
+    "light": {
+      "frames": [0,1,2,3,4,5,6,7],
+      "isLooping": true,
+      "frameDuration": 0.15
+    },
+    "heavy": {
+      "frames": [ 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "isLooping": true,
+      "frameDuration": 0.09
+    }
+  }
+}

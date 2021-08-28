@@ -3,9 +3,6 @@ using Microsoft.Xna.Framework;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {
@@ -21,6 +18,14 @@ namespace Merthsoft.MooseEngine.BaseDriver
 
         protected List<int>[,] blockingMap = new List<int>[0, 0];
 
+        public bool CellIsInBounds(Vector2 cell)
+            => cell.X > 0 && cell.X < Width
+            && cell.Y > 0 && cell.Y < Height;
+
+        public bool CellIsInBounds(int cellX, int cellY)
+            => cellX > 0 && cellX < Width
+            && cellY > 0 && cellY < Height;
+
         public virtual void Update(GameTime gameTime)
             => BuildFullBlockingMap();
 
@@ -30,11 +35,11 @@ namespace Merthsoft.MooseEngine.BaseDriver
 
             for (var x = 0; x < Width; x++)
                 for (var y = 0; y < Height; y++)
+                {
+                    blockingMap[x, y] = new();
                     for (var layerIndex = 0; layerIndex < Layers.Count; layerIndex++)
-                    {
-                        blockingMap[x, y] = new();
                         blockingMap[x, y].Add(IsBlockedAt(layerIndex, x, y));
-                    }
+                }
         }
 
         protected abstract int IsBlockedAt(int layer, int x, int y);
@@ -49,16 +54,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
                 Velocity.FromMetersPerSecond(1));
 
         public Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
-            => BaseGrid.DisconnectWhere((x, y) => blockingMap[x, y].Any() && !walkableOverrides.Contains(new(x, y)));
-
-        public bool CellIsInBounds(Vector2 cell)
-            => cell.X > 0 && cell.X < Width
-            && cell.Y > 0 && cell.Y < Height;
-
-        public bool CellIsInBounds(int cellX, int cellY)
-            => cellX > 0 && cellX < Width
-            && cellY > 0 && cellY < Height;
-
+            => BaseGrid.DisconnectWhere((x, y) => blockingMap[x, y].Any(t => t > 0) && !walkableOverrides.Contains(new(x, y)));
 
         public virtual IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
         {
@@ -125,15 +121,21 @@ namespace Merthsoft.MooseEngine.BaseDriver
             var endX = (int)endCell.X;
             var endY = (int)endCell.Y;
 
-            var path = new PathFinder()
-                .FindPath(new GridPosition(startX, startY), new GridPosition(endX, endY), grid);
+            try
+            {
+                var path = new PathFinder()
+                    .FindPath(new GridPosition(startX, startY), new GridPosition(endX, endY), grid);
 
-            if (path.Type != PathType.Complete)
+                if (path.Type != PathType.Complete)
+                    return Enumerable.Empty<Vector2>();
+
+                return path.Edges
+                    .Select(e => new Vector2((int)e.End.Position.X, (int)e.End.Position.Y))
+                    .Distinct();
+            }
+            catch {
                 return Enumerable.Empty<Vector2>();
-
-            return path.Edges
-                .Select(e => new Vector2((int)e.End.Position.X, (int)e.End.Position.Y))
-                .Distinct();
+            }
         }
 
         public bool WorldPositionIsInBounds(float worldX, float worldY)

@@ -5,10 +5,9 @@ using Merthsoft.MooseEngine.TiledDriver;
 using Merthsoft.MooseEngine.Ui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.SnowballFight
 {
@@ -20,8 +19,8 @@ namespace Merthsoft.SnowballFight
 
         // TODO: Move layer values into something else
         public static int UnitLayer { get; private set; } = 2;
-
         public static int SnowballLayer { get; private set; } = 4;
+        public static int WeatherLayer { get; private set; } = 5;
 
         private WindowManager WindowManager = null!;
         private Window StatsWindow = null!;
@@ -40,11 +39,21 @@ namespace Merthsoft.SnowballFight
 
         private IEnumerable<Unit> Units => ReadObjects.OfType<Unit>();
 
-        public AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
+        private AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
+
+        private readonly Dictionary<int, RenderHook> GameRenderHooks;
+
+        private bool Demo = true;
 
         public SnowballFightGame()
         {
             Instance = this;
+
+            GameRenderHooks = new()
+            {
+                { 2, new(PreHook: _ => DrawSelectedUnitDetails()) },
+                { 4, new(PostHook: _ => DrawTargetLine()) },
+            };
         }
 
         protected override void Initialize()
@@ -61,10 +70,20 @@ namespace Merthsoft.SnowballFight
             AddRenderer(TiledMooseMapRenderer.DefaultRenderKey, new TiledMooseMapRenderer(GraphicsDevice));
             AddRenderer(SpriteBatchObjectRenderer.DefaultRenderKey, new SpriteBatchObjectRenderer(SpriteBatch));
 
-            MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap"));
-            LoadMap();
-            UnitLayer = MainMap.ObjectLayerIndices.First();
-            SnowballLayer = MainMap.ObjectLayerIndices.Last();
+            MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/title_screen"));
+
+            using (var layerIndex = MainMap.ObjectLayerIndices.GetEnumerator())
+            {
+                layerIndex.MoveNext();
+                UnitLayer = layerIndex.Current;
+
+                layerIndex.MoveNext();
+                SnowballLayer = layerIndex.Current;
+
+                if (layerIndex.MoveNext())
+                    WeatherLayer = layerIndex.Current;
+            }
+            
 
             UnitsTexture = Content.Load<Texture2D>("Images/units");
             var unitsTextureData = new Color[UnitsTexture.Width * UnitsTexture.Height];
@@ -89,13 +108,15 @@ namespace Merthsoft.SnowballFight
             AddDef(new UnitDef("mari", 3, 11, .4f, extractPortrait(1), "Mari Lwyd"));
             AddDef(new UnitDef("santa", 8, 4, .1f, extractPortrait(9)));
             AddDef(new UnitDef("snowman", 8, 4, .1f, extractPortrait(2)));
+
             AddDef(new AnimatedGameObjectDef("snowball", "snowball"));
+            AddDef(new AnimatedGameObjectDef("snow", "snow"));
 
             MainCamera.ZoomIn(1f);
 
             var fonts = new SpriteFont[]
             {
-                Content.Load<SpriteFont>("Fonts/Whacky_Joe_15"),
+                Content.Load<SpriteFont>("Fonts/Whacky_Joe_18"),
                 Content.Load<SpriteFont>("Fonts/Direct_Message_14"),
             };
 
@@ -109,23 +130,35 @@ namespace Merthsoft.SnowballFight
                 new("Candycane", windowTextures[0], 32, 32, fonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Maroon },
             });
 
-            MainMenu = new SimpleMenu(WindowManager.DefaultTheme, "New Game", "Exit");
+            MainMenu = new SimpleMenu(WindowManager.DefaultTheme, "New Game", "Settings", "About", "Exit");
             WindowManager.AddWindow(MainMenu);
 
             MainMenu.Center(WindowSize, WindowSize);
             MainMenu.Clicked = MainMenu_Clicked;
 
             var logoText = "Snowfight Tactics";
-            var logoSize = fonts[0].MeasureString(logoText);
-            Logo = WindowManager.NewWindow((int)(MainMenu.X + MainMenu.Width / 2.0 - logoSize.X / 2.0), (int)(MainMenu.Y - logoSize.Y), MainMenu.Width, 25);
-            var logoLabel = Logo.AddLabel(0, 0, logoText, 0);
-            logoLabel.Color = new Color(59, 23, 37);
+            var logoTexture = StrokeEffect.CreateStrokeSpriteFont(fonts[0], logoText, Color.Yellow, Vector2.One, 3, Color.Black, GraphicsDevice, StrokeType.OutlineAndTexture);
+
+            var (logoWidth, logoHeight) = (logoTexture.Width, logoTexture.Height);
+            Logo = WindowManager.NewWindow((int)(MainMenu.X + MainMenu.Width / 2.0 - logoWidth / 2.0), (int)(MainMenu.Y - logoHeight), MainMenu.Width, 25);
+            Logo.AddPicture(0, 0, logoTexture);
 
             StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2);
             StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
             StatsWindow.Hide();
 
             ContentManager.LoadAnimatedSpriteSheet(Snowball.AnimationKey);
+        }
+
+        protected override void PostLoad()
+        {
+            for (var index = 0; index < 6; index++)
+                SpawnUnit(Random.Next(0, 3) switch
+                {
+                    1 => "elf1",
+                    2 => "elf2",
+                    _ => "elf3"
+                }, Random.Next(4, 26), Random.Next(21, 29));
         }
 
         private void MainMenu_Clicked(string option)
@@ -157,6 +190,11 @@ namespace Merthsoft.SnowballFight
 
         private void NewGame()
         {
+            Demo = false;
+
+            MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/map1"));
+
+            MarkAllObjectsForRemoval();
             SpawnUnit("deer", 5, 9);
             SpawnUnit("elf1", 10, 5);
             SpawnUnit("elf2", 3, 10);
@@ -180,23 +218,61 @@ namespace Merthsoft.SnowballFight
             => HandleMouseInput();
 
         protected override void PostUpdate(GameTime gameTime)
-            => WindowManager.Update(gameTime, CurrentMouseState, WorldMouse);
+        {
+            WindowManager.Update(gameTime, CurrentMouseState);
+            if (Demo)
+                DemoUpdate();
+        }
+    
+        private void DemoUpdate()
+        {
+            if (SelectedUnit == null)
+            {
+                SelectedUnit = (ReadObjects[Random.Next(6)] as Unit)!;
+                var state = Random.Next(2) switch
+                {
+                    0 => Unit.States.Walk,
+                    _ => Unit.States.Attack
+                };
+
+                SelectedUnit.State = state;
+
+                if (state == Unit.States.Walk)
+                {
+                    var startCell = SelectedUnit.GetCell();
+                    var endCell = new Vector2(startCell.X + Random.Next(-3, 4), startCell.Y + Random.Next(-3, 4));
+                    var path = MainMap.FindCellPath(startCell, endCell);
+                    if (path.Any())
+                        path.ForEach(SelectedUnit.MoveQueue.Enqueue);
+                }
+                else if (state == Unit.States.Attack)
+                {
+                    var attackUnit = (ReadObjects[Random.Next(6)] as Unit)!;
+                    while (attackUnit == SelectedUnit)
+                        attackUnit = (ReadObjects[Random.Next(6)] as Unit)!;
+
+                    SelectedUnit.Attack(attackUnit);
+                }
+            }
+
+            if (SelectedUnit.State == Unit.States.Idle)
+                SelectedUnit = null;
+        }
 
         protected override void Draw(GameTime gameTime)
         {
-            Draw(null, null,
-                (_ => DrawSelectedUnitDetails(), null),
-                null,
-                (null, _ => DrawTargetLine()));
+            Draw(gameTime, GameRenderHooks);
 
             SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             WindowManager.Draw(SpriteBatch);
             SpriteBatch.End();
         }
 
-
         private void HandleMouseInput()
         {
+            if (Demo)
+                return;
+
             var mouseOverUnit = Units.FirstOrDefault(unit => unit.AtWorldPosition(WorldMouse));
 
             if (CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton))
