@@ -6,8 +6,10 @@ using MonoGame.Extended;
 
 namespace Merthsoft.MooseEngine.GameObjects
 {
-    public abstract class GameObjectBase : IComparable<GameObjectBase>
+    public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<GameObjectBase>
     {
+        public Guid Id { get; } = Guid.NewGuid();
+
         public GameObjectDef Def { get; set; }
 
         public int Layer { get; set; }
@@ -41,12 +43,10 @@ namespace Merthsoft.MooseEngine.GameObjects
         }
 
         public abstract void Draw(SpriteBatch spriteBatch);
-        
-        public virtual void OnAdd(IMap map)
-            => ParentMap = map;
 
-        public virtual void OnRemove()
-            => ParentMap = null;
+        public virtual void OnAdd() { }
+
+        public virtual void OnRemove() { }
 
         public virtual bool AtWorldPosition(Vector2 worldPosition)
             => WorldRectangle.Contains(worldPosition);
@@ -65,13 +65,9 @@ namespace Merthsoft.MooseEngine.GameObjects
             => layer == Layer && InCell(x, y, parentMap);
 
         public int CompareTo(GameObjectBase? other)
-            => (IsNull: other == null, Layer: Layer == other?.Layer, Y: WorldPosition.Y == other?.WorldPosition.Y, X: WorldPosition.X == other?.WorldPosition.X) switch
-            {
-                { IsNull: true } => 1,
-                { Layer: false } => Layer.CompareTo(other!.Layer),
-                { Y: false } => WorldPosition.Y.CompareTo(other!.WorldPosition.Y),
-                { X: false } => WorldPosition.X.CompareTo(other!.WorldPosition.X),
-                _ => GetHashCode().CompareTo(other!.GetHashCode()),
-            };
+            => Id.CompareTo(other?.Id);
+
+        public bool Equals(GameObjectBase? other)
+            => Id.Equals(other?.Id);
     }
 }

@@ -14,7 +14,7 @@ namespace Merthsoft.MooseEngine
 
         protected bool ShouldQuit { get; set; } = false;
 
-        public MooseContentManager ContentManager { get; set; } = null!;
+        public MooseContentManager ContentManager { get; set; } = null!; // Set in initialize
         
         public OrthographicCamera MainCamera = null!; // Set in load content
         public SpriteBatch SpriteBatch = null!; // Set in load content
@@ -53,7 +53,7 @@ namespace Merthsoft.MooseEngine
                
         public virtual Vector2 HalfTileSize => MainMap.HalfTileSize; // TODO: Cache
 
-        public Dictionary<int, RenderHook>? DefaultRenderHooks { get; } = new();
+        public virtual IDictionary<int, RenderHook>? DefaultRenderHooks => null;
 
         public int ScreenWidth => GraphicsDevice.Viewport.Width;
         public int ScreenHeight => GraphicsDevice.Viewport.Height;
@@ -62,7 +62,6 @@ namespace Merthsoft.MooseEngine
 
         public MooseGame()
         {
-            ContentManager = new MooseContentManager(Content);
             IsMouseVisible = true;
             Graphics = new GraphicsDeviceManager(this);
         }
@@ -80,6 +79,8 @@ namespace Merthsoft.MooseEngine
 
         protected override void Initialize()
         {
+            ContentManager = new MooseContentManager(Content, GraphicsDevice);
+
             var initialization = Startup();
             GraphicsDevice.BlendState = initialization.BlendState ?? BlendState.AlphaBlend;
             GraphicsDevice.SamplerStates[0] = initialization.SamplerState ?? SamplerState.PointClamp;
@@ -127,7 +128,8 @@ namespace Merthsoft.MooseEngine
         public TObject AddObject<TObject>(TObject gameObject, IMap? parentMap = null) where TObject : GameObjectBase
         {
             ObjectsToAdd.Enqueue(gameObject);
-            gameObject.OnAdd(parentMap ?? MainMap);
+            gameObject.ParentMap = parentMap ?? MainMap;
+            gameObject.OnAdd();
             return gameObject;
         }
 
@@ -140,10 +142,10 @@ namespace Merthsoft.MooseEngine
         public TDef GetDef<TDef>(string defName) where TDef : Def
             => ((Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
 
-        protected virtual void PreRenderUpdate(GameTime gameTime) { return; }
-        protected virtual void PreObjectsUpdate(GameTime gameTime) { return; }
+        protected virtual bool PreRenderUpdate(GameTime gameTime) => true;
+        protected virtual bool PreObjectsUpdate(GameTime gameTime) => true;
         protected virtual void PostObjectsUpdate(GameTime gameTime) { return; }
-        protected virtual void PreMapUpdate(GameTime gameTime) { return; }
+        protected virtual bool PreMapUpdate(GameTime gameTime) => true;
         protected virtual void PostUpdate(GameTime gameTime) { return; }
 
         protected override void Update(GameTime gameTime)
@@ -155,20 +157,21 @@ namespace Merthsoft.MooseEngine
 
             WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
 
-            PreRenderUpdate(gameTime);
-            foreach (var renderer in Renderers.Values)
-                renderer.Update(gameTime);
+            if (PreRenderUpdate(gameTime))
+                foreach (var renderer in Renderers.Values)
+                    renderer.Update(gameTime);
 
-            PreObjectsUpdate(gameTime);
-            foreach (var obj in Objects)
-                obj.Update(gameTime);
+            if (PreObjectsUpdate(gameTime))
+                foreach (var obj in Objects)
+                    obj.Update(gameTime);
             PostObjectsUpdate(gameTime);
 
-            foreach (var obj in Objects)
-                if (obj.RemoveFlag && obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
+            foreach (var obj in Objects.Where(obj => obj.RemoveFlag))
+                if (obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
                 {
                     layer.RemoveObject(obj);
                     obj.OnRemove();
+                    obj.ParentMap = null;
                 }
 
             Objects.RemoveWhere(obj => obj.RemoveFlag);
@@ -186,8 +189,8 @@ namespace Merthsoft.MooseEngine
 
             ObjectsToAdd.Clear();
 
-            PreMapUpdate(gameTime);
-            MainMap?.Update(gameTime);
+            if (PreMapUpdate(gameTime))
+                MainMap?.Update(gameTime);
 
             PostUpdate(gameTime);
 
@@ -201,27 +204,38 @@ namespace Merthsoft.MooseEngine
         protected override void Draw(GameTime gameTime)
             => Draw(gameTime, DefaultRenderHooks);
 
+        protected virtual bool PreClear(GameTime gameTime) => true;
+        protected virtual bool PreMapDraw(GameTime gameTime) => true;
+        protected virtual void PostMapDraw(GameTime gameTime) { return; }
+        protected virtual void PostDraw(GameTime gameTime) { return; }
+
         protected void Draw(GameTime gameTime, IDictionary<int,  RenderHook>? renderHooks)
         {
-            GraphicsDevice.Clear(DefaultBackgroundColor);
-
-            if (MainMap == null)
-                return;
-
+            if (PreClear(gameTime))
+                GraphicsDevice.Clear(DefaultBackgroundColor);
+            
             var transformMatrix = MainCamera.GetViewMatrix();
+            SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+            
+            if (PreMapDraw(gameTime) && MainMap != null)
+                for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
+                {
+                    var hookTuple = renderHooks?.GetValueOrDefault(layerIndex);
+                    var layer = MainMap.Layers[layerIndex];
+                    var renderer = Renderers[layer.RendererKey];
 
-            for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
-            {
-                var hookTuple = renderHooks?.GetValueOrDefault(layerIndex);
-                var layer = MainMap.Layers[layerIndex];
-                var renderer = Renderers[layer.RendererKey];
+                    renderer.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+                    hookTuple?.PreHook?.Invoke(layerIndex);
+                    renderer.Draw(gameTime, layer, layerIndex);
+                    hookTuple?.PostHook?.Invoke(layerIndex);
+                    renderer.End();
+                }
 
-                renderer.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-                hookTuple?.PreHook?.Invoke(layerIndex);
-                renderer.Draw(gameTime, layer, layerIndex);
-                hookTuple?.PostHook?.Invoke(layerIndex);
-                renderer.End();
-            }
+            PostMapDraw(gameTime);
+
+            SpriteBatch.End();
+
+            PostDraw(gameTime);
         }
 
         public bool WasLeftMouseJustPressed()

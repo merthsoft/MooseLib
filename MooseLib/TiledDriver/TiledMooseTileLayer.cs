@@ -18,7 +18,7 @@ namespace Merthsoft.MooseEngine.TiledDriver
             set => Layer.Opacity = value;
         }
 
-        public string RendererKey { get; set; } = TiledMooseMapRenderer.DefaultRenderKey;
+        public string RendererKey { get; set; } = DefaultRenderKeys.TiledMooseMapRenderer;
         public int Number => throw new NotImplementedException();
 
         public ITile<TiledMapTile> GetTile(int x, int y)

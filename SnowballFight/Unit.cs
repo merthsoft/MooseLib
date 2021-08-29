@@ -82,14 +82,14 @@ namespace Merthsoft.SnowballFight
 
         private void AttackComplete()
         {
-            if (targettedUnit == null)
-                return;
-
-            var startWorldPosition = WorldPosition + ParentMap!.HalfTileSize;
-            var wiggle = AimDistribution.NextDouble();
-            var endWorldPosition = (targettedUnit.WorldPosition + ParentMap!.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
-            var flightPath = ParentMap!.FindWorldRay(startWorldPosition, endWorldPosition);
-            SnowballFightGame.SpawnSnowball(flightPath.Select(p => p.WorldPosition));
+            if (targettedUnit != null)
+            {
+                var startWorldPosition = WorldPosition + ParentMap!.HalfTileSize;
+                var wiggle = AimDistribution.NextDouble();
+                var endWorldPosition = (targettedUnit.WorldPosition + ParentMap!.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
+                var flightPath = ParentMap!.FindWorldRay(startWorldPosition, endWorldPosition);
+                SnowballFightGame.SpawnSnowball(flightPath.Select(p => p.WorldPosition));
+            }
 
             State = States.Idle;
             StateCompleteAction = null;

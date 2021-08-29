@@ -1,5 +1,5 @@
 ﻿using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.BaseDriver;
+using Merthsoft.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.MooseEngine.Defs;
 using Merthsoft.MooseEngine.TiledDriver;
 using Merthsoft.MooseEngine.Ui;
@@ -42,6 +42,7 @@ namespace Merthsoft.SnowballFight
         private AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
 
         private readonly Dictionary<int, RenderHook> GameRenderHooks;
+        public override IDictionary<int, RenderHook>? DefaultRenderHooks => GameRenderHooks;// Demo ? null : GameRenderHooks;
 
         private bool Demo = true;
 
@@ -67,8 +68,8 @@ namespace Merthsoft.SnowballFight
 
         protected override void Load()
         {
-            AddRenderer(TiledMooseMapRenderer.DefaultRenderKey, new TiledMooseMapRenderer(GraphicsDevice));
-            AddRenderer(SpriteBatchObjectRenderer.DefaultRenderKey, new SpriteBatchObjectRenderer(SpriteBatch));
+            AddRenderer(MooseEngine.TiledDriver.DefaultRenderKeys.TiledMooseMapRenderer, new TiledMooseMapRenderer(GraphicsDevice));
+            AddRenderer(MooseEngine.BaseDriver.Renderers.DefaultRenderKeys.SpriteBatchObjectRenderer, new SpriteBatchObjectRenderer(SpriteBatch));
 
             MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/title_screen"));
 
@@ -84,7 +85,6 @@ namespace Merthsoft.SnowballFight
                     WeatherLayer = layerIndex.Current;
             }
             
-
             UnitsTexture = Content.Load<Texture2D>("Images/units");
             var unitsTextureData = new Color[UnitsTexture.Width * UnitsTexture.Height];
             UnitsTexture.GetData(unitsTextureData);
@@ -116,8 +116,8 @@ namespace Merthsoft.SnowballFight
 
             var fonts = new SpriteFont[]
             {
-                Content.Load<SpriteFont>("Fonts/Whacky_Joe_18"),
-                Content.Load<SpriteFont>("Fonts/Direct_Message_14"),
+                ContentManager.BakeFont("Whacky_Joe", 64),
+                ContentManager.BakeFont("Direct_Message", 48),
             };
 
             var windowTextures = new Texture2D[]
@@ -127,7 +127,7 @@ namespace Merthsoft.SnowballFight
             };
 
             WindowManager = new WindowManager(new Theme[] {
-                new("Candycane", windowTextures[0], 32, 32, fonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Maroon },
+                new("Candycane", windowTextures[0], 32, 32, fonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow },
             });
 
             MainMenu = new SimpleMenu(WindowManager.DefaultTheme, "New Game", "Settings", "About", "Exit");
@@ -152,7 +152,7 @@ namespace Merthsoft.SnowballFight
 
         protected override void PostLoad()
         {
-            for (var index = 0; index < 6; index++)
+            for (var index = 0; index < 18; index++)
                 SpawnUnit(Random.Next(0, 3) switch
                 {
                     1 => "elf1",
@@ -214,8 +214,11 @@ namespace Merthsoft.SnowballFight
             return snowBall;
         }
 
-        protected override void PreRenderUpdate(GameTime gameTime)
-            => HandleMouseInput();
+        protected override bool PreRenderUpdate(GameTime gameTime)
+        {
+            HandleMouseInput();
+            return true;
+        }
 
         protected override void PostUpdate(GameTime gameTime)
         {
@@ -228,7 +231,7 @@ namespace Merthsoft.SnowballFight
         {
             if (SelectedUnit == null)
             {
-                SelectedUnit = (ReadObjects[Random.Next(6)] as Unit)!;
+                SelectedUnit = Units.ElementAt(Random.Next(Units.Count()));
                 var state = Random.Next(2) switch
                 {
                     0 => Unit.States.Walk,
@@ -259,10 +262,8 @@ namespace Merthsoft.SnowballFight
                 SelectedUnit = null;
         }
 
-        protected override void Draw(GameTime gameTime)
+        protected override void PostDraw(GameTime gameTime)
         {
-            Draw(gameTime, GameRenderHooks);
-
             SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             WindowManager.Draw(SpriteBatch);
             SpriteBatch.End();

@@ -40,10 +40,10 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="MonoGame.Extended">
-			<HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.dll</HintPath>
+			<HintPath>..\lib\MonoGame.Extended.dll</HintPath>
 		</Reference>
 		<Reference Include="MonoGame.Extended.Tiled">
-			<HintPath>..\..\MonoGame.Extended\src\dotnet\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Tiled.dll</HintPath>
+			<HintPath>..\lib\MonoGame.Extended.Tiled.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<ItemGroup>
@@ -91,6 +91,18 @@
 		</None>
 		<None Update="Content\Animations\units.sf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Capital_Hill.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Direct_Message.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Whacky_Joe.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Whacky_Joe_Nospace_Cutout.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 </Project>

@@ -4,6 +4,9 @@ using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
 using Roy_T.AStar.Grids;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Merthsoft.MooseEngine
 {

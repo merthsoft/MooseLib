@@ -3,12 +3,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
-namespace Merthsoft.MooseEngine.BaseDriver
+namespace Merthsoft.MooseEngine.BaseDriver.Renderers
 {
     public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchObjectRenderer
     {
-        public new static string DefaultRenderKey = "SpriteBatchPrimitiveRectangleRenderer_Default";
-
         private List<Color> Palette { get; } = new();
 
         public int TileWidth { get; private set; }

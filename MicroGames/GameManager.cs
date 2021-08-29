@@ -2,8 +2,9 @@
 using Merthsoft.MooseEngine.Ui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using SpriteFontPlus;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Merthsoft.MicroGames
 {
@@ -13,21 +14,6 @@ namespace Merthsoft.MicroGames
         private WindowManager WindowManager = null!;
 
         public GameManager() { }
-
-        private static readonly CharacterRange[] DefaultCharacterRange = new[]
-        {
-            CharacterRange.BasicLatin,
-            CharacterRange.Latin1Supplement,
-            CharacterRange.LatinExtendedA,
-            CharacterRange.Cyrillic
-        };
-
-        private static readonly int DefaultBitmapSize = 1024;
-
-        private SpriteFont BakeFont(string font, int fontPixelHeight)
-            => TtfFontBaker.Bake(File.ReadAllBytes($"Content/Fonts/{font}.ttf"), fontPixelHeight, 
-                DefaultBitmapSize, DefaultBitmapSize, DefaultCharacterRange
-               ).CreateSpriteFont(GraphicsDevice);
 
         protected override StartupParameters Startup()
             => new()
@@ -40,8 +26,8 @@ namespace Merthsoft.MicroGames
         {
             var fonts = new[]
             {
-                BakeFont("Outward_Bound", 78),
-                BakeFont("Tomorrow_Night", 78),
+                ContentManager.BakeFont("Outward_Bound", 78),
+                ContentManager.BakeFont("Tomorrow_Night", 78),
             };
 
             var windowTextures = new[] {
@@ -63,7 +49,7 @@ namespace Merthsoft.MicroGames
                     TextColor = Color.White, 
                     TextMouseOverColor = Color.Maroon,
                     TileScale = new(7, 7),
-                },
+                }, 
             };
 
             WindowManager = new WindowManager(themes);

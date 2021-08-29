@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 
 namespace Merthsoft.MooseEngine.Ui
 {
@@ -14,7 +16,7 @@ namespace Merthsoft.MooseEngine.Ui
 
         public IReadOnlyCollection<Theme> Themes => ThemeDictionary.Values;
 
-        private string defaultThemeName;
+        private string defaultThemeName = null!; // Set in AddTheme called from ctor
         public string DefaultThemeName 
         { 
             get => defaultThemeName;
@@ -26,7 +28,7 @@ namespace Merthsoft.MooseEngine.Ui
         }
 
         private Theme? defaultTheme;
-        public Theme DefaultTheme => defaultTheme ??= ThemeDictionary[DefaultThemeName];
+        public Theme DefaultTheme => defaultTheme ??= ThemeDictionary.GetValueOrDefault(DefaultThemeName) ?? Themes.First();
 
         public IReadOnlyCollection<Window> Windows => windows;
 
@@ -88,6 +90,10 @@ namespace Merthsoft.MooseEngine.Ui
         }
 
         public void AddTheme(Theme theme)
-            => ThemeDictionary[theme.Name] = theme;
+        {
+            ThemeDictionary[theme.Name] = theme;
+            if (ThemeDictionary.Count == 1)
+                DefaultThemeName = theme.Name;
+        }
     }
 }

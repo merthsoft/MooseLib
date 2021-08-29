@@ -4,12 +4,10 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 
-namespace Merthsoft.MooseEngine.BaseDriver
+namespace Merthsoft.MooseEngine.BaseDriver.Renderers
 {
     public class SpriteBatchIndexedSpriteTileRenderer : SpriteBatchObjectRenderer
     {
-        public new static string DefaultRenderKey = "SpriteBatchIndexedTileRenderer_Default";
-
         private Sprite[] SpriteSheet { get; }
 
         public Transform2 Transform { get; set; } = new();

@@ -12,6 +12,7 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="RoyT.AStar" Version="3.0.2" />
+    <PackageReference Include="SpriteFontPlus.MonoGame" Version="0.7.0.22" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Extended">

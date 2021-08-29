@@ -2,12 +2,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Merthsoft.MooseEngine.BaseDriver
+namespace Merthsoft.MooseEngine.BaseDriver.Renderers
 {
     public class SpriteBatchIndexedTextureTileRenderer : SpriteBatchObjectRenderer
     {
-        public new static string DefaultRenderKey = "SpriteBatchIndexedTileRenderer_Default";
-
         private Texture2D SpriteSheet { get; }
 
         public Color Color { get; set; } = Color.White;

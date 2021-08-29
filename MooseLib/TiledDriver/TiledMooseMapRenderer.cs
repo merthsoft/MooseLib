@@ -7,8 +7,6 @@ namespace Merthsoft.MooseEngine.TiledDriver
 {
     public record TiledMooseMapRenderer : ILayerRenderer
     {
-        public const string DefaultRenderKey = "TiledMooseMapRenderer_Default";
-
         private TiledMapRenderer MapRenderer { get; }
         private Matrix? ViewMatrix { get; set; }
 

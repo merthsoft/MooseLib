@@ -1,13 +1,13 @@
-﻿using Merthsoft.MooseEngine.BaseDriver;
-using Merthsoft.MooseEngine.GameObjects;
+﻿using Merthsoft.MooseEngine.GameObjects;
 using Merthsoft.MooseEngine.Interface;
 using MonoGame.Extended.Tiled;
+using System.Collections.Generic;
 
 namespace Merthsoft.MooseEngine.TiledDriver
 {
     public record TiledMooseObjectLayer(TiledMapObjectLayer Layer) : IObjectLayer
     {
-        readonly SortedSet<GameObjectBase> objects = new();
+        readonly HashSet<GameObjectBase> objects = new();
         public IReadOnlyList<GameObjectBase> Objects => objects.ToList().AsReadOnly();
 
         public string Name => Layer.Name;
@@ -24,12 +24,14 @@ namespace Merthsoft.MooseEngine.TiledDriver
             set => Layer.Opacity = value;
         }
 
-        public string RendererKey { get; set; } = SpriteBatchObjectRenderer.DefaultRenderKey;
+        public string RendererKey { get; set; } = BaseDriver.Renderers.DefaultRenderKeys.SpriteBatchObjectRenderer;
 
         public void AddObject(GameObjectBase obj)
             => objects.Add(obj);
 
         public void RemoveObject(GameObjectBase obj)
-            => objects.Remove(obj);
+        {
+            var ret = objects.Remove(obj);
+        }
     }
 }

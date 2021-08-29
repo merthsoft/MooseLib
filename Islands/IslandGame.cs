@@ -1,5 +1,4 @@
 ﻿using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.BaseDriver;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -54,7 +53,7 @@ namespace Merthsoft.Islands
                     map[i, j] = 0;
         }
 
-        protected override void PreMapUpdate(GameTime gameTime)
+        protected override bool PreMapUpdate(GameTime gameTime)
         {
             if (WasKeyJustPressed(Keys.R))
                 map.Randomize();
@@ -80,6 +79,8 @@ namespace Merthsoft.Islands
 
                 Stamp(cellX, cellY, 0, 2);
             }
+
+            return true;
         }
 
         private void Stamp(int cellX, int cellY, int v, int size = 1)

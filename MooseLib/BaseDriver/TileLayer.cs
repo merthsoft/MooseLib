@@ -1,4 +1,5 @@
-﻿using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.MooseEngine.BaseDriver.Renderers;
+using Merthsoft.MooseEngine.Interface;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {
@@ -12,7 +13,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
         
         public bool IsVisible { get; set; }
         public float Opacity { get; set; }
-        public string RendererKey { get; set; } = SpriteBatchPrimitiveRectangleRenderer.DefaultRenderKey;
+        public string RendererKey { get; set; } = DefaultRenderKeys.SpriteBatchPrimitiveRectangleRenderer;
 
         public TTile[,] Tiles { get; }
 

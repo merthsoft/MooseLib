@@ -30,12 +30,8 @@ namespace Merthsoft.SnowballFight
             SpriteTransform = new(new(-8, -8), 0, Vector2.One);
         }
 
-        public override void OnAdd(IMap map)
-        {
-            base.OnAdd(map);
-
-            StartCell = GetCell();
-        }
+        public override void OnAdd()
+            => StartCell = GetCell();
 
         public override void Update(GameTime gameTime)
         {
