@@ -1,4 +1,5 @@
-﻿using Merthsoft.MooseEngine.GameObjects;
+﻿using Merthsoft.MooseEngine.BaseDriver.Renderers;
+using Merthsoft.MooseEngine.GameObjects;
 using Merthsoft.MooseEngine.Interface;
 
 namespace Merthsoft.MooseEngine.BaseDriver
@@ -9,14 +10,12 @@ namespace Merthsoft.MooseEngine.BaseDriver
         public IReadOnlyList<GameObjectBase> Objects => objects.ToList().AsReadOnly();
 
         public string Name { get; }
+        public string RendererKey { get; set; } = DefaultRenderKeys.SpriteBatchObjectRenderer;
         public bool IsVisible { get; set; }
-        public float Opacity { get; set; }
-        public string RendererKey { get; set; }
-        public int Number { get; }
 
-        public ObjectLayer(string name, string rendererKey, int number)
-            => (Name, RendererKey, Number)
-             = (name, rendererKey, number);
+        public ObjectLayer(string name)
+            => Name
+             = name;
 
         public void AddObject(GameObjectBase obj)
             => objects.Add(obj);

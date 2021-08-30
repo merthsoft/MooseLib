@@ -11,7 +11,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
         public override int TileWidth { get; }
         public override int TileHeight { get; }
 
-        private ReadOnlyCollection<TileLayer<TTile>> layersCache = null!; // Set in BuildLayers called by ctor
+        private ReadOnlyCollection<TileLayer<TTile>> layersCache;
         public override IReadOnlyList<ILayer> Layers => layersCache;
 
         public override IEnumerable<int> ObjectLayerIndices => Enumerable.Empty<int>();
@@ -29,13 +29,8 @@ namespace Merthsoft.MooseEngine.BaseDriver
             TileHeight = tileHeight;
             DefaultTileMapRendererKey = defaultTileMapRenderKey;
 
-            BuildLayers(numLayers);
-        }
-
-        private void BuildLayers(int numLayers)
-        {
             for (int layerIndex = 0; layerIndex < numLayers; layerIndex++)
-                layers.Add(new TileLayer<TTile>($"Layer {layerIndex}", layerIndex, Width, Height) { RendererKey = DefaultTileMapRendererKey });
+                layers.Add(new TileLayer<TTile>($"Layer {layerIndex}", Width, Height) { RendererKey = DefaultTileMapRendererKey });
             layersCache = layers.AsReadOnly();
         }
 

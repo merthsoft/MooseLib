@@ -29,8 +29,6 @@ namespace Merthsoft.MooseEngine
             return AnimationSpriteSheets[animationKey];
         }
 
-
-
         private static readonly CharacterRange[] DefaultCharacterRange = new[]
         {
             CharacterRange.BasicLatin,

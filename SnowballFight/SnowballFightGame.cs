@@ -21,7 +21,7 @@ namespace Merthsoft.SnowballFight
         public static int UnitLayer { get; private set; } = 2;
         public static int SnowballLayer { get; private set; } = 4;
         public static int WeatherLayer { get; private set; } = 5;
-
+        
         private WindowManager WindowManager = null!;
         private Window StatsWindow = null!;
         private SimpleMenu MainMenu = null!;

@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
-using System.Collections.Generic;
 
 namespace Merthsoft.MooseEngine.BaseDriver
 {

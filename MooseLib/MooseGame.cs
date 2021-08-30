@@ -129,7 +129,6 @@ namespace Merthsoft.MooseEngine
         {
             ObjectsToAdd.Enqueue(gameObject);
             gameObject.ParentMap = parentMap ?? MainMap;
-            gameObject.OnAdd();
             return gameObject;
         }
 
@@ -178,13 +177,10 @@ namespace Merthsoft.MooseEngine
 
             foreach (var obj in ObjectsToAdd)
             {
-                var map = obj.ParentMap
-                    ?? throw new Exception("Object not added to a map.");
-                var layer = map.Layers[obj.Layer] as IObjectLayer
-                    ?? throw new Exception("Cannot add object to non-object layer");
-                
-                layer.AddObject(obj);
                 Objects.Add(obj);
+                var layer = obj.ParentMap?.Layers[obj.Layer] as IObjectLayer;
+                layer?.AddObject(obj);
+                obj.OnAdd();
             }
 
             ObjectsToAdd.Clear();
@@ -222,6 +218,8 @@ namespace Merthsoft.MooseEngine
                 {
                     var hookTuple = renderHooks?.GetValueOrDefault(layerIndex);
                     var layer = MainMap.Layers[layerIndex];
+                    if (!layer.IsVisible)
+                        continue;
                     var renderer = Renderers[layer.RendererKey];
 
                     renderer.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);

@@ -9,7 +9,6 @@ namespace Merthsoft.MooseEngine.BaseDriver
         public int Width { get; }
 
         public string Name { get; }
-        public int Number { get; }
         
         public bool IsVisible { get; set; }
         public float Opacity { get; set; }
@@ -17,10 +16,9 @@ namespace Merthsoft.MooseEngine.BaseDriver
 
         public TTile[,] Tiles { get; }
 
-        public TileLayer(string name, int number, int width, int height)
+        public TileLayer(string name, int width, int height)
         {
             Name = name;
-            Number = number;
             Width = width;
             Height = height;
 
