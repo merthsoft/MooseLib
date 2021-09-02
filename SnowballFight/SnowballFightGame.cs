@@ -73,16 +73,30 @@ namespace Merthsoft.SnowballFight
 
             MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/title_screen"));
 
-            using (var layerIndex = MainMap.ObjectLayerIndices.GetEnumerator())
+            var objectLayerCount = 0;
+            for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
             {
-                layerIndex.MoveNext();
-                UnitLayer = layerIndex.Current;
+                var layer = MainMap.Layers[layerIndex];
+                if (layer is not TiledMooseObjectLayer objectLayer)
+                    continue;
+                
+                objectLayerCount++;
 
-                layerIndex.MoveNext();
-                SnowballLayer = layerIndex.Current;
+                switch (objectLayerCount)
+                {
+                    case 0:
+                        UnitLayer = layerIndex;
+                        break;
+                    case 1:
+                        SnowballLayer = layerIndex;
+                        break;
+                    case 2:
+                        WeatherLayer = layerIndex;
+                        break;
+                }
 
-                if (layerIndex.MoveNext())
-                    WeatherLayer = layerIndex.Current;
+                if (objectLayerCount == 3)
+                    break;
             }
             
             UnitsTexture = Content.Load<Texture2D>("Images/units");

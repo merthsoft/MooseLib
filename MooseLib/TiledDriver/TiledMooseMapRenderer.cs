@@ -8,7 +8,6 @@ namespace Merthsoft.MooseEngine.TiledDriver
     public record TiledMooseMapRenderer : ILayerRenderer
     {
         private TiledMapRenderer MapRenderer { get; }
-        private Matrix? ViewMatrix { get; set; }
 
         public TiledMooseMapRenderer(GraphicsDevice graphicsDevice)
             => MapRenderer = new(graphicsDevice);
@@ -16,15 +15,7 @@ namespace Merthsoft.MooseEngine.TiledDriver
         public void Load(IMap map)
             => MapRenderer.LoadMap((map as TiledMooseMap)?.Map);
 
-        public void Update(GameTime gameTime)
-            => MapRenderer.Update(gameTime);
-
-        public void Begin(SpriteSortMode sortMode = SpriteSortMode.Deferred, BlendState? blendState = null, SamplerState? samplerState = null, DepthStencilState? depthStencilState = null, RasterizerState? rasterizerState = null, Effect? effect = null, Matrix? transformMatrix = null)
-            => ViewMatrix = transformMatrix;
-
-        public void Draw(GameTime _, ILayer layer, int __)
-            => MapRenderer.Draw((layer as TiledMooseTileLayer)?.Layer, ViewMatrix);
-
-        public void End() { }
+        public void Draw(GameTime _, ILayer layer, int __, Matrix transformMatrix)
+            => MapRenderer.Draw((layer as TiledMooseTileLayer)?.Layer, transformMatrix);
     }
 }

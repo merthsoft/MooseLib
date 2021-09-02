@@ -13,15 +13,24 @@ namespace Merthsoft.MooseEngine.BaseDriver
         public override int TileWidth { get; }
         public override int TileHeight { get; }
 
-        private ReadOnlyCollection<ILayer> layers;
+        private readonly ReadOnlyCollection<ILayer> layers;
         public override IReadOnlyList<ILayer> Layers => layers;
-        
-        public override IEnumerable<int> ObjectLayerIndices { get; }
-        
-        public override IEnumerable<int> TileLayerIndices { get; }
 
         public string DefaultTileLayerRendererKey { get; set; }
         public string DefaultObjectLayerRendererKey { get; set; }
+
+        public MultiMap(int width, int height, int tileWidth, int tileHeight, string tileLayerRenderKey, string objectLayerRenderKey, params ILayer[] layers)
+        {
+            Width = width;
+            Height = height;
+            TileWidth = tileWidth;
+            TileHeight = tileHeight;
+
+            DefaultTileLayerRendererKey = tileLayerRenderKey;
+            DefaultObjectLayerRendererKey = objectLayerRenderKey;
+
+            this.layers = new(layers);
+        }
 
         public MultiMap(int width, int height, int tileWidth, int tileHeight, string tileLayerRenderKey, string objectLayerRenderKey, params LayerType[] layerTypes)
         {
@@ -53,16 +62,42 @@ namespace Merthsoft.MooseEngine.BaseDriver
                 {
                     LayerType.Tile => createTileLayer(layerIndex),
                     LayerType.Object => createObjectLayer(layerIndex),
-                    _ => throw new ArgumentOutOfRangeException($"layerTypes[{layerIndex}]", $"{layerTypes[layerIndex]} is not a valid layer type")
+                    _ => throw new ArgumentOutOfRangeException($"layerTypes[{layerIndex}]", layerTypes[layerIndex], $"{layerTypes[layerIndex]} is not a valid layer type")
                 });
             this.layers = layers.AsReadOnly();
-            ObjectLayerIndices = objectLayerIndices.AsReadOnly();
-            TileLayerIndices = tileLayerIndices.AsReadOnly();
         }
 
         public override void CopyFromMap(IMap sourceMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null)
         {
-            throw new NotImplementedException();
+            width ??= Width;
+            height ??= Height;
+
+            if (sourceX < 0 || sourceY < 0 || destX < 0 || destY < 0
+                || width <= 0 || height <= 0
+                || sourceX > sourceMap.Width || sourceY > sourceMap.Height
+                || destX > sourceMap.Height || destY > sourceMap.Height
+                || sourceX + width > sourceMap.Width || sourceY + height > sourceMap.Height
+                || destX + width > sourceMap.Height || destY + height > sourceMap.Height)
+                throw new ArgumentOutOfRangeException("Not in bounds of one of the maps.", innerException: null);
+
+            if (sourceMap is not MultiMap<TTile> sourceTileMap)
+                throw new ArgumentOutOfRangeException(nameof(sourceMap), "sourceMap must be MultiMap");
+
+            var sourceLayers = sourceTileMap.Layers;
+
+            for (var layerIndex = 0; layerIndex < Layers.Count; layerIndex++)
+            {
+                if (layerIndex >= sourceLayers.Count)
+                    break;
+
+                var layer = layers[layerIndex];
+
+                for (var x = 0; x < width; x++)
+                    for (var y = 0; y < height; y++)
+                        if (layer is TileLayer<TTile> tileLayer)
+                            tileLayer.SetTile(x + destX, y + destY,
+                                (sourceLayers[layerIndex] as TileLayer<TTile>)!.GetTileValue(x + sourceX, y + sourceY));
+            }
         }
 
         protected override int IsBlockedAt(int layer, int x, int y)

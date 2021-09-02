@@ -35,8 +35,8 @@ namespace Merthsoft.MooseEngine.GameObjects
             State = state;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
-            => Sprite.Draw(spriteBatch, WorldPosition, SpriteTransform, SpriteEffects);
+        public override (Texture2D texture, Rectangle textureRectangle) GetTexture()
+            => (Sprite.TextureRegion.Texture, Sprite.TextureRegion.Bounds);
 
         public override void Update(GameTime gameTime)
         {

@@ -15,7 +15,7 @@ namespace Merthsoft.Islands
         private const int MapSize = 80;
         private const int WindowSize = MapSize * TileDimmensions * (int)(2 * DefaultZoom);
 
-        GameOfLifeMap map = new(MapSize, MapSize, TileDimmensions, TileDimmensions, TileRenderKey);
+        private readonly GameOfLifeMap map = new(MapSize, MapSize, TileDimmensions, TileDimmensions, TileRenderKey);
 
         public IslandGame()
         {
@@ -38,20 +38,6 @@ namespace Merthsoft.Islands
             AddRenderer(TileRenderKey, new SpriteBatchIndexedTextureTileRenderer(SpriteBatch, TileDimmensions, TileDimmensions, tilesheet));
 
             ZoomIn(1);
-        }
-
-        private void Randomize()
-        {
-            for (var i = 0; i < MapSize; i++)
-                for (var j = 0; j < MapSize; j++)
-                    map[i, j] = Random.NextDouble() < .35 ? 1 : 0;
-        }
-
-        private void Clear()
-        {
-            for (var i = 0; i < MapSize; i++)
-                for (var j = 0; j < MapSize; j++)
-                    map[i, j] = 0;
         }
 
         protected override bool PreMapUpdate(GameTime gameTime)

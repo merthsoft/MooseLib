@@ -16,12 +16,6 @@ namespace Merthsoft.MooseEngine.TiledDriver
 
         protected readonly List<ILayer> layerCache = new();
         public override IReadOnlyList<ILayer> Layers => layerCache.AsReadOnly();
-        
-        protected readonly HashSet<int> objectLayerIndices = new();
-        public override IEnumerable<int> ObjectLayerIndices => objectLayerIndices;
-
-        protected readonly HashSet<int> tileLayerIndices = new();
-        public override IEnumerable<int> TileLayerIndices => tileLayerIndices;
 
         public TiledMooseMap(TiledMap map)
         {
@@ -41,28 +35,21 @@ namespace Merthsoft.MooseEngine.TiledDriver
         protected virtual void BuildLayerCache()
         {
             layerCache.Clear();
-            objectLayerIndices.Clear();
-            tileLayerIndices.Clear();
 
             for (var layerIndex = 0; layerIndex < Map.Layers.Count; layerIndex++)
             {
-                var layer = Map.Layers[layerIndex];
-                switch (layer)
+                var mooseLayer = Map.Layers[layerIndex] switch
                 {
-                    case TiledMapTileLayer tileLayer:
-                        layerCache.Add(new TiledMooseTileLayer(tileLayer));
-                        tileLayerIndices.Add(layerIndex);
-                        break;
-
-                    case TiledMapObjectLayer objectLayer:
-                        layerCache.Add(new TiledMooseObjectLayer(objectLayer));
-                        objectLayerIndices.Add(layerIndex);
-                        break;
-                }
+                    TiledMapTileLayer tileLayer => new TiledMooseTileLayer(tileLayer),
+                    TiledMapObjectLayer objectLayer => new TiledMooseObjectLayer(objectLayer),
+                    _ => null as ILayer
+                };
+                if (mooseLayer != null)
+                    layerCache.Add(mooseLayer);
             }
 
             BuildFullBlockingMap();
-        }
+        } 
 
         public override void CopyFromMap(IMap fromMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null)
         {

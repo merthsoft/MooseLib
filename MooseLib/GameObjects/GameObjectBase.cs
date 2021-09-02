@@ -42,7 +42,7 @@ namespace Merthsoft.MooseEngine.GameObjects
             WorldPosition = WorldPosition.Round(Def.WorldSizeRound);
         }
 
-        public abstract void Draw(SpriteBatch spriteBatch);
+        public abstract (Texture2D texture, Rectangle textureRectangle) GetTexture();
 
         public virtual void OnAdd() { }
 

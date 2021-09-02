@@ -10,7 +10,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
 
         public string Name { get; }
         
-        public bool IsVisible { get; set; }
+        public bool IsVisible { get; set; } = true;
         public float Opacity { get; set; }
         public string RendererKey { get; set; } = DefaultRenderKeys.SpriteBatchPrimitiveRectangleRenderer;
 

@@ -202,7 +202,6 @@ namespace Merthsoft.MooseEngine
 
         protected virtual bool PreClear(GameTime gameTime) => true;
         protected virtual bool PreMapDraw(GameTime gameTime) => true;
-        protected virtual void PostMapDraw(GameTime gameTime) { return; }
         protected virtual void PostDraw(GameTime gameTime) { return; }
 
         protected void Draw(GameTime gameTime, IDictionary<int,  RenderHook>? renderHooks)
@@ -211,7 +210,6 @@ namespace Merthsoft.MooseEngine
                 GraphicsDevice.Clear(DefaultBackgroundColor);
             
             var transformMatrix = MainCamera.GetViewMatrix();
-            SpriteBatch.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             
             if (PreMapDraw(gameTime) && MainMap != null)
                 for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
@@ -222,16 +220,10 @@ namespace Merthsoft.MooseEngine
                         continue;
                     var renderer = Renderers[layer.RendererKey];
 
-                    renderer.Begin(transformMatrix: transformMatrix, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
                     hookTuple?.PreHook?.Invoke(layerIndex);
-                    renderer.Draw(gameTime, layer, layerIndex);
+                    renderer.Draw(gameTime, layer, layerIndex, transformMatrix);
                     hookTuple?.PostHook?.Invoke(layerIndex);
-                    renderer.End();
                 }
-
-            PostMapDraw(gameTime);
-
-            SpriteBatch.End();
 
             PostDraw(gameTime);
         }

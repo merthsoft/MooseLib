@@ -13,8 +13,6 @@ namespace Merthsoft.MooseEngine.BaseDriver
         public abstract int TileWidth { get; }
         public abstract int TileHeight { get; }
         public abstract IReadOnlyList<ILayer> Layers { get; }
-        public abstract IEnumerable<int> ObjectLayerIndices { get; }
-        public abstract IEnumerable<int> TileLayerIndices { get; }
 
         protected List<int>[,] blockingMap = new List<int>[0, 0];
 

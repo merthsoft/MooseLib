@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework;
 
 namespace Merthsoft.Islands
 {
-    class GameOfLifeMap : TileMap<int>
+    class GameOfLifeMap : MultiMap<int>
     {
         private TimeSpan lastUpdate = TimeSpan.Zero;
 
         private int mapBuffer = 0;
-        private int[,,] map = new int[2, 80, 80];
-        private int[,] waterMap = new int[80, 80];
+        private readonly int[,,] map = new int[2, 80, 80];
+        private readonly int[,] waterMap = new int[80, 80];
 
         public int this[int x, int y]
         {
@@ -20,7 +20,7 @@ namespace Merthsoft.Islands
         public bool DoUpdate { get; set; } = false;
 
         public GameOfLifeMap(int width, int height, int tileWidth, int tileHeight, string defaultTileMapRenderKey)
-            : base(width, height, 2, tileWidth, tileHeight, defaultTileMapRenderKey)
+            : base(width, height, tileWidth, tileHeight, defaultTileMapRenderKey, "", LayerType.Tile, LayerType.Tile)
         { }
 
         public int Get(int x, int y, int outOfBoundsValue = 0)

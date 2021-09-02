@@ -27,14 +27,20 @@ namespace Merthsoft.MooseEngine.BaseDriver.Renderers
         }
 
 
-        public override void Draw(GameTime _, ILayer layer, int layerNumber)
+        public override void Draw(GameTime _, ILayer layer, int layerNumber, Matrix viewMatrix)
         {
             if (layer is not TileLayer<int> tileLayer)
                 throw new Exception("TileLayer<int> layer expected");
 
+            SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, SamplerState.PointClamp, 
+                rasterizerState: RasterizerState.CullNone,
+                transformMatrix: viewMatrix);
+
             for (int i = 0; i < tileLayer.Width; i++)
                 for (int j = 0; j < tileLayer.Height; j++)
                     DrawSprite(tileLayer.Tiles[i, j], i, j, layerNumber);
+
+            SpriteBatch.End();
         }
 
         public virtual void DrawSprite(int spriteIndex, int i, int j, int layer)

@@ -11,7 +11,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
 
         public string Name { get; }
         public string RendererKey { get; set; } = DefaultRenderKeys.SpriteBatchObjectRenderer;
-        public bool IsVisible { get; set; }
+        public bool IsVisible { get; set; } = true;
 
         public ObjectLayer(string name)
             => Name
