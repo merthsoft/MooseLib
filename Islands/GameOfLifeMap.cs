@@ -1,7 +1,7 @@
-﻿using Merthsoft.MooseEngine.BaseDriver;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Microsoft.Xna.Framework;
 
-namespace Merthsoft.Islands
+namespace Merthsoft.Moose.Islands
 {
     class GameOfLifeMap : MultiMap<int>
     {
@@ -19,8 +19,8 @@ namespace Merthsoft.Islands
 
         public bool DoUpdate { get; set; } = false;
 
-        public GameOfLifeMap(int width, int height, int tileWidth, int tileHeight, string defaultTileMapRenderKey)
-            : base(width, height, tileWidth, tileHeight, defaultTileMapRenderKey, "", LayerType.Tile, LayerType.Tile)
+        public GameOfLifeMap(int width, int height, int tileWidth, int tileHeight)
+            : base(width, height, tileWidth, tileHeight, LayerType.Tile, LayerType.Tile)
         { }
 
         public int Get(int x, int y, int outOfBoundsValue = 0)

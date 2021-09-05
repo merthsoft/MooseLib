@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Merthsoft.Moose.MooseEngine.Defs;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
-using Merthsoft.MooseEngine.Defs;
 
-namespace Merthsoft.MooseEngine.GameObjects
+namespace Merthsoft.Moose.MooseEngine.GameObjects
 {
     public class AnimatedGameObject : GameObjectBase
     {
@@ -35,9 +35,6 @@ namespace Merthsoft.MooseEngine.GameObjects
             State = state;
         }
 
-        public override (Texture2D texture, Rectangle textureRectangle) GetTexture()
-            => (Sprite.TextureRegion.Texture, Sprite.TextureRegion.Bounds);
-
         public override void Update(GameTime gameTime)
         {
             if (PlayKey != PreviousPlayKey)
@@ -50,5 +47,8 @@ namespace Merthsoft.MooseEngine.GameObjects
 
             base.Update(gameTime);
         }
+
+        public override DrawParameters GetDrawParameters()
+            => new(Sprite.TextureRegion.Texture, (Rectangle)WorldRectangle, Sprite.TextureRegion.Bounds);
     }
 }

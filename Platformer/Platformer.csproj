@@ -6,8 +6,8 @@
     <TieredCompilation>false</TieredCompilation>
 	  <LangVersion>preview</LangVersion>
 	  <Nullable>enable</Nullable>
-    <RootNamespace>Merthsoft.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <AssemblyName>Merthsoft.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>Platformer</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>

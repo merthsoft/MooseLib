@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Merthsoft.MooseEngine;
 
-namespace Platformer.PlatformerGameObjects
+namespace Merthsoft.Moose.Platformer.PlatformerGameObjects
 {
     class Player : PlatformerGameObject
     {

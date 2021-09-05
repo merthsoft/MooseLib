@@ -1,4 +1,4 @@
-﻿namespace Merthsoft.CyberpunkRl
+﻿namespace Merthsoft.Moose.CyberpunkRL
 {
     public static class Program
     {

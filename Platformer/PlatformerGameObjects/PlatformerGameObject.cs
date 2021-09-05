@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Merthsoft.MooseEngine.GameObjects;
+﻿using Merthsoft.Moose.MooseEngine.GameObjects;
+using Microsoft.Xna.Framework;
 
-namespace Platformer.PlatformerGameObjects
+namespace Merthsoft.Moose.Platformer.PlatformerGameObjects
 {
     class PlatformerGameObject : AnimatedGameObject
     {

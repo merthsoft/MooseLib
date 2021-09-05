@@ -1,16 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Tiled;
-using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.BaseDriver.Renderers;
-using Merthsoft.MooseEngine.Interface;
-using Merthsoft.MooseEngine.TiledDriver;
-using Platformer.PlatformerGameObjects;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+using Merthsoft.Moose.MooseEngine.TiledDriver;
+using Merthsoft.Moose.Platformer.PlatformerGameObjects;
 
-namespace Platformer
+namespace Merthsoft.Moose.Platformer
 {
     public class PlatformerGame : MooseGame
     {
@@ -27,8 +26,8 @@ namespace Platformer
 
         protected override void Load()
         {
-            AddRenderer(Merthsoft.MooseEngine.TiledDriver.DefaultRenderKeys.TiledMooseMapRenderer, new TiledMooseMapRenderer(GraphicsDevice));
-            AddRenderer(Merthsoft.MooseEngine.BaseDriver.Renderers.DefaultRenderKeys.SpriteBatchObjectRenderer, new SpriteBatchObjectRenderer(SpriteBatch));
+            AddDefaultRenderer<TiledMooseTileLayer>("map", new TiledMooseMapRenderer(GraphicsDevice));
+            AddDefaultRenderer<TiledMooseObjectLayer>("object", new SpriteBatchObjectRenderer(SpriteBatch));
 
             MainMap = new TiledMooseMap("map", 30, 30, 16, 16);
             MainMap.CopyFromMap(new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap")));

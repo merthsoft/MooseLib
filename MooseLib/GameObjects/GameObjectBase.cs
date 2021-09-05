@@ -1,10 +1,9 @@
-﻿using Merthsoft.MooseEngine.Defs;
-using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Defs;
+using Merthsoft.Moose.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
-namespace Merthsoft.MooseEngine.GameObjects
+namespace Merthsoft.Moose.MooseEngine.GameObjects
 {
     public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<GameObjectBase>
     {
@@ -42,7 +41,7 @@ namespace Merthsoft.MooseEngine.GameObjects
             WorldPosition = WorldPosition.Round(Def.WorldSizeRound);
         }
 
-        public abstract (Texture2D texture, Rectangle textureRectangle) GetTexture();
+        public abstract DrawParameters GetDrawParameters();
 
         public virtual void OnAdd() { }
 
@@ -69,5 +68,29 @@ namespace Merthsoft.MooseEngine.GameObjects
 
         public bool Equals(GameObjectBase? other)
             => Id.Equals(other?.Id);
+
+        public override bool Equals(object? obj) 
+            => ReferenceEquals(this, obj) || (obj is GameObjectBase gameObject && gameObject.Id.Equals(Id));
+
+        public override int GetHashCode()
+            => Id.GetHashCode();
+
+        public static bool operator ==(GameObjectBase left, GameObjectBase right)
+            => left is null ? right is null : left.Equals(right);
+
+        public static bool operator !=(GameObjectBase left, GameObjectBase right) 
+            => !(left == right);
+
+        public static bool operator <(GameObjectBase left, GameObjectBase right) 
+            => left is null ? right is not null : left.CompareTo(right) < 0;
+
+        public static bool operator <=(GameObjectBase left, GameObjectBase right) 
+            => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(GameObjectBase left, GameObjectBase right) 
+            => left is not null && left.CompareTo(right) > 0;
+
+        public static bool operator >=(GameObjectBase left, GameObjectBase right) 
+            => left is null ? right is null : left.CompareTo(right) >= 0;
     }
 }

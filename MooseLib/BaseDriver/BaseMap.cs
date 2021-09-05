@@ -1,10 +1,11 @@
-﻿using Merthsoft.MooseEngine.Interface;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
+using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.MooseEngine.BaseDriver
+namespace Merthsoft.Moose.MooseEngine.BaseDriver
 {
     public abstract class BaseMap : IMap
     {

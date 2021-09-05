@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Merthsoft.Islands
+namespace Merthsoft.Moose.Islands
 {
     public static class Program
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended.Sprites;
 
-namespace Merthsoft.MooseEngine.Defs
+namespace Merthsoft.Moose.MooseEngine.Defs
 {
     public record AnimatedGameObjectDef : GameObjectDef
     {

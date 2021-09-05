@@ -1,6 +1,6 @@
-﻿using Merthsoft.MooseEngine.GameObjects;
+﻿using Merthsoft.Moose.MooseEngine.GameObjects;
 
-namespace Merthsoft.MooseEngine.Interface
+namespace Merthsoft.Moose.MooseEngine.Interface
 {
     public interface IObjectLayer : ILayer
     {

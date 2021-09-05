@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Platformer
+namespace Merthsoft.Moose.Platformer
 {
     public static class Program
     {

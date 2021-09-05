@@ -1,21 +1,20 @@
-﻿using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.BaseDriver.Renderers;
+﻿using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Merthsoft.Islands
+namespace Merthsoft.Moose.Islands
 {
     public class IslandGame : MooseGame
     {
-        private const string TileRenderKey = "island_tile_renderer";
-
         private const int TileDimmensions = 8;
         private const float DefaultZoom = 1f;
         private const int MapSize = 80;
         private const int WindowSize = MapSize * TileDimmensions * (int)(2 * DefaultZoom);
 
-        private readonly GameOfLifeMap map = new(MapSize, MapSize, TileDimmensions, TileDimmensions, TileRenderKey);
+        private readonly GameOfLifeMap map = new(MapSize, MapSize, TileDimmensions, TileDimmensions);
 
         public IslandGame()
         {
@@ -35,7 +34,7 @@ namespace Merthsoft.Islands
             MainMap = map;
 
             var tilesheet = Content.Load<Texture2D>("Images/tileset");
-            AddRenderer(TileRenderKey, new SpriteBatchIndexedTextureTileRenderer(SpriteBatch, TileDimmensions, TileDimmensions, tilesheet));
+            AddDefaultRenderer<TileLayer<int>>("island", new SpriteBatchIndexedTextureTileRenderer(SpriteBatch, TileDimmensions, TileDimmensions, tilesheet));
 
             ZoomIn(1);
         }

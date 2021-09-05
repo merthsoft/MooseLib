@@ -1,11 +1,12 @@
-﻿using Merthsoft.MooseEngine.Ui.Controls;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.Ui.Controls;
 
-namespace Merthsoft.MooseEngine.Ui
+namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public class WindowManager
     {

@@ -1,7 +1,6 @@
-﻿using Merthsoft.MooseEngine.BaseDriver.Renderers;
-using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.MooseEngine.BaseDriver
+namespace Merthsoft.Moose.MooseEngine.BaseDriver
 {
     public class TileLayer<TTile> : ITileLayer<TTile>
     {
@@ -12,7 +11,6 @@ namespace Merthsoft.MooseEngine.BaseDriver
         
         public bool IsVisible { get; set; } = true;
         public float Opacity { get; set; }
-        public string RendererKey { get; set; } = DefaultRenderKeys.SpriteBatchPrimitiveRectangleRenderer;
 
         public TTile[,] Tiles { get; }
 

@@ -1,4 +1,4 @@
-﻿namespace Platformer.PlatformerGameObjects
+﻿namespace Merthsoft.Moose.Platformer.PlatformerGameObjects
 {
     record PlayerDef : PlatformerGameObjectDef
     {

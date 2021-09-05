@@ -1,9 +1,8 @@
-﻿using Merthsoft.MooseEngine.Defs;
-using Merthsoft.MooseEngine.GameObjects;
-using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Defs;
+using Merthsoft.Moose.MooseEngine.GameObjects;
 using Microsoft.Xna.Framework;
 
-namespace Merthsoft.SnowballFight
+namespace Merthsoft.Moose.SnowballFight
 {
     public class Snowball : AnimatedGameObject
     {

@@ -6,12 +6,10 @@
     <TieredCompilation>false</TieredCompilation>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <AssemblyName>Games!</AssemblyName>
-    <RootNamespace>Merthsoft.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Icon.ico" />

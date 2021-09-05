@@ -1,10 +1,10 @@
-﻿using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.GameObjects;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Troschuetz.Random.Distributions.Continuous;
+using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.GameObjects;
 
-namespace Merthsoft.SnowballFight
+namespace Merthsoft.Moose.SnowballFight
 {
     internal class Unit : AnimatedGameObject
     {
@@ -33,7 +33,7 @@ namespace Merthsoft.SnowballFight
         private Vector2 MoveDirection = Vector2.Zero;
         private Vector2 NextLocation = Vector2.Zero;
 
-        private readonly NormalDistribution AimDistribution = new(0, 2);
+        private readonly NormalDistribution AimDistribution;
         private Unit? targettedUnit;
         private bool stepFlag;
 
@@ -41,6 +41,7 @@ namespace Merthsoft.SnowballFight
             : base(unitDef, new(worldX, worldY), SnowballFightGame.UnitLayer, state: state)
         {
             UnitDef = unitDef;
+            AimDistribution = new NormalDistribution(0, unitDef.AccuracySigma);
         }
 
         public override void Update(GameTime gameTime)

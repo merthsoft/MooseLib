@@ -7,8 +7,9 @@ using Roy_T.AStar.Grids;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Merthsoft.Moose.MooseEngine;
 
-namespace Merthsoft.MooseEngine
+namespace Merthsoft.Moose.MooseEngine
 {
     public static class Extensions
     {

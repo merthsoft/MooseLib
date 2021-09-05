@@ -1,37 +1,47 @@
-﻿using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Merthsoft.MooseEngine.BaseDriver.Renderers
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 {
     public class SpriteBatchObjectRenderer : ILayerRenderer
     {
         public SpriteBatch SpriteBatch { get; }
+        public Effect? Effect { get; set; }
 
         public SpriteBatchObjectRenderer(SpriteBatch spriteBatch)
-        {
-            SpriteBatch = spriteBatch;
-        }
+            => SpriteBatch = spriteBatch;
 
-        public virtual void Draw(GameTime _, ILayer layer, int layerNumber, Matrix viewMatrix)
+        public virtual void Begin(Matrix viewMatrix)
+            => SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, SamplerState.PointClamp, effect: Effect, transformMatrix: viewMatrix);
+
+        public virtual void Draw(GameTime _, ILayer layer, int layerNumber)
         {
             if (layer is not IObjectLayer objectLayer)
                 throw new Exception("Object layer expected");
 
-            SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, transformMatrix: viewMatrix);
-
             foreach (var obj in objectLayer)
             {
-                var (texture, sourceRect) = obj.GetTexture();
-                SpriteBatch.Draw(texture, obj.WorldPosition, sourceRect, Color.Transparent);
+                var drawParameters = obj.GetDrawParameters();
+                SpriteBatch.Draw(drawParameters.Texture,
+                    drawParameters.DestinationRectangle,
+                    drawParameters.SourceRectangle,
+                    drawParameters.Color ?? Color.White,
+                    drawParameters.Rotation,
+                    drawParameters.Origin ?? Vector2.Zero,
+                    drawParameters.Effects,
+                    drawParameters.LayerDepth);
             }
-                
-
-            SpriteBatch.End();
         }
+
+        public virtual void End()
+            => SpriteBatch.End();
 
         public void Load(IMap map) { }
 
         public void Update(GameTime gameTime) { }
+
+        public void Dispose()
+            => GC.SuppressFinalize(this);
     }
 }

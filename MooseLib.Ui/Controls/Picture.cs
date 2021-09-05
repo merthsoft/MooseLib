@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using C = Microsoft.Xna.Framework.Color;
 
-namespace Merthsoft.MooseEngine.Ui.Controls
+namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 {
     public class Picture : Control
     {

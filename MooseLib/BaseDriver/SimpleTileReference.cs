@@ -1,6 +1,6 @@
-﻿using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.MooseEngine.BaseDriver
+namespace Merthsoft.Moose.MooseEngine.BaseDriver
 {
     public record SimpleTileReference<TTile>(TTile Tile, bool Blocking = false) : ITile<TTile>
     {

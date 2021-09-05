@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Merthsoft.MooseEngine.Defs
+namespace Merthsoft.Moose.MooseEngine.Defs
 {
     public record GameObjectDef : Def
     {

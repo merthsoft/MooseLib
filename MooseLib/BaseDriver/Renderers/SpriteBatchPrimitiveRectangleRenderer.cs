@@ -1,9 +1,9 @@
-﻿using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
-namespace Merthsoft.MooseEngine.BaseDriver.Renderers
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 {
     public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchObjectRenderer
     {
@@ -19,12 +19,10 @@ namespace Merthsoft.MooseEngine.BaseDriver.Renderers
             Palette.AddRange(colors);
         }
 
-        public override void Draw(GameTime _, ILayer layer, int layerNumber, Matrix viewMatrix)
+        public override void Draw(GameTime _, ILayer layer, int layerNumber)
         {
             if (layer is not TileLayer<int> tileLayer)
                 throw new Exception("TileLayer<int> layer expected");
-
-            SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, transformMatrix: viewMatrix);
 
             for (int i = 0; i < tileLayer.Width; i++)
                 for (int j = 0; j < tileLayer.Height; j++)
@@ -32,8 +30,6 @@ namespace Merthsoft.MooseEngine.BaseDriver.Renderers
                         i * TileWidth, j * TileHeight, 
                         TileWidth, TileHeight, 
                         Palette[tileLayer.Tiles[i, j]]);
-
-            SpriteBatch.End();
         }
     }
 }

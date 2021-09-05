@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace Merthsoft.MooseEngine
+namespace Merthsoft.Moose.MooseEngine
 {
     public class StartupParameters
     {

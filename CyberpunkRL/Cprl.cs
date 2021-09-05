@@ -1,9 +1,9 @@
-﻿using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.BaseDriver.Renderers;
-using Merthsoft.MooseEngine.TiledDriver;
+﻿using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+using Merthsoft.Moose.MooseEngine.TiledDriver;
 using MonoGame.Extended.Tiled;
 
-namespace Merthsoft.CyberpunkRl
+namespace Merthsoft.Moose.CyberpunkRL
 {
     public class Cprl : MooseGame
     {
@@ -16,8 +16,8 @@ namespace Merthsoft.CyberpunkRl
 
         protected override void Load()
         {
-            AddRenderer(MooseEngine.TiledDriver.DefaultRenderKeys.TiledMooseMapRenderer, new TiledMooseMapRenderer(GraphicsDevice));
-            AddRenderer(MooseEngine.BaseDriver.Renderers.DefaultRenderKeys.SpriteBatchObjectRenderer, new SpriteBatchObjectRenderer(SpriteBatch));
+            AddRenderer("map", new TiledMooseMapRenderer(GraphicsDevice));
+            AddRenderer("objects", new SpriteBatchObjectRenderer(SpriteBatch));
 
             Rooms.Add(new(Content.Load<TiledMap>("Maps/room1")));
             Rooms.Add(new(Content.Load<TiledMap>("Maps/room2")));

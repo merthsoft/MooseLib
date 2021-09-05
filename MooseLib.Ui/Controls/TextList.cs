@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Merthsoft.MooseEngine.Ui.Controls
+namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 {
     public class TextList : Control
     {

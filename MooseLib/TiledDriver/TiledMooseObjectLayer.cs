@@ -1,7 +1,7 @@
-﻿using Merthsoft.MooseEngine.BaseDriver;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
 using MonoGame.Extended.Tiled;
 
-namespace Merthsoft.MooseEngine.TiledDriver
+namespace Merthsoft.Moose.MooseEngine.TiledDriver
 {
     public class TiledMooseObjectLayer : ObjectLayer
     {

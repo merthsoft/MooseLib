@@ -1,8 +1,8 @@
-﻿using Merthsoft.MooseEngine.Interface;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System.Collections.ObjectModel;
+using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.MooseEngine.BaseDriver
+namespace Merthsoft.Moose.MooseEngine.BaseDriver
 {
     public class MultiMap<TTile> : BaseMap
     {
@@ -16,30 +16,22 @@ namespace Merthsoft.MooseEngine.BaseDriver
         private readonly ReadOnlyCollection<ILayer> layers;
         public override IReadOnlyList<ILayer> Layers => layers;
 
-        public string DefaultTileLayerRendererKey { get; set; }
-        public string DefaultObjectLayerRendererKey { get; set; }
-
-        public MultiMap(int width, int height, int tileWidth, int tileHeight, string tileLayerRenderKey, string objectLayerRenderKey, params ILayer[] layers)
+        public MultiMap(int width, int height, int tileWidth, int tileHeight, params ILayer[] layers)
         {
             Width = width;
             Height = height;
             TileWidth = tileWidth;
             TileHeight = tileHeight;
-
-            DefaultTileLayerRendererKey = tileLayerRenderKey;
-            DefaultObjectLayerRendererKey = objectLayerRenderKey;
 
             this.layers = new(layers);
         }
 
-        public MultiMap(int width, int height, int tileWidth, int tileHeight, string tileLayerRenderKey, string objectLayerRenderKey, params LayerType[] layerTypes)
+        public MultiMap(int width, int height, int tileWidth, int tileHeight, params MultiMap<TTile>.LayerType[] layerTypes)
         {
             Width = width;
             Height = height;
             TileWidth = tileWidth;
             TileHeight = tileHeight;
-            DefaultTileLayerRendererKey = tileLayerRenderKey;
-            DefaultObjectLayerRendererKey = objectLayerRenderKey;
 
             var layers = new List<ILayer>();
             var objectLayerIndices = new List<int>();
@@ -48,7 +40,7 @@ namespace Merthsoft.MooseEngine.BaseDriver
             TileLayer<TTile> createTileLayer(int layerIndex)
             {
                 tileLayerIndices.Add(layerIndex);
-                return new TileLayer<TTile>($"Layer {layerIndex}", Width, Height) { RendererKey = tileLayerRenderKey };
+                return new TileLayer<TTile>($"Layer {layerIndex}", Width, Height);
             }
 
             ObjectLayer createObjectLayer(int layerIndex)
@@ -60,8 +52,8 @@ namespace Merthsoft.MooseEngine.BaseDriver
             for (var layerIndex = 0; layerIndex < layerTypes.Length; layerIndex++)
                 layers.Add(layerTypes[layerIndex] switch
                 {
-                    LayerType.Tile => createTileLayer(layerIndex),
-                    LayerType.Object => createObjectLayer(layerIndex),
+                    MultiMap<TTile>.LayerType.Tile => createTileLayer(layerIndex),
+                    MultiMap<TTile>.LayerType.Object => createObjectLayer(layerIndex),
                     _ => throw new ArgumentOutOfRangeException($"layerTypes[{layerIndex}]", layerTypes[layerIndex], $"{layerTypes[layerIndex]} is not a valid layer type")
                 });
             this.layers = layers.AsReadOnly();

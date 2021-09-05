@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
-namespace Merthsoft.MooseEngine.Ui
+namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public class Theme
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Merthsoft.MooseEngine.Ui.Controls
+namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 {
     public class Label : Control
     {

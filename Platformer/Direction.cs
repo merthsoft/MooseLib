@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Platformer
+namespace Merthsoft.Moose.Platformer
 {
     class Direction
     {

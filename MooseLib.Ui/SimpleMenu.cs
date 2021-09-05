@@ -1,7 +1,7 @@
-﻿using Merthsoft.MooseEngine.Ui.Controls;
+﻿using Merthsoft.Moose.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 
-namespace Merthsoft.MooseEngine.Ui
+namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public class SimpleMenu : Window
     {

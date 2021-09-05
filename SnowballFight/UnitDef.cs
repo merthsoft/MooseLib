@@ -1,8 +1,8 @@
-﻿using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.Defs;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.Defs;
 
-namespace Merthsoft.SnowballFight
+namespace Merthsoft.Moose.SnowballFight
 {
     public record UnitDef : AnimatedGameObjectDef
     {

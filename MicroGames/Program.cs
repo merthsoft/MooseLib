@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Merthsoft.MicroGames
+namespace Merthsoft.Moose.MicroGames
 {
     public static class Program
     {

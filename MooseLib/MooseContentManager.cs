@@ -5,7 +5,7 @@ using MonoGame.Extended.Serialization;
 using MonoGame.Extended.Sprites;
 using SpriteFontPlus;
 
-namespace Merthsoft.MooseEngine
+namespace Merthsoft.Moose.MooseEngine
 {
     public class MooseContentManager
     {

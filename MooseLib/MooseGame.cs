@@ -1,12 +1,12 @@
-﻿using Merthsoft.MooseEngine.Defs;
-using Merthsoft.MooseEngine.GameObjects;
-using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Defs;
+using Merthsoft.Moose.MooseEngine.GameObjects;
+using Merthsoft.Moose.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 
-namespace Merthsoft.MooseEngine
+namespace Merthsoft.Moose.MooseEngine
 {
     public abstract class MooseGame : Game
     {
@@ -39,7 +39,9 @@ namespace Merthsoft.MooseEngine
         public IReadOnlyList<GameObjectBase> ReadObjects => Objects.ToList().AsReadOnly();
         private readonly Queue<GameObjectBase> ObjectsToAdd = new();
 
-        private readonly Dictionary<string, ILayerRenderer> Renderers = new();
+        private readonly Dictionary<Type, string> DefaultRenderers = new();
+        private readonly Dictionary<string, ILayerRenderer> RendererDictionary = new();
+        private readonly Dictionary<int, string> LayerRenderers = new();
 
         public virtual int MapHeight => MainMap.Height;
                
@@ -114,16 +116,33 @@ namespace Merthsoft.MooseEngine
 
             Load();
 
-            Defs.AsParallel().ForEach(kvp => kvp.Value.LoadContent(ContentManager));
+            Defs.ForEach(kvp => kvp.Value.LoadContent(ContentManager));
             
-            foreach (var renderer in Renderers.Values)
+            foreach (var renderer in RendererDictionary.Values)
                 renderer.Load(MainMap);
 
             PostLoad();
         }
 
-        public void AddRenderer(string rendererKey, ILayerRenderer renderer)
-            => Renderers[rendererKey] = renderer;
+        public void AddDefaultRenderer<TRenderer>(string rendererKey, ILayerRenderer renderer, params int[] layerIndexes)
+            where TRenderer : ILayer
+        {
+            DefaultRenderers[typeof(TRenderer)] = rendererKey;
+            AddRenderer(rendererKey, renderer, layerIndexes);
+        }
+
+        public void AddRenderer(string rendererKey, ILayerRenderer renderer, params int[] layerIndexes)
+        {
+            RendererDictionary[rendererKey] = renderer;
+            foreach (var layerIndex in layerIndexes)
+                LayerRenderers[layerIndex] = rendererKey;
+        }
+
+        public void SetRenderer(int layerIndex, string rendererKey)
+            => LayerRenderers[layerIndex] = rendererKey;
+
+        public void SetDefaultRenderer<TRenderer>(string rendererKey) where TRenderer : ILayer
+            => DefaultRenderers[typeof(TRenderer)] = rendererKey;
 
         public TObject AddObject<TObject>(TObject gameObject, IMap? parentMap = null) where TObject : GameObjectBase
         {
@@ -157,7 +176,7 @@ namespace Merthsoft.MooseEngine
             WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
 
             if (PreRenderUpdate(gameTime))
-                foreach (var renderer in Renderers.Values)
+                foreach (var renderer in RendererDictionary.Values)
                     renderer.Update(gameTime);
 
             if (PreObjectsUpdate(gameTime))
@@ -204,7 +223,7 @@ namespace Merthsoft.MooseEngine
         protected virtual bool PreMapDraw(GameTime gameTime) => true;
         protected virtual void PostDraw(GameTime gameTime) { return; }
 
-        protected void Draw(GameTime gameTime, IDictionary<int,  RenderHook>? renderHooks)
+        protected void Draw(GameTime gameTime, IDictionary<int, RenderHook>? renderHooks)
         {
             if (PreClear(gameTime))
                 GraphicsDevice.Clear(DefaultBackgroundColor);
@@ -218,11 +237,19 @@ namespace Merthsoft.MooseEngine
                     var layer = MainMap.Layers[layerIndex];
                     if (!layer.IsVisible)
                         continue;
-                    var renderer = Renderers[layer.RendererKey];
 
+                    ILayerRenderer? renderer = null;
+                    var rendererKey = LayerRenderers.GetValueOrDefault(layerIndex);
+                    if (renderer == null)
+                        rendererKey = DefaultRenderers[layer.GetType()];
+                    if (rendererKey != null)
+                        renderer = RendererDictionary[rendererKey];
+
+                    renderer?.Begin(transformMatrix);
                     hookTuple?.PreHook?.Invoke(layerIndex);
-                    renderer.Draw(gameTime, layer, layerIndex, transformMatrix);
+                    renderer?.Draw(gameTime, layer, layerIndex);
                     hookTuple?.PostHook?.Invoke(layerIndex);
+                    renderer?.End();
                 }
 
             PostDraw(gameTime);

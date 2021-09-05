@@ -1,8 +1,8 @@
-﻿using Merthsoft.MooseEngine.BaseDriver.Renderers;
-using Merthsoft.MooseEngine.GameObjects;
-using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+using Merthsoft.Moose.MooseEngine.GameObjects;
+using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.MooseEngine.BaseDriver
+namespace Merthsoft.Moose.MooseEngine.BaseDriver
 {
     public class ObjectLayer : IObjectLayer
     {
@@ -10,7 +10,6 @@ namespace Merthsoft.MooseEngine.BaseDriver
         public IReadOnlyList<GameObjectBase> Objects => objects.ToList().AsReadOnly();
 
         public string Name { get; }
-        public string RendererKey { get; set; } = DefaultRenderKeys.SpriteBatchObjectRenderer;
         public bool IsVisible { get; set; } = true;
 
         public ObjectLayer(string name)

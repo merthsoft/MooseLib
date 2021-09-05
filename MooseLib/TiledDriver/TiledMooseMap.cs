@@ -1,9 +1,9 @@
-﻿using Merthsoft.MooseEngine.BaseDriver;
-using Merthsoft.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Tiled;
 
-namespace Merthsoft.MooseEngine.TiledDriver
+namespace Merthsoft.Moose.MooseEngine.TiledDriver
 {
     public class TiledMooseMap : BaseMap
     {

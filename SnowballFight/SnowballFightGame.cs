@@ -1,15 +1,15 @@
-﻿using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.BaseDriver.Renderers;
-using Merthsoft.MooseEngine.Defs;
-using Merthsoft.MooseEngine.TiledDriver;
-using Merthsoft.MooseEngine.Ui;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
+using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+using Merthsoft.Moose.MooseEngine.Defs;
+using Merthsoft.Moose.MooseEngine.TiledDriver;
+using Merthsoft.Moose.MooseEngine.Ui;
 
-namespace Merthsoft.SnowballFight
+namespace Merthsoft.Moose.SnowballFight
 {
     public class SnowballFightGame : MooseGame
     {
@@ -42,7 +42,7 @@ namespace Merthsoft.SnowballFight
         private AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
 
         private readonly Dictionary<int, RenderHook> GameRenderHooks;
-        public override IDictionary<int, RenderHook>? DefaultRenderHooks => GameRenderHooks;// Demo ? null : GameRenderHooks;
+        public override IDictionary<int, RenderHook>? DefaultRenderHooks => Demo ? null : GameRenderHooks;
 
         private bool Demo = true;
 
@@ -68,8 +68,8 @@ namespace Merthsoft.SnowballFight
 
         protected override void Load()
         {
-            AddRenderer(MooseEngine.TiledDriver.DefaultRenderKeys.TiledMooseMapRenderer, new TiledMooseMapRenderer(GraphicsDevice));
-            AddRenderer(MooseEngine.BaseDriver.Renderers.DefaultRenderKeys.SpriteBatchObjectRenderer, new SpriteBatchObjectRenderer(SpriteBatch));
+            AddDefaultRenderer<TiledMooseTileLayer>("map", new TiledMooseMapRenderer(GraphicsDevice));
+            AddDefaultRenderer<TiledMooseObjectLayer>("object", new SpriteBatchObjectRenderer(SpriteBatch));
 
             MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/title_screen"));
 

@@ -1,6 +1,6 @@
-﻿using Merthsoft.MooseEngine.Defs;
+﻿using Merthsoft.Moose.MooseEngine.Defs;
 
-namespace Platformer.PlatformerGameObjects
+namespace Merthsoft.Moose.Platformer.PlatformerGameObjects
 {
     record PlatformerGameObjectDef : AnimatedGameObjectDef
     {

@@ -6,8 +6,7 @@
     <TieredCompilation>false</TieredCompilation>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
+    <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>

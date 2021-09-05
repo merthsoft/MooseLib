@@ -1,12 +1,12 @@
-﻿using Merthsoft.MooseEngine;
-using Merthsoft.MooseEngine.Ui;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpriteFontPlus;
 using System.Collections.Generic;
 using System.IO;
+using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.Ui;
 
-namespace Merthsoft.MicroGames
+namespace Merthsoft.Moose.MicroGames
 {
     public class GameManager : MooseGame
     {
