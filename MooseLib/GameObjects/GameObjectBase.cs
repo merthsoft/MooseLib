@@ -75,22 +75,22 @@ namespace Merthsoft.Moose.MooseEngine.GameObjects
         public override int GetHashCode()
             => Id.GetHashCode();
 
-        public static bool operator ==(GameObjectBase left, GameObjectBase right)
+        public static bool operator ==(GameObjectBase? left, GameObjectBase? right)
             => left is null ? right is null : left.Equals(right);
 
-        public static bool operator !=(GameObjectBase left, GameObjectBase right) 
+        public static bool operator !=(GameObjectBase? left, GameObjectBase? right) 
             => !(left == right);
 
-        public static bool operator <(GameObjectBase left, GameObjectBase right) 
+        public static bool operator <(GameObjectBase? left, GameObjectBase? right) 
             => left is null ? right is not null : left.CompareTo(right) < 0;
 
-        public static bool operator <=(GameObjectBase left, GameObjectBase right) 
+        public static bool operator <=(GameObjectBase? left, GameObjectBase? right) 
             => left is null || left.CompareTo(right) <= 0;
 
-        public static bool operator >(GameObjectBase left, GameObjectBase right) 
+        public static bool operator >(GameObjectBase? left, GameObjectBase? right) 
             => left is not null && left.CompareTo(right) > 0;
 
-        public static bool operator >=(GameObjectBase left, GameObjectBase right) 
+        public static bool operator >=(GameObjectBase? left, GameObjectBase? right) 
             => left is null ? right is null : left.CompareTo(right) >= 0;
     }
 }

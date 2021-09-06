@@ -166,7 +166,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         protected override void PostLoad()
         {
-            for (var index = 0; index < 18; index++)
+            for (var index = 0; index < 8; index++)
                 SpawnUnit(Random.Next(0, 3) switch
                 {
                     1 => "elf1",
