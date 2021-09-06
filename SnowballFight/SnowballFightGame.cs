@@ -8,6 +8,8 @@ using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.TiledDriver;
 using Merthsoft.Moose.MooseEngine.Ui;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace Merthsoft.Moose.SnowballFight
 {
@@ -25,7 +27,6 @@ namespace Merthsoft.Moose.SnowballFight
         private WindowManager WindowManager = null!;
         private Window StatsWindow = null!;
         private SimpleMenu MainMenu = null!;
-        private Window Logo = null!;
 
         public OrthographicCamera StatsWindowCamera = null!;
 
@@ -132,6 +133,7 @@ namespace Merthsoft.Moose.SnowballFight
             {
                 ContentManager.BakeFont("Whacky_Joe", 64),
                 ContentManager.BakeFont("Direct_Message", 48),
+                ContentManager.BakeFont("Direct_Message", 16),
             };
 
             var windowTextures = new Texture2D[]
@@ -152,10 +154,12 @@ namespace Merthsoft.Moose.SnowballFight
 
             var logoText = "Snowfight Tactics";
             var logoTexture = StrokeEffect.CreateStrokeSpriteFont(fonts[0], logoText, Color.Yellow, Vector2.One, 3, Color.Black, GraphicsDevice, StrokeType.OutlineAndTexture);
-
             var (logoWidth, logoHeight) = (logoTexture.Width, logoTexture.Height);
-            Logo = WindowManager.NewWindow((int)(MainMenu.X + MainMenu.Width / 2.0 - logoWidth / 2.0), (int)(MainMenu.Y - logoHeight), MainMenu.Width, 25);
-            Logo.AddPicture(0, 0, logoTexture);
+
+            MainMenu.AddPicture((int)(MainMenu.X + MainMenu.Width / 2.0 - logoWidth / 2.0), (int)(MainMenu.Y - logoHeight), logoTexture);
+
+            var version = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+            MainMenu.AddLabel(0, WindowSize - 24, $"v{version}", 2);
 
             StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2);
             StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
@@ -190,10 +194,7 @@ namespace Merthsoft.Moose.SnowballFight
         }
 
         private void HideMenu()
-        {
-            MainMenu.Hide();
-            Logo.Hide();
-        }
+            => MainMenu.Hide();
 
         private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)
         {
@@ -221,8 +222,10 @@ namespace Merthsoft.Moose.SnowballFight
             SpawnUnit("snowman", 11, 13);
         }
 
-        public static Snowball SpawnSnowball(IEnumerable<Vector2> flightPath)
-        {     
+        public static Snowball? SpawnSnowball(IEnumerable<Vector2> flightPath)
+        {
+            if (!flightPath.Any())
+                return null;
             var snowBall = new Snowball(Instance.SnowballDef, flightPath);
             Instance.AddObject(snowBall);
             return snowBall;
