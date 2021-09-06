@@ -1,25 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>preview</LangVersion>
-    <Nullable>enable</Nullable>
-    <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <AssemblyName>Merthsoft.Moose.$(MSBuildProjectName)</AssemblyName>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="RoyT.AStar" Version="3.0.2" />
-    <PackageReference Include="SpriteFontPlus.MonoGame" Version="0.7.0.22" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="MonoGame.Extended">
-      <HintPath>..\lib\MonoGame.Extended.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Extended.Tiled">
-      <HintPath>..\lib\MonoGame.Extended.Tiled.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
+		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<AssemblyName>Merthsoft.Moose.$(MSBuildProjectName)</AssemblyName>
+		<Version>0.1-alpha</Version>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
+			<PrivateAssets>All</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="RoyT.AStar" Version="3.0.2" />
+		<PackageReference Include="SpriteFontPlus.MonoGame" Version="0.7.0.22" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="MonoGame.Extended">
+			<HintPath>..\lib\MonoGame.Extended.dll</HintPath>
+		</Reference>
+		<Reference Include="MonoGame.Extended.Tiled">
+			<HintPath>..\lib\MonoGame.Extended.Tiled.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 </Project>
