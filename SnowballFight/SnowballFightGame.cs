@@ -1,15 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame;
-using MonoGame.Extended;
-using MonoGame.Extended.Tiled;
-using Merthsoft.Moose.MooseEngine;
+﻿using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.TiledDriver;
 using Merthsoft.Moose.MooseEngine.Ui;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame;
+using MonoGame.Extended;
+using MonoGame.Extended.Tiled;
 using System.Reflection;
-using System.Diagnostics;
 
 namespace Merthsoft.Moose.SnowballFight
 {
@@ -72,7 +71,7 @@ namespace Merthsoft.Moose.SnowballFight
             AddDefaultRenderer<TiledMooseTileLayer>("map", new TiledMooseMapRenderer(GraphicsDevice));
             AddDefaultRenderer<TiledMooseObjectLayer>("object", new SpriteBatchObjectRenderer(SpriteBatch));
 
-            MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/title_screen"));
+            LoadMap("title_screen");
 
             var objectLayerCount = 0;
             for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
@@ -146,20 +145,10 @@ namespace Merthsoft.Moose.SnowballFight
                 new("Candycane", windowTextures[0], 32, 32, fonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow },
             });
 
-            MainMenu = new SimpleMenu(WindowManager.DefaultTheme, "New Game", "Settings", "About", "Exit");
-            WindowManager.AddWindow(MainMenu);
-
+            MainMenu = new MainMenu(WindowManager.DefaultTheme, GraphicsDevice, WindowSize);
             MainMenu.Center(WindowSize, WindowSize);
             MainMenu.Clicked = MainMenu_Clicked;
-
-            var logoText = "Snowfight Tactics";
-            var logoTexture = StrokeEffect.CreateStrokeSpriteFont(fonts[0], logoText, Color.Yellow, Vector2.One, 3, Color.Black, GraphicsDevice, StrokeType.OutlineAndTexture);
-            var (logoWidth, logoHeight) = (logoTexture.Width, logoTexture.Height);
-
-            MainMenu.AddPicture((int)(MainMenu.X + MainMenu.Width / 2.0 - logoWidth / 2.0), (int)(MainMenu.Y - logoHeight), logoTexture);
-
-            var version = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
-            MainMenu.AddLabel(0, WindowSize - 24, $"v{version}", 2);
+            WindowManager.AddWindow(MainMenu);
 
             StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2);
             StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
@@ -179,7 +168,7 @@ namespace Merthsoft.Moose.SnowballFight
                 }, Random.Next(4, 26), Random.Next(21, 29));
         }
 
-        private void MainMenu_Clicked(string option)
+        private void MainMenu_Clicked(Window _, string option)
         {
             switch (option)
             {
@@ -206,8 +195,7 @@ namespace Merthsoft.Moose.SnowballFight
         private void NewGame()
         {
             Demo = false;
-
-            MainMap = new TiledMooseMap(Content.Load<TiledMap>("Maps/map1"));
+            LoadMap("map1");
 
             MarkAllObjectsForRemoval();
             SpawnUnit("deer", 5, 9);
@@ -220,6 +208,12 @@ namespace Merthsoft.Moose.SnowballFight
 
             SpawnUnit("santa", 13, 12);
             SpawnUnit("snowman", 11, 13);
+        }
+
+        private void LoadMap(string mapName)
+        {
+            MainMap = new TiledMooseMap(Content.Load<TiledMap>($"Maps/{mapName}"));
+            GetRenderer<TiledMooseMapRenderer>("map").Load(MainMap);
         }
 
         public static Snowball? SpawnSnowball(IEnumerable<Vector2> flightPath)
@@ -246,6 +240,7 @@ namespace Merthsoft.Moose.SnowballFight
     
         private void DemoUpdate()
         {
+            MainMenu.Center(WindowSize, WindowSize);
             if (SelectedUnit == null)
             {
                 SelectedUnit = Units.ElementAt(Random.Next(Units.Count()));

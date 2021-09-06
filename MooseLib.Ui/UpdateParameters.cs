@@ -1,22 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using MonoGame.Extended;
 
 namespace Merthsoft.Moose.MooseEngine.Ui
 {
-    public class UpdateParameters
+    public record UpdateParameters(GameTime GameTime, Vector2 LocalMousePosition)
     {
-        public GameTime GameTime { get; set; }
-
         public bool MouseOver { get; set; }
-
-        public Vector2 LocalMousePosition { get; set; }
 
         public bool LeftMouse { get; set; }
 
         public bool RightMouse { get; set; }
-
-        public UpdateParameters(GameTime gameTime, Vector2 localMousePosition)
-            => (GameTime, LocalMousePosition)
-             = (gameTime, localMousePosition);
     }
 }

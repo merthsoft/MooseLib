@@ -5,8 +5,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public class SimpleMenu : Window
     {
-        public string? Title { get; set; }
-        public Action<string>? Clicked { get; set; }
+        public Action<Window, string>? Clicked { get; set; }
 
         public SimpleMenu(Theme theme, params string[] options) : base(new(0, 0, 0, 0), theme)
         {
@@ -19,7 +18,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             if (owner is not TextList textList || textList.MouseOverOption == null)
                 return;
 
-            Clicked?.Invoke(textList.MouseOverOption.Text);
+            Clicked?.Invoke(this, textList.MouseOverOption.Text);
         }
     }
 }

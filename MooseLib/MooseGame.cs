@@ -117,17 +117,21 @@ namespace Merthsoft.Moose.MooseEngine
             Load();
 
             Defs.ForEach(kvp => kvp.Value.LoadContent(ContentManager));
-            
-            foreach (var renderer in RendererDictionary.Values)
-                renderer.Load(MainMap);
 
             PostLoad();
         }
 
-        public void AddDefaultRenderer<TRenderer>(string rendererKey, ILayerRenderer renderer, params int[] layerIndexes)
-            where TRenderer : ILayer
+        public ILayerRenderer GetRenderer(string rendererKey)
+            => RendererDictionary[rendererKey];
+
+        public TRenderer GetRenderer<TRenderer>(string rendererKey)
+            where TRenderer : ILayerRenderer
+            => (TRenderer)RendererDictionary[rendererKey];
+
+        public void AddDefaultRenderer<TLayer>(string rendererKey, ILayerRenderer renderer, params int[] layerIndexes)
+            where TLayer : ILayer
         {
-            DefaultRenderers[typeof(TRenderer)] = rendererKey;
+            DefaultRenderers[typeof(TLayer)] = rendererKey;
             AddRenderer(rendererKey, renderer, layerIndexes);
         }
 

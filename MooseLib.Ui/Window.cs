@@ -1,23 +1,33 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
+﻿using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.Ui.Controls;
-using Merthsoft.Moose.MooseEngine;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public class Window
     {
+        private Rectangle rectangle;
+
         public Theme Theme { get; set; }
 
         public bool ShouldClose { get; protected set; }
 
         public bool Visible { get; set; } = true;
-        
+
         public bool DrawBackground { get; set; } = true;
 
-        public Rectangle Rectangle { get; set; }
+        public Rectangle Rectangle { 
+            get => rectangle; 
+            set
+            {
+                var oldRect = rectangle;
+                rectangle = value;
+                RectangleChanged?.Invoke(this, new(oldRect, value));
+            }
+        }
+
+        public Action<Window, ValueChangedParameters<Rectangle>>? RectangleChanged;
 
         public Vector2 Position
         {
