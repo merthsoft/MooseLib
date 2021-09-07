@@ -183,6 +183,9 @@ namespace Merthsoft.Moose.MooseEngine
                 foreach (var renderer in RendererDictionary.Values)
                     renderer.Update(gameTime);
 
+            if (PreMapUpdate(gameTime))
+                MainMap?.Update(gameTime);
+
             if (PreObjectsUpdate(gameTime))
                 foreach (var obj in Objects)
                     obj.Update(gameTime);
@@ -207,9 +210,6 @@ namespace Merthsoft.Moose.MooseEngine
             }
 
             ObjectsToAdd.Clear();
-
-            if (PreMapUpdate(gameTime))
-                MainMap?.Update(gameTime);
 
             PostUpdate(gameTime);
 

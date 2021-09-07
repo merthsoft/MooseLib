@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 {
@@ -39,11 +36,19 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                 return;
 
             for (var index = 0; index < Options.Count; index++)
+            {
+                var option = Options[index];
+                var color = Options[index].Enabled
+                                ? index == MouseOverIndex
+                                    ? Theme.TextMouseOverColor
+                                    : Theme.TextColor
+                                : Theme.TextDisabledColor;
                 spriteBatch.DrawString(
-                    Window.Theme.Fonts[FontIndex], 
-                    Options[index].Text, 
-                    GlobalPosition + new Vector2(0, index * Window.Theme.TileHeight), 
-                    index == MouseOverIndex ? Theme.TextMouseOverColor : Theme.TextColor);
+                    Window.Theme.Fonts[FontIndex],
+                    option.Text, 
+                    GlobalPosition + new Vector2(0, index * Window.Theme.TileHeight),
+                    color);
+            }
         }
 
         public override void Update(UpdateParameters updateParameters)

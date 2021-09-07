@@ -10,15 +10,23 @@
 		<ApplicationIcon>Icon.ico</ApplicationIcon>
 		<AssemblyName>Snowfight Tactics</AssemblyName>
 		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-		<Version>0.1-alpha</Version>
+		<Copyright>2021 Merthsoft Creations</Copyright>
+		<Deterministic>False</Deterministic>
+		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
+		<VersionPrefix>0.1</VersionPrefix>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Icon.ico" />
 		<None Remove="Icon.bmp" />
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="Icon.ico" />
-		<EmbeddedResource Include="Icon.bmp" />
+		<EmbeddedResource Include="Icon.ico">
+			<LogicalName>Icon.ico</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Icon.bmp">
+			<LogicalName>Icon.bmp</LogicalName>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<MonoGameContentReference Include="Content\Content.mgcb" />
@@ -95,6 +103,9 @@
 		</None>
 		<None Update="Content\Fonts\Direct_Message.ttf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Tomorrow_Night.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Content\Fonts\Whacky_Joe.ttf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

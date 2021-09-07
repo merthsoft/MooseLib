@@ -18,6 +18,9 @@ namespace Merthsoft.Moose.SnowballFight
         public MainMenu(Theme theme, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, int screenSize)
             : base(theme, "New Game", "Settings", "About", "Exit")
         {
+            MainList.Options[1].Enabled = false;
+            MainList.Options[2].Enabled = false;
+
             this.screenSize = screenSize;
 
             var logoText = "Snowfight Tactics";
@@ -28,10 +31,9 @@ namespace Merthsoft.Moose.SnowballFight
 
             var assembly = Assembly.GetExecutingAssembly();
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            var version = fileVersionInfo.ProductVersion;
+            var version = fileVersionInfo.ProductVersion!.Split('-');
 
-            versionLabel = AddLabel(0, 0, $"v{version}", 2);
-            versionLabel.Color = Color.Black;
+            versionLabel = AddLabel(0, 0, $"v{version[0]}{version[1][0]} - {fileVersionInfo.LegalCopyright}", 2, Color.Black);
 
             RectangleChanged = MainMenu_RectangleChanged;
         }

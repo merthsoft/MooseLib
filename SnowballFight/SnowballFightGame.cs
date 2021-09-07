@@ -5,10 +5,9 @@ using Merthsoft.Moose.MooseEngine.TiledDriver;
 using Merthsoft.Moose.MooseEngine.Ui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
-using System.Reflection;
 
 namespace Merthsoft.Moose.SnowballFight
 {
@@ -42,9 +41,10 @@ namespace Merthsoft.Moose.SnowballFight
         private AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
 
         private readonly Dictionary<int, RenderHook> GameRenderHooks;
-        public override IDictionary<int, RenderHook>? DefaultRenderHooks => Demo ? null : GameRenderHooks;
+        public override IDictionary<int, RenderHook>? DefaultRenderHooks => Demo || Paused ? null : GameRenderHooks;
 
         private bool Demo = true;
+        private bool Paused = false;
 
         public SnowballFightGame()
         {
@@ -128,11 +128,17 @@ namespace Merthsoft.Moose.SnowballFight
 
             MainCamera.ZoomIn(1f);
 
-            var fonts = new SpriteFont[]
+            var mainMenuFonts = new SpriteFont[]
             {
                 ContentManager.BakeFont("Whacky_Joe", 64),
                 ContentManager.BakeFont("Direct_Message", 48),
-                ContentManager.BakeFont("Direct_Message", 16),
+                ContentManager.BakeFont("Tomorrow_Night", 16),
+            };
+
+            var gameFonts = new SpriteFont[]
+            {
+                ContentManager.BakeFont("Whacky_Joe", 32),
+                ContentManager.BakeFont("Direct_Message", 24),
             };
 
             var windowTextures = new Texture2D[]
@@ -142,7 +148,8 @@ namespace Merthsoft.Moose.SnowballFight
             };
 
             WindowManager = new WindowManager(new Theme[] {
-                new("Candycane", windowTextures[0], 32, 32, fonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow },
+                new("main menu", windowTextures[0], 32, 32, mainMenuFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow },
+                new("stats window", windowTextures[0], 32, 32, gameFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow },
             });
 
             MainMenu = new MainMenu(WindowManager.DefaultTheme, GraphicsDevice, WindowSize);
@@ -150,7 +157,7 @@ namespace Merthsoft.Moose.SnowballFight
             MainMenu.Clicked = MainMenu_Clicked;
             WindowManager.AddWindow(MainMenu);
 
-            StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2);
+            StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2, "stats window");
             StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
             StatsWindow.Hide();
 
@@ -195,9 +202,12 @@ namespace Merthsoft.Moose.SnowballFight
         private void NewGame()
         {
             Demo = false;
+            Paused = false;
             LoadMap("map1");
 
             MarkAllObjectsForRemoval();
+            SelectedUnit = null;
+
             SpawnUnit("deer", 5, 9);
             SpawnUnit("elf1", 10, 5);
             SpawnUnit("elf2", 3, 10);
@@ -227,11 +237,11 @@ namespace Merthsoft.Moose.SnowballFight
 
         protected override bool PreRenderUpdate(GameTime gameTime)
         {
-            HandleMouseInput();
+            HandleInput();
             return true;
         }
 
-        protected override void PostUpdate(GameTime gameTime)
+        protected override void PostObjectsUpdate(GameTime gameTime)
         {
             WindowManager.Update(gameTime, CurrentMouseState);
             if (Demo)
@@ -241,7 +251,7 @@ namespace Merthsoft.Moose.SnowballFight
         private void DemoUpdate()
         {
             MainMenu.Center(WindowSize, WindowSize);
-            if (SelectedUnit == null)
+            if (SelectedUnit == null && Units.Any())
             {
                 SelectedUnit = Units.ElementAt(Random.Next(Units.Count()));
                 var state = Random.Next(2) switch
@@ -270,7 +280,7 @@ namespace Merthsoft.Moose.SnowballFight
                 }
             }
 
-            if (SelectedUnit.State == Unit.States.Idle)
+            if (SelectedUnit?.State == Unit.States.Idle)
                 SelectedUnit = null;
         }
 
@@ -281,9 +291,22 @@ namespace Merthsoft.Moose.SnowballFight
             SpriteBatch.End();
         }
 
-        private void HandleMouseInput()
+        private void HandleInput()
         {
             if (Demo)
+                return;
+
+            if (WasKeyJustPressed(Keys.Escape))
+            { 
+                Paused = !Paused;
+                if (Paused)
+                    MainMenu.Show();
+                else
+                    MainMenu.Hide();
+                return;
+            }
+
+            if (Paused)
                 return;
 
             var mouseOverUnit = Units.FirstOrDefault(unit => unit.AtWorldPosition(WorldMouse));
@@ -339,8 +362,8 @@ namespace Merthsoft.Moose.SnowballFight
             var smallFontHeight = (int)StatsWindow.MeasureString("|", 1).Y;
 
             StatsWindow.AddPicture(4, 4, unit.Portrait, scale: new(6, 6));
-            StatsWindow.AddLabel(113, 2, unit.DisplayName);
-            var yOffset = (int)displayNameSize.Y - 4;
+            var nameLabel = StatsWindow.AddLabel(113, 2, unit.DisplayName, color: Color.Yellow);
+            var yOffset = (int)displayNameSize.Y + 2;
             StatsWindow.AddLine(112, yOffset, 112 + (int)displayNameSize.X, yOffset);
             StatsWindow.AddLabel(112, yOffset + 2, $"Speed: {unit.DisplaySpeed}", 1);
             StatsWindow.AddLabel(112, yOffset + 2 + smallFontHeight * 1, $"HP: {unit.DisplayHealth}/{unit.DisplayMaxHealth}", 1);

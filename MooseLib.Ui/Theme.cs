@@ -65,9 +65,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public int TileDrawHeight => (int)(TileHeight * TileScale.Y);
 
         public Color TextColor { get; set; } = Color.Black;
-
         public Color TextMouseOverColor { get; set; } = Color.White;
-
+        public Color TextDisabledColor { get; set; } = Color.Gray;
         public Color SelectedColor { get; set; } = Color.Blue;
 
         public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Point textureOffset = default)

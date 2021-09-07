@@ -9,6 +9,11 @@
     <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+	  <Copyright>2021 Merthsoft Creations</Copyright>
+	  <Deterministic>False</Deterministic>
+	  <VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
+	  <VersionPrefix>0.1</VersionPrefix>
+	  <DebugType>embedded</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Icon.ico" />

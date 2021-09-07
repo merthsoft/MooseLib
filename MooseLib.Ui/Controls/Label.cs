@@ -27,7 +27,6 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public override void Update(UpdateParameters updateParameters)
         {
-            CenterInWindow();
             if (updateParameters.MouseOver && updateParameters.LeftMouse)
                 Action?.Invoke(this, updateParameters);
             base.Update(updateParameters);

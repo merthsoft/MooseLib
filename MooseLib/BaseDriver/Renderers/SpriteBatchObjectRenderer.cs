@@ -13,7 +13,12 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
             => SpriteBatch = spriteBatch;
 
         public virtual void Begin(Matrix viewMatrix)
-            => SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, SamplerState.PointClamp, effect: Effect, transformMatrix: viewMatrix);
+            => SpriteBatch.Begin(
+                SpriteSortMode.FrontToBack, 
+                BlendState.AlphaBlend, 
+                SamplerState.PointClamp, 
+                effect: Effect, 
+                transformMatrix: viewMatrix);
 
         public virtual void Draw(GameTime _, ILayer layer, int layerNumber)
         {
@@ -36,8 +41,6 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 
         public virtual void End()
             => SpriteBatch.End();
-
-        public void Load(IMap map) { }
 
         public void Update(GameTime gameTime) { }
 
