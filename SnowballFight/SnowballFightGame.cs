@@ -15,6 +15,9 @@ namespace Merthsoft.Moose.SnowballFight
     {
         public const int WindowSize = 960;
 
+        private enum GameMode { Demo, Playing, Paused };
+        private GameMode Mode { get; set; }
+
         public static SnowballFightGame Instance { get; private set; } = null!;
 
         // TODO: Move layer values into something else
@@ -41,10 +44,7 @@ namespace Merthsoft.Moose.SnowballFight
         private AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
 
         private readonly Dictionary<int, RenderHook> GameRenderHooks;
-        public override IDictionary<int, RenderHook>? DefaultRenderHooks => Demo || Paused ? null : GameRenderHooks;
-
-        private bool Demo = true;
-        private bool Paused = false;
+        public override IDictionary<int, RenderHook>? DefaultRenderHooks => Mode == GameMode.Playing ? GameRenderHooks : null;
 
         public SnowballFightGame()
         {
@@ -114,14 +114,14 @@ namespace Merthsoft.Moose.SnowballFight
                 return t;
             }
 
-            AddDef(new UnitDef("deer", 6, 6, 1, extractPortrait(10)));
-            AddDef(new UnitDef("elf1", 4, 5, .2f, extractPortrait(3)));
-            AddDef(new UnitDef("elf2", 4, 5, .2f, extractPortrait(4)));
-            AddDef(new UnitDef("elf3", 4, 5, .2f, extractPortrait(5)));
-            AddDef(new UnitDef("krampus", 8, 4, .1f, extractPortrait(8)));
-            AddDef(new UnitDef("mari", 3, 11, .4f, extractPortrait(1), "Mari Lwyd"));
-            AddDef(new UnitDef("santa", 8, 4, .1f, extractPortrait(9)));
-            AddDef(new UnitDef("snowman", 8, 4, .1f, extractPortrait(2)));
+            AddDef(new UnitDef("deer", 6, 4, 6, 1, extractPortrait(10)));
+            AddDef(new UnitDef("elf1", 4, 6, 5, .2f, extractPortrait(3)));
+            AddDef(new UnitDef("elf2", 4, 6, 5, .2f, extractPortrait(4)));
+            AddDef(new UnitDef("elf3", 4, 6, 5, .2f, extractPortrait(5)));
+            AddDef(new UnitDef("krampus", 8, 8, 4, .1f, extractPortrait(8)));
+            AddDef(new UnitDef("mari", 3, 8, 11, .4f, extractPortrait(1), "Mari Lwyd"));
+            AddDef(new UnitDef("santa", 8, 8, 4, .1f, extractPortrait(9)));
+            AddDef(new UnitDef("snowman", 8, 2, 4, .1f, extractPortrait(2)));
 
             AddDef(new AnimatedGameObjectDef("snowball", "snowball"));
             AddDef(new AnimatedGameObjectDef("snow", "snow"));
@@ -152,9 +152,7 @@ namespace Merthsoft.Moose.SnowballFight
                 new("stats window", windowTextures[0], 32, 32, gameFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow },
             });
 
-            MainMenu = new MainMenu(WindowManager.DefaultTheme, GraphicsDevice, WindowSize);
-            MainMenu.Center(WindowSize, WindowSize);
-            MainMenu.Clicked = MainMenu_Clicked;
+            MainMenu = new MainMenu(WindowManager.DefaultTheme, WindowSize) { Clicked = MainMenu_Clicked };
             WindowManager.AddWindow(MainMenu);
 
             StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2, "stats window");
@@ -201,8 +199,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         private void NewGame()
         {
-            Demo = false;
-            Paused = false;
+            Mode = GameMode.Playing;
             LoadMap("map1");
 
             MarkAllObjectsForRemoval();
@@ -244,13 +241,12 @@ namespace Merthsoft.Moose.SnowballFight
         protected override void PostObjectsUpdate(GameTime gameTime)
         {
             WindowManager.Update(gameTime, CurrentMouseState);
-            if (Demo)
+            if (Mode == GameMode.Demo)
                 DemoUpdate();
         }
     
         private void DemoUpdate()
         {
-            MainMenu.Center(WindowSize, WindowSize);
             if (SelectedUnit == null && Units.Any())
             {
                 SelectedUnit = Units.ElementAt(Random.Next(Units.Count()));
@@ -293,20 +289,27 @@ namespace Merthsoft.Moose.SnowballFight
 
         private void HandleInput()
         {
-            if (Demo)
+            if (Mode == GameMode.Demo)
                 return;
 
             if (WasKeyJustPressed(Keys.Escape))
             { 
-                Paused = !Paused;
-                if (Paused)
-                    MainMenu.Show();
-                else
-                    MainMenu.Hide();
+                switch (Mode)
+                {
+                    case GameMode.Paused:
+                        Mode = GameMode.Playing;
+                        MainMenu.Hide();
+                        break;
+                    case GameMode.Playing:
+                        Mode = GameMode.Paused;
+                        MainMenu.Show();
+                        break;
+                }
+                
                 return;
             }
 
-            if (Paused)
+            if (Mode == GameMode.Paused)
                 return;
 
             var mouseOverUnit = Units.FirstOrDefault(unit => unit.AtWorldPosition(WorldMouse));

@@ -4,6 +4,8 @@ using MonoGame.Extended.Content;
 using MonoGame.Extended.Serialization;
 using MonoGame.Extended.Sprites;
 using SpriteFontPlus;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Merthsoft.Moose.MooseEngine
 {

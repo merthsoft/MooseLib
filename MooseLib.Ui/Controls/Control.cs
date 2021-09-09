@@ -16,6 +16,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         public Vector2 Position { get; set; }
 
         public int FontIndex { get; set; }
+        public SpriteFont Font => Theme.Fonts[FontIndex];
 
         protected UpdateParameters UpdateParameters { get; set; } = null!;
 

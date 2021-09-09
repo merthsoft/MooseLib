@@ -19,7 +19,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         public Texture2D Portrait => UnitDef.Portrait;
 
-        public int DisplaySpeed => UnitDef.Speed;
+        public int DisplaySpeed => UnitDef.MovementSpeed;
 
         public string DisplayName => UnitDef.DisplayName;
 

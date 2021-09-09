@@ -84,12 +84,14 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public Line AddLine(int x1, int y1, int x2, int y2, int thickness = 1)
             => (Controls.AddPassThrough(new Line(this, x1, y1, x2, y2, thickness)) as Line)!;
 
-        public Label AddLabel(int x, int y, string text, int fontIndex = 0, Color? color = null)
+        public Label AddLabel(int x, int y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null)
             => (Controls.AddPassThrough(new Label(this, x, y)
             {
                 Text = text,
                 FontIndex = fontIndex,
                 Color = color,
+                StrokeSize = strokeSize,
+                StrokeColor = strokeColor ?? Color.Black
             }) as Label)!;
 
         public Label AddActionLabel(int x, int y, string text, Action<Control, UpdateParameters> action)

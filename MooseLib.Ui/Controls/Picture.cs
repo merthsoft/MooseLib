@@ -24,7 +24,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public override Vector2 CalculateSize() => new(Texture.Width, Texture.Height);
 
-        public Picture(Window window, int x, int y, Texture2D texture) : base(window, x, y) => Texture = texture;
+        public Picture(Window window, int x, int y, Texture2D texture) 
+            : base(window, x, y) => Texture = texture;
 
         public override void Draw(SpriteBatch spriteBatch)
             => spriteBatch.Draw(Texture, GlobalPosition, SourceRectangle, Color ?? C.White, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);

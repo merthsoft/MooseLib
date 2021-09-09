@@ -33,6 +33,8 @@
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MonoGame.Extended" Version="3.9.0-alpha0047" />
+    <PackageReference Include="MonoGame.Extended.Tiled" Version="3.9.0-alpha0047" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
   </ItemGroup>
@@ -40,14 +42,6 @@
     <ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
     <ProjectReference Include="..\SnowballFight\SnowballFight.csproj" />
   </ItemGroup>
-	<ItemGroup>
-		<Reference Include="MonoGame.Extended">
-			<HintPath>..\lib\MonoGame.Extended.dll</HintPath>
-		</Reference>
-		<Reference Include="MonoGame.Extended.Tiled">
-			<HintPath>..\lib\MonoGame.Extended.Tiled.dll</HintPath>
-		</Reference>
-	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Content\Animations\Hero.sf">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

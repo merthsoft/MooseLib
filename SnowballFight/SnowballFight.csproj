@@ -13,7 +13,7 @@
 		<Copyright>2021 Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-		<VersionPrefix>0.1</VersionPrefix>
+		<VersionPrefix>0.2</VersionPrefix>
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
@@ -37,7 +37,6 @@
 	<ItemGroup>
 		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
 		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
-		<PackageReference Include="MonoGame.StrokeEffect" Version="1.0.7" />
 		<PackageReference Include="Troschuetz.Random" Version="5.0.1" />
 	</ItemGroup>
 	<ItemGroup>
@@ -45,12 +44,18 @@
 		<ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Reference Include="MonoGame.Extended">
-			<HintPath>..\lib\MonoGame.Extended.dll</HintPath>
-		</Reference>
-		<Reference Include="MonoGame.Extended.Tiled">
-			<HintPath>..\lib\MonoGame.Extended.Tiled.dll</HintPath>
-		</Reference>
+	  <Reference Include="MonoGame.Extended">
+	    <HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.dll</HintPath>
+	  </Reference>
+	  <Reference Include="MonoGame.Extended.Content.Pipeline">
+	    <HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Content.Pipeline.dll</HintPath>
+	  </Reference>
+	  <Reference Include="MonoGame.Extended.Graphics">
+	    <HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Graphics.dll</HintPath>
+	  </Reference>
+	  <Reference Include="MonoGame.Extended.Tiled">
+	    <HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Tiled.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="Content\Animations\deer.sf">

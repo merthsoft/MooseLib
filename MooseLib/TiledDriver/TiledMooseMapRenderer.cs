@@ -13,6 +13,9 @@ namespace Merthsoft.Moose.MooseEngine.TiledDriver
         public TiledMooseMapRenderer(GraphicsDevice graphicsDevice)
             => MapRenderer = new(graphicsDevice);
 
+        public void Update(GameTime gameTime)
+            => MapRenderer.Update(gameTime);
+
         public void Load(IMap map)
             => MapRenderer.LoadMap((map as TiledMooseMap)?.Map);
 
