@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 
 namespace Merthsoft.Moose.MooseEngine.Ui
 {
@@ -66,6 +65,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public Color TextColor { get; set; } = Color.Black;
         public Color TextMouseOverColor { get; set; } = Color.White;
+        public Color TextBorderColor { get; set; } = Color.Gray;
         public Color TextDisabledColor { get; set; } = Color.Gray;
         public Color SelectedColor { get; set; } = Color.Blue;
 

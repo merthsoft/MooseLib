@@ -38,9 +38,15 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             }
         }
 
+        public bool ForceHighlight { get; set; }
         public bool HighlightOnHover { get; set; }
+        public Color? HighlightColor { get; set; }
 
         private Texture2D? renderedTexture;
+
+        public Color ResolvedColor => ForceHighlight || (HighlightOnHover && UpdateParameters.MouseOver)
+                                        ? HighlightColor ?? Theme.TextMouseOverColor
+                                        : Color ?? Theme.TextColor;
 
         public Label(Window window, int x, int y) : base(window, x, y)
         {
@@ -51,23 +57,17 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                 ? Window.Theme.Fonts[FontIndex].MeasureString(Text)
                 : new(renderedTexture?.Width ?? 0, renderedTexture?.Height ?? 0);
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
         {
             if (Text == null)
                 return;
 
-            var color = Color ?? (HighlightOnHover && UpdateParameters.MouseOver ? Theme.TextMouseOverColor : Theme.TextColor);
+            var position = Position + parentOffset;
 
             if (strokeSize == 0)
-            {
-                spriteBatch.DrawString(Font, Text, GlobalPosition, color);
-                return;
-            }
-
-            if (renderedTexture == null)
-                renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, color, Vector2.One, StrokeSize, StrokeColor, spriteBatch.GraphicsDevice);
-
-            spriteBatch.Draw(renderedTexture, GlobalPosition, Microsoft.Xna.Framework.Color.White);
+                spriteBatch.DrawString(Font, Text, position, ResolvedColor);
+            else
+                spriteBatch.Draw(renderedTexture, position, Microsoft.Xna.Framework.Color.White);
 
         }
 
@@ -75,6 +75,10 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         {
             if (updateParameters.MouseOver && updateParameters.LeftMouse)
                 Action?.Invoke(this, updateParameters);
+
+            if (renderedTexture == null)
+                renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedColor, Vector2.One, StrokeSize, StrokeColor, updateParameters.GraphicsDevice);
+
             base.Update(updateParameters);
         }
     }

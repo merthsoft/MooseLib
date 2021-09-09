@@ -30,7 +30,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         });
 
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
         {
             if (Options.Count == 0 || Window.Theme.Fonts == null)
                 return;
@@ -46,7 +46,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                 spriteBatch.DrawString(
                     Window.Theme.Fonts[FontIndex],
                     option.Text, 
-                    GlobalPosition + new Vector2(0, index * Window.Theme.TileHeight),
+                    Position + parentOffset + new Vector2(0, index * Window.Theme.TileHeight),
                     color);
             }
         }

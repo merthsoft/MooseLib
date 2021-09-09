@@ -1,5 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine;
-using Merthsoft.Moose.MooseEngine.Ui.Controls;
+﻿using Merthsoft.Moose.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -17,8 +16,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public bool DrawBackground { get; set; } = true;
 
-        public Rectangle Rectangle { 
-            get => rectangle; 
+        public Rectangle Rectangle {
+            get => rectangle;
             set
             {
                 var oldRect = rectangle;
@@ -52,11 +51,14 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             => (Rectangle, Theme)
              = (rectangle, theme);
 
+        public Window(int x, int y, int w, int h, Theme theme)
+            : this(new(x, y, w, h), theme) { }
+
         public virtual void Update(UpdateParameters updateParameters)
         {
             foreach (var c in Controls)
             {
-                var controlUpdateParameters = new UpdateParameters(updateParameters.GameTime, updateParameters.LocalMousePosition - c.Position);
+                var controlUpdateParameters = new UpdateParameters(updateParameters.GameTime, updateParameters.LocalMousePosition - c.Position, updateParameters.GraphicsDevice);
                 if (Visible && c.Rectangle.Contains(updateParameters.LocalMousePosition))
                 {
                     controlUpdateParameters.MouseOver = true;
@@ -75,52 +77,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             if (DrawBackground)
                 Theme.DrawWindowTexture(spriteBatch, Rectangle);
 
-            Controls.ForEach(c => c.Draw(spriteBatch));
+            Controls.ForEach(c => c.Draw(spriteBatch, Position + Theme.ControlDrawOffset));
         }
 
         public void Center(int width, int height)
             => Position = new(width / 2 - Width / 2, height / 2 - Height / 2);
-
-        public Line AddLine(int x1, int y1, int x2, int y2, int thickness = 1)
-            => (Controls.AddPassThrough(new Line(this, x1, y1, x2, y2, thickness)) as Line)!;
-
-        public Label AddLabel(int x, int y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null)
-            => (Controls.AddPassThrough(new Label(this, x, y)
-            {
-                Text = text,
-                FontIndex = fontIndex,
-                Color = color,
-                StrokeSize = strokeSize,
-                StrokeColor = strokeColor ?? Color.Black
-            }) as Label)!;
-
-        public Label AddActionLabel(int x, int y, string text, Action<Control, UpdateParameters> action)
-            => (Controls.AddPassThrough(new Label(this, x, y)
-            {
-                Text = text,
-                Action = action,
-            }) as Label)!;
-
-        public TextList AddActionList(int x, int y, int fontIndex, Action<Control, UpdateParameters> action, params string[] options)
-            => (Controls.AddPassThrough(new TextList(this, x, y, options)
-            {
-                Action = action,
-                SelectMode = SelectMode.None,
-                FontIndex = fontIndex,
-            }) as TextList)!;
-
-        public TextList AddActionList(int x, int y, params (string text, Action<Control, UpdateParameters> action)[] options)
-            => (Controls.AddPassThrough(new TextList(this, x, y, options.Select(o => o.text))
-            {
-                Action = (c, u) => options[(c as TextList)!.MouseOverIndex].action(c, u),
-                SelectMode = SelectMode.None,
-            }) as TextList)!;
-
-        public Picture AddPicture(int x, int y, Texture2D texture, Vector2? scale = null)
-            => (Controls.AddPassThrough(new Picture(this, x, y, texture)
-            {
-                Scale = scale ?? Vector2.One,
-            }) as Picture)!;
 
         public void SetCellSize(int cellWidth, int cellHeight)
             => Size = new(cellWidth * Theme.TileWidth, cellHeight * Theme.TileHeight);
@@ -138,6 +99,53 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             => Visible = false;
 
         public void Show()
-            => Visible = true;
+            => Visible = true; 
+        
+        public Line AddLine(int x1, int y1, int x2, int y2, int thickness = 1)
+             => Controls.AddPassThrough(new Line(this, x1, y1, x2, y2, thickness));
+
+        public Label AddLabel(int x, int y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false, Color? highlightColor = null, bool forceHighlight = false)
+            => Controls.AddPassThrough(new Label(this, x, y)
+            {
+                Text = text,
+                FontIndex = fontIndex,
+                Color = color,
+                StrokeSize = strokeSize,
+                StrokeColor = strokeColor ?? Theme.TextBorderColor,
+                HighlightOnHover = hightlightOnHover || highlightColor.HasValue,
+                HighlightColor = highlightColor,
+                ForceHighlight = forceHighlight,
+            });
+
+        public Label AddActionLabel(int x, int y, string text, Action<Control, UpdateParameters> action)
+            => Controls.AddPassThrough(new Label(this, x, y)
+            {
+                Text = text,
+                Action = action,
+            });
+
+        public TextList AddActionList(int x, int y, int fontIndex, Action<Control, UpdateParameters> action, params string[] options)
+            => Controls.AddPassThrough(new TextList(this, x, y, options)
+            {
+                Action = action,
+                SelectMode = SelectMode.None,
+                FontIndex = fontIndex,
+            });
+
+        public TextList AddActionList(int x, int y, params (string text, Action<Control, UpdateParameters> action)[] options)
+            => Controls.AddPassThrough(new TextList(this, x, y, options.Select(o => o.text))
+            {
+                Action = (c, u) => options[(c as TextList)!.MouseOverIndex].action(c, u),
+                SelectMode = SelectMode.None,
+            });
+
+        public Picture AddPicture(int x, int y, Texture2D texture)
+            => Controls.AddPassThrough(new Picture(this, x, y, texture));
+
+        public Picture AddPicture(int x, int y, Texture2D texture, Vector2 scale)
+            => Controls.AddPassThrough(new Picture(this, x, y, texture) { Scale = scale });
+
+        public Picture AddPicture(int x, int y, Texture2D texture, float scale)
+            => Controls.AddPassThrough(new Picture(this, x, y, texture) { Scale = new(scale, scale) });
     }
 }

@@ -1,15 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Merthsoft.Moose.MooseEngine.Ui.Controls;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using Merthsoft.Moose.MooseEngine;
-using Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public class WindowManager
     {
+        private GraphicsDevice graphicsDevice;
+
         private readonly List<Window> windowsToAdd = new();
         private readonly List<Window> windows = new();
 
@@ -37,10 +36,13 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         internal MouseState PreviousMouseState { get; set; }
 
-        public WindowManager(Theme theme)
+        private WindowManager(GraphicsDevice graphicsDevice)
+            => this.graphicsDevice = graphicsDevice;
+
+        public WindowManager(GraphicsDevice graphicsDevice, Theme theme) : this(graphicsDevice)
             => AddTheme(theme);
 
-        public WindowManager(IEnumerable<Theme> themes)
+        public WindowManager(GraphicsDevice graphicsDevice, IEnumerable<Theme> themes) : this(graphicsDevice)
             => themes.ForEach(AddTheme);
 
         public void Update(GameTime gameTime, MouseState currentMouseState, Vector2? worldMouse = null)
@@ -49,7 +51,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             var mousePosition = worldMouse ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
             foreach (var w in Windows)
             {
-                var updateParams = new UpdateParameters(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset);
+                var updateParams = new UpdateParameters(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset, graphicsDevice);
 
                 if (w.Rectangle.Contains(mousePosition))
                 {

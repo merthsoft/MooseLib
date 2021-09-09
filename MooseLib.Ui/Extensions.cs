@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
 using Microsoft.Xna.Framework.Input;
 
 namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public static class Extensions
     {
-        public static T AddPassThrough<T>(this ICollection<T> list, T item)
+        public static T AddPassThrough<T>(this IList list, T item)
         {
             list.Add(item);
             return item;

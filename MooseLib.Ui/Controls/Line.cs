@@ -18,7 +18,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             Thickness = thickness;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
-            => spriteBatch.DrawLine(GlobalPosition, GetGlobalPosition(End), Theme.TextColor, Thickness);
+        public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+            => spriteBatch.DrawLine(Position + parentOffset, End + parentOffset, Theme.TextColor, Thickness);
     }
 }

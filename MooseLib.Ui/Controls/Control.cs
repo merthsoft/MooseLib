@@ -29,10 +29,6 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             }
         }
 
-        protected Vector2 GlobalPosition => GetGlobalPosition(Position);
-
-        protected Vector2 GetGlobalPosition(Vector2 position) => position + Window.Position + Window.Theme.ControlDrawOffset;
-
         public Action<Control, UpdateParameters>? Action { get; set; }
 
         public Control(Window window)
@@ -46,7 +42,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         public virtual void Update(UpdateParameters updateParameters)
             => UpdateParameters = updateParameters;
 
-        public abstract void Draw(SpriteBatch spriteBatch);
+        public abstract void Draw(SpriteBatch spriteBatch, Vector2 parentOffset);
 
         public Vector2 CenterInWindow()
         {

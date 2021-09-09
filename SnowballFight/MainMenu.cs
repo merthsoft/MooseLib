@@ -12,9 +12,6 @@ namespace Merthsoft.Moose.SnowballFight
         private readonly Label versionLabel;
         private readonly int screenSize;
 
-        private float logoHeight;
-        private float logoWidth;
-
         public MainMenu(Theme theme, int screenSize)
             : base(theme, "New Game", "Settings", "About", "Exit")
         {
@@ -23,7 +20,7 @@ namespace Merthsoft.Moose.SnowballFight
 
             this.screenSize = screenSize;
 
-            logo = AddLabel(0, 0, "Snowfight Tactics", 0, Color.Yellow, 3, Color.Black);
+            logo = AddLabel(0, 0, "Snowfight Tactics", 0, strokeSize: 3, forceHighlight: true);
 
             var assembly = Assembly.GetExecutingAssembly();
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -36,7 +33,10 @@ namespace Merthsoft.Moose.SnowballFight
 
         public override void Update(UpdateParameters updateParameters)
         {
-            (logoWidth, logoHeight) = logo.CalculateSize();
+            if (!Visible)
+                return;
+
+            var (logoWidth, logoHeight) = logo.CalculateSize();
             logo.Position = new(-logoWidth / 4, -logoHeight - 8);
             versionLabel.Position = new(-X, -Y + screenSize - 24);
 

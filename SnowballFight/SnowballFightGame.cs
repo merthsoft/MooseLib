@@ -15,8 +15,9 @@ namespace Merthsoft.Moose.SnowballFight
     {
         public const int WindowSize = 960;
 
-        private enum GameMode { Demo, Playing, Paused };
-        private GameMode Mode { get; set; }
+        private enum GameMode { Demo, SelectingTeam, Playing, Paused };
+        private GameMode Mode { get; set; } = GameMode.Demo;
+        private Team PlayerTeam = Team.Santa;
 
         public static SnowballFightGame Instance { get; private set; } = null!;
 
@@ -27,7 +28,8 @@ namespace Merthsoft.Moose.SnowballFight
         
         private WindowManager WindowManager = null!;
         private Window StatsWindow = null!;
-        private SimpleMenu MainMenu = null!;
+        private MainMenu MainMenu = null!;
+        private TeamSelectionWindow TeamSelectionWindow = null!;
 
         public OrthographicCamera StatsWindowCamera = null!;
 
@@ -114,13 +116,16 @@ namespace Merthsoft.Moose.SnowballFight
                 return t;
             }
 
+            var krampusPortrait = extractPortrait(8);
+            var santaPortrait = extractPortrait(9);
+
             AddDef(new UnitDef("deer", 6, 4, 6, 1, extractPortrait(10)));
             AddDef(new UnitDef("elf1", 4, 6, 5, .2f, extractPortrait(3)));
             AddDef(new UnitDef("elf2", 4, 6, 5, .2f, extractPortrait(4)));
             AddDef(new UnitDef("elf3", 4, 6, 5, .2f, extractPortrait(5)));
-            AddDef(new UnitDef("krampus", 8, 8, 4, .1f, extractPortrait(8)));
+            AddDef(new UnitDef("krampus", 8, 8, 4, .1f, krampusPortrait));
             AddDef(new UnitDef("mari", 3, 8, 11, .4f, extractPortrait(1), "Mari Lwyd"));
-            AddDef(new UnitDef("santa", 8, 8, 4, .1f, extractPortrait(9)));
+            AddDef(new UnitDef("santa", 8, 8, 4, .1f, santaPortrait));
             AddDef(new UnitDef("snowman", 8, 2, 4, .1f, extractPortrait(2)));
 
             AddDef(new AnimatedGameObjectDef("snowball", "snowball"));
@@ -133,6 +138,7 @@ namespace Merthsoft.Moose.SnowballFight
                 ContentManager.BakeFont("Whacky_Joe", 64),
                 ContentManager.BakeFont("Direct_Message", 48),
                 ContentManager.BakeFont("Tomorrow_Night", 16),
+                ContentManager.BakeFont("Direct_Message", 40)
             };
 
             var gameFonts = new SpriteFont[]
@@ -147,13 +153,18 @@ namespace Merthsoft.Moose.SnowballFight
                 Content.Load<Texture2D>("Images/window2"),
             };
 
-            WindowManager = new WindowManager(new Theme[] {
-                new("main menu", windowTextures[0], 32, 32, mainMenuFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow },
-                new("stats window", windowTextures[0], 32, 32, gameFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow },
+            WindowManager = new WindowManager(GraphicsDevice, new Theme[] {
+                new("main menu", windowTextures[0], 32, 32, mainMenuFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
+                new("stats window", windowTextures[0], 32, 32, gameFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
             });
 
             MainMenu = new MainMenu(WindowManager.DefaultTheme, WindowSize) { Clicked = MainMenu_Clicked };
             WindowManager.AddWindow(MainMenu);
+            MainMenu.Hide();
+
+            TeamSelectionWindow = new TeamSelectionWindow(WindowManager.DefaultTheme, WindowSize, santaPortrait, krampusPortrait) { TeamSelected = TeamSelectionWindow_TeamSelected };
+            WindowManager.AddWindow(TeamSelectionWindow);
+            TeamSelectionWindow.Hide();
 
             StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2, "stats window");
             StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
@@ -173,12 +184,11 @@ namespace Merthsoft.Moose.SnowballFight
                 }, Random.Next(4, 26), Random.Next(21, 29));
         }
 
-        private void MainMenu_Clicked(Window _, string option)
+        private void MainMenu_Clicked(SimpleMenu _, string option)
         {
             switch (option)
             {
                 case "New Game":
-                    HideMenu();
                     NewGame();
                     break;
                 case "Exit":
@@ -187,8 +197,11 @@ namespace Merthsoft.Moose.SnowballFight
             }
         }
 
-        private void HideMenu()
-            => MainMenu.Hide();
+        private void TeamSelectionWindow_TeamSelected(TeamSelectionWindow _, Team team)
+        {
+            PlayerTeam = team;
+            StartGame();
+        }
 
         private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)
         {
@@ -198,6 +211,9 @@ namespace Merthsoft.Moose.SnowballFight
         }
 
         private void NewGame()
+            => Mode = GameMode.SelectingTeam;
+
+        private void StartGame()
         {
             Mode = GameMode.Playing;
             LoadMap("map1");
@@ -234,14 +250,43 @@ namespace Merthsoft.Moose.SnowballFight
 
         protected override bool PreRenderUpdate(GameTime gameTime)
         {
+            DetermineOpenWindows();
             HandleInput();
             return true;
+        }
+
+        private void DetermineOpenWindows()
+        {
+            switch (Mode)
+            {
+                case GameMode.Demo:
+                    MainMenu.Show();
+                    TeamSelectionWindow.Hide();
+                    StatsWindow.Hide();
+                    break;
+                case GameMode.SelectingTeam:
+                    MainMenu.Hide();
+                    TeamSelectionWindow.Show();
+                    StatsWindow.Hide();
+                    break;
+                case GameMode.Playing:
+                    MainMenu.Hide();
+                    TeamSelectionWindow.Hide();
+                    if (SelectedUnit == null)
+                        StatsWindow.Hide();
+                    break;
+                case GameMode.Paused:
+                    MainMenu.Show();
+                    TeamSelectionWindow.Hide();
+                    StatsWindow.Hide();
+                    break;
+            }
         }
 
         protected override void PostObjectsUpdate(GameTime gameTime)
         {
             WindowManager.Update(gameTime, CurrentMouseState);
-            if (Mode == GameMode.Demo)
+            if (Mode == GameMode.Demo || Mode == GameMode.SelectingTeam)
                 DemoUpdate();
         }
     
@@ -289,7 +334,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         private void HandleInput()
         {
-            if (Mode == GameMode.Demo)
+            if (Mode == GameMode.Demo || Mode == GameMode.SelectingTeam)
                 return;
 
             if (WasKeyJustPressed(Keys.Escape))
@@ -364,7 +409,7 @@ namespace Merthsoft.Moose.SnowballFight
             var displayNameSize = StatsWindow.MeasureString(unit.DisplayName);
             var smallFontHeight = (int)StatsWindow.MeasureString("|", 1).Y;
 
-            StatsWindow.AddPicture(4, 4, unit.Portrait, scale: new(6, 6));
+            StatsWindow.AddPicture(4, 4, unit.Portrait, 6);
             var nameLabel = StatsWindow.AddLabel(113, 2, unit.DisplayName, color: Color.Yellow);
             var yOffset = (int)displayNameSize.Y + 2;
             StatsWindow.AddLine(112, yOffset, 112 + (int)displayNameSize.X, yOffset);
