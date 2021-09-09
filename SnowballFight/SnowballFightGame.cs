@@ -54,7 +54,7 @@ namespace Merthsoft.Moose.SnowballFight
 
             GameRenderHooks = new()
             {
-                { 2, new(PreHook: _ => DrawSelectedUnitDetails()) },
+                { 1, new(PostHook: _ => DrawSelectedUnitDetails()) },
                 { 4, new(PostHook: _ => DrawTargetLine()) },
             };
         }
@@ -494,6 +494,9 @@ namespace Merthsoft.Moose.SnowballFight
             if (SelectedUnit == null)
                 return;
 
+            var transformMatrix = MainCamera.GetViewMatrix();
+            SpriteBatch.Begin(transformMatrix: transformMatrix);
+
             SpriteBatch.FillRectangle(SelectedUnit.WorldPosition, TileSize, Color.Red.HalveAlphaChannel());
 
             SelectedUnitHintCells.ForEach(t =>
@@ -524,6 +527,8 @@ namespace Merthsoft.Moose.SnowballFight
                 }
                 SpriteBatch.DrawCircle(lastCell, 2, 40, Color.Red, 2);
             }
+
+            SpriteBatch.End();
         }
     }
 }

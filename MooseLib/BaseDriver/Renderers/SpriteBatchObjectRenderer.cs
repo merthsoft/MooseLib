@@ -14,7 +14,7 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 
         public virtual void Begin(Matrix viewMatrix)
             => SpriteBatch.Begin(
-                SpriteSortMode.FrontToBack, 
+                SpriteSortMode.FrontToBack,
                 BlendState.AlphaBlend, 
                 SamplerState.PointClamp, 
                 effect: Effect, 
