@@ -1,4 +1,5 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
+using Microsoft.Xna.Framework;
 using MonoGame.Extended.Tiled;
 
 namespace Merthsoft.Moose.MooseEngine.TiledDriver
@@ -6,7 +7,7 @@ namespace Merthsoft.Moose.MooseEngine.TiledDriver
     public record TiledMooseTileLayer(TiledMapTileLayer Layer) : ITileLayer<TiledMapTile>
     {
         public string Name => Layer.Name;
-        public bool IsVisible
+        public bool IsHidden
         {
             get => Layer.IsVisible;
             set => Layer.IsVisible = value;
@@ -17,6 +18,10 @@ namespace Merthsoft.Moose.MooseEngine.TiledDriver
             get => Layer.Opacity;
             set => Layer.Opacity = value;
         }
+        public int Width => Layer.Width;
+        public int Height => Layer.Height;
+
+        public Vector2 DrawOffset { get; set; }
 
         public ITile<TiledMapTile> GetTile(int x, int y)
             => new TiledMooseTile(Layer.GetTile((ushort)x, (ushort)y));

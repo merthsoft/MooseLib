@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 {
-    public class SpriteBatchIndexedTextureTileRenderer : SpriteBatchObjectRenderer
+    public class SpriteBatchIndexedTextureTileRenderer : SpriteBatchRenderer
     {
         private Texture2D SpriteSheet { get; }
 
@@ -29,15 +29,15 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 
         public override void Draw(GameTime _, ILayer layer, int layerNumber)
         {
-            if (layer is not TileLayer<int> tileLayer)
+            if (layer is not ITileLayer<int> tileLayer)
                 throw new Exception("TileLayer<int> layer expected");
 
             for (int i = 0; i < tileLayer.Width; i++)
                 for (int j = 0; j < tileLayer.Height; j++)
-                    DrawSprite(tileLayer.Tiles[i, j], i, j, layerNumber);
+                    DrawSprite(tileLayer.GetTileValue(i, j), i, j, layerNumber, layer.DrawOffset);
         }
 
-        public virtual void DrawSprite(int spriteIndex, int i, int j, int layer)
+        public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, Vector2 layerDrawOffset)
         {
             var columns = SpriteSheet.Width / TileWidth;
 
@@ -45,7 +45,7 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
             var sourceY = (spriteIndex / columns) * TileHeight;
 
             SpriteBatch.Draw(SpriteSheet, 
-                destinationRectangle: new(i * TileWidth, j * TileHeight, TileWidth, TileHeight),
+                destinationRectangle: new(i * TileWidth + (int)layerDrawOffset.X, j * TileHeight + (int)layerDrawOffset.Y, TileWidth, TileHeight),
                 sourceRectangle: new(sourceX, sourceY, TileWidth, TileHeight),
                 color: Color, rotation: Rotation, effects: SpriteEffects,
                 origin: Vector2.Zero, layerDepth: 0);

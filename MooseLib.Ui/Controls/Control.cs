@@ -17,8 +17,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public int FontIndex { get; set; }
         public SpriteFont Font => Theme.Fonts[FontIndex];
+        
+        public bool IsHidden { get; set; }
 
         protected UpdateParameters UpdateParameters { get; set; } = null!;
+
 
         public Rectangle Rectangle
         {
@@ -36,6 +39,18 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public Control(Window window, int x, int y) : this(window)
             => Position = new(x, y);
+
+        public Control Hide()
+        {
+            IsHidden = true;
+            return this;
+        }
+
+        public Control Show()
+        {
+            IsHidden = false;
+            return this;
+        }
 
         public abstract Vector2 CalculateSize();
 

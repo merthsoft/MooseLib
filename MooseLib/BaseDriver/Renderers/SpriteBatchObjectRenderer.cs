@@ -4,23 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 {
-    public class SpriteBatchObjectRenderer : ILayerRenderer
+    public class SpriteBatchObjectRenderer : SpriteBatchRenderer
     {
-        public SpriteBatch SpriteBatch { get; }
-        public Effect? Effect { get; set; }
-
         public SpriteBatchObjectRenderer(SpriteBatch spriteBatch)
-            => SpriteBatch = spriteBatch;
+            : base(spriteBatch) { }
 
-        public virtual void Begin(Matrix viewMatrix)
-            => SpriteBatch.Begin(
-                SpriteSortMode.FrontToBack,
-                BlendState.AlphaBlend, 
-                SamplerState.PointClamp, 
-                effect: Effect, 
-                transformMatrix: viewMatrix);
-
-        public virtual void Draw(GameTime _, ILayer layer, int layerNumber)
+        public override void Draw(GameTime _, ILayer layer, int layerNumber)
         {
             if (layer is not IObjectLayer objectLayer)
                 throw new Exception("Object layer expected");
@@ -38,13 +27,5 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
                     drawParameters.LayerDepth);
             }
         }
-
-        public virtual void End()
-            => SpriteBatch.End();
-
-        public void Update(GameTime gameTime) { }
-
-        public void Dispose()
-            => GC.SuppressFinalize(this);
     }
 }

@@ -21,7 +21,8 @@ namespace Merthsoft.Moose.MooseEngine
 
         public GraphicsDeviceManager Graphics { get; set; } = null!;
 
-        public IMap MainMap = null!;
+        public IMap MainMap => ActiveMaps.Any() ? ActiveMaps[0] : NullMap.Instance;
+        public IList<IMap> ActiveMaps = new List<IMap>();
 
         public IDictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
 
@@ -43,17 +44,17 @@ namespace Merthsoft.Moose.MooseEngine
         private readonly Dictionary<string, ILayerRenderer> RendererDictionary = new();
         private readonly Dictionary<int, string> LayerRenderers = new();
 
-        public virtual int MapHeight => MainMap.Height;
+        public virtual int MapHeight => MainMap?.Height ?? 0;
                
-        public virtual int MapWidth => MainMap.Width;
+        public virtual int MapWidth => MainMap?.Width ?? 0;
                
-        public virtual int TileWidth => MainMap.TileWidth;
+        public virtual int TileWidth => MainMap?.TileWidth ?? 0;
                
-        public virtual int TileHeight => MainMap.TileHeight;
+        public virtual int TileHeight => MainMap?.TileHeight ?? 0;
                
-        public virtual Size2 TileSize => MainMap.TileSize; // TODO: Cache
+        public virtual Size2 TileSize => MainMap?.TileSize ?? new(0, 0); // TODO: Cache
                
-        public virtual Vector2 HalfTileSize => MainMap.HalfTileSize; // TODO: Cache
+        public virtual Vector2 HalfTileSize => MainMap?.HalfTileSize ?? new Vector2(0, 0); // TODO: Cache
 
         public virtual IDictionary<int, RenderHook>? DefaultRenderHooks => null;
 
@@ -183,8 +184,9 @@ namespace Merthsoft.Moose.MooseEngine
                 foreach (var renderer in RendererDictionary.Values)
                     renderer.Update(gameTime);
 
-            if (PreMapUpdate(gameTime))
-                MainMap?.Update(gameTime);
+            if (PreMapUpdate(gameTime) && ActiveMaps.Any())
+                foreach (var map in ActiveMaps)
+                    map.Update(gameTime);
 
             if (PreObjectsUpdate(gameTime))
                 foreach (var obj in Objects)
@@ -233,30 +235,37 @@ namespace Merthsoft.Moose.MooseEngine
                 GraphicsDevice.Clear(DefaultBackgroundColor);
             
             var transformMatrix = MainCamera.GetViewMatrix();
-            
-            if (PreMapDraw(gameTime) && MainMap != null)
-                for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
-                {
-                    var hookTuple = renderHooks?.GetValueOrDefault(layerIndex);
-                    var layer = MainMap.Layers[layerIndex];
-                    if (!layer.IsVisible)
-                        continue;
 
-                    ILayerRenderer? renderer = null;
-                    var rendererKey = LayerRenderers.GetValueOrDefault(layerIndex);
-                    if (renderer == null)
-                        rendererKey = DefaultRenderers[layer.GetType()];
-                    if (rendererKey != null)
-                        renderer = RendererDictionary[rendererKey];
-
-                    renderer?.Begin(transformMatrix);
-                    hookTuple?.PreHook?.Invoke(layerIndex);
-                    renderer?.Draw(gameTime, layer, layerIndex);
-                    hookTuple?.PostHook?.Invoke(layerIndex);
-                    renderer?.End();
-                }
+            if (PreMapDraw(gameTime) && ActiveMaps.Any())
+                foreach (var map in ActiveMaps)
+                    DrawMap(map, gameTime, renderHooks, transformMatrix);
 
             PostDraw(gameTime);
+        }
+
+        private void DrawMap(IMap map, GameTime gameTime, IDictionary<int, RenderHook>? renderHooks, Matrix transformMatrix)
+        {
+            for (var layerIndex = 0; layerIndex < map.Layers.Count; layerIndex++)
+            {
+                var hookTuple = renderHooks?.GetValueOrDefault(layerIndex);
+                var layer = map.Layers[layerIndex];
+                
+                ILayerRenderer? renderer = null;
+                var rendererKey = LayerRenderers.GetValueOrDefault(layerIndex);
+                if (renderer == null)
+                    rendererKey = DefaultRenderers.GetValueOrDefault(layer.GetType());
+                if (rendererKey != null)
+                    renderer = RendererDictionary[rendererKey];
+
+                renderer?.Begin(transformMatrix);
+                hookTuple?.PreHook?.Invoke(layerIndex);
+                
+                if (!layer.IsHidden)
+                    renderer?.Draw(gameTime, layer, layerIndex);
+                
+                hookTuple?.PostHook?.Invoke(layerIndex);
+                renderer?.End();
+            }
         }
 
         public bool WasLeftMouseJustPressed()

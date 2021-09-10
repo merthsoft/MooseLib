@@ -5,7 +5,7 @@ using MonoGame.Extended;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 {
-    public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchObjectRenderer
+    public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
     {
         private List<Color> Palette { get; } = new();
 

@@ -33,7 +33,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         public override void Update(UpdateParameters updateParameters)
         {
-            if (!Visible)
+            if (IsHidden)
                 return;
 
             var (logoWidth, logoHeight) = headerLabel.CalculateSize();
@@ -65,7 +65,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (!Visible)
+            if (IsHidden)
                 return;
 
             santaWindow.Draw(spriteBatch);

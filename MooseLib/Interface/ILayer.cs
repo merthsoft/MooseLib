@@ -1,8 +1,11 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Interface
+﻿using Microsoft.Xna.Framework;
+
+namespace Merthsoft.Moose.MooseEngine.Interface
 {
     public interface ILayer
     {
         string Name { get; }
-        bool IsVisible { get; set;}
+        bool IsHidden { get; set;}
+        Vector2 DrawOffset { get; }
     }
 }

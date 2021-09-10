@@ -2,6 +2,9 @@
 {
     public interface ITileLayer<TTile> : ILayer
     {
+        int Width { get; }
+        int Height { get; }
+
         ITile<TTile> GetTile(int x, int y);
         TTile GetTileValue(int x, int y);
 

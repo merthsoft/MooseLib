@@ -12,7 +12,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public bool ShouldClose { get; protected set; }
 
-        public bool Visible { get; set; } = true;
+        public bool IsHidden { get; set; } = false;
 
         public bool DrawBackground { get; set; } = true;
 
@@ -59,7 +59,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             foreach (var c in Controls)
             {
                 var controlUpdateParameters = new UpdateParameters(updateParameters.GameTime, updateParameters.LocalMousePosition - c.Position, updateParameters.GraphicsDevice);
-                if (Visible && c.Rectangle.Contains(updateParameters.LocalMousePosition))
+                if (!IsHidden && !c.IsHidden && c.Rectangle.Contains(updateParameters.LocalMousePosition))
                 {
                     controlUpdateParameters.MouseOver = true;
                     controlUpdateParameters.LeftMouse = updateParameters.LeftMouse;
@@ -71,13 +71,15 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            if (!Visible)
+            if (IsHidden)
                 return;
 
             if (DrawBackground)
                 Theme.DrawWindowTexture(spriteBatch, Rectangle);
 
-            Controls.ForEach(c => c.Draw(spriteBatch, Position + Theme.ControlDrawOffset));
+            foreach (var c in Controls)
+                if (!c.IsHidden)
+                    c.Draw(spriteBatch, Position + Theme.ControlDrawOffset);
         }
 
         public void Center(int width, int height)
@@ -93,13 +95,16 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             => Theme.Fonts[fontIndex].MeasureString(s);
 
         public void Close()
-            => ShouldClose = true;
+        {
+            ShouldClose = true;
+            IsHidden = true;
+        }
 
         public void Hide()
-            => Visible = false;
+            => IsHidden = true;
 
         public void Show()
-            => Visible = true; 
+            => IsHidden = false; 
         
         public Line AddLine(int x1, int y1, int x2, int y2, int thickness = 1)
              => Controls.AddPassThrough(new Line(this, x1, y1, x2, y2, thickness));
@@ -139,8 +144,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 SelectMode = SelectMode.None,
             });
 
-        public Picture AddPicture(int x, int y, Texture2D texture)
-            => Controls.AddPassThrough(new Picture(this, x, y, texture));
+        public Picture AddPicture(int x, int y, Texture2D texture, Rectangle? sourceRectangle = null)
+            => Controls.AddPassThrough(new Picture(this, x, y, texture) { SourceRectangle = sourceRectangle ?? new(x, y, texture.Width, texture.Height) });
 
         public Picture AddPicture(int x, int y, Texture2D texture, Vector2 scale)
             => Controls.AddPassThrough(new Picture(this, x, y, texture) { Scale = scale });

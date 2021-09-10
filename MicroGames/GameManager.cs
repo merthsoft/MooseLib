@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SpriteFontPlus;
-using System.Collections.Generic;
-using System.IO;
 using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.Ui;
 
@@ -52,7 +49,7 @@ namespace Merthsoft.Moose.MicroGames
                 }, 
             };
 
-            WindowManager = new WindowManager(themes);
+            WindowManager = new WindowManager(GraphicsDevice, themes);
             var titleWindow = WindowManager.NewWindow(0, 0, 384, 128, "fancy");
             titleWindow.AddLabel(21, 20, "Games!", 1);
             titleWindow.Center(ScreenWidth, titleWindow.Height);

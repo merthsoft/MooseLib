@@ -33,7 +33,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         public override void Update(UpdateParameters updateParameters)
         {
-            if (!Visible)
+            if (IsHidden)
                 return;
 
             var (logoWidth, logoHeight) = logo.CalculateSize();

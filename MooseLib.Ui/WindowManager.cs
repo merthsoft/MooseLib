@@ -68,7 +68,10 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         }
 
         public void Draw(SpriteBatch spriteBatch)
-            => windows.ForEach(w => w.Draw(spriteBatch));
+        {
+            foreach (var w in windows)
+                w.Draw(spriteBatch);
+        }
 
         public Window NewWindow(int x, int y, int width, int height, string? theme = null)
         {

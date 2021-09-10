@@ -235,8 +235,9 @@ namespace Merthsoft.Moose.SnowballFight
 
         private void LoadMap(string mapName)
         {
-            MainMap = new TiledMooseMap(Content.Load<TiledMap>($"Maps/{mapName}"));
-            GetRenderer<TiledMooseMapRenderer>("map").Load(MainMap);
+            ActiveMaps.Clear();
+            ActiveMaps.Add(new TiledMooseMap(Content.Load<TiledMap>($"Maps/{mapName}")));
+            GetRenderer<TiledMooseMapRenderer>("map").Load(MainMap!);
         }
 
         public static Snowball? SpawnSnowball(IEnumerable<Vector2> flightPath)

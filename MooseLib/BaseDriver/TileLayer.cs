@@ -1,4 +1,5 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
+using Microsoft.Xna.Framework;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver
 {
@@ -9,8 +10,9 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver
 
         public string Name { get; }
         
-        public bool IsVisible { get; set; } = true;
+        public bool IsHidden { get; set; }
         public float Opacity { get; set; }
+        public Vector2 DrawOffset { get; set; }
 
         public TTile[,] Tiles { get; }
 
