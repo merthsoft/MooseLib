@@ -31,10 +31,10 @@ namespace Merthsoft.Moose.Islands
         protected override void Load()
         {
             map.Randomize();
-            MainMap = map;
+            ActiveMaps.Add(map);
 
             var tilesheet = Content.Load<Texture2D>("Images/tileset");
-            AddDefaultRenderer<TileLayer<int>>("island", new SpriteBatchIndexedTextureTileRenderer(SpriteBatch, TileDimmensions, TileDimmensions, tilesheet));
+            AddDefaultRenderer<TileLayer<int>>("island", new SpriteBatchTextureRenderer(SpriteBatch, TileDimmensions, TileDimmensions, tilesheet));
 
             ZoomIn(1);
         }

@@ -41,7 +41,7 @@ namespace Merthsoft.Moose.Islands
             for (var i = 0; i < Width; i++)
                 for (var j = 0; j < Height; j++)
                 {
-                    map[0, i, j] = Random.Shared.NextDouble() < .52 ? 1 : 0;
+                    map[0, i, j] = Random.Shared.NextDouble() < .45 ? 1 : 0;
                     map[1, i, j] = 0;
                 }
 
@@ -67,7 +67,7 @@ namespace Merthsoft.Moose.Islands
                 lastUpdate = gameTime.TotalGameTime;
 
                 var bornRule = new[] { 5, 6, 7, 8 };
-                var stayAliveRule = new[] { 4, 5, 6, 7, 8 };
+                var stayAliveRule = new[] { 3, 4, 5, 6, 7, 8 };
 
                 var nextBuffer = mapBuffer == 0 ? 1 : 0;
                 for (var i = 0; i < Width; i++)
@@ -105,7 +105,7 @@ namespace Merthsoft.Moose.Islands
 
                     var (resolvedX, resolvedY) = ResolveCoordinates(x + i, y + j);
 
-                    count += Get(resolvedX, resolvedY) >= 1 ? 1 : 0;
+                    count += Get(resolvedX, resolvedY, 1) >= 1 ? 1 : 0;
                 }
 
             return count;

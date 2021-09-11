@@ -27,9 +27,6 @@ namespace Merthsoft.Moose.MooseEngine.GameObjects
 
         public IMap? ParentMap { get; set; }
 
-        public GameObjectBase(GameObjectDef def)
-            => Def = def;
-
         public GameObjectBase(GameObjectDef def, Vector2? position = null, int? layer = null, Vector2? size = null, string? direction = null)
         {
             Def = def;

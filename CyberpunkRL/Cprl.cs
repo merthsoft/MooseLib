@@ -23,7 +23,7 @@ namespace Merthsoft.Moose.CyberpunkRL
             Rooms.Add(new(Content.Load<TiledMap>("Maps/room2")));
             Hallways.Add(new(Content.Load<TiledMap>("Maps/hall1")));
 
-            MainMap = new TiledMooseMap("map", 22, 16, 16, 16);
+            ActiveMaps.Add(new TiledMooseMap("map", 22, 16, 16, 16));
             MainMap.CopyFromMap(Rooms[0], destX: 0, destY: 0);
             MainMap.CopyFromMap(Rooms[1], destX: 11, destY: 0);
             MainMap.CopyFromMap(Hallways[0], destX: 0, destY: 11);

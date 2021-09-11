@@ -1,13 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Tiled;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using Merthsoft.Moose.MooseEngine;
+﻿using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.TiledDriver;
 using Merthsoft.Moose.Platformer.PlatformerGameObjects;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Tiled;
+using System.Diagnostics;
 
 namespace Merthsoft.Moose.Platformer
 {
@@ -29,7 +27,7 @@ namespace Merthsoft.Moose.Platformer
             AddDefaultRenderer<TiledMooseTileLayer>("map", new TiledMooseMapRenderer(GraphicsDevice));
             AddDefaultRenderer<TiledMooseObjectLayer>("object", new SpriteBatchObjectRenderer(SpriteBatch));
 
-            MainMap = new TiledMooseMap("map", 30, 30, 16, 16);
+            ActiveMaps.Add(new TiledMooseMap("map", 30, 30, 16, 16));
             MainMap.CopyFromMap(new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap")));
 
             MainCamera.ZoomIn(2f);

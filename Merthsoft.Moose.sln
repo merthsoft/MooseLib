@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroGames", "MicroGames\Mi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MidiChess", "..\Chess\moosechess\MidiChess.csproj", "{CB74696D-EA61-475E-AC3A-205A37391675}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miner", "Miner\Miner.csproj", "{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{CB74696D-EA61-475E-AC3A-205A37391675}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB74696D-EA61-475E-AC3A-205A37391675}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB74696D-EA61-475E-AC3A-205A37391675}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,6 +23,9 @@ namespace Merthsoft.Moose.MooseEngine
             Content.RootDirectory = nameof(Content);
         }
 
+        public TContent Load<TContent>(string assetName)
+            => Content.Load<TContent>(assetName);
+
         public SpriteSheet LoadAnimatedSpriteSheet(string animationKey, bool replace = false)
         {
             if (replace || !AnimationSpriteSheets.ContainsKey(animationKey))

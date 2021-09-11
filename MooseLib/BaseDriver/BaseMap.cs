@@ -18,12 +18,12 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver
         protected List<int>[,] blockingMap = new List<int>[0, 0];
 
         public bool CellIsInBounds(Vector2 cell)
-            => cell.X > 0 && cell.X < Width
-            && cell.Y > 0 && cell.Y < Height;
+            => cell.X >= 0 && cell.X < Width
+            && cell.Y >= 0 && cell.Y < Height;
 
         public bool CellIsInBounds(int cellX, int cellY)
-            => cellX > 0 && cellX < Width
-            && cellY > 0 && cellY < Height;
+            => cellX >= 0 && cellX < Width
+            && cellY >= 0 && cellY < Height;
 
         public virtual void Update(GameTime gameTime)
             => BuildFullBlockingMap();
