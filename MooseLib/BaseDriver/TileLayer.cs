@@ -12,7 +12,7 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver
         
         public bool IsHidden { get; set; }
         public float Opacity { get; set; }
-        public Vector2 DrawOffset { get; set; }
+        public virtual Vector2 DrawOffset { get; set; }
 
         public TTile[,] Tiles { get; }
 
