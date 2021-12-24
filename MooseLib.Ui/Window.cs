@@ -129,7 +129,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 Action = action,
             });
 
-        public TextList AddActionList(int x, int y, int fontIndex, Action<Control, UpdateParameters> action, params string[] options)
+        public TextList AddActionList(int x, int y, int fontIndex, Action<Control, UpdateParameters> action, IEnumerable<string> options)
             => Controls.AddPassThrough(new TextList(this, x, y, options)
             {
                 Action = action,
@@ -137,11 +137,12 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 FontIndex = fontIndex,
             });
 
-        public TextList AddActionList(int x, int y, params (string text, Action<Control, UpdateParameters> action)[] options)
-            => Controls.AddPassThrough(new TextList(this, x, y, options.Select(o => o.text))
+        public TextGrid AddActionGrid(int x, int y, int gridWidth, int fontIndex, Action<Control, UpdateParameters> action, IEnumerable<string> options)
+            => Controls.AddPassThrough(new TextGrid(this, x, y, gridWidth, options)
             {
-                Action = (c, u) => options[(c as TextList)!.MouseOverIndex].action(c, u),
+                Action = action,
                 SelectMode = SelectMode.None,
+                FontIndex = fontIndex,
             });
 
         public Picture AddPicture(int x, int y, Texture2D texture, Rectangle? sourceRectangle = null)

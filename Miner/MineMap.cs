@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Merthsoft.Moose.Miner
 {
-    class MineMap : BaseMap
+    public class MineMap : BaseMap
     {
         public MineLayer MineLayer => (Layers[0] as MineLayer)!;
 

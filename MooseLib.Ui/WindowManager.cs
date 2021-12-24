@@ -13,7 +13,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         private readonly List<Window> windows = new();
 
         public Dictionary<string, Theme> ThemeDictionary { get; } = new();
-
+        
         public IReadOnlyCollection<Theme> Themes => ThemeDictionary.Values;
 
         private string defaultThemeName = null!; // Set in AddTheme called from ctor

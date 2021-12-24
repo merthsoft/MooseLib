@@ -4,6 +4,8 @@ namespace Merthsoft.Moose.MooseEngine.Interface
 {
     public interface ILayerRenderer : IDisposable
     {
+        void LoadContent(MooseContentManager contentManager);
+
         void Update(GameTime gameTime) { }
 
         void Begin(Matrix transformMatrix) { }

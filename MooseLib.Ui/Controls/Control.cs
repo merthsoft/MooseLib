@@ -34,11 +34,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public Action<Control, UpdateParameters>? Action { get; set; }
 
-        public Control(Window window)
-            => Window = window;
-
-        public Control(Window window, int x, int y) : this(window)
-            => Position = new(x, y);
+        public Control(Window window, int x, int y)
+        {
+            Window = window;
+            Position = new(x, y);
+        }
 
         public Control Hide()
         {

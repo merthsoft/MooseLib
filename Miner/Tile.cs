@@ -1,15 +1,14 @@
 ﻿namespace Merthsoft.Moose.Miner
 {
-    enum Tile
+    public enum Tile
     {
         Empty,
-        Dirt1,
-        Dirt2,
-        Dirt3,
-        
-        LastDirt = Dirt3,
-        
+        Dirt,
+
+        SandStone,
+        VolcanicRock,
         Stone,
+
         Silver,
         Gold,
         Platinum,
@@ -24,43 +23,34 @@
         Lantern,
         Dynamite,
 
-        LastTreasure = Dynamite,
-
-        SandStone = 22,
-        VolcanicRock = 23,
-
-        LastMinable = VolcanicRock,
-
-        Sky = 24,
-        Bird,
-        CloudLeft,
-        CloudMiddle,
-        CloudRight,
-        RoofLeft,
-        RoofMiddle,
-        RoofRight,
-        Cactus,
-        Hitch,
+        Sky = 22,
         Outhouse,
         Wall,
         Door,
         Wheel,
         HospitalSign,
         BankSign,
-        ElevatorShaft,
-        Elevator,
-        ElevatorBottom,
-        ElevatorTop_Shaft,
-        ElevatorTop_Sky,
         SaloonDoor,
         SaloonSign,
-
-        Border = 48,
-
-        Granite = 51,
-        CaveIn,
+        Hitch,
+        Cactus,
+        
+        Border,
+        RoofLeft,
+        RoofMiddle,
+        RoofRight,
         Flood,
         Water,
-        MineCeiling
+        MineCeiling,
+        ElevatorShaft,
+        Granite,
+        CaveIn,
+        CloudLeft,
+        CloudMiddle,
+        CloudRight,
+        Bird,
+        Sky_Blocking,
+
+        Flag_Hidden = 0b1000000000000000000000000000000
     }
 }

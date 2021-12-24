@@ -37,19 +37,24 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
                     DrawSprite(tileLayer.GetTileValue(i, j), i, j, layerNumber, tileLayer);
         }
 
-        public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> tileLayer, float layerDepth = 1f)
+        public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ILayer layer, float layerDepth = 1f)
+            => SpriteBatch.Draw(SpriteSheet,
+                destinationRectangle: GetDestinationRectangle(i, j, layer.DrawOffset),
+                sourceRectangle: GetSourceRectangle(spriteIndex),
+                color: Color, rotation: Rotation, effects: SpriteEffects,
+                origin: Vector2.Zero, layerDepth: layerDepth);
+
+        public Rectangle GetDestinationRectangle(int i, int j, Vector2 drawOffset)
+            => new(i * TileWidth + (int)drawOffset.X, j * TileHeight + (int)drawOffset.Y, TileWidth, TileHeight);
+
+        public Rectangle GetSourceRectangle(int spriteIndex)
         {
-            var layerDrawOffset = tileLayer.DrawOffset;
             var columns = SpriteSheet.Width / TileWidth;
 
             var sourceX = (spriteIndex % columns) * (TileWidth + TilePadding) + TextureMargin;
             var sourceY = (spriteIndex / columns) * (TileHeight + TilePadding) + TextureMargin;
 
-            SpriteBatch.Draw(SpriteSheet, 
-                destinationRectangle: new(i * TileWidth + (int)layerDrawOffset.X, j * TileHeight + (int)layerDrawOffset.Y, TileWidth, TileHeight),
-                sourceRectangle: new(sourceX, sourceY, TileWidth, TileHeight),
-                color: Color, rotation: Rotation, effects: SpriteEffects,
-                origin: Vector2.Zero, layerDepth: layerDepth);
+            return new(sourceX, sourceY, TileWidth, TileHeight);
         }
     }
 }

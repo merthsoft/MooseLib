@@ -4,24 +4,28 @@ using MonoGame.Extended.Content;
 using MonoGame.Extended.Serialization;
 using MonoGame.Extended.Sprites;
 using SpriteFontPlus;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Merthsoft.Moose.MooseEngine
 {
     public class MooseContentManager
     {
         ContentManager Content { get; }
-        GraphicsDevice GraphicsDevice {  get;}
+        
+        public MooseGame Game { get; }
+        public GraphicsDevice GraphicsDevice {  get;}
 
         public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = new();
 
-        public MooseContentManager(ContentManager content, GraphicsDevice graphicsDevice)
+        public MooseContentManager(MooseGame game, ContentManager content, GraphicsDevice graphicsDevice)
         {
+            Game = game;
             Content = content;
             GraphicsDevice = graphicsDevice;
             Content.RootDirectory = nameof(Content);
         }
+
+        public TGame? GetGame<TGame>() where TGame : MooseGame
+            => Game as TGame;
 
         public TContent Load<TContent>(string assetName)
             => Content.Load<TContent>(assetName);

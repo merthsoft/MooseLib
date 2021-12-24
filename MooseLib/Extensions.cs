@@ -4,15 +4,27 @@ using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
 using Roy_T.AStar.Grids;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Merthsoft.Moose.MooseEngine;
 
 namespace Merthsoft.Moose.MooseEngine
 {
     public static class Extensions
     {
+        public static Rectangle Move(this Rectangle rect, Vector2 delta)
+            => new(rect.X + (int)delta.X, rect.Y + (int)delta.Y, rect.Width, rect.Height);
+
+        public static bool Intersects(this Rectangle rect, float x, float y)
+            => x >= rect.X
+                && x <= rect.X + rect.Width
+            && y >= rect.Y
+                && y <= rect.Y + rect.Height;
+
+        public static bool Intersects(this Rectangle rect, Vector2 point)
+            => point.X >= rect.X
+                && point.X <= rect.X + rect.Width
+            && point.Y >= rect.Y
+                && point.Y <= rect.Y + rect.Height;
+
         public static IEnumerable<T> Select<T>(this Range range, Func<int, T> func)
         {
             for (int index = range.Start.Value; index < range.End.Value; index++)

@@ -15,7 +15,7 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 
         public virtual void Begin(Matrix viewMatrix)
             => SpriteBatch.Begin(
-                SpriteSortMode.FrontToBack,
+                SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
                 SamplerState.PointClamp,
                 effect: Effect,
@@ -23,6 +23,7 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers
 
         public abstract void Draw(GameTime gameTime, ILayer layer, int layerNumber);
         public virtual void Update(GameTime gameTime) { }
+        public virtual void LoadContent(MooseContentManager contentManager) { }
 
         public virtual void End()
             => SpriteBatch.End();

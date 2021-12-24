@@ -4,6 +4,9 @@ using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Merthsoft.Moose.Miner
 {
@@ -14,7 +17,8 @@ namespace Merthsoft.Moose.Miner
         public const int BaseTileWidth = 16;
         public const int BaseTileHeight = 24;
 
-        MineMap Map => (ActiveMaps[0] as MineMap)!;
+        public MineMap Map => (ActiveMaps[0] as MineMap)!;
+        public MineLayerRenderer MineLayerRenderer => GetRenderer<MineLayerRenderer>("mine")!;
 
         MinerPlayerDef PlayerDef { get; } = new();
         MinerPlayer Player { get; }
@@ -34,7 +38,7 @@ namespace Merthsoft.Moose.Miner
             AddDefaultRenderer<MineLayer>("mine", new MineLayerRenderer(SpriteBatch, BaseTileWidth, BaseTileHeight, tiles));
             AddDefaultRenderer<ObjectLayer>("player", new SpriteBatchObjectRenderer(SpriteBatch));
 
-            foreach (var tile in Enum.GetValues<Tile>().SkipWhile(t => t <= Tile.LastDirt).TakeWhile(t => t <= Tile.LastTreasure))
+            foreach (var tile in Enum.GetValues<Tile>().SkipWhile(t => t < Tile.Silver).TakeWhile(t => t < Tile.Sky))
             {
                 TreasureDefs[tile] = new TreasureDef(tile, tiles);
                 AddDef(TreasureDefs[tile]);
@@ -43,13 +47,15 @@ namespace Merthsoft.Moose.Miner
             ActiveMaps.Add(new MineMap());
             AddDef(PlayerDef);
 
-            ZoomIn(1.5f);
+            ZoomIn(1);
             SetScreenSize(1280, 960);
         }
 
         protected override void PostLoad()
         {
             AddObject(Player);
+
+            Reset();
         }
 
         protected override void PostObjectsUpdate(GameTime gameTime)
@@ -57,15 +63,21 @@ namespace Merthsoft.Moose.Miner
 
             if (WasKeyJustPressed(Keys.R))
             {
-                Map.MineLayer.Reset();
-                Player.WorldPosition = Vector2.Zero;
-                Player.Direction = MinerPlayer.Right;
-                MarkAllObjectsForRemoval();
-                Player.RemoveFlag = false;
+                Reset();
                 return;
             }
 
             HandleMovement();
+        }
+
+        private void Reset()
+        {
+            Map.MineLayer.Reset();
+            MineLayerRenderer.GenerateDirtTexture(GraphicsDevice, MapWidth, MapHeight, TileWidth, TileHeight);
+            Player.WorldPosition = new(0 * TileWidth, 5 * TileHeight);
+            Player.Direction = MinerPlayer.Right;
+            MarkAllObjectsForRemoval();
+            Player.RemoveFlag = false;
         }
 
         private void HandleMovement()
@@ -86,11 +98,11 @@ namespace Merthsoft.Moose.Miner
             else if (WasKeyJustPressed(Keys.Up))
                 moveDelta = new(0, -1);
 
-            var playerCell = Player.GetCell();
 
             if (moveDelta == Vector2.Zero)
                 return;
 
+            var playerCell = Player.GetCell();
             var uncovered = Map.Mine(playerCell + moveDelta);
 
             if (uncovered < Tile.Border)
@@ -98,7 +110,7 @@ namespace Merthsoft.Moose.Miner
                 Player.WorldPosition += new Vector2(moveDelta.X * BaseTileWidth, moveDelta.Y * BaseTileHeight);
                 Map.SearchCell(Player.GetCell(), Player.HasTorch, Player.HasLantern);
 
-                if (uncovered > Tile.LastDirt && uncovered <= Tile.LastTreasure)
+                if (TreasureDefs.ContainsKey(uncovered))
                     SpawnTreasure(uncovered, Player.WorldPosition);
             }
         }

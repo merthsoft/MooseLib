@@ -5,6 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Merthsoft.Moose.MooseEngine
 {
@@ -82,7 +85,7 @@ namespace Merthsoft.Moose.MooseEngine
 
         protected override void Initialize()
         {
-            ContentManager = new MooseContentManager(Content, GraphicsDevice);
+            ContentManager = new MooseContentManager(this, Content, GraphicsDevice);
 
             var initialization = Startup();
             GraphicsDevice.BlendState = initialization.BlendState ?? BlendState.AlphaBlend;
@@ -118,6 +121,7 @@ namespace Merthsoft.Moose.MooseEngine
             Load();
 
             Defs.ForEach(kvp => kvp.Value.LoadContent(ContentManager));
+            RendererDictionary.Values.ForEach(r => r.LoadContent(ContentManager));
 
             PostLoad();
         }

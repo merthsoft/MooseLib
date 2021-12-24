@@ -10,7 +10,5 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public bool LeftMouse { get; set; }
 
         public bool RightMouse { get; set; }
-
-        public Rectangle MouseRectangle => new((int)LocalMousePosition.X, (int)LocalMousePosition.Y, 1, 1);
     }
 }
