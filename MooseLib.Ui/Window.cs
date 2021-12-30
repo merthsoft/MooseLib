@@ -7,6 +7,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
     public class Window
     {
         private Rectangle rectangle;
+        
+        public GraphicsDevice GraphicsDevice { get; private set; }
 
         public Theme Theme { get; set; }
 
@@ -47,25 +49,29 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public List<Control> Controls { get; } = new();
 
-        public Window(Rectangle rectangle, Theme theme)
-            => (Rectangle, Theme)
-             = (rectangle, theme);
+        public Window(GraphicsDevice graphicsDevice, Rectangle rectangle, Theme theme)
+            => (Rectangle, Theme, GraphicsDevice)
+             = (rectangle, theme, graphicsDevice);
 
-        public Window(int x, int y, int w, int h, Theme theme)
-            : this(new(x, y, w, h), theme) { }
+        public Window(GraphicsDevice graphicsDevice, int x, int y, int w, int h, Theme theme)
+            : this(graphicsDevice, new(x, y, w, h), theme) { }
 
         public virtual void Update(UpdateParameters updateParameters)
         {
             foreach (var c in Controls)
             {
-                var controlUpdateParameters = new UpdateParameters(updateParameters.GameTime, updateParameters.LocalMousePosition - c.Position, updateParameters.GraphicsDevice);
+                UpdateParameters controlUpdateParameters 
+                    = new (updateParameters.GameTime, updateParameters.LocalMousePosition - c.Position, updateParameters.RawMouseState, updateParameters.RawKeyState);
                 if (!IsHidden && !c.IsHidden && c.Rectangle.Contains(updateParameters.LocalMousePosition))
                 {
                     controlUpdateParameters.MouseOver = true;
-                    controlUpdateParameters.LeftMouse = updateParameters.LeftMouse;
-                    controlUpdateParameters.RightMouse = updateParameters.RightMouse;
+                    controlUpdateParameters.LeftMouseClick = updateParameters.LeftMouseClick;
+                    controlUpdateParameters.RightMouseClick = updateParameters.RightMouseClick;
+                    controlUpdateParameters.LeftMouseDown = updateParameters.LeftMouseDown;
+                    controlUpdateParameters.RightMouseDown = updateParameters.RightMouseDown;
                 }
                 c.Update(controlUpdateParameters);
+                c.UpdateParameters = controlUpdateParameters;
             }
         }
 
@@ -153,5 +159,18 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public Picture AddPicture(int x, int y, Texture2D texture, float scale)
             => Controls.AddPassThrough(new Picture(this, x, y, texture) { Scale = new(scale, scale) });
+
+        public Button AddButton(int x, int y, string text, Action<Control, UpdateParameters> action)
+            => Controls.AddPassThrough(new Button(this, x, y, text)
+            {
+                Action = action,
+            });
+
+        public Slider AddSlider(int x, int y, int min, int max, int initialValue, Action<Control, UpdateParameters> action)
+            => Controls.AddPassThrough(new Slider(this, x, y, min, max)
+            {
+                Value = initialValue,
+                Action = action,
+            });
     }
 }

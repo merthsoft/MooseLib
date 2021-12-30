@@ -158,11 +158,11 @@ namespace Merthsoft.Moose.SnowballFight
                 new("stats window", windowTextures[0], 32, 32, gameFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
             });
 
-            MainMenu = new MainMenu(WindowManager.DefaultTheme, WindowSize) { Clicked = MainMenu_Clicked };
+            MainMenu = new MainMenu(GraphicsDevice, WindowManager.DefaultTheme, WindowSize) { Clicked = MainMenu_Clicked };
             WindowManager.AddWindow(MainMenu);
             MainMenu.Hide();
 
-            TeamSelectionWindow = new TeamSelectionWindow(WindowManager.DefaultTheme, WindowSize, santaPortrait, krampusPortrait) { TeamSelected = TeamSelectionWindow_TeamSelected };
+            TeamSelectionWindow = new TeamSelectionWindow(GraphicsDevice, WindowManager.DefaultTheme, WindowSize, santaPortrait, krampusPortrait) { TeamSelected = TeamSelectionWindow_TeamSelected };
             WindowManager.AddWindow(TeamSelectionWindow);
             TeamSelectionWindow.Hide();
 

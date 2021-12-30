@@ -73,11 +73,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public override void Update(UpdateParameters updateParameters)
         {
-            if (updateParameters.MouseOver && updateParameters.LeftMouse)
+            if (updateParameters.MouseOver && updateParameters.LeftMouseClick)
                 Action?.Invoke(this, updateParameters);
 
             if (renderedTexture == null)
-                renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedColor, Vector2.One, StrokeSize, StrokeColor, updateParameters.GraphicsDevice);
+                renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedColor, Vector2.One, StrokeSize, StrokeColor, Window.GraphicsDevice);
 
             base.Update(updateParameters);
         }

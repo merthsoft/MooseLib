@@ -15,14 +15,15 @@ namespace Merthsoft.Moose.SnowballFight
 
         public Action<TeamSelectionWindow, Team>? TeamSelected { get; set; }
 
-        public TeamSelectionWindow(Theme theme, int screenSize, Texture2D santaPicture, Texture2D krampusPicture) : base(new(0, 0, screenSize, screenSize), theme)
+        public TeamSelectionWindow(GraphicsDevice graphicsDevice, Theme theme, int screenSize, Texture2D santaPicture, Texture2D krampusPicture) 
+            : base(graphicsDevice, new(0, 0, screenSize, screenSize), theme)
         {
             DrawBackground = false;
             this.screenSize = screenSize;
 
             headerLabel = AddLabel(144, 140, "Choose your team!", strokeSize: 3, forceHighlight: true);
-            santaWindow = new(159, 215, 300, 300, theme);
-            krampusWindow = new(501, 215, 300, 300, theme);
+            santaWindow = new(graphicsDevice, 159, 215, 300, 300, theme);
+            krampusWindow = new(graphicsDevice, 501, 215, 300, 300, theme);
 
             santaWindow.AddPicture(5, 5, santaPicture, 14);
             santaWindow.AddLabel(1, 227, "Santa", 1);
@@ -58,9 +59,9 @@ namespace Merthsoft.Moose.SnowballFight
 
         private bool HighlightIfHovering(UpdateParameters updateParameters, Window window)
         {
-            var intersects = window.Rectangle.Intersects(updateParameters.MouseRectangle);
+            var intersects = window.Rectangle.Intersects(updateParameters.LocalMousePosition);
             window.Controls.OfType<Label>().ForEach(l => l.ForceHighlight = intersects);
-            return intersects && updateParameters.LeftMouse;
+            return intersects && updateParameters.LeftMouseClick;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

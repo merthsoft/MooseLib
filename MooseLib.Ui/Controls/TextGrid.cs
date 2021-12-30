@@ -30,12 +30,13 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         }
 
         public override Vector2 CalculateSize()
-            => new(GridWidth * CellWidth, (Options.Count / GridWidth) * CellHeight);
+            => new(GridWidth * CellWidth, (Options.Count / GridWidth + 1) * CellHeight);
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
         {
+            var position = Position + parentOffset;
             for (var index = 0; index < Options.Count; index++)
-                DrawCell(spriteBatch, index, parentOffset);
+                DrawCell(spriteBatch, index, position);
         }
 
         protected virtual void DrawCell(SpriteBatch spriteBatch, int index, Vector2 drawOffset)
@@ -53,7 +54,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                                 : Theme.TextColor
                             : Theme.TextDisabledColor;
 
-            spriteBatch.DrawRectangle(x, y, CellWidth + 1, CellHeight + 1, Window.Theme.TextColor);
+            spriteBatch.FillRectangle(x, y, CellWidth, CellHeight, Theme.ControlBackgroundColor);
+            spriteBatch.DrawRectangle(x, y, CellWidth + 1, CellHeight + 1, Theme.ControlBorderColor);
             spriteBatch.DrawString(Font, text, new(x + 2, y + 1), color);
         }
 
@@ -64,7 +66,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                 var mouseX = (int)updateParameters.LocalMousePosition.X / CellWidth;
                 var mouseY = (int)updateParameters.LocalMousePosition.Y / CellHeight;
                 MouseOverIndex = mouseY * GridWidth + mouseX;
-                if (updateParameters.MouseOver && updateParameters.LeftMouse)
+                if (updateParameters.MouseOver && updateParameters.LeftMouseClick && MouseOverIndex < Options.Count)
                 {
                     if (SelectMode == SelectMode.Single)
                         Options.ForEach(o => o.Selected = false);

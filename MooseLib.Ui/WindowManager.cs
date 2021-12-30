@@ -7,7 +7,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public class WindowManager
     {
-        private GraphicsDevice graphicsDevice;
+        public GraphicsDevice GraphicsDevice { get; private set; }
 
         private readonly List<Window> windowsToAdd = new();
         private readonly List<Window> windows = new();
@@ -36,8 +36,12 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         internal MouseState PreviousMouseState { get; set; }
 
+        internal KeyboardState CurrentKeyState { get; set; }
+
+        internal KeyboardState PreviousKeyState { get; set; }
+
         private WindowManager(GraphicsDevice graphicsDevice)
-            => this.graphicsDevice = graphicsDevice;
+            => this.GraphicsDevice = graphicsDevice;
 
         public WindowManager(GraphicsDevice graphicsDevice, Theme theme) : this(graphicsDevice)
             => AddTheme(theme);
@@ -45,26 +49,31 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public WindowManager(GraphicsDevice graphicsDevice, IEnumerable<Theme> themes) : this(graphicsDevice)
             => themes.ForEach(AddTheme);
 
-        public void Update(GameTime gameTime, MouseState currentMouseState, Vector2? worldMouse = null)
+        public void Update(GameTime gameTime, MouseState currentMouseState, KeyboardState currentKeyState, Vector2? worldMouse = null)
         {
             CurrentMouseState = currentMouseState;
+            CurrentKeyState = currentKeyState;
             var mousePosition = worldMouse ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
             foreach (var w in Windows)
             {
-                var updateParams = new UpdateParameters(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset, graphicsDevice);
+                UpdateParameters updateParams 
+                    = new(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset, currentMouseState, currentKeyState);
 
                 if (w.Rectangle.Contains(mousePosition))
-                {
                     updateParams.MouseOver = true;
-                    updateParams.LeftMouse = CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton);
-                    updateParams.RightMouse = CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton);
-                }
+                
+                updateParams.LeftMouseDown = CurrentMouseState.LeftButton == ButtonState.Pressed;
+                updateParams.RightMouseDown = CurrentMouseState.RightButton == ButtonState.Pressed;
+                updateParams.LeftMouseClick = CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton);
+                updateParams.RightMouseClick = CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton);
+                
                 w.Update(updateParams);
             }
             windows.RemoveAll(w => w.ShouldClose);
             windows.AddRange(windowsToAdd);
             windowsToAdd.Clear();
             PreviousMouseState = CurrentMouseState;
+            PreviousKeyState = CurrentKeyState;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -75,14 +84,14 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public Window NewWindow(int x, int y, int width, int height, string? theme = null)
         {
-            var ret = new Window(new(x, y, width, height), ThemeDictionary.GetValueOrDefault(theme) ?? DefaultTheme);
+            var ret = new Window(GraphicsDevice, new(x, y, width, height), ThemeDictionary.GetValueOrDefault(theme) ?? DefaultTheme);
             windowsToAdd.Add(ret);
             return ret;
         }
 
         public Window NewActionListWindow(int x, int y, Action<Control, UpdateParameters> action, params string[] options)
         {
-            var ret = new Window(new(x, y, 0, 0), DefaultTheme);
+            var ret = new Window(GraphicsDevice, new(x, y, 0, 0), DefaultTheme);
             var list = ret.AddActionList(0, 0, 0, action, options);
             ret.Size = list.CalculateSize() + new Vector2(DefaultTheme.TileWidth * 2, DefaultTheme.TileHeight);
             windowsToAdd.Add(ret);

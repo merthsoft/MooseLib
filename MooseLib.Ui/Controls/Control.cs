@@ -20,15 +20,15 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         
         public bool IsHidden { get; set; }
 
-        protected UpdateParameters UpdateParameters { get; set; } = null!;
+        public UpdateParameters UpdateParameters { get; set; } = new(new(), Vector2.Zero, null, null);
 
-
+        protected Rectangle CalculatedRectangle { get; set; }
         public Rectangle Rectangle
         {
             get
             {
                 var size = CalculateSize();
-                return new((int)Position.X, (int)Position.Y, (int)size.X, (int)size.Y);
+                return CalculatedRectangle = new((int)Position.X, (int)Position.Y, (int)size.X, (int)size.Y);
             }
         }
 
@@ -54,15 +54,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public abstract Vector2 CalculateSize();
 
-        public virtual void Update(UpdateParameters updateParameters)
-            => UpdateParameters = updateParameters;
+        public virtual void Update(UpdateParameters updateParameters) { }
 
-        public abstract void Draw(SpriteBatch spriteBatch, Vector2 parentOffset);
+        public virtual void Draw(SpriteBatch spriteBatch, Vector2 parentOffset) { }
 
         public Vector2 CenterInWindow()
-        {
-            var size = CalculateSize();
-            return Position = new(Window.Width / 2 - size.X / 2, Window.Height / 2 - size.Y / 2);
-        }
+            => Position = new(Window.Width / 2 - CalculatedRectangle.X / 2, Window.Height / 2 - CalculatedRectangle.Y / 2);
     }
 }
