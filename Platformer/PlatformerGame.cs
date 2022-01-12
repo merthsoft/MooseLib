@@ -28,7 +28,7 @@ namespace Merthsoft.Moose.Platformer
             AddDefaultRenderer<TiledMooseObjectLayer>("object", new SpriteBatchObjectRenderer(SpriteBatch));
 
             ActiveMaps.Add(new TiledMooseMap("map", 30, 30, 16, 16));
-            MainMap.CopyFromMap(new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap")));
+            (MainMap as TiledMooseMap)!.CopyFromMap(new TiledMooseMap(Content.Load<TiledMap>("Maps/testmap")));
 
             MainCamera.ZoomIn(2f);
             MainCamera.Move(Direction.South * 160);

@@ -286,7 +286,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         protected override void PostObjectsUpdate(GameTime gameTime)
         {
-            WindowManager.Update(gameTime, CurrentMouseState);
+            WindowManager.Update(gameTime, CurrentMouseState, CurrentKeyState);
             if (Mode == GameMode.Demo || Mode == GameMode.SelectingTeam)
                 DemoUpdate();
         }

@@ -10,6 +10,8 @@ namespace Merthsoft.Moose.CyberpunkRL
         protected readonly List<TiledMooseMap> Rooms = new();
         protected readonly List<TiledMooseMap> Hallways = new();
 
+        protected TiledMooseMap Map => (MainMap as TiledMooseMap)!;
+
         public Cprl()
         {
         }
@@ -24,9 +26,10 @@ namespace Merthsoft.Moose.CyberpunkRL
             Hallways.Add(new(Content.Load<TiledMap>("Maps/hall1")));
 
             ActiveMaps.Add(new TiledMooseMap("map", 22, 16, 16, 16));
-            MainMap.CopyFromMap(Rooms[0], destX: 0, destY: 0);
-            MainMap.CopyFromMap(Rooms[1], destX: 11, destY: 0);
-            MainMap.CopyFromMap(Hallways[0], destX: 0, destY: 11);
+
+            Map.CopyFromMap(Rooms[0], destX: 0, destY: 0);
+            Map.CopyFromMap(Rooms[1], destX: 11, destY: 0);
+            Map.CopyFromMap(Hallways[0], destX: 0, destY: 11);
 
             MainCamera.ZoomIn(1f);
         }

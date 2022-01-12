@@ -11,8 +11,6 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public Theme Theme => Window.Theme;
 
-        public Color? Color { get; set; }
-
         public Vector2 Position { get; set; }
 
         public int FontIndex { get; set; }

@@ -44,6 +44,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         private Texture2D? renderedTexture;
 
+        public Color? Color { get; set; }
         public Color ResolvedColor => ForceHighlight || (HighlightOnHover && UpdateParameters.MouseOver)
                                         ? HighlightColor ?? Theme.TextMouseOverColor
                                         : Color ?? Theme.TextColor;

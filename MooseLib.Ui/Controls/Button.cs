@@ -11,7 +11,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             => Text = text;
 
         public override Vector2 CalculateSize()
-            => Window.Theme.Fonts[FontIndex].MeasureString(Text) + new Vector2(4, 2);
+            => Font.MeasureString(Text) + new Vector2(4, 2);
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
         {

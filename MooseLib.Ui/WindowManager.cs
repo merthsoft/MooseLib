@@ -69,6 +69,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 
                 w.Update(updateParams);
             }
+            windows.Where(w => w.ShouldClose).ForEach(w => w.OnClose?.Invoke(w));
             windows.RemoveAll(w => w.ShouldClose);
             windows.AddRange(windowsToAdd);
             windowsToAdd.Clear();

@@ -7,7 +7,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
     public class Window
     {
         private Rectangle rectangle;
-        
+
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         public Theme Theme { get; set; }
@@ -17,6 +17,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public bool IsHidden { get; set; } = false;
 
         public bool DrawBackground { get; set; } = true;
+
+        public Action<Window>? OnClose { get; set; }
 
         public Rectangle Rectangle {
             get => rectangle;
@@ -170,6 +172,14 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             => Controls.AddPassThrough(new Slider(this, x, y, min, max)
             {
                 Value = initialValue,
+                Action = action,
+            });
+
+        public Checkbox AddCheckbox(int x, int y, bool isChecked, string? text, Action<Control, UpdateParameters> action)
+            => Controls.AddPassThrough(new Checkbox(this, x, y)
+            {
+                IsChecked = isChecked,
+                Text = text,
                 Action = action,
             });
     }

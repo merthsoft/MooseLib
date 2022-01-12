@@ -28,7 +28,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             : base(window, x, y) => Texture = texture;
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
-            => spriteBatch.Draw(Texture, Position + parentOffset, SourceRectangle, Color ?? C.White, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
+            => spriteBatch.Draw(Texture, Position + parentOffset, SourceRectangle, C.White, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
 
         public override void Update(UpdateParameters updateParameters)
         {

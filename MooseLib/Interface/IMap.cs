@@ -17,8 +17,6 @@ namespace Merthsoft.Moose.MooseEngine.Interface
 
         IReadOnlyList<ILayer> Layers { get; }
 
-        void CopyFromMap(IMap sourceMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null);
-
         void Update(GameTime gameTime);
         IEnumerable<int> GetBlockingVector(int cellX, int cellY);
         IEnumerable<int> GetBlockingVector(Vector2 worldPosition)
