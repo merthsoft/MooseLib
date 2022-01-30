@@ -22,37 +22,27 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             => Options.AddRange(options.Select(o => new TextListOption(o)));
 
         public override Vector2 CalculateSize()
-            => Options.Aggregate(Vector2.Zero, (acc, o) =>
-        {
-            var textSize = Window.Theme.Fonts[FontIndex].MeasureString(o.FormattedText);
-            return new Vector2(Math.Max(acc.X, textSize.X), acc.Y + Window.Theme.TileHeight);
-        });
+            => Horizontal
+                ? new Vector2(Options.Count * SpacingOverride ?? Options.Max(o => Font.MeasureString(o.FormattedText).X) + Theme.TileDrawWidth, 0)
+                : new Vector2(0, Options.Count * SpacingOverride ?? Theme.TileDrawHeight);
 
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
         {
             if (Options.Count == 0 || Window.Theme.Fonts == null)
                 return;
-            
-            var font = Window.Theme.Fonts[FontIndex];
 
             var spacing = 0f;
             if (Horizontal)
-                spacing = SpacingOverride ?? Options.Max(o => font.MeasureString(o.FormattedText).Y);
+                spacing = SpacingOverride ?? Options.Max(o => Font.MeasureString(o.FormattedText).X) + Theme.TileDrawWidth;
             else
-                spacing = SpacingOverride ?? Window.Theme.TileHeight;
+                spacing = SpacingOverride ?? Theme.TileDrawHeight;
 
             for (var index = 0; index < Options.Count; index++)
             {
                 var option = Options[index];
                 var text = option.FormattedText;
-                var color = option.Selected
-                        ? Theme.SelectedColor
-                        : option.Enabled
-                            ? index == MouseOverIndex
-                                ? Theme.TextMouseOverColor
-                                : Theme.TextColor
-                            : Theme.TextDisabledColor;
+                var color = Theme.ResolveTextColor(UpdateParameters, option.Enabled, option.Selected);
                 var position = Position + parentOffset;
 
                 if (Horizontal)
@@ -61,7 +51,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                     position += new Vector2(0, index * spacing);
 
                  
-                spriteBatch.DrawString(font, text, position, color);
+                spriteBatch.DrawString(Font, text, position, color);
             }
         }
     }

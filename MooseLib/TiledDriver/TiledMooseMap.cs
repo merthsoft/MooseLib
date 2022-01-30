@@ -51,7 +51,7 @@ namespace Merthsoft.Moose.MooseEngine.TiledDriver
             BuildFullBlockingMap();
         } 
 
-        public override void CopyFromMap(IMap fromMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null)
+        public void CopyFromMap(IMap fromMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null)
         {
             var sourceMap = (fromMap as TiledMooseMap)?.Map;
             if (sourceMap == null)

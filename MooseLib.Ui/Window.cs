@@ -20,6 +20,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public Action<Window>? OnClose { get; set; }
 
+        public WindowManager? ParentManager { get; set; }
+
         public Rectangle Rectangle {
             get => rectangle;
             set
@@ -60,11 +62,12 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public virtual void Update(UpdateParameters updateParameters)
         {
+            PreControlUpdate(updateParameters);
             foreach (var c in Controls)
             {
                 UpdateParameters controlUpdateParameters 
                     = new (updateParameters.GameTime, updateParameters.LocalMousePosition - c.Position, updateParameters.RawMouseState, updateParameters.RawKeyState);
-                if (!IsHidden && !c.IsHidden && c.Rectangle.Contains(updateParameters.LocalMousePosition))
+                if (c.Rectangle.Contains(updateParameters.LocalMousePosition) && !IsHidden && !c.IsHidden && updateParameters.MouseOver)
                 {
                     controlUpdateParameters.MouseOver = true;
                     controlUpdateParameters.LeftMouseClick = updateParameters.LeftMouseClick;
@@ -75,7 +78,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 c.Update(controlUpdateParameters);
                 c.UpdateParameters = controlUpdateParameters;
             }
+            PostControlUpdate(updateParameters);
         }
+
+        public virtual void PreControlUpdate(UpdateParameters updateParameters) { }
+        public virtual void PostControlUpdate(UpdateParameters updateParameters) { }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
@@ -87,7 +94,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
             foreach (var c in Controls)
                 if (!c.IsHidden)
-                    c.Draw(spriteBatch, Position + Theme.ControlDrawOffset);
+                    c.Draw(spriteBatch, Position + (DrawBackground ? Theme.ControlDrawOffset : Vector2.Zero));
         }
 
         public void Center(int width, int height)
@@ -112,12 +119,18 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             => IsHidden = true;
 
         public void Show()
-            => IsHidden = false; 
-        
+            => IsHidden = false;
+
         public Line AddLine(int x1, int y1, int x2, int y2, int thickness = 1)
              => Controls.AddPassThrough(new Line(this, x1, y1, x2, y2, thickness));
 
-        public Label AddLabel(int x, int y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false, Color? highlightColor = null, bool forceHighlight = false)
+        public Line AddLine(float x1, float y1, float x2, float y2, int thickness = 1)
+             => Controls.AddPassThrough(new Line(this, (int)x1, (int)y1, (int)x2, (int)y2, thickness));
+
+        public Rect AddRectangle(int x, int y, int w, int h)
+             => Controls.AddPassThrough(new Rect(this, x, y, w, h));
+
+        public Label AddLabel(int x, int y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false)
             => Controls.AddPassThrough(new Label(this, x, y)
             {
                 Text = text,
@@ -125,19 +138,18 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 Color = color,
                 StrokeSize = strokeSize,
                 StrokeColor = strokeColor ?? Theme.TextBorderColor,
-                HighlightOnHover = hightlightOnHover || highlightColor.HasValue,
-                HighlightColor = highlightColor,
-                ForceHighlight = forceHighlight,
+                HighlightOnHover = hightlightOnHover,
             });
 
-        public Label AddActionLabel(int x, int y, string text, Action<Control, UpdateParameters> action)
+        public Label AddActionLabel(int x, int y, string text, Action<Control, UpdateParameters>? action, int fontIndex = 0)
             => Controls.AddPassThrough(new Label(this, x, y)
             {
                 Text = text,
                 Action = action,
+                FontIndex = fontIndex,
             });
 
-        public TextList AddActionList(int x, int y, int fontIndex, Action<Control, UpdateParameters> action, IEnumerable<string> options)
+        public TextList AddActionList(int x, int y, Action<Control, UpdateParameters> action, IEnumerable<string> options, int fontIndex = 0)
             => Controls.AddPassThrough(new TextList(this, x, y, options)
             {
                 Action = action,
@@ -145,7 +157,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 FontIndex = fontIndex,
             });
 
-        public TextGrid AddActionGrid(int x, int y, int gridWidth, int fontIndex, Action<Control, UpdateParameters> action, IEnumerable<string> options)
+        public TextGrid AddActionGrid(int x, int y, int gridWidth, Action<Control, UpdateParameters> action, IEnumerable<string> options, int fontIndex = 0)
             => Controls.AddPassThrough(new TextGrid(this, x, y, gridWidth, options)
             {
                 Action = action,
@@ -162,25 +174,35 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public Picture AddPicture(int x, int y, Texture2D texture, float scale)
             => Controls.AddPassThrough(new Picture(this, x, y, texture) { Scale = new(scale, scale) });
 
-        public Button AddButton(int x, int y, string text, Action<Control, UpdateParameters> action)
+        public Button AddButton(int x, int y, string text, Action<Control, UpdateParameters> action, int fontIndex = 0)
             => Controls.AddPassThrough(new Button(this, x, y, text)
             {
                 Action = action,
+                FontIndex = fontIndex,
             });
 
-        public Slider AddSlider(int x, int y, int min, int max, int initialValue, Action<Control, UpdateParameters> action)
+        public ToggleButton AddToggleButton(int x, int y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0)
+            => Controls.AddPassThrough(new ToggleButton(this, x, y, text)
+            {
+                Action = action,
+                FontIndex = fontIndex,
+            });
+
+        public Slider AddSlider(int x, int y, int min, int max, int initialValue, Action<Control, UpdateParameters> action, int fontIndex = 0)
             => Controls.AddPassThrough(new Slider(this, x, y, min, max)
             {
                 Value = initialValue,
                 Action = action,
+                FontIndex = fontIndex,
             });
 
-        public Checkbox AddCheckbox(int x, int y, bool isChecked, string? text, Action<Control, UpdateParameters> action)
+        public Checkbox AddCheckbox(int x, int y, bool isChecked, string? text, Action<Control, UpdateParameters> action, int fontIndex = 0)
             => Controls.AddPassThrough(new Checkbox(this, x, y)
             {
                 IsChecked = isChecked,
                 Text = text,
                 Action = action,
+                FontIndex = fontIndex,
             });
     }
 }

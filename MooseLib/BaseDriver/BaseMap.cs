@@ -140,7 +140,5 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver
         public bool WorldPositionIsInBounds(float worldX, float worldY)
             => worldX > 0 && worldX < Width * TileWidth
             && worldY > 0 && worldY < Height * TileHeight;
-
-        public abstract void CopyFromMap(IMap sourceMap, int sourceX = 0, int sourceY = 0, int destX = 0, int destY = 0, int? width = null, int? height = null);
     }
 }

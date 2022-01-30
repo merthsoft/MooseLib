@@ -21,7 +21,7 @@ namespace Merthsoft.Moose.SnowballFight
             DrawBackground = false;
             this.screenSize = screenSize;
 
-            headerLabel = AddLabel(144, 140, "Choose your team!", strokeSize: 3, forceHighlight: true);
+            headerLabel = AddLabel(144, 140, "Choose your team!", strokeSize: 3);
             santaWindow = new(graphicsDevice, 159, 215, 300, 300, theme);
             krampusWindow = new(graphicsDevice, 501, 215, 300, 300, theme);
 
@@ -60,7 +60,7 @@ namespace Merthsoft.Moose.SnowballFight
         private bool HighlightIfHovering(UpdateParameters updateParameters, Window window)
         {
             var intersects = window.Rectangle.Intersects(updateParameters.LocalMousePosition);
-            window.Controls.OfType<Label>().ForEach(l => l.ForceHighlight = intersects);
+            //TODO: window.Controls.OfType<Label>().ForEach(l => l.ForceHighlight = intersects);
             return intersects && updateParameters.LeftMouseClick;
         }
 

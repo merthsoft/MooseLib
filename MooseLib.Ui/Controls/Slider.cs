@@ -31,6 +31,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                 var label = Value.ToString();
                 var textSize = Font.MeasureString(label);
                 width += (int)textSize.X + 1;
+                if (height < textSize.Y)
+                    height = (int)textSize.Y + 1;
             }
 
             return new(width, height);
@@ -43,15 +45,15 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
             var (x, y) = Position + parentOffset;
 
-            spriteBatch.FillRectangle(x, y, width, height, Theme.ControlBackgroundColor);
+            spriteBatch.FillRectangle(x, y, width, height, Theme.ResolveBackgroundColor(UpdateParameters, Enabled));
             spriteBatch.DrawRectangle(x, y, width, height, Theme.ControlBorderColor);
 
             var percentOfPosition = (float)Value / (Max - Min);
-            var position = (int)((width - 2) * percentOfPosition);
-            spriteBatch.DrawLine(x + position + 1, y + 1, x + position + 1, y + height - 1, Theme.ControlPointerColor);
+            var position = (int)((width - 5) * percentOfPosition);
+            spriteBatch.FillRectangle(x + position + 1, y + 1, 3, height - 2, Theme.ControlPointerColor);
 
             if (DrawLabel)
-                spriteBatch.DrawString(Font, Value.ToString(), new(x + width + 1, y - 2), Theme.TextColor);
+                spriteBatch.DrawString(Font, Value.ToString(), new(x + width + 3, y - 2), Theme.ResolveTextColor(UpdateParameters, Enabled, false));
         }
 
         public override void Update(UpdateParameters updateParameters)
@@ -59,6 +61,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             if (updateParameters.MouseOver && updateParameters.LeftMouseDown)
             {
                 var newValue = (int)(Min + updateParameters.LocalMousePosition.X - 1);
+                
                 if (newValue >= Min && newValue <= Max)
                 {
                     Value = newValue;

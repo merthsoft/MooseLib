@@ -5,8 +5,6 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 {
     public abstract class Control
     {
-        public object? Object { get; set; }
-
         public Window Window { get; }
 
         public Theme Theme => Window.Theme;
@@ -17,6 +15,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         public SpriteFont Font => Theme.Fonts[FontIndex];
         
         public bool IsHidden { get; set; }
+        public bool Enabled { get; set; } = true;
 
         public UpdateParameters UpdateParameters { get; set; } = new(new(), Vector2.Zero, null, null);
 
@@ -52,7 +51,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public abstract Vector2 CalculateSize();
 
-        public virtual void Update(UpdateParameters updateParameters) { }
+        public virtual void Update(UpdateParameters updateParameters) 
+        {
+            if (updateParameters.MouseOver && (updateParameters.LeftMouseClick || updateParameters.RightMouseClick))
+                Action?.Invoke(this, updateParameters);
+        }
 
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 parentOffset) { }
 

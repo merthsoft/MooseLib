@@ -4,18 +4,19 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<LangVersion>preview</LangVersion>
 		<Nullable>enable</Nullable>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		<AssemblyName>Merthsoft.Moose.$(MSBuildProjectName)</AssemblyName>
 		<Copyright>2021 Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-		<VersionPrefix>0.2</VersionPrefix>
+		<VersionPrefix>0.3</VersionPrefix>
 		<DebugType>embedded</DebugType>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2082-develop" />
 		<PackageReference Include="MonoGame.StrokeEffect" Version="1.0.7" />
 	</ItemGroup>
 	<ItemGroup>

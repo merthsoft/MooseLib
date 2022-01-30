@@ -30,33 +30,34 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         }
 
         public override Vector2 CalculateSize()
-            => new(GridWidth * CellWidth, (Options.Count / GridWidth + 1) * CellHeight);
+            => new(GridWidth * CellWidth, ((Options.Count == 0 ? 1 : Options.Count) / GridWidth + 1) * CellHeight);
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
         {
+            var mouseX = (int)UpdateParameters.LocalMousePosition.X / CellWidth;
+            var mouseY = (int)UpdateParameters.LocalMousePosition.Y / CellHeight;
+            MouseOverIndex = UpdateParameters.MouseOver ? mouseY * GridWidth + mouseX : -1;
+
             var position = Position + parentOffset;
             for (var index = 0; index < Options.Count; index++)
-                DrawCell(spriteBatch, index, position);
+                DrawCell(spriteBatch, index, MouseOverIndex, position);
         }
 
-        protected virtual void DrawCell(SpriteBatch spriteBatch, int index, Vector2 drawOffset)
+        protected virtual void DrawCell(SpriteBatch spriteBatch, int index, int mouseIndex, Vector2 drawOffset)
         {
             var x = (index % GridWidth) * CellWidth + (int)drawOffset.X;
             var y = (index / GridWidth) * CellHeight + (int)drawOffset.Y;
 
             var option = Options[index];
             var text = option.FormattedText;
-            var color = option.Selected 
-                        ? Theme.SelectedColor 
-                        : option.Enabled
-                            ? index == MouseOverIndex
-                                ? Theme.TextMouseOverColor
-                                : Theme.TextColor
-                            : Theme.TextDisabledColor;
 
-            spriteBatch.FillRectangle(x, y, CellWidth, CellHeight, Theme.ControlBackgroundColor);
+            var cellUpdateParams = UpdateParameters with { MouseOver = index == mouseIndex };
+
+            spriteBatch.FillRectangle(x, y, CellWidth, CellHeight, Theme.ResolveBackgroundColor(cellUpdateParams, Enabled));
             spriteBatch.DrawRectangle(x, y, CellWidth + 1, CellHeight + 1, Theme.ControlBorderColor);
-            spriteBatch.DrawString(Font, text, new(x + 2, y + 1), color);
+
+            var color = Theme.ResolveTextColor(cellUpdateParams, option.Enabled, option.Selected);
+            spriteBatch.DrawString(Font, text, new(x + 2, y), color);
         }
 
         public override void Update(UpdateParameters updateParameters)

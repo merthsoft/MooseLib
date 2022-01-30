@@ -9,6 +9,11 @@ namespace Merthsoft.Moose.MooseEngine
 {
     public class MooseContentManager
     {
+        private static readonly int DefaultBitmapSize = 1024;
+        public static readonly CharacterRange BasicAsciiRange = new(' ', '~');
+
+        public List<CharacterRange> DefaultCharacterRange { get; } = new() { BasicAsciiRange };
+
         ContentManager Content { get; }
         
         public MooseGame Game { get; }
@@ -38,20 +43,10 @@ namespace Merthsoft.Moose.MooseEngine
             return AnimationSpriteSheets[animationKey];
         }
 
-        private static readonly CharacterRange[] DefaultCharacterRange = new[]
-        {
-            CharacterRange.BasicLatin,
-            CharacterRange.Latin1Supplement,
-            CharacterRange.LatinExtendedA,
-            CharacterRange.Cyrillic
-        };
-
-        private static readonly int DefaultBitmapSize = 1024;
-
-        public SpriteFont BakeFont(string font, int fontPixelHeight)
+        public SpriteFont BakeFont(string font, int fontPixelHeight, CharacterRange[]? characterRange = null)
             => TtfFontBaker.Bake(
                     File.ReadAllBytes($"Content/Fonts/{font}.ttf"), fontPixelHeight, 
-                    DefaultBitmapSize, DefaultBitmapSize, DefaultCharacterRange
+                    DefaultBitmapSize, DefaultBitmapSize, characterRange ?? DefaultCharacterRange.ToArray()
                ).CreateSpriteFont(GraphicsDevice);
     }
 }

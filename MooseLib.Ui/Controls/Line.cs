@@ -10,6 +10,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public int Thickness { get; set; } = 1;
 
+        public Color? Color { get; set; }
+
         public override Vector2 CalculateSize() => new(Position.X - End.X, Position.Y - End.Y);
 
         public Line(Window window, int x1, int y1, int x2, int y2, int thickness = 1) : base(window, x1, y1)
@@ -19,6 +21,6 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
-            => spriteBatch.DrawLine(Position + parentOffset, End + parentOffset, Theme.TextColor, Thickness);
+            => spriteBatch.DrawLine(Position + parentOffset, End + parentOffset, Color ?? Theme.ControlBorderColor, Thickness);
     }
 }

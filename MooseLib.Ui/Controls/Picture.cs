@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using C = Microsoft.Xna.Framework.Color;
 
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 {
@@ -22,20 +21,14 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public SpriteEffects SpriteEffects { get; set; }
 
-        public override Vector2 CalculateSize() => new(Texture.Width, Texture.Height);
+        public Color Color { get; set; } = Color.White;
+
+        public override Vector2 CalculateSize() => new(Texture?.Width ?? 0, Texture?.Height ?? 0);
 
         public Picture(Window window, int x, int y, Texture2D texture) 
             : base(window, x, y) => Texture = texture;
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
-            => spriteBatch.Draw(Texture, Position + parentOffset, SourceRectangle, C.White, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
-
-        public override void Update(UpdateParameters updateParameters)
-        {
-            if (updateParameters.MouseOver && updateParameters.LeftMouseClick)
-                Action?.Invoke(this, updateParameters);
-
-            base.Update(updateParameters);
-        }
+            => spriteBatch.Draw(Texture, Position + parentOffset, SourceRectangle, Color, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
     }
 }

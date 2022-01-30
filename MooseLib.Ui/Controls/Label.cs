@@ -38,16 +38,12 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             }
         }
 
-        public bool ForceHighlight { get; set; }
         public bool HighlightOnHover { get; set; }
-        public Color? HighlightColor { get; set; }
 
         private Texture2D? renderedTexture;
 
         public Color? Color { get; set; }
-        public Color ResolvedColor => ForceHighlight || (HighlightOnHover && UpdateParameters.MouseOver)
-                                        ? HighlightColor ?? Theme.TextMouseOverColor
-                                        : Color ?? Theme.TextColor;
+        public Color ResolvedColor => Theme.ResolveTextColor(UpdateParameters, Enabled, false, HighlightOnHover);
 
         public Label(Window window, int x, int y) : base(window, x, y)
         {
@@ -77,7 +73,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             if (updateParameters.MouseOver && updateParameters.LeftMouseClick)
                 Action?.Invoke(this, updateParameters);
 
-            if (renderedTexture == null)
+            if (renderedTexture == null && StrokeSize > 0)
                 renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedColor, Vector2.One, StrokeSize, StrokeColor, Window.GraphicsDevice);
 
             base.Update(updateParameters);

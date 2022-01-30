@@ -21,7 +21,7 @@ namespace Merthsoft.Moose.SnowballFight
 
             this.screenSize = screenSize;
 
-            logo = AddLabel(0, 0, "Snowfight Tactics", 0, strokeSize: 3, forceHighlight: true);
+            logo = AddLabel(0, 0, "Snowfight Tactics", 0, strokeSize: 3);
 
             var assembly = Assembly.GetExecutingAssembly();
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);

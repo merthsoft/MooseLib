@@ -66,6 +66,8 @@ namespace Merthsoft.Moose.MooseEngine
 
         public Color DefaultBackgroundColor { get; set; } = Color.DarkCyan;
 
+        protected FramesPerSecondCounter FramesPerSecondCounter { get; } = new();
+
         public MooseGame()
         {
             IsMouseVisible = true;
@@ -221,13 +223,18 @@ namespace Merthsoft.Moose.MooseEngine
 
             if (ShouldQuit)
                 base.Exit();
+
+            FramesPerSecondCounter.Update(gameTime);
         }
 
         protected void MarkAllObjectsForRemoval()
             => Objects.ForEach(o => o.RemoveFlag = true);
 
         protected override void Draw(GameTime gameTime)
-            => Draw(gameTime, DefaultRenderHooks);
+        {
+            FramesPerSecondCounter.Draw(gameTime);
+            Draw(gameTime, DefaultRenderHooks);
+        }
 
         protected virtual bool PreClear(GameTime gameTime) => true;
         protected virtual bool PreMapDraw(GameTime gameTime) => true;

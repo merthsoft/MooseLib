@@ -9,8 +9,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
     {
         public GraphicsDevice GraphicsDevice { get; private set; }
 
-        private readonly List<Window> windowsToAdd = new();
-        private readonly List<Window> windows = new();
+        private readonly HashSet<Window> windowsToAdd = new();
+        private HashSet<Window> windows = new();
 
         public Dictionary<string, Theme> ThemeDictionary { get; } = new();
         
@@ -54,13 +54,14 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             CurrentMouseState = currentMouseState;
             CurrentKeyState = currentKeyState;
             var mousePosition = worldMouse ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
-            foreach (var w in Windows)
+            var windowFound = false;
+            foreach (var w in Windows.Reverse())
             {
                 UpdateParameters updateParams 
                     = new(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset, currentMouseState, currentKeyState);
 
-                if (w.Rectangle.Contains(mousePosition))
-                    updateParams.MouseOver = true;
+                if (w.Rectangle.Contains(mousePosition) && !windowFound)
+                    windowFound = updateParams.MouseOver = true;
                 
                 updateParams.LeftMouseDown = CurrentMouseState.LeftButton == ButtonState.Pressed;
                 updateParams.RightMouseDown = CurrentMouseState.RightButton == ButtonState.Pressed;
@@ -69,10 +70,29 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 
                 w.Update(updateParams);
             }
-            windows.Where(w => w.ShouldClose).ForEach(w => w.OnClose?.Invoke(w));
-            windows.RemoveAll(w => w.ShouldClose);
-            windows.AddRange(windowsToAdd);
+
+            var newWindowSet = new HashSet<Window>(windows.Count + windowsToAdd.Count);
+            foreach (var window in windows)
+            {
+                if (window.ShouldClose)
+                {
+                    window.OnClose?.Invoke(window);
+                    window.ParentManager = null;
+                } else
+                {
+                    newWindowSet.Add(window);
+                }
+            }
+            
+            foreach (var window in windowsToAdd)
+            {
+                window.ParentManager = this;
+                newWindowSet.Add(window);
+            }
             windowsToAdd.Clear();
+
+            windows = newWindowSet;
+            
             PreviousMouseState = CurrentMouseState;
             PreviousKeyState = CurrentKeyState;
         }
@@ -93,7 +113,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public Window NewActionListWindow(int x, int y, Action<Control, UpdateParameters> action, params string[] options)
         {
             var ret = new Window(GraphicsDevice, new(x, y, 0, 0), DefaultTheme);
-            var list = ret.AddActionList(0, 0, 0, action, options);
+            var list = ret.AddActionList(0, 0, action, options, 0);
             ret.Size = list.CalculateSize() + new Vector2(DefaultTheme.TileWidth * 2, DefaultTheme.TileHeight);
             windowsToAdd.Add(ret);
             return ret;

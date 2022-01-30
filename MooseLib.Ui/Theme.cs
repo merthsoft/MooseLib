@@ -68,8 +68,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public Color TextBorderColor { get; set; } = Color.Gray;
         public Color TextDisabledColor { get; set; } = Color.Gray;
         public Color SelectedColor { get; set; } = Color.Blue;
+        public Color SelectedMouseOverColor { get; set; } = Color.DarkBlue;
         public Color ControlPointerColor { get; set; } = Color.Red;
         public Color ControlBackgroundColor { get; set; } = Color.Gray;
+        public Color ControlDisabledBackgroundColor { get; set; } = Color.DarkGray;
+        public Color ControlMouseOverBackgroundColor { get; set; } = Color.LightGray;
         public Color ControlBorderColor { get; set; } = Color.Black;
 
         public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Point textureOffset = default)
@@ -78,6 +81,24 @@ namespace Merthsoft.Moose.MooseEngine.Ui
              = (name, tileWidth, tileHeight, windowTexture, textureOffset);
             Fonts.AddRange(fonts);
         }
+
+        public Color ResolveTextColor(UpdateParameters updateParameters, bool enabled, bool selected, bool highlightOnHover = true)
+            => (enabled, selected, updateParameters.MouseOver && highlightOnHover) switch
+            {
+                (false, _, _) => TextDisabledColor,
+                (true, true, true) => SelectedMouseOverColor,
+                (true, true, false) => SelectedColor,
+                (true, false, true) => TextMouseOverColor,
+                (true, false, false) => TextColor
+            };
+
+        public Color ResolveBackgroundColor(UpdateParameters updateParameters, bool enabled, bool highlightOnHover = true)
+            => (enabled, updateParameters.MouseOver && highlightOnHover) switch
+            {
+                (false, _) => ControlDisabledBackgroundColor,
+                (true, true) => ControlMouseOverBackgroundColor,
+                (true, false) => ControlBackgroundColor
+            };
 
         protected void DrawWindowTexture(SpriteBatch spriteBatch, int index, Point position, int xTileOffset, int yTileOffet)
         {

@@ -7,6 +7,10 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
     public class Button : Control
     {
         public string Text { get; set; }
+
+        public Color? BackgroundColor { get; set; }
+        public Color? BorderColor { get; set; }
+
         public Button(Window window, int x, int y, string text) : base(window, x, y)
             => Text = text;
 
@@ -14,18 +18,19 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             => Font.MeasureString(Text) + new Vector2(4, 2);
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
+            => DrawButton(spriteBatch, drawOffset, 
+                BackgroundColor ?? Theme.ResolveBackgroundColor(UpdateParameters, Enabled),
+                BorderColor ?? Theme.ControlBorderColor,
+                Theme.ResolveTextColor(UpdateParameters, Enabled, false)
+               );
+
+        protected void DrawButton(SpriteBatch spriteBatch, Vector2 drawOffset, Color backgroundColor, Color borderColor, Color textColor)
         {
             var (x, y) = Position + drawOffset;
             var (w, h) = CalculateSize();
-            spriteBatch.FillRectangle(x, y, w, h, Theme.ControlBackgroundColor);
-            spriteBatch.DrawRectangle(x, y, w, h, Theme.ControlBorderColor);
-            spriteBatch.DrawString(Font, Text, new(x + 2, y + 1), UpdateParameters.MouseOver ? Theme.TextMouseOverColor : Theme.TextColor);
-        }
-
-        public override void Update(UpdateParameters updateParameters)
-        {
-            if (updateParameters.MouseOver && updateParameters.LeftMouseClick)
-                Action?.Invoke(this, updateParameters);
+            spriteBatch.FillRectangle(x, y, w, h, backgroundColor);
+            spriteBatch.DrawRectangle(x, y, w, h, borderColor);
+            spriteBatch.DrawString(Font, Text, new(x + 3, y + 1), textColor);
         }
     }
 }

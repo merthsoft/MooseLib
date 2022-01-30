@@ -5,6 +5,7 @@
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
     <LangVersion>preview</LangVersion>
+	<EnablePreviewFeatures>true</EnablePreviewFeatures>
     <Nullable>enable</Nullable>
     <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -31,10 +32,10 @@
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
-    <PackageReference Include="MonoGame.Extended" Version="3.9.0-alpha0047" />
-    <PackageReference Include="MonoGame.Extended.Tiled" Version="3.9.0-alpha0047" />
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2082-develop" />
+    <PackageReference Include="MonoGame.Extended" Version="3.9.0-alpha0051" />
+    <PackageReference Include="MonoGame.Extended.Tiled" Version="3.9.0-alpha0051" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2082-develop" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
