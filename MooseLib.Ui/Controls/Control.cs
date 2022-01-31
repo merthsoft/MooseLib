@@ -11,6 +11,18 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public Vector2 Position { get; set; }
 
+        public int X
+        {
+            get => (int)Position.X;
+            set => Position = Position with { X = value };
+        }
+
+        public int Y
+        {
+            get => (int)Position.Y;
+            set => Position = Position with { Y = value };
+        }
+
         public int FontIndex { get; set; }
         public SpriteFont Font => Theme.Fonts[FontIndex];
         

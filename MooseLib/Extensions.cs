@@ -19,6 +19,12 @@ namespace Merthsoft.Moose.MooseEngine
             && y >= rect.Y
                 && y <= rect.Y + rect.Height;
 
+        public static bool Intersects(this Rectangle rect, int x, int y)
+            => x >= rect.X
+                && x <= rect.X + rect.Width
+            && y >= rect.Y
+                && y <= rect.Y + rect.Height;
+
         public static bool Intersects(this Rectangle rect, Vector2 point)
             => point.X >= rect.X
                 && point.X <= rect.X + rect.Width

@@ -16,14 +16,28 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public override Vector2 CalculateSize()
         {
-            var labelLength = Text == null ? 0 : Font.MeasureString(Text).X;
-            return new(WidthOverride ?? (Theme.TileDrawWidth + labelLength), HeightOverride ?? Theme.TileDrawHeight);
+            var width = WidthOverride ?? Theme.TileDrawWidth;
+            var height = HeightOverride ?? Theme.TileDrawHeight;
+
+            if (Text != null)
+            {
+                var textSize = Font.MeasureString(Text);
+                if (height < textSize.Y)
+                    height = (int)textSize.Y + 2;
+                width = height + (int)textSize.X + 1;
+            }
+
+            return new(width, height);
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
         {
+            var labelLength = Text == null ? 0 : (int)Font.MeasureString(Text).X;
             var (x, y) = Position + drawOffset;
             var (w, h) = CalculateSize();
+
+            if (WidthOverride == null)
+                w -= labelLength;
 
             spriteBatch.FillRectangle(x, y, w, h, Theme.ResolveBackgroundColor(UpdateParameters, Enabled));
             spriteBatch.DrawRectangle(x, y, w, h, Theme.ControlBorderColor);

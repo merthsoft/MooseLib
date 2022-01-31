@@ -32,7 +32,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                 var textSize = Font.MeasureString(label);
                 width += (int)textSize.X + 1;
                 if (height < textSize.Y)
-                    height = (int)textSize.Y + 1;
+                    height = (int)textSize.Y + 2;
             }
 
             return new(width, height);

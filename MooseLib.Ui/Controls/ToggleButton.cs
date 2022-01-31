@@ -21,8 +21,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public override void Update(UpdateParameters updateParameters)
         {
-            if (updateParameters.MouseOver && updateParameters.LeftMouseClick)
+            if (updateParameters.MouseOver && (updateParameters.LeftMouseClick || updateParameters.LeftMouseClick))
+            {
+                Toggled = !Toggled;
                 Action?.Invoke(this, updateParameters);
+            }
         }
     }
 }
