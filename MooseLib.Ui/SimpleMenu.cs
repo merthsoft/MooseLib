@@ -11,7 +11,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public SimpleMenu(GraphicsDevice graphicsDevice, Theme theme, params string[] options) : base(graphicsDevice, new(0, 0, 0, 0), theme)
         {
-            MainList = AddActionList(4, 8, MainMenu_Clicked, options, 1);
+            MainList = this.AddActionList(4, 8, MainMenu_Clicked, options, 1);
             Size = MainList.CalculateSize() + new Vector2(Theme.TileWidth * 2, Theme.TileHeight);
         }
 

@@ -21,7 +21,7 @@ namespace Merthsoft.Moose.SnowballFight
             DrawBackground = false;
             this.screenSize = screenSize;
 
-            headerLabel = AddLabel(144, 140, "Choose your team!", strokeSize: 3);
+            headerLabel = this.AddLabel(144, 140, "Choose your team!", strokeSize: 3);
             santaWindow = new(graphicsDevice, 159, 215, 300, 300, theme);
             krampusWindow = new(graphicsDevice, 501, 215, 300, 300, theme);
 

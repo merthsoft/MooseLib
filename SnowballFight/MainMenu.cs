@@ -21,13 +21,13 @@ namespace Merthsoft.Moose.SnowballFight
 
             this.screenSize = screenSize;
 
-            logo = AddLabel(0, 0, "Snowfight Tactics", 0, strokeSize: 3);
+            logo = this.AddLabel(0, 0, "Snowfight Tactics", 0, strokeSize: 3);
 
             var assembly = Assembly.GetExecutingAssembly();
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             var version = fileVersionInfo.ProductVersion!.Split('-');
 
-            versionLabel = AddLabel(0, 0, $"v{version[0]}{version[1][0]} - {fileVersionInfo.LegalCopyright}", 2, Color.Black, 1, Color.White);
+            versionLabel = this.AddLabel(0, 0, $"v{version[0]}{version[1][0]} - {fileVersionInfo.LegalCopyright}", 2, Color.Black, 1, Color.White);
 
             Center(screenSize, screenSize);
         }

@@ -74,6 +74,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public Color ControlDisabledBackgroundColor { get; set; } = Color.DarkGray;
         public Color ControlMouseOverBackgroundColor { get; set; } = Color.LightGray;
         public Color ControlBorderColor { get; set; } = Color.Black;
+        public Color WindowBackgroundColor { get; set; } = new(113, 65, 59);
+        public Color WindowBorderColor { get; set; } = new(219, 164, 99);
 
         public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Point textureOffset = default)
         {

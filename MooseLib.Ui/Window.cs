@@ -4,9 +4,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Merthsoft.Moose.MooseEngine.Ui
 {
-    public class Window
+    public class Window : IControlContainer
     {
         private Rectangle rectangle;
+
+        protected List<Control> controlsToAdd = new();
+        protected List<Control> controls = new();
+        public Control[] Controls => controls.ToArray();
+
+        public Window ParentWindow => this;
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
@@ -20,7 +26,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public Action<Window>? OnClose { get; set; }
 
-        public WindowManager? ParentManager { get; set; }
+        public WindowManager? Manager { get; set; }
 
         public Rectangle Rectangle {
             get => rectangle;
@@ -51,14 +57,18 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public int X => Rectangle.X;
         public int Y => Rectangle.Y;
 
-        public List<Control> Controls { get; } = new();
-
         public Window(GraphicsDevice graphicsDevice, Rectangle rectangle, Theme theme)
             => (Rectangle, Theme, GraphicsDevice)
              = (rectangle, theme, graphicsDevice);
 
         public Window(GraphicsDevice graphicsDevice, int x, int y, int w, int h, Theme theme)
             : this(graphicsDevice, new(x, y, w, h), theme) { }
+
+        public virtual IControlContainer AddControl(Control control)
+        {
+            controlsToAdd.Add(control);
+            return this;
+        }
 
         public virtual void Update(UpdateParameters updateParameters)
         {
@@ -78,6 +88,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 c.Update(controlUpdateParameters);
                 c.UpdateParameters = controlUpdateParameters;
             }
+            controls.AddRange(controlsToAdd);
+            controlsToAdd.Clear();
             PostControlUpdate(updateParameters);
         }
 
@@ -120,89 +132,5 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public void Show()
             => IsHidden = false;
-
-        public Line AddLine(int x1, int y1, int x2, int y2, int thickness = 1)
-             => Controls.AddPassThrough(new Line(this, x1, y1, x2, y2, thickness));
-
-        public Line AddLine(float x1, float y1, float x2, float y2, int thickness = 1)
-             => Controls.AddPassThrough(new Line(this, (int)x1, (int)y1, (int)x2, (int)y2, thickness));
-
-        public Rect AddRectangle(int x, int y, int w, int h)
-             => Controls.AddPassThrough(new Rect(this, x, y, w, h));
-
-        public Label AddLabel(int x, int y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false)
-            => Controls.AddPassThrough(new Label(this, x, y)
-            {
-                Text = text,
-                FontIndex = fontIndex,
-                Color = color,
-                StrokeSize = strokeSize,
-                StrokeColor = strokeColor ?? Theme.TextBorderColor,
-                HighlightOnHover = hightlightOnHover,
-            });
-
-        public Label AddActionLabel(int x, int y, string text, Action<Control, UpdateParameters>? action, int fontIndex = 0)
-            => Controls.AddPassThrough(new Label(this, x, y)
-            {
-                Text = text,
-                Action = action,
-                FontIndex = fontIndex,
-            });
-
-        public TextList AddActionList(int x, int y, Action<Control, UpdateParameters> action, IEnumerable<string> options, int fontIndex = 0)
-            => Controls.AddPassThrough(new TextList(this, x, y, options)
-            {
-                Action = action,
-                SelectMode = SelectMode.None,
-                FontIndex = fontIndex,
-            });
-
-        public TextGrid AddActionGrid(int x, int y, int gridWidth, Action<Control, UpdateParameters> action, IEnumerable<string> options, int fontIndex = 0)
-            => Controls.AddPassThrough(new TextGrid(this, x, y, gridWidth, options)
-            {
-                Action = action,
-                SelectMode = SelectMode.None,
-                FontIndex = fontIndex,
-            });
-
-        public Picture AddPicture(int x, int y, Texture2D texture, Rectangle? sourceRectangle = null)
-            => Controls.AddPassThrough(new Picture(this, x, y, texture) { SourceRectangle = sourceRectangle ?? new(x, y, texture.Width, texture.Height) });
-
-        public Picture AddPicture(int x, int y, Texture2D texture, Vector2 scale)
-            => Controls.AddPassThrough(new Picture(this, x, y, texture) { Scale = scale });
-
-        public Picture AddPicture(int x, int y, Texture2D texture, float scale)
-            => Controls.AddPassThrough(new Picture(this, x, y, texture) { Scale = new(scale, scale) });
-
-        public Button AddButton(int x, int y, string text, Action<Control, UpdateParameters> action, int fontIndex = 0)
-            => Controls.AddPassThrough(new Button(this, x, y, text)
-            {
-                Action = action,
-                FontIndex = fontIndex,
-            });
-
-        public ToggleButton AddToggleButton(int x, int y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0)
-            => Controls.AddPassThrough(new ToggleButton(this, x, y, text)
-            {
-                Action = action,
-                FontIndex = fontIndex,
-            });
-
-        public Slider AddSlider(int x, int y, int min, int max, int initialValue, Action<Control, UpdateParameters> action, int fontIndex = 0)
-            => Controls.AddPassThrough(new Slider(this, x, y, min, max)
-            {
-                Value = initialValue,
-                Action = action,
-                FontIndex = fontIndex,
-            });
-
-        public Checkbox AddCheckbox(int x, int y, bool isChecked, string? text, Action<Control, UpdateParameters> action, int fontIndex = 0)
-            => Controls.AddPassThrough(new Checkbox(this, x, y)
-            {
-                IsChecked = isChecked,
-                Text = text,
-                Action = action,
-                FontIndex = fontIndex,
-            });
     }
 }

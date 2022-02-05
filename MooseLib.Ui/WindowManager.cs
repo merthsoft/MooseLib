@@ -30,7 +30,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         private Theme? defaultTheme;
         public Theme DefaultTheme => defaultTheme ??= ThemeDictionary.GetValueOrDefault(DefaultThemeName) ?? Themes.First();
 
-        public IReadOnlyCollection<Window> Windows => windows;
+        public Window[] Windows => windows.ToArray();
 
         internal MouseState CurrentMouseState { get; set; }
 
@@ -41,7 +41,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         internal KeyboardState PreviousKeyState { get; set; }
 
         private WindowManager(GraphicsDevice graphicsDevice)
-            => this.GraphicsDevice = graphicsDevice;
+            => GraphicsDevice = graphicsDevice;
 
         public WindowManager(GraphicsDevice graphicsDevice, Theme theme) : this(graphicsDevice)
             => AddTheme(theme);
@@ -56,20 +56,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             var mousePosition = worldMouse ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
             var windowFound = false;
             foreach (var w in Windows.Reverse())
-            {
-                UpdateParameters updateParams 
-                    = new(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset, currentMouseState, currentKeyState);
-
-                if (w.Rectangle.Contains(mousePosition) && !windowFound)
-                    windowFound = updateParams.MouseOver = true;
-                
-                updateParams.LeftMouseDown = CurrentMouseState.LeftButton == ButtonState.Pressed;
-                updateParams.RightMouseDown = CurrentMouseState.RightButton == ButtonState.Pressed;
-                updateParams.LeftMouseClick = CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton);
-                updateParams.RightMouseClick = CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton);
-                
-                w.Update(updateParams);
-            }
+                updateWindow(w);
 
             var newWindowSet = new HashSet<Window>(windows.Count + windowsToAdd.Count);
             foreach (var window in windows)
@@ -77,7 +64,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 if (window.ShouldClose)
                 {
                     window.OnClose?.Invoke(window);
-                    window.ParentManager = null;
+                    window.Manager = null;
                 } else
                 {
                     newWindowSet.Add(window);
@@ -86,7 +73,12 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             
             foreach (var window in windowsToAdd)
             {
-                window.ParentManager = this;
+                var hiddenCache = window.IsHidden;
+                window.IsHidden = false;
+                window.Manager = this;
+                updateWindow(window);
+                window.IsHidden = hiddenCache;
+
                 newWindowSet.Add(window);
             }
             windowsToAdd.Clear();
@@ -95,6 +87,23 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             
             PreviousMouseState = CurrentMouseState;
             PreviousKeyState = CurrentKeyState;
+
+            bool updateWindow(Window w)
+            {
+                UpdateParameters updateParams
+                    = new(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset, currentMouseState, currentKeyState);
+
+                if (w.Rectangle.Contains(mousePosition) && !windowFound)
+                    windowFound = updateParams.MouseOver = true;
+
+                updateParams.LeftMouseDown = CurrentMouseState.LeftButton == ButtonState.Pressed;
+                updateParams.RightMouseDown = CurrentMouseState.RightButton == ButtonState.Pressed;
+                updateParams.LeftMouseClick = CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton);
+                updateParams.RightMouseClick = CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton);
+
+                w.Update(updateParams);
+                return windowFound;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
