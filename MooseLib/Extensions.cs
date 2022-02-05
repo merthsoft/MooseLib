@@ -10,6 +10,17 @@ namespace Merthsoft.Moose.MooseEngine
 {
     public static class Extensions
     {
+        public static int IndexOf<T>(this IEnumerable<T> set, Func<T, bool> func)
+        {
+            var index = 0;
+            foreach (var item in set)
+            {
+                if (func(item))
+                    return index;
+            }
+            return -1;
+        }
+
         public static Rectangle Move(this Rectangle rect, Vector2 delta)
             => new(rect.X + (int)delta.X, rect.Y + (int)delta.Y, rect.Width, rect.Height);
 

@@ -49,7 +49,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public WindowManager(GraphicsDevice graphicsDevice, IEnumerable<Theme> themes) : this(graphicsDevice)
             => themes.ForEach(AddTheme);
 
-        public void Update(GameTime gameTime, MouseState currentMouseState, KeyboardState currentKeyState, Vector2? worldMouse = null)
+        public void Update(GameTime gameTime, bool gameHasFocus, MouseState currentMouseState, KeyboardState currentKeyState, Vector2? worldMouse = null)
         {
             CurrentMouseState = currentMouseState;
             CurrentKeyState = currentKeyState;
@@ -93,7 +93,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 UpdateParameters updateParams
                     = new(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset, currentMouseState, currentKeyState);
 
-                if (w.Rectangle.Contains(mousePosition) && !windowFound)
+                if (gameHasFocus && w.Rectangle.Contains(mousePosition) && !windowFound)
                     windowFound = updateParams.MouseOver = true;
 
                 updateParams.LeftMouseDown = CurrentMouseState.LeftButton == ButtonState.Pressed;

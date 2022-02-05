@@ -12,6 +12,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         public Color? BorderColor { get; set; }
 
         public int? WidthOverride { get; set; }
+        public int? HeightOverride { get; set; }
 
         public Button(Window window, int x, int y, string text) : base(window, x, y)
             => Text = text;
@@ -19,10 +20,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         public override Vector2 CalculateSize()
         {
             var fontSize = Font.MeasureString(Text);
-            if (WidthOverride == null)
-                return fontSize + new Vector2(4, 2);
-            else
-                return new(WidthOverride.Value, fontSize.Y + 2);
+            return new(WidthOverride ?? fontSize.X + 5, HeightOverride ?? fontSize.Y + 2);
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)

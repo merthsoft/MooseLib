@@ -9,9 +9,6 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public ToggleButton(Window window, int x, int y, string text) : base(window, x, y, text) { }
 
-        public override Vector2 CalculateSize()
-            => Font.MeasureString(Text) + new Vector2(4, 2);
-
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
             => DrawButton(spriteBatch, drawOffset,
                 BackgroundColor ?? Theme.ResolveBackgroundColor(UpdateParameters, Enabled),
@@ -21,7 +18,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public override void Update(UpdateParameters updateParameters)
         {
-            if (updateParameters.MouseOver && (updateParameters.LeftMouseClick || updateParameters.LeftMouseClick))
+            if (updateParameters.MouseOver && (updateParameters.LeftMouseClick || updateParameters.RightMouseClick))
             {
                 Toggled = !Toggled;
                 Action?.Invoke(this, updateParameters);

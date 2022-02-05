@@ -53,7 +53,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
             spriteBatch.FillRectangle(x + position + 1, y + 1, 3, height - 2, Theme.ControlPointerColor);
 
             if (DrawLabel)
-                spriteBatch.DrawString(Font, Value.ToString(), new(x + width + 3, y - 2), Theme.ResolveTextColor(UpdateParameters, Enabled, false));
+                spriteBatch.DrawString(Font, Value.ToString(), new(x + width + 3, y), Theme.ResolveTextColor(UpdateParameters, Enabled, false));
         }
 
         public override void Update(UpdateParameters updateParameters)
