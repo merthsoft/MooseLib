@@ -10,6 +10,35 @@ namespace Merthsoft.Moose.MooseEngine
 {
     public static class Extensions
     {
+        public static SpriteBatch DrawRect(this SpriteBatch s, Rectangle r, Color c)
+        {
+            s.DrawRectangle(r, c);
+            return s;
+        }
+
+        public static SpriteBatch FillRect(this SpriteBatch s, Rectangle r, Color fillColor, Color? borderColor = null)
+        {
+            s.FillRectangle(r, fillColor);
+            if (borderColor != null)
+                s.DrawRectangle(r, borderColor.Value);
+            return s;
+        }
+
+        public static SpriteBatch FillRect(this SpriteBatch s, Vector2 position, int width, int height, Color fillColor, Color? borderColor = null)
+        {
+            var r = new Rectangle((int)position.X, (int)position.Y, width, height);
+            s.FillRectangle(r, fillColor);
+            if (borderColor != null)
+                s.DrawRectangle(r, borderColor.Value);
+            return s;
+        }
+
+        public static void DrawEllipse(this SpriteBatch spriteBatch, Rectangle destinationRectangle, int sides, Color color, float thickness = 1f, float layerDepth = 0)
+            => spriteBatch.DrawEllipse(destinationRectangle.Center.ToVector2(), destinationRectangle.Size.ToVector2(), sides, color, thickness, layerDepth);
+
+        public static Color Shade(this Color c, float delta)
+            => new Color(Round(c.R * delta), Round(c.G * delta), Round(c.B * delta));
+
         public static int IndexOf<T>(this IEnumerable<T> set, Func<T, bool> func)
         {
             var index = 0;
@@ -100,11 +129,17 @@ namespace Merthsoft.Moose.MooseEngine
         public static (float, float) Floor(this (float X, float Y) vec)
             => new(MathF.Floor(vec.X), MathF.Floor(vec.Y));
 
-        public static float Floor(this float f)
-            => MathF.Floor(f);
+        public static int Floor(this float f)
+            => (int)MathF.Floor(f);
+
+        public static int Ceiling(this float f)
+            => (int)MathF.Ceiling(f);
 
         public static float Round(this float f, int digits)
             => MathF.Round(f, digits);
+
+        public static int Round(this float f)
+            => (int)MathF.Round(f, 0);
 
         public static long Sum(this IEnumerable<byte> set)
             => set.Sum(b => (long)b);

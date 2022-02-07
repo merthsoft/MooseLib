@@ -8,6 +8,10 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         Window ParentWindow { get; }
 
+        IControlContainer ClearControls();
+        IControlContainer RemoveControl(Control control);
+        IControlContainer RemoveControlAt(int index);
+
         IControlContainer AddControl(Control control);
         
         TControl AddControlPassThrough<TControl>(TControl control) where TControl : Control

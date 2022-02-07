@@ -70,6 +70,26 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             return this;
         }
 
+        public virtual IControlContainer ClearControls()
+        {
+            controls.Clear();
+            controlsToAdd.Clear();
+            return this;
+        }
+
+        public virtual IControlContainer RemoveControl(Control control)
+        {
+            controls.Remove(control);
+            controlsToAdd.Remove(control);
+            return this;
+        }
+
+        public virtual IControlContainer RemoveControlAt(int index)
+        {
+            controls.RemoveAt(index);
+            return this;
+        }
+
         public virtual void Update(UpdateParameters updateParameters)
         {
             PreControlUpdate(updateParameters);

@@ -286,7 +286,7 @@ namespace Merthsoft.Moose.SnowballFight
 
         protected override void PostObjectsUpdate(GameTime gameTime)
         {
-            WindowManager.Update(gameTime, CurrentMouseState, CurrentKeyState);
+            WindowManager.Update(gameTime, IsActive, CurrentMouseState, CurrentKeyState);
             if (Mode == GameMode.Demo || Mode == GameMode.SelectingTeam)
                 DemoUpdate();
         }
@@ -456,7 +456,7 @@ namespace Merthsoft.Moose.SnowballFight
             SelectedUnit = null;
             SelectedUnitHintCells.Clear();
             TargettedUnit = null;
-            StatsWindow.Controls.Clear();
+            StatsWindow.ClearControls();
             StatsWindow.Hide();
         }
 

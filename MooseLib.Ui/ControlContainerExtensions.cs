@@ -73,7 +73,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 FontIndex = fontIndex,
             });
 
-        public static Slider AddSlider(this IControlContainer container, int x, int y, int min, int max, int initialValue, Action<Control, UpdateParameters> action, int fontIndex = 0)
+        public static Slider AddSlider(this IControlContainer container, int x, int y, long min, long max, long initialValue, Action<Control, UpdateParameters> action, int fontIndex = 0)
             => container.AddControlPassThrough(new Slider(container.ParentWindow, x, y, min, max)
             {
                 Value = initialValue,

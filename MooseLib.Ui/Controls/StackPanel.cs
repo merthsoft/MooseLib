@@ -1,56 +1,36 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace Merthsoft.Moose.MooseEngine.Ui.Controls
+﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 {
-    public class StackPanel : Panel, IControlContainer
+    public class StackPanel : FlowPanel, IControlContainer
     {
-        public int ColumnWidth { get; set; }
+        public StackDirection Direction { get; set; } = StackDirection.Horizontal;
 
         public StackPanel(Window window)
-            : base(window)
-        {
-            DockMode = DockMode.Fill;
-            Width = window.Width;
-            Height = window.Height;
-        }
-
+            : base(window) { }
         public StackPanel(Window window, int x, int y, int w, int h)
-            : base(window, x, y, w, h)
-        {
-            DockMode = DockMode.None;
-            Width = w;
-            Height = h;
-        }
+            : base(window, x, y, w, h) { }
 
-        protected void Flow()
+        protected override void Flow()
         {
             var x = 0;
             var y = 0;
+
+            (var maxWidth, var maxHeight) = Controls.Aggregate((0, 0), (current, control) =>
+            {
+                var size = control.CalculateSize();
+                return (MathF.Max(current.Item1, size.X).Ceiling(), MathF.Max(current.Item2, size.Y).Ceiling());
+            });
+
             foreach (var control in Controls)
             {
                 var height = (int)Math.Ceiling(control.CalculateSize().Y);
                 if (y + height > Height)
                 {
-                    x += ColumnWidth;
+                    x += maxWidth;
                     y = 0;
                 }
                 control.Position = new(x, y);
                 y += height;
             }
         }
-
-        public override IControlContainer AddControl(Control control)
-        {
-            base.AddControl(control);
-            var size = control.CalculateSize();
-            if (size.X > ColumnWidth)
-                ColumnWidth = (int)Math.Ceiling(size.X);
-            Flow();
-            return this;
-        }
-
-        public override void PreControlUpdate(UpdateParameters updateParameters)
-            => Flow();
     }
 }

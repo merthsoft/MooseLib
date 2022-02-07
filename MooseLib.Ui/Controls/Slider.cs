@@ -6,16 +6,16 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 {
     public class Slider : Control
     {
-        public int Min { get; }
-        public int Max { get; }
-        public int Value { get; set; }
+        public long Min { get; }
+        public long Max { get; }
+        public long Value { get; set; }
 
         public bool DrawLabel { get; set; } = true;
 
         public int? WidthOverride { get; set; } = null;
         public int? HeightOverride { get; set; } = null;
 
-        public Slider(Window window, int x, int y, int min, int max) : base(window, x, y)
+        public Slider(Window window, int x, int y, long min, long max) : base(window, x, y)
         {
             Min = min;
             Max = max;
