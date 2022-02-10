@@ -19,7 +19,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public override Vector2 CalculateSize()
         {
-            var fontSize = Font.MeasureString(Text);
+            var fontSize = Font.MeasureString(Text.Length == 0 ? "X" : Text);
             return new(WidthOverride ?? fontSize.X + 5, HeightOverride ?? fontSize.Y + 2);
         }
 

@@ -9,7 +9,7 @@
 		<Copyright>2021 Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-		<VersionPrefix>0.3</VersionPrefix>
+		<VersionPrefix>0.4</VersionPrefix>
 		<DebugType>embedded</DebugType>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>

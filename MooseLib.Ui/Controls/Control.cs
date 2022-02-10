@@ -29,7 +29,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         public bool IsHidden { get; set; }
         public bool Enabled { get; set; } = true;
 
-        public UpdateParameters UpdateParameters { get; set; } = new(new(), Vector2.Zero, null, null);
+        public UpdateParameters UpdateParameters { get; set; } = new(new(), Vector2.Zero, default, default);
 
         protected Rectangle CalculatedRectangle { get; set; }
         public Rectangle Rectangle

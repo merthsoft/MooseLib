@@ -10,6 +10,12 @@ namespace Merthsoft.Moose.MooseEngine
 {
     public static class Extensions
     {
+        public static bool IsPrintableAscii(this char c)
+            => char.IsLetterOrDigit(c)
+            || char.IsPunctuation(c)
+            || char.IsSymbol(c)
+            || c == ' ';
+
         public static SpriteBatch DrawRect(this SpriteBatch s, Rectangle r, Color c)
         {
             s.DrawRectangle(r, c);
@@ -37,7 +43,7 @@ namespace Merthsoft.Moose.MooseEngine
             => spriteBatch.DrawEllipse(destinationRectangle.Center.ToVector2(), destinationRectangle.Size.ToVector2(), sides, color, thickness, layerDepth);
 
         public static Color Shade(this Color c, float delta)
-            => new Color(Round(c.R * delta), Round(c.G * delta), Round(c.B * delta));
+            => new(Round(c.R * delta), Round(c.G * delta), Round(c.B * delta));
 
         public static int IndexOf<T>(this IEnumerable<T> set, Func<T, bool> func)
         {

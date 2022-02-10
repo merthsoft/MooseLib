@@ -16,7 +16,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
         public bool DrawBorder { get; set; } = true;
         public bool DrawFill { get; set; } = true;
 
-        public override Vector2 CalculateSize() => new(Position.X - Size.X, Position.Y - Size.Y);
+        public override Vector2 CalculateSize() => Size;
 
         public Rect(Window window, int x, int y, int w, int h, int thickness = 1) : base(window, x, y)
         {

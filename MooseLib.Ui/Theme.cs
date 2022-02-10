@@ -77,10 +77,10 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public Color WindowBackgroundColor { get; set; } = new(113, 65, 59);
         public Color WindowBorderColor { get; set; } = new(219, 164, 99);
 
-        public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Point textureOffset = default)
+        public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Point textureOffset = default, Vector2 controlDrawOffset = default)
         {
-            (Name, TileWidth, TileHeight, this.windowTexture, this.textureOffset)
-             = (name, tileWidth, tileHeight, windowTexture, textureOffset);
+            (Name, TileWidth, TileHeight, this.windowTexture, this.textureOffset, ControlDrawOffset)
+             = (name, tileWidth, tileHeight, windowTexture, textureOffset, controlDrawOffset);
             Fonts.AddRange(fonts);
         }
 

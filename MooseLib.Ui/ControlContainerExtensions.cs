@@ -1,11 +1,19 @@
 ﻿using Merthsoft.Moose.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Merthsoft.Moose.MooseEngine.Ui
 {
     public static class ControlContainerExtensions
     {
+        public static TextBox AddTextBox(this IControlContainer container, int x, int y, int width, string text = "", int fontIndex = 0)
+            => container.AddControlPassThrough(new TextBox(container.ParentWindow, x, y, width)
+            {
+                Text = text,
+                FontIndex = fontIndex
+            });
+
         public static Line AddLine(this IControlContainer container, int x1, int y1, int x2, int y2, int thickness = 1)
              => container.AddControlPassThrough(new Line(container.ParentWindow, x1, y1, x2, y2, thickness));
 
@@ -20,7 +28,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             {
                 Text = text,
                 FontIndex = fontIndex,
-                Color = color,
+                TextColor = color,
                 StrokeSize = strokeSize,
                 StrokeColor = strokeColor ?? container.ParentWindow.Theme.TextBorderColor,
                 HighlightOnHover = hightlightOnHover,
@@ -32,6 +40,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 Text = text,
                 Action = action,
                 FontIndex = fontIndex,
+                HighlightOnHover = true,
             });
 
         public static TextList AddActionList(this IControlContainer container, int x, int y, Action<Control, UpdateParameters> action, IEnumerable<string> options, int fontIndex = 0)
@@ -93,7 +102,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         public static Panel AddPanel(this IControlContainer container, int x, int y, int w, int h)
             => container.AddControlPassThrough(new Panel(container.ParentWindow, x, y, w, h));
 
-        public static StackPanel AddStackPanel(this IControlContainer container, int x, int y, int w, int h)
+        public static StackPanel AddStackPanel(this IControlContainer container, int x, int y, int w, int h, StackDirection stackDirection = StackDirection.Vertical)
             => container.AddControlPassThrough(new StackPanel(container.ParentWindow, x, y, w, h));
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Text;
 
 namespace Merthsoft.Moose.MooseEngine.Ui
 {
@@ -130,7 +131,10 @@ namespace Merthsoft.Moose.MooseEngine.Ui
         }
 
         public void Center(int width, int height)
-            => Position = new(width / 2 - Width / 2, height / 2 - Height / 2);
+            => Position += new Vector2(width / 2 - Width / 2, height / 2 - Height / 2);
+
+        public void Center(Vector2 size)
+            => Position += new Vector2(size.X.Ceiling() / 2 - Width / 2, size.Y.Ceiling() / 2 - Height / 2);
 
         public void SetCellSize(int cellWidth, int cellHeight)
             => Size = new(cellWidth * Theme.TileWidth, cellHeight * Theme.TileHeight);
@@ -140,6 +144,24 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public Vector2 MeasureString(string s, int fontIndex = 0)
             => Theme.Fonts[fontIndex].MeasureString(s);
+
+        public string TruncateString(string s, int width, string truncationString = "...", int fontIndex = 0)
+        {
+            var totalLength = ParentWindow.MeasureString(s, fontIndex).X;
+            if (totalLength < width)
+                return s;
+
+            var length = ParentWindow.MeasureString(truncationString, fontIndex).X;
+            var nameBuilder = new StringBuilder(s.Length);
+            foreach (var c in s)
+            {
+                nameBuilder.Append(c);
+                length += ParentWindow.MeasureString(c.ToString(), fontIndex).X;
+                if (length >= width)
+                    break;
+            }
+            return nameBuilder.Append(truncationString).ToString();
+        }
 
         public void Close()
         {

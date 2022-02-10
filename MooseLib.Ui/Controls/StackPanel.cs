@@ -2,7 +2,8 @@
 {
     public class StackPanel : FlowPanel, IControlContainer
     {
-        public StackDirection Direction { get; set; } = StackDirection.Horizontal;
+        public StackDirection Direction { get; set; } = StackDirection.Vertical;
+        public int Padding { get; set; }
 
         public StackPanel(Window window)
             : base(window) { }
@@ -22,14 +23,27 @@
 
             foreach (var control in Controls)
             {
-                var height = (int)Math.Ceiling(control.CalculateSize().Y);
-                if (y + height > Height)
+                if (Direction == StackDirection.Vertical)
                 {
-                    x += maxWidth;
-                    y = 0;
+                    var height = (int)Math.Ceiling(control.CalculateSize().Y);
+                    if (y + height > Height)
+                    {
+                        x += maxWidth;
+                        y = 0;
+                    }
+                    control.Position = new(x, y);
+                    y += height + Padding;
+                } else
+                {
+                    var width = (int)Math.Ceiling(control.CalculateSize().X);
+                    if (x + width > Width)
+                    {
+                        y += maxHeight;
+                        x = 0;
+                    }
+                    control.Position = new(x, y);
+                    x += width + Padding;
                 }
-                control.Position = new(x, y);
-                y += height;
             }
         }
     }
