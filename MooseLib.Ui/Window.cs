@@ -23,7 +23,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public bool IsHidden { get; set; } = false;
 
-        public bool DrawBackground { get; set; } = true;
+        public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Texture;
 
         public Action<Window>? OnClose { get; set; }
 
@@ -122,12 +122,11 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             if (IsHidden)
                 return;
 
-            if (DrawBackground)
-                Theme.DrawWindowTexture(spriteBatch, Rectangle);
+            var pos = Position + Theme.DrawWindow(spriteBatch, Rectangle, BackgroundDrawingMode);
 
             foreach (var c in Controls)
                 if (!c.IsHidden)
-                    c.Draw(spriteBatch, Position + (DrawBackground ? Theme.ControlDrawOffset : Vector2.Zero));
+                    c.Draw(spriteBatch, pos);
         }
 
         public void Center(int width, int height)

@@ -31,13 +31,7 @@ namespace Merthsoft.Moose.MooseEngine
         }
 
         public static SpriteBatch FillRect(this SpriteBatch s, Vector2 position, int width, int height, Color fillColor, Color? borderColor = null)
-        {
-            var r = new Rectangle((int)position.X, (int)position.Y, width, height);
-            s.FillRectangle(r, fillColor);
-            if (borderColor != null)
-                s.DrawRectangle(r, borderColor.Value);
-            return s;
-        }
+            => s.FillRect(new Rectangle((int)position.X, (int)position.Y, width, height), fillColor, borderColor);
 
         public static void DrawEllipse(this SpriteBatch spriteBatch, Rectangle destinationRectangle, int sides, Color color, float thickness = 1f, float layerDepth = 0)
             => spriteBatch.DrawEllipse(destinationRectangle.Center.ToVector2(), destinationRectangle.Size.ToVector2(), sides, color, thickness, layerDepth);

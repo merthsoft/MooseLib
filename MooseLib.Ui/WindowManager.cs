@@ -91,7 +91,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
             bool updateWindow(Window w)
             {
                 UpdateParameters updateParams
-                    = new(gameTime, mousePosition - w.Position - w.Theme.ControlDrawOffset, currentMouseState, currentKeyState);
+                    = new(gameTime, mousePosition - w.Position - w.Theme.TextureWindowControlDrawOffset, currentMouseState, currentKeyState);
 
                 if (gameHasFocus && w.Rectangle.Contains(mousePosition) && !windowFound)
                     windowFound = updateParams.MouseOver = true;

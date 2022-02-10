@@ -154,8 +154,8 @@ namespace Merthsoft.Moose.SnowballFight
             };
 
             WindowManager = new WindowManager(GraphicsDevice, new Theme[] {
-                new("main menu", windowTextures[0], 32, 32, mainMenuFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
-                new("stats window", windowTextures[0], 32, 32, gameFonts) { ControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
+                new("main menu", windowTextures[0], 32, 32, mainMenuFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
+                new("stats window", windowTextures[0], 32, 32, gameFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
             });
 
             MainMenu = new MainMenu(GraphicsDevice, WindowManager.DefaultTheme, WindowSize) { Clicked = MainMenu_Clicked };

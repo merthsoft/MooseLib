@@ -16,7 +16,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
 
         public Window ParentWindow => Window;
 
-        public bool DrawBackground { get; set; } = true;
+        public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
 
         public Panel(Window window)
             : base(window, 0, 0)
@@ -103,13 +103,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls
                 return;
 
             var position = Position + parentOffset;
-
-            if (DrawBackground)
-            {
-                spriteBatch.FillRect(position, Width, Height, Theme.WindowBackgroundColor, Theme.WindowBorderColor);
-                position += new Vector2(2, 2);
-            }
-
+            position += Theme.DrawWindow(spriteBatch, Rectangle.Move(parentOffset), BackgroundDrawingMode);
+            
             foreach (var c in Controls)
                 if (!c.IsHidden)
                     c.Draw(spriteBatch, position);

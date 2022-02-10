@@ -18,7 +18,7 @@ namespace Merthsoft.Moose.SnowballFight
         public TeamSelectionWindow(GraphicsDevice graphicsDevice, Theme theme, int screenSize, Texture2D santaPicture, Texture2D krampusPicture) 
             : base(graphicsDevice, new(0, 0, screenSize, screenSize), theme)
         {
-            DrawBackground = false;
+            BackgroundDrawingMode = false;
             this.screenSize = screenSize;
 
             headerLabel = this.AddLabel(144, 140, "Choose your team!", strokeSize: 3);

@@ -38,7 +38,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public Vector2 TileScale { get; set; } = new(1, 1);
 
-        public Vector2 ControlDrawOffset { get; set; }
+        public Vector2 TextureWindowControlDrawOffset { get; set; } = new(2, 2);
+        public Vector2 BasicWindowControlDrawOffset { get; set; } = new(2, 2);
 
         public int TileWidth
         {
@@ -79,7 +80,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui
 
         public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Point textureOffset = default, Vector2 controlDrawOffset = default)
         {
-            (Name, TileWidth, TileHeight, this.windowTexture, this.textureOffset, ControlDrawOffset)
+            (Name, TileWidth, TileHeight, this.windowTexture, this.textureOffset, TextureWindowControlDrawOffset)
              = (name, tileWidth, tileHeight, windowTexture, textureOffset, controlDrawOffset);
             Fonts.AddRange(fonts);
         }
@@ -102,13 +103,30 @@ namespace Merthsoft.Moose.MooseEngine.Ui
                 (true, false) => ControlBackgroundColor
             };
 
+        public Vector2 DrawWindow(SpriteBatch spriteBatch, Rectangle rectangle, BackgroundDrawingMode backgroundDrawingMode)
+        {
+            switch (backgroundDrawingMode)
+            {
+                case BackgroundDrawingMode.Basic:
+                    DrawWindowBasic(spriteBatch, rectangle);
+                    return BasicWindowControlDrawOffset;
+                case BackgroundDrawingMode.Texture:
+                    DrawWindowTexture(spriteBatch, rectangle);
+                    return TextureWindowControlDrawOffset;
+            }
+            return Vector2.Zero;
+        }
+
+        protected void DrawWindowBasic(SpriteBatch spriteBatch, Rectangle rectangle)
+            => spriteBatch.FillRect(rectangle, WindowBackgroundColor, WindowBorderColor);
+        
         protected void DrawWindowTexture(SpriteBatch spriteBatch, int index, Point position, int xTileOffset, int yTileOffet)
         {
             var destRect = new Rectangle(position.X + xTileOffset * TileDrawWidth, position.Y + yTileOffet * TileDrawHeight, TileDrawWidth, TileDrawHeight);
             spriteBatch.Draw(WindowTexture, destRect, TextureRects[index], Color.White);
         }
 
-        public void DrawWindowTexture(SpriteBatch spriteBatch, Rectangle rectangle)
+        protected void DrawWindowTexture(SpriteBatch spriteBatch, Rectangle rectangle)
         {
             var numXTiles = rectangle.Width / TileDrawWidth;
             var numYTiles = rectangle.Height / TileDrawHeight;
