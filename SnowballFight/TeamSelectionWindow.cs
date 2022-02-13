@@ -16,14 +16,14 @@ class TeamSelectionWindow : Window
     public Action<TeamSelectionWindow, Team>? TeamSelected { get; set; }
 
     public TeamSelectionWindow(GraphicsDevice graphicsDevice, Theme theme, int screenSize, Texture2D santaPicture, Texture2D krampusPicture)
-        : base(graphicsDevice, new(0, 0, screenSize, screenSize), theme)
+        : base(graphicsDevice, x: new(0, 0, screenSize, screenSize), y: theme)
     {
         BackgroundDrawingMode = false;
         this.screenSize = screenSize;
 
         headerLabel = this.AddLabel(144, 140, "Choose your team!", strokeSize: 3);
-        santaWindow = new(graphicsDevice, 159, 215, 300, 300, theme);
-        krampusWindow = new(graphicsDevice, 501, 215, 300, 300, theme);
+        santaWindow = new(graphicsDevice, theme, 159, 215, 300, 300);
+        krampusWindow = new(graphicsDevice, theme, 501, 215, 300, 300);
 
         santaWindow.AddPicture(5, 5, santaPicture, 14);
         santaWindow.AddLabel(1, 227, "Santa", 1);

@@ -29,11 +29,11 @@ public class TextBox : Control
     public int CursorPosition { get; set; }
     public int ScrollPosition { get; set; }
 
-    public TextBox(Window window, int x, int y, int width) : base(window, x, y)
+    public TextBox(Theme theme, int x, int y, int width) : base(theme, x, y)
         => Width = width;
 
     public override Vector2 CalculateSize()
-        => new(Width, Window.MeasureString("M").Y + 1);
+        => new(Width, MeasureString("M").Y + 1);
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
     {
@@ -46,14 +46,14 @@ public class TextBox : Control
         spriteBatch.FillRectangle(x, y, w, h, backgroundColor);
         spriteBatch.DrawRectangle(x, y, w, h, borderColor);
 
-        var truncatedText = Window.TruncateString(Text[ScrollPosition..], Width, "", FontIndex);
+        var truncatedText = TruncateString(Text[ScrollPosition..], Width, "");
         spriteBatch.DrawString(Font, truncatedText, new(x + 3, y + 1), textColor);
 
         var cursorX = x + 3;
         if (CursorPosition != 0)
         {
             var subString = Text.Substring(ScrollPosition, CursorPosition - ScrollPosition);
-            cursorX += Window.MeasureString(subString, FontIndex).X.Ceiling();
+            cursorX += MeasureString(subString).X.Ceiling();
         }
         spriteBatch.DrawLine(cursorX, y + 3, cursorX, y + h - 3, Theme.ControlPointerColor, 3);
     }
@@ -74,7 +74,7 @@ public class TextBox : Control
         var left = false;
         var right = false;
 
-        var truncatedText = Window.TruncateString(Text[ScrollPosition..], Width - Padding, "", FontIndex);
+        var truncatedText = TruncateString(Text[ScrollPosition..], Width - Padding, "");
         var truncatedTextLength = truncatedText.Length;
         var isTruncated = truncatedTextLength != Text.Length;
 
@@ -174,7 +174,7 @@ public class TextBox : Control
             else
                 Text = Text[..CursorPosition] + outKey + Text[CursorPosition..];
 
-            truncatedText = Window.TruncateString(Text[ScrollPosition..], Width - Padding, "", FontIndex);
+            truncatedText = TruncateString(Text[ScrollPosition..], Width - Padding, "");
             truncatedTextLength = truncatedText.Length;
             isTruncated = truncatedTextLength != Text.Length;
             if (isTruncated)

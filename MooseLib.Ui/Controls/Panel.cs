@@ -5,8 +5,6 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class Panel : Control, IControlContainer
 {
-    public DockMode DockMode { get; set; }
-
     public int Width { get; set; }
     public int Height { get; set; }
 
@@ -14,22 +12,11 @@ public class Panel : Control, IControlContainer
     protected List<Control> controls = new();
     public Control[] Controls => controls.ToArray();
 
-    public Window ParentWindow => Window;
-
     public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
 
-    public Panel(Window window)
-        : base(window, 0, 0)
+    public Panel(Theme theme, int x, int y, int w, int h)
+        : base(theme, x, y)
     {
-        DockMode = DockMode.Fill;
-        Width = window.Width;
-        Height = window.Height;
-    }
-
-    public Panel(Window window, int x, int y, int w, int h)
-        : base(window, x, y)
-    {
-        DockMode = DockMode.None;
         Width = w;
         Height = h;
     }
@@ -65,14 +52,6 @@ public class Panel : Control, IControlContainer
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (DockMode == DockMode.Fill)
-        {
-            X = 0;
-            Y = 0;
-            Width = Window.Width;
-            Height = Window.Height;
-        }
-
         PreControlUpdate(updateParameters);
         foreach (var c in Controls)
         {
@@ -103,7 +82,7 @@ public class Panel : Control, IControlContainer
             return;
 
         var position = Position + parentOffset;
-        position += Theme.DrawWindow(spriteBatch, Rectangle.Move(parentOffset), BackgroundDrawingMode);
+        position += base.Theme.DrawWindow(spriteBatch, Rectangle.Move(parentOffset), BackgroundDrawingMode);
 
         foreach (var c in Controls)
             if (!c.IsHidden)

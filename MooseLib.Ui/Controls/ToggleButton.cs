@@ -7,7 +7,7 @@ public class ToggleButton : Button
 {
     public bool Toggled { get; set; } = false;
 
-    public ToggleButton(Window window, int x, int y, string text) : base(window, x, y, text) { }
+    public ToggleButton(Theme theme, int x, int y, string text) : base(theme, x, y, text) { }
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
         => DrawButton(spriteBatch, drawOffset,

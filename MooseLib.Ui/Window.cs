@@ -1,7 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Text;
 
 namespace Merthsoft.Moose.MooseEngine.Ui;
 
@@ -12,10 +11,6 @@ public class Window : IControlContainer
     protected List<Control> controlsToAdd = new();
     protected List<Control> controls = new();
     public Control[] Controls => controls.ToArray();
-
-    public Window ParentWindow => this;
-
-    public GraphicsDevice GraphicsDevice { get; private set; }
 
     public Theme Theme { get; set; }
 
@@ -28,6 +23,15 @@ public class Window : IControlContainer
     public Action<Window>? OnClose { get; set; }
 
     public WindowManager? Manager { get; set; }
+
+    private Window? contextMenu;
+    public Window? ContextMenu { 
+        get => contextMenu;
+        set
+        {
+            contextMenu = value;
+        }
+    }
 
     public Rectangle Rectangle
     {
@@ -45,13 +49,13 @@ public class Window : IControlContainer
     public Vector2 Position
     {
         get => new(Rectangle.X, Rectangle.Y);
-        set => Rectangle = new Rectangle((int)value.X, (int)value.Y, Rectangle.Width, Rectangle.Height);
+        set => Rectangle = Rectangle with { X = (int)value.X, Y = (int)value.Y };
     }
 
     public Vector2 Size
     {
         get => new(Rectangle.Width, Rectangle.Height);
-        set => Rectangle = new Rectangle(Rectangle.X, Rectangle.Y, (int)value.X, (int)value.Y);
+        set => Rectangle = Rectangle with { Height = (int)value.X, Width = (int)value.Y };
     }
 
     public int Width => Rectangle.Width;
@@ -59,12 +63,11 @@ public class Window : IControlContainer
     public int X => Rectangle.X;
     public int Y => Rectangle.Y;
 
-    public Window(GraphicsDevice graphicsDevice, Rectangle rectangle, Theme theme)
-        => (Rectangle, Theme, GraphicsDevice)
-         = (rectangle, theme, graphicsDevice);
-
-    public Window(GraphicsDevice graphicsDevice, int x, int y, int w, int h, Theme theme)
-        : this(graphicsDevice, new(x, y, w, h), theme) { }
+    public Window(Theme theme, int x, int y, int w = 0, int h = 0)
+    {
+        Theme = theme;
+        Rectangle = new(x, y, w, h);
+    }
 
     public virtual IControlContainer AddControl(Control control)
     {
@@ -95,11 +98,12 @@ public class Window : IControlContainer
     public virtual void Update(UpdateParameters updateParameters)
     {
         PreControlUpdate(updateParameters);
+        
         foreach (var c in Controls)
         {
             UpdateParameters controlUpdateParameters
                 = new(updateParameters.GameTime, updateParameters.LocalMousePosition - c.Position, updateParameters.RawMouseState, updateParameters.RawKeyState);
-            if (c.Rectangle.Contains(updateParameters.LocalMousePosition) && !IsHidden && !c.IsHidden && updateParameters.MouseOver)
+            if (c.Rectangle.Contains(updateParameters.LocalMousePosition) && !IsHidden && !c.IsHidden && updateParameters.MouseOver && ContextMenu == null)
             {
                 controlUpdateParameters.MouseOver = true;
                 controlUpdateParameters.LeftMouseClick = updateParameters.LeftMouseClick;
@@ -135,33 +139,6 @@ public class Window : IControlContainer
 
     public void Center(Vector2 size)
         => Position += new Vector2(size.X.Ceiling() / 2 - Width / 2, size.Y.Ceiling() / 2 - Height / 2);
-
-    public void SetCellSize(int cellWidth, int cellHeight)
-        => Size = new(cellWidth * Theme.TileWidth, cellHeight * Theme.TileHeight);
-
-    public void SetCellPosition(int cellX, int cellY)
-        => Position = new(cellX * Theme.TileWidth, cellY * Theme.TileHeight);
-
-    public Vector2 MeasureString(string s, int fontIndex = 0)
-        => Theme.Fonts[fontIndex].MeasureString(s);
-
-    public string TruncateString(string s, int width, string truncationString = "...", int fontIndex = 0)
-    {
-        var totalLength = ParentWindow.MeasureString(s, fontIndex).X;
-        if (totalLength < width)
-            return s;
-
-        var length = ParentWindow.MeasureString(truncationString, fontIndex).X.Ceiling();
-        var nameBuilder = new StringBuilder(s.Length);
-        foreach (var c in s)
-        {
-            length += ParentWindow.MeasureString(c.ToString(), fontIndex).X.Ceiling();
-            if (length >= width)
-                break;
-            nameBuilder.Append(c);
-        }
-        return nameBuilder.Append(truncationString).ToString();
-    }
 
     public void Close()
     {

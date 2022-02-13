@@ -114,7 +114,7 @@ public class WindowManager
 
     public Window NewWindow(int x, int y, int width, int height, string? theme = null)
     {
-        var ret = new Window(GraphicsDevice, new(x, y, width, height), ThemeDictionary.GetValueOrDefault(theme) ?? DefaultTheme);
+        var ret = new Window(ThemeDictionary.GetValueOrDefault(theme) ?? DefaultTheme, x, y, width, height);
         windowsToAdd.Add(ret);
         return ret;
     }

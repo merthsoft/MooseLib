@@ -20,10 +20,10 @@ public class TextGrid : Control
     public int? CellWidthOverride { get; set; } = null;
     public int? CellHeightOverride { get; set; } = null;
 
-    public int CellWidth => CellWidthOverride ?? Window.Theme.TileDrawWidth;
-    public int CellHeight => CellHeightOverride ?? Window.Theme.TileDrawHeight;
+    public int CellWidth => CellWidthOverride ?? Theme.TileDrawWidth;
+    public int CellHeight => CellHeightOverride ?? Theme.TileDrawHeight;
 
-    public TextGrid(Window window, int x, int y, int gridWidth, IEnumerable<string> options) : base(window, x, y)
+    public TextGrid(Theme theme, int x, int y, int gridWidth, IEnumerable<string> options) : base(theme, x, y)
     {
         Options.AddRange(options.Select(o => new Option(o)));
         GridWidth = gridWidth;

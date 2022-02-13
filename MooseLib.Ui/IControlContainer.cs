@@ -6,7 +6,7 @@ public interface IControlContainer
 {
     Control[] Controls { get; }
 
-    Window ParentWindow { get; }
+    Theme Theme { get; set; }
 
     IControlContainer ClearControls();
     IControlContainer RemoveControl(Control control);

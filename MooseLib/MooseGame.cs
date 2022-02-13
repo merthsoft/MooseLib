@@ -14,12 +14,12 @@ public abstract class MooseGame : Game
 
     protected bool ShouldQuit { get; set; } = false;
 
-    public MooseContentManager ContentManager { get; set; } = null!; // Set in initialize
+    public static MooseContentManager ContentManager { get; set; } = null!; // Set in initialize
 
     public OrthographicCamera MainCamera = null!; // Set in load content
     public SpriteBatch SpriteBatch = null!; // Set in load content
 
-    public GraphicsDeviceManager Graphics { get; set; } = null!;
+    private GraphicsDeviceManager Graphics { get; set; } = null!;
 
     public IMap MainMap => ActiveMaps.Any() ? ActiveMaps[0] : NullMap.Instance;
     public IList<IMap> ActiveMaps = new List<IMap>();

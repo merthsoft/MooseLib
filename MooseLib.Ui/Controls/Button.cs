@@ -14,12 +14,12 @@ public class Button : Control
     public int? WidthOverride { get; set; }
     public int? HeightOverride { get; set; }
 
-    public Button(Window window, int x, int y, string text) : base(window, x, y)
+    public Button(Theme theme, int x, int y, string text) : base(theme, x, y)
         => Text = text;
 
     public override Vector2 CalculateSize()
     {
-        var fontSize = Font.MeasureString(Text.Length == 0 ? "X" : Text);
+        var fontSize = MeasureString(Text.Length == 0 ? "X" : Text);
         return new(WidthOverride ?? fontSize.X + 5, HeightOverride ?? fontSize.Y + 2);
     }
 

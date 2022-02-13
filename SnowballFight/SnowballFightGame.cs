@@ -62,10 +62,7 @@ public class SnowballFightGame : MooseGame
     protected override void Initialize()
     {
         base.Initialize();
-
-        Graphics.PreferredBackBufferWidth = WindowSize;
-        Graphics.PreferredBackBufferHeight = WindowSize;
-        Graphics.ApplyChanges();
+        SetScreenSize(WindowSize, WindowSize);
     }
 
     protected override void Load()
@@ -158,7 +155,7 @@ public class SnowballFightGame : MooseGame
             new("stats window", windowTextures[0], 32, 32, gameFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
         });
 
-        MainMenu = new MainMenu(GraphicsDevice, WindowManager.DefaultTheme, WindowSize) { Clicked = MainMenu_Clicked };
+        MainMenu = new MainMenu(WindowManager.DefaultTheme, WindowSize);
         WindowManager.AddWindow(MainMenu);
         MainMenu.Hide();
 
@@ -184,7 +181,7 @@ public class SnowballFightGame : MooseGame
             }, Random.Next(4, 26), Random.Next(21, 29));
     }
 
-    private void MainMenu_Clicked(SimpleMenu _, string option)
+    private void MainMenu_Clicked(Window _, string option)
     {
         switch (option)
         {
@@ -407,8 +404,8 @@ public class SnowballFightGame : MooseGame
         StatsWindow.Show();
         SelectedUnit = unit;
 
-        var displayNameSize = StatsWindow.MeasureString(unit.DisplayName);
-        var smallFontHeight = (int)StatsWindow.MeasureString("|", 1).Y;
+        var displayNameSize = StatsWindow.Theme.MeasureString(unit.DisplayName, 0);
+        var smallFontHeight = (int)StatsWindow.Theme.MeasureString("|", 1).Y;
 
         StatsWindow.AddPicture(4, 4, unit.Portrait, 6);
         var nameLabel = StatsWindow.AddLabel(113, 2, unit.DisplayName, color: Color.Yellow);

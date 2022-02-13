@@ -1,24 +1,21 @@
 ﻿using Merthsoft.Moose.MooseEngine.Ui;
 using Merthsoft.Moose.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using System.Reflection;
 
 namespace Merthsoft.Moose.SnowballFight;
 
-class MainMenu : SimpleMenu
+class MainMenu : Window
 {
     private readonly Label logo;
     private readonly Label versionLabel;
     private readonly int screenSize;
 
-    public MainMenu(GraphicsDevice graphicsDevice, Theme theme, int screenSize)
-        : base(graphicsDevice, theme, "New Game", "Settings", "About", "Exit")
+    public MainMenu(Theme theme, int screenSize)
+        : base(theme, 0, 0, screenSize, screenSize)
     {
-        MainList.Options[1].Enabled = false;
-        MainList.Options[2].Enabled = false;
-
+        //"New Game", "Settings", "About", "Exit"
         this.screenSize = screenSize;
 
         logo = this.AddLabel(0, 0, "Snowfight Tactics", 0, strokeSize: 3);

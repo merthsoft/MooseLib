@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Text;
 
 namespace Merthsoft.Moose.MooseEngine.Ui;
 
@@ -195,4 +196,26 @@ public class Theme
 
         TextureRects[15] = new Rectangle(3 * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
     }
+
+    public Vector2 MeasureString(string s, int fontIndex)
+        => Fonts[fontIndex].MeasureString(s);
+
+    public string TruncateString(string s, int width, string truncationString = "...", int fontIndex = 0)
+    {
+        var totalLength = MeasureString(s, fontIndex).X;
+        if (totalLength < width)
+            return s;
+
+        var length = MeasureString(truncationString, fontIndex).X.Ceiling();
+        var nameBuilder = new StringBuilder(s.Length);
+        foreach (var c in s)
+        {
+            length += MeasureString(c.ToString(), fontIndex).X.Ceiling();
+            if (length >= width)
+                break;
+            nameBuilder.Append(c);
+        }
+        return nameBuilder.Append(truncationString).ToString();
+    }
+
 }

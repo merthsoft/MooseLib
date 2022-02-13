@@ -25,8 +25,8 @@ public class Picture : Control
 
     public override Vector2 CalculateSize() => new(Texture?.Width ?? 0, Texture?.Height ?? 0);
 
-    public Picture(Window window, int x, int y, Texture2D texture)
-        : base(window, x, y) => Texture = texture;
+    public Picture(Theme theme, int x, int y, Texture2D texture)
+        : base(theme, x, y) => Texture = texture;
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
         => spriteBatch.Draw(Texture, Position + parentOffset, SourceRectangle, Color, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);

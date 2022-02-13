@@ -5,9 +5,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public abstract class Control
 {
-    public Window Window { get; }
-
-    public Theme Theme => Window.Theme;
+    public Theme Theme { get; set; }
 
     public Vector2 Position { get; set; }
 
@@ -43,9 +41,9 @@ public abstract class Control
 
     public Action<Control, UpdateParameters>? Action { get; set; }
 
-    public Control(Window window, int x, int y)
+    public Control(Theme theme, int x, int y)
     {
-        Window = window;
+        Theme = theme;
         Position = new(x, y);
     }
 
@@ -61,6 +59,12 @@ public abstract class Control
         return this;
     }
 
+    public Vector2 MeasureString(string s, int? fontIndex = null)
+        => Theme.MeasureString(s, fontIndex ?? FontIndex);
+
+    public string TruncateString(string s, int width, string truncationString = "...", int? fontIndex = null)
+        => Theme.TruncateString(s, width, truncationString, fontIndex ?? FontIndex);
+
     public abstract Vector2 CalculateSize();
 
     public virtual void Update(UpdateParameters updateParameters)
@@ -69,8 +73,5 @@ public abstract class Control
             Action?.Invoke(this, updateParameters);
     }
 
-    public virtual void Draw(SpriteBatch spriteBatch, Vector2 parentOffset) { }
-
-    public Vector2 CenterInWindow()
-        => Position = new(Window.Width / 2 - CalculatedRectangle.X / 2, Window.Height / 2 - CalculatedRectangle.Y / 2);
+    public abstract void Draw(SpriteBatch spriteBatch, Vector2 parentOffset);
 }

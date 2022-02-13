@@ -6,13 +6,13 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class Label : Control
 {
-    private string? text;
-    public string? Text
+    private string text = "";
+    public string Text
     {
         get => text;
         set
         {
-            text = value;
+            text = value ?? "";
             renderedTexture = null;
         }
     }
@@ -46,18 +46,18 @@ public class Label : Control
     public Color? TextColor { get; set; }
     public Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, false, HighlightOnHover);
 
-    public Label(Window window, int x, int y) : base(window, x, y)
+    public Label(Theme theme, int x, int y) : base(theme, x, y)
     {
     }
 
     public override Vector2 CalculateSize()
         => StrokeSize == 0
-            ? Window.Theme.Fonts[FontIndex].MeasureString(Text)
+            ? MeasureString(Text ?? "")
             : new(renderedTexture?.Width ?? 0, renderedTexture?.Height ?? 0);
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
     {
-        if (Text == null)
+        if (Text == "")
             return;
 
         var position = Position + parentOffset;
@@ -75,7 +75,7 @@ public class Label : Control
             Action?.Invoke(this, updateParameters);
 
         if (renderedTexture == null && StrokeSize > 0)
-            renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedTextColor, Vector2.One, StrokeSize, StrokeColor, Window.GraphicsDevice);
+            renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedTextColor, Vector2.One, StrokeSize, StrokeColor, MooseGame.ContentManager.GraphicsDevice);
 
         base.Update(updateParameters);
     }
