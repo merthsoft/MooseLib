@@ -4,74 +4,73 @@ using Merthsoft.Moose.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Merthsoft.Moose.SnowballFight
+namespace Merthsoft.Moose.SnowballFight;
+
+class TeamSelectionWindow : Window
 {
-    class TeamSelectionWindow : Window
+    private readonly Label headerLabel;
+    private readonly Window santaWindow;
+    private readonly Window krampusWindow;
+    private readonly int screenSize;
+
+    public Action<TeamSelectionWindow, Team>? TeamSelected { get; set; }
+
+    public TeamSelectionWindow(GraphicsDevice graphicsDevice, Theme theme, int screenSize, Texture2D santaPicture, Texture2D krampusPicture)
+        : base(graphicsDevice, new(0, 0, screenSize, screenSize), theme)
     {
-        private readonly Label headerLabel;
-        private readonly Window santaWindow;
-        private readonly Window krampusWindow;
-        private readonly int screenSize;
+        BackgroundDrawingMode = false;
+        this.screenSize = screenSize;
 
-        public Action<TeamSelectionWindow, Team>? TeamSelected { get; set; }
+        headerLabel = this.AddLabel(144, 140, "Choose your team!", strokeSize: 3);
+        santaWindow = new(graphicsDevice, 159, 215, 300, 300, theme);
+        krampusWindow = new(graphicsDevice, 501, 215, 300, 300, theme);
 
-        public TeamSelectionWindow(GraphicsDevice graphicsDevice, Theme theme, int screenSize, Texture2D santaPicture, Texture2D krampusPicture) 
-            : base(graphicsDevice, new(0, 0, screenSize, screenSize), theme)
-        {
-            BackgroundDrawingMode = false;
-            this.screenSize = screenSize;
+        santaWindow.AddPicture(5, 5, santaPicture, 14);
+        santaWindow.AddLabel(1, 227, "Santa", 1);
 
-            headerLabel = this.AddLabel(144, 140, "Choose your team!", strokeSize: 3);
-            santaWindow = new(graphicsDevice, 159, 215, 300, 300, theme);
-            krampusWindow = new(graphicsDevice, 501, 215, 300, 300, theme);
+        krampusWindow.AddPicture(5, 5, krampusPicture, 14);
+        krampusWindow.AddLabel(1, 227, "Krampus", 1);
+    }
 
-            santaWindow.AddPicture(5, 5, santaPicture, 14);
-            santaWindow.AddLabel(1, 227, "Santa", 1);
+    public override void Update(UpdateParameters updateParameters)
+    {
+        if (IsHidden)
+            return;
 
-            krampusWindow.AddPicture(5, 5, krampusPicture, 14);
-            krampusWindow.AddLabel(1, 227, "Krampus", 1);
-        }
+        var (logoWidth, logoHeight) = headerLabel.CalculateSize();
+        headerLabel.Position = new(screenSize / 2 - logoWidth / 2, logoHeight * 2);
 
-        public override void Update(UpdateParameters updateParameters)
-        {
-            if (IsHidden)
-                return;
+        santaWindow.Position = headerLabel.Position + new Vector2(15, 75);
+        krampusWindow.Position = headerLabel.Position + new Vector2(logoWidth - 315, 75);
 
-            var (logoWidth, logoHeight) = headerLabel.CalculateSize();
-            headerLabel.Position = new(screenSize/2 - logoWidth / 2, logoHeight * 2);
+        Team? team = null;
 
-            santaWindow.Position = headerLabel.Position + new Vector2(15, 75);
-            krampusWindow.Position = headerLabel.Position + new Vector2(logoWidth - 315, 75);
+        if (HighlightIfHovering(updateParameters, santaWindow))
+            team = Team.Santa;
 
-            Team? team = null;
+        if (HighlightIfHovering(updateParameters, krampusWindow))
+            team = Team.Krampus;
 
-            if (HighlightIfHovering(updateParameters, santaWindow))
-                team = Team.Santa;
+        if (team.HasValue)
+            TeamSelected?.Invoke(this, team.Value);
 
-            if (HighlightIfHovering(updateParameters, krampusWindow))
-                team = Team.Krampus;
+        base.Update(updateParameters);
+    }
 
-            if (team.HasValue)
-                TeamSelected?.Invoke(this, team.Value);
+    private bool HighlightIfHovering(UpdateParameters updateParameters, Window window)
+    {
+        var intersects = window.Rectangle.Intersects(updateParameters.LocalMousePosition);
+        //TODO: window.Controls.OfType<Label>().ForEach(l => l.ForceHighlight = intersects);
+        return intersects && updateParameters.LeftMouseClick;
+    }
 
-            base.Update(updateParameters);
-        }
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        if (IsHidden)
+            return;
 
-        private bool HighlightIfHovering(UpdateParameters updateParameters, Window window)
-        {
-            var intersects = window.Rectangle.Intersects(updateParameters.LocalMousePosition);
-            //TODO: window.Controls.OfType<Label>().ForEach(l => l.ForceHighlight = intersects);
-            return intersects && updateParameters.LeftMouseClick;
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            if (IsHidden)
-                return;
-
-            santaWindow.Draw(spriteBatch);
-            krampusWindow.Draw(spriteBatch);
-            base.Draw(spriteBatch);
-        }
+        santaWindow.Draw(spriteBatch);
+        krampusWindow.Draw(spriteBatch);
+        base.Draw(spriteBatch);
     }
 }

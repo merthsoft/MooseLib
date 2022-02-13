@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Merthsoft.Moose.MooseEngine.Interface
+namespace Merthsoft.Moose.MooseEngine.Interface;
+
+public interface ILayer
 {
-    public interface ILayer
-    {
-        string Name { get; }
-        bool IsHidden { get; set;}
-        Vector2 DrawOffset { get; }
-    }
+    string Name { get; }
+    bool IsHidden { get; set; }
+    Vector2 DrawOffset { get; }
 }

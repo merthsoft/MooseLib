@@ -1,12 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
-namespace Merthsoft.Moose.MooseEngine.Ui.Controls
+public enum SelectMode
 {
-    public enum SelectMode
-    {
-        None,
-        Single,
-        Multiple
-    }
+    None,
+    Single,
+    Multiple
 }

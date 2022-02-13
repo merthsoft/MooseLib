@@ -3,180 +3,203 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 
-namespace Merthsoft.Moose.MooseEngine.Ui.Controls
+namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
+
+public class TextBox : Control
 {
-    public class TextBox : Control
+    public int Width { get; set; }
+    protected int Padding => Font.MeasureString("W").X.Ceiling();
+
+    private string text = null!;
+    public string Text
     {
-        public int Width { get; set; }
-        
-        private string text = null!;
-        public string Text
+        get => text;
+        set
         {
-            get => text;
-            set {
-                text = value ?? "";
+            text = value ?? "";
 
-                if (text == "")
-                {
-                    CursorPosition = 1;
-                    ScrollPosition = 0;
-                }
+            if (text == "")
+            {
+                CursorPosition = 0;
+                ScrollPosition = 0;
             }
         }
+    }
 
-        public int CursorPosition { get; set; } = 1;
-        public int ScrollPosition { get; set; }
+    public int CursorPosition { get; set; }
+    public int ScrollPosition { get; set; }
 
-        public TextBox(Window window, int x, int y, int width) : base(window, x, y)
-            => Width = width;
+    public TextBox(Window window, int x, int y, int width) : base(window, x, y)
+        => Width = width;
 
-        public override Vector2 CalculateSize()
-            => new(Width, Window.MeasureString("M").Y + 1);
+    public override Vector2 CalculateSize()
+        => new(Width, Window.MeasureString("M").Y + 1);
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    {
+        var backgroundColor = Theme.ResolveBackgroundColor(UpdateParameters, Enabled);
+        var borderColor = Theme.ControlBorderColor;
+        var textColor = Theme.ResolveTextColor(UpdateParameters, Enabled, false);
+
+        var (x, y) = Position + parentOffset;
+        var (w, h) = CalculateSize();
+        spriteBatch.FillRectangle(x, y, w, h, backgroundColor);
+        spriteBatch.DrawRectangle(x, y, w, h, borderColor);
+
+        var truncatedText = Window.TruncateString(Text[ScrollPosition..], Width, "", FontIndex);
+        spriteBatch.DrawString(Font, truncatedText, new(x + 3, y + 1), textColor);
+
+        var cursorX = x + 3;
+        if (CursorPosition != 0)
         {
-            var backgroundColor = Theme.ResolveBackgroundColor(UpdateParameters, Enabled);
-            var borderColor = Theme.ControlBorderColor;
-            var textColor = Theme.ResolveTextColor(UpdateParameters, Enabled, false);
+            var subString = Text.Substring(ScrollPosition, CursorPosition - ScrollPosition);
+            cursorX += Window.MeasureString(subString, FontIndex).X.Ceiling();
+        }
+        spriteBatch.DrawLine(cursorX, y + 3, cursorX, y + h - 3, Theme.ControlPointerColor, 3);
+    }
 
-            var (x, y) = Position + parentOffset;
-            var (w, h) = CalculateSize();
-            spriteBatch.FillRectangle(x, y, w, h, backgroundColor);
-            spriteBatch.DrawRectangle(x, y, w, h, borderColor);
+    public override void Update(UpdateParameters updateParameters)
+    {
+        base.Update(updateParameters);
 
-            var truncatedText = Window.TruncateString(Text[ScrollPosition..], Width - 4, "", FontIndex);
-            spriteBatch.DrawString(Font, truncatedText, new(x + 3, y + 1), textColor);
-            
-            var cursorX = x + 3;
-            if (CursorPosition != 0)
+        var previousKeyState = UpdateParameters.RawKeyState;
+        var currentKeyState = updateParameters.RawKeyState;
+
+        var previousPressedKeys = previousKeyState.GetPressedKeys();
+        var currentPressedKeys = currentKeyState.GetPressedKeys();
+
+        var newChars = new List<char>();
+        var shift = false;
+        var back = false;
+        var left = false;
+        var right = false;
+
+        var truncatedText = Window.TruncateString(Text[ScrollPosition..], Width - Padding, "", FontIndex);
+        var truncatedTextLength = truncatedText.Length;
+        var isTruncated = truncatedTextLength != Text.Length;
+
+        foreach (var key in currentPressedKeys)
+        {
+            var keyChar = (char)key;
+            shift |= key == Keys.LeftShift || key == Keys.RightShift;
+            if (!previousPressedKeys.Contains(key))
             {
-                var subString = Text.Substring(ScrollPosition, CursorPosition - ScrollPosition - 1);
-                cursorX += Window.MeasureString(subString, FontIndex).X.Ceiling();
+                if (keyChar.IsPrintableAscii())
+                    newChars.Add(keyChar);
+
+                back |= key == Keys.Back || key == Keys.Delete;
+                left |= key == Keys.Left;
+                right |= key == Keys.Right;
             }
-            spriteBatch.DrawLine(cursorX, y + 3, cursorX, y + h - 3, Theme.ControlPointerColor, 3);
+
+            if (key == Keys.LeftAlt || key == Keys.RightAlt)
+                return;
         }
 
-        public override void Update(UpdateParameters updateParameters)
+        if (left)
         {
-            base.Update(updateParameters);
-
-            var previousKeyState = UpdateParameters.RawKeyState;
-            var currentKeyState = updateParameters.RawKeyState;
-
-            var previousPressedKeys = previousKeyState.GetPressedKeys();
-            var currentPressedKeys = currentKeyState.GetPressedKeys();
-
-            var newChars = new List<char>();
-            var shift = false;
-            var back = false;
-            var left = false;
-            var right = false;
-
-            var truncatedText = Window.TruncateString(Text[ScrollPosition..], Width - 4, "", FontIndex);
-            var truncatedTextLength = truncatedText.Length;
-            var isTruncated = truncatedTextLength != Text.Length;
-            
-            foreach (var key in currentPressedKeys)
+            if (CursorPosition > 0)
             {
-                var keyChar = (char)key;
-                shift |= key == Keys.LeftShift || key == Keys.RightShift;
-                if (!previousPressedKeys.Contains(key))
-                {
-                    if (keyChar.IsPrintableAscii())
-                        newChars.Add(keyChar);
-
-                    back |= key == Keys.Back || key == Keys.Delete;
-                    left |= key == Keys.Left;
-                    right |= key == Keys.Right;
-                }
-
-                if (key == Keys.LeftAlt || key == Keys.RightAlt)
-                    return;
-            }
-
-            if (left)
-            {
-                if (CursorPosition > 1)
-                {
-                    if (isTruncated && ScrollPosition > 0 && CursorPosition - ScrollPosition - 1 == 1)
-                        ScrollPosition -= 1;
-                    CursorPosition -= 1;
-                }
-                return;
-            }
-
-            if (right)
-            {
-                if (CursorPosition < Text.Length + 1)
-                {
-                    if (isTruncated && CursorPosition - ScrollPosition == truncatedTextLength)
-                        ScrollPosition += 1;
-                    CursorPosition += 1;
-                }
-                return;
-            }
-
-            if (back)
-            {
-                if (CursorPosition == 0 || Text.Length == 0 || (CursorPosition == 1 && Text.Length > 0))
-                    return;
-                if (CursorPosition == Text.Length + 1)
-                    Text = Text[..(CursorPosition - 2)];
-                else
-                    Text = Text[..(CursorPosition - 2)] + Text[(CursorPosition-1)..];
+                if (isTruncated && ScrollPosition > 0 && CursorPosition - ScrollPosition - 1 == 1)
+                    ScrollPosition -= 1;
                 CursorPosition -= 1;
-                if (CursorPosition <= 0)
-                    CursorPosition = 1;
-                return;
             }
+            return;
+        }
 
-            foreach (var key in newChars)
+        if (right)
+        {
+            if (CursorPosition < Text.Length)
             {
-                var outKey = key;
-
-                if (char.IsLetter(key) && !shift)
-                    outKey = char.ToLower(key);
-                // this is so dirty and won't work with other keyboard layouts
-                if ((char.IsNumber(key) || char.IsSymbol(key)) && shift)
-                    outKey = key switch
-                    {
-                        '1' => '!',
-                        '2' => '@',
-                        '3' => '#',
-                        '4' => '$',
-                        '5' => '%',
-                        '6' => '^',
-                        '7' => '&',
-                        '8' => '*',
-                        '9' => '(',
-                        '0' => ')',
-                        '-' => '_',
-                        '=' => '+',
-                        '[' => '{',
-                        ']' => '}',
-                        '\\' => '|',
-                        ';' => ':',
-                        '\'' => '"',
-                        ',' => '<',
-                        '.' => '>',
-                        '/' => '?',
-                        _ => ' ',
-                    };
-
-                if (CursorPosition > Text.Length || Text.Length == 0)
-                    Text += outKey;
-                else if (CursorPosition == 0)
-                    Text = outKey + Text;
-                else
-                    Text = Text[..CursorPosition] + outKey + Text[CursorPosition..];
-
-                truncatedText = Window.TruncateString(Text[ScrollPosition..], Width - 4, "", FontIndex);
-                truncatedTextLength = truncatedText.Length;
-                isTruncated = truncatedTextLength != Text.Length;
                 if (isTruncated && CursorPosition - ScrollPosition == truncatedTextLength)
                     ScrollPosition += 1;
-
                 CursorPosition += 1;
+            }
+            return;
+        }
+
+        if (back)
+        {
+            if (CursorPosition == 0 || Text.Length == 0)
+                return;
+            if (CursorPosition == Text.Length + 1)
+                Text = Text[..(CursorPosition - 1)];
+            else
+                Text = Text[..(CursorPosition - 1)] + Text[CursorPosition..];
+            CursorPosition -= 1;
+            if (CursorPosition < 0)
+                CursorPosition = 0;
+            if (ScrollPosition > 0)
+                ScrollPosition -= 1;
+            return;
+        }
+
+        foreach (var key in newChars)
+        {
+            var outKey = key;
+
+            if (char.IsLetter(key) && !shift)
+                outKey = char.ToLower(key);
+            // this is so dirty and won't work with other keyboard layouts
+            if ((char.IsNumber(key) || char.IsSymbol(key)) && shift)
+                outKey = key switch
+                {
+                    '1' => '!',
+                    '2' => '@',
+                    '3' => '#',
+                    '4' => '$',
+                    '5' => '%',
+                    '6' => '^',
+                    '7' => '&',
+                    '8' => '*',
+                    '9' => '(',
+                    '0' => ')',
+                    '-' => '_',
+                    '=' => '+',
+                    '[' => '{',
+                    ']' => '}',
+                    '\\' => '|',
+                    ';' => ':',
+                    '\'' => '"',
+                    ',' => '<',
+                    '.' => '>',
+                    '/' => '?',
+                    _ => ' ',
+                };
+
+            if (CursorPosition > Text.Length || Text.Length == 0)
+                Text += outKey;
+            else if (CursorPosition == 0)
+                Text = outKey + Text;
+            else
+                Text = Text[..CursorPosition] + outKey + Text[CursorPosition..];
+
+            truncatedText = Window.TruncateString(Text[ScrollPosition..], Width - Padding, "", FontIndex);
+            truncatedTextLength = truncatedText.Length;
+            isTruncated = truncatedTextLength != Text.Length;
+            if (isTruncated)
+                ScrollPosition += 1;
+
+            CursorPosition += 1;
+        }
+
+        if (updateParameters.LeftMouseClick)
+        {
+            var (w, h) = CalculateSize();
+            var (clickX, clickY) = updateParameters.LocalMousePosition;
+            if (new Rectangle(0, 0, (int)w, (int)h).Intersects(clickX, clickY))
+            {
+                clickX -= 3;
+
+                CursorPosition = ScrollPosition;
+                var currentLength = 0f;
+                foreach (var c in Text.Skip(ScrollPosition))
+                {
+                    currentLength += Font.MeasureString(c.ToString()).X;
+                    if (currentLength > clickX)
+                        break;
+                    CursorPosition++;
+                }
             }
         }
     }

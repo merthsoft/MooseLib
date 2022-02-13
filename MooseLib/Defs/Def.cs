@@ -1,9 +1,8 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Defs
+﻿namespace Merthsoft.Moose.MooseEngine.Defs;
+
+public record Def(string DefName)
 {
-    public record Def(string DefName)
-    {
-        public static readonly Def Empty = new("EMPTY_DEF");
-        
-        public virtual void LoadContent(MooseContentManager contentManager) { }
-    }
+    public static readonly Def Empty = new("EMPTY_DEF");
+
+    public virtual void LoadContent(MooseContentManager contentManager) { }
 }

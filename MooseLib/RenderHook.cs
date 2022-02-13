@@ -1,7 +1,6 @@
-﻿namespace Merthsoft.Moose.MooseEngine
+﻿namespace Merthsoft.Moose.MooseEngine;
+
+public record RenderHook(Action<int>? PreHook = null, Action<int>? PostHook = null)
 {
-    public record RenderHook(Action<int>? PreHook = null, Action<int>? PostHook = null)
-    {
-        
-    }
+
 }

@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace Merthsoft.Moose.SnowballFight;
 
-namespace Merthsoft.Moose.SnowballFight
+public static class Program
 {
-    public static class Program
+    [STAThread]
+    private static void Main()
     {
-        [STAThread]
-        private static void Main()
-        {
-            using var game = new SnowballFightGame();
-            game.Run();
-        }
+        using var game = new SnowballFightGame();
+        game.Run();
     }
 }

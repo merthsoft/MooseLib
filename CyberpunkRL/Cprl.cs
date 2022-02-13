@@ -3,35 +3,34 @@ using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.TiledDriver;
 using MonoGame.Extended.Tiled;
 
-namespace Merthsoft.Moose.CyberpunkRL
+namespace Merthsoft.Moose.CyberpunkRL;
+
+public class Cprl : MooseGame
 {
-    public class Cprl : MooseGame
+    protected readonly List<TiledMooseMap> Rooms = new();
+    protected readonly List<TiledMooseMap> Hallways = new();
+
+    protected TiledMooseMap Map => (MainMap as TiledMooseMap)!;
+
+    public Cprl()
     {
-        protected readonly List<TiledMooseMap> Rooms = new();
-        protected readonly List<TiledMooseMap> Hallways = new();
+    }
 
-        protected TiledMooseMap Map => (MainMap as TiledMooseMap)!;
+    protected override void Load()
+    {
+        AddRenderer("map", new TiledMooseMapRenderer(GraphicsDevice));
+        AddRenderer("objects", new SpriteBatchObjectRenderer(SpriteBatch));
 
-        public Cprl()
-        {
-        }
+        Rooms.Add(new(Content.Load<TiledMap>("Maps/room1")));
+        Rooms.Add(new(Content.Load<TiledMap>("Maps/room2")));
+        Hallways.Add(new(Content.Load<TiledMap>("Maps/hall1")));
 
-        protected override void Load()
-        {
-            AddRenderer("map", new TiledMooseMapRenderer(GraphicsDevice));
-            AddRenderer("objects", new SpriteBatchObjectRenderer(SpriteBatch));
+        ActiveMaps.Add(new TiledMooseMap("map", 22, 16, 16, 16));
 
-            Rooms.Add(new(Content.Load<TiledMap>("Maps/room1")));
-            Rooms.Add(new(Content.Load<TiledMap>("Maps/room2")));
-            Hallways.Add(new(Content.Load<TiledMap>("Maps/hall1")));
+        Map.CopyFromMap(Rooms[0], destX: 0, destY: 0);
+        Map.CopyFromMap(Rooms[1], destX: 11, destY: 0);
+        Map.CopyFromMap(Hallways[0], destX: 0, destY: 11);
 
-            ActiveMaps.Add(new TiledMooseMap("map", 22, 16, 16, 16));
-
-            Map.CopyFromMap(Rooms[0], destX: 0, destY: 0);
-            Map.CopyFromMap(Rooms[1], destX: 11, destY: 0);
-            Map.CopyFromMap(Hallways[0], destX: 0, destY: 11);
-
-            MainCamera.ZoomIn(1f);
-        }
+        MainCamera.ZoomIn(1f);
     }
 }

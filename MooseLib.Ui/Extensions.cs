@@ -1,22 +1,20 @@
-﻿using System.Collections;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
+using System.Collections;
 
-namespace Merthsoft.Moose.MooseEngine.Ui
+namespace Merthsoft.Moose.MooseEngine.Ui;
+
+public static class Extensions
 {
-    public static class Extensions
+
+    public static T AddPassThrough<T>(this IList list, T item)
     {
-        
-        public static T AddPassThrough<T>(this IList list, T item)
-        {
-            list.Add(item);
-            return item;
-        }
-
-        public static bool JustPressed(this ButtonState buttonState, ButtonState previousButtonState)
-               => buttonState == ButtonState.Pressed && previousButtonState == ButtonState.Released;
-
-        public static bool JustReleased(this ButtonState buttonState, ButtonState previousButtonState)
-            => buttonState == ButtonState.Released && previousButtonState == ButtonState.Pressed;
+        list.Add(item);
+        return item;
     }
+
+    public static bool JustPressed(this ButtonState buttonState, ButtonState previousButtonState)
+           => buttonState == ButtonState.Pressed && previousButtonState == ButtonState.Released;
+
+    public static bool JustReleased(this ButtonState buttonState, ButtonState previousButtonState)
+        => buttonState == ButtonState.Released && previousButtonState == ButtonState.Pressed;
 }

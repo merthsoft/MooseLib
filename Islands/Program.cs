@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace Merthsoft.Moose.Islands;
 
-namespace Merthsoft.Moose.Islands
+public static class Program
 {
-    public static class Program
+    [STAThread]
+    static void Main()
     {
-        [STAThread]
-        static void Main()
-        {
-            using (var game = new IslandGame())
-                game.Run();
-        }
+        using (var game = new IslandGame())
+            game.Run();
     }
 }

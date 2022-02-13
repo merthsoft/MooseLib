@@ -1,13 +1,12 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
 
-namespace Merthsoft.Moose.Miner
+namespace Merthsoft.Moose.Miner;
+
+abstract record MinerObjectDef : GameObjectDef
 {
-    abstract record MinerObjectDef : GameObjectDef
+    public MinerObjectDef(string defName) : base(defName)
     {
-        public MinerObjectDef(string defName) : base(defName)
-        {
-            DefaultLayer = 1;
-            DefaultSize = new(16, 24);
-        }
+        DefaultLayer = 1;
+        DefaultSize = new(16, 24);
     }
 }

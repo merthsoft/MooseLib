@@ -1,32 +1,30 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using Roy_T.AStar.Grids;
-using System.Collections.Generic;
 
-namespace Merthsoft.Moose.MooseEngine.Interface
+namespace Merthsoft.Moose.MooseEngine.Interface;
+
+public interface IMap
 {
-    public interface IMap
-    {
-        int Height { get; }
-        int Width { get; }
-        int TileWidth { get; }
-        int TileHeight { get; }
+    int Height { get; }
+    int Width { get; }
+    int TileWidth { get; }
+    int TileHeight { get; }
 
-        public Size2 TileSize => new(TileWidth, TileHeight);
-        public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2);
+    public Size2 TileSize => new(TileWidth, TileHeight);
+    public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2);
 
-        IReadOnlyList<ILayer> Layers { get; }
+    IReadOnlyList<ILayer> Layers { get; }
 
-        void Update(GameTime gameTime);
-        IEnumerable<int> GetBlockingVector(int cellX, int cellY);
-        IEnumerable<int> GetBlockingVector(Vector2 worldPosition)
-            => GetBlockingVector((int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight));
+    void Update(GameTime gameTime);
+    IEnumerable<int> GetBlockingVector(int cellX, int cellY);
+    IEnumerable<int> GetBlockingVector(Vector2 worldPosition)
+        => GetBlockingVector((int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight));
 
-        Grid BuildCollisionGrid(params Vector2[] walkableOverrides);
-        IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false);
-        IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null);
+    Grid BuildCollisionGrid(params Vector2[] walkableOverrides);
+    IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false);
+    IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null);
 
-        public bool CellIsInBounds(Vector2 cell);
-        public bool CellIsInBounds(int cellX, int cellY);
-    }
+    public bool CellIsInBounds(Vector2 cell);
+    public bool CellIsInBounds(int cellX, int cellY);
 }

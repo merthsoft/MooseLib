@@ -1,7 +1,6 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Ui
+﻿namespace Merthsoft.Moose.MooseEngine.Ui;
+
+public enum BackgroundDrawingMode
 {
-    public enum BackgroundDrawingMode
-    {
-        None, Basic, Texture
-    }
+    None, Basic, Texture
 }

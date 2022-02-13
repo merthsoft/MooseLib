@@ -1,8 +1,7 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Interface
+﻿namespace Merthsoft.Moose.MooseEngine.Interface;
+
+public interface ITile<T>
 {
-    public interface ITile<T>
-    {
-        T Tile { get; }
-        bool IsBlocking(IMap map);
-    }
+    T Tile { get; }
+    bool IsBlocking(IMap map);
 }

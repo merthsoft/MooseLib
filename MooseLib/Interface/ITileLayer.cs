@@ -1,14 +1,13 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Interface
+﻿namespace Merthsoft.Moose.MooseEngine.Interface;
+
+public interface ITileLayer<TTile> : ILayer
 {
-    public interface ITileLayer<TTile> : ILayer
-    {
-        int Width { get; }
-        int Height { get; }
+    int Width { get; }
+    int Height { get; }
 
-        ITile<TTile> GetTile(int x, int y);
-        TTile GetTileValue(int x, int y);
+    ITile<TTile> GetTile(int x, int y);
+    TTile GetTileValue(int x, int y);
 
-        bool IsBlockedAt(int x, int y, IMap map)
-            => GetTile(x, y).IsBlocking(map);
-    }
+    bool IsBlockedAt(int x, int y, IMap map)
+        => GetTile(x, y).IsBlocking(map);
 }
