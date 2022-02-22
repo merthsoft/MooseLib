@@ -7,10 +7,10 @@ public class ToggleButton : Button
 {
     public bool Toggled { get; set; } = false;
 
-    public ToggleButton(Theme theme, int x, int y, string text) : base(theme, x, y, text) { }
+    public ToggleButton(Theme theme, float x, float y, string text) : base(theme, x, y, text) { }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
-        => DrawButton(spriteBatch, drawOffset,
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+        => DrawButton(spriteBatch, parentOffset,
             BackgroundColor ?? Theme.ResolveBackgroundColor(UpdateParameters, Enabled),
             BorderColor ?? Theme.ControlBorderColor,
             Theme.ResolveTextColor(UpdateParameters, Enabled, Toggled)

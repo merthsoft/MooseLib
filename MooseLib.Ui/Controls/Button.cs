@@ -14,7 +14,7 @@ public class Button : Control
     public int? WidthOverride { get; set; }
     public int? HeightOverride { get; set; }
 
-    public Button(Theme theme, int x, int y, string text) : base(theme, x, y)
+    public Button(Theme theme, float x, float y, string text) : base(theme, x, y)
         => Text = text;
 
     public override Vector2 CalculateSize()
@@ -23,8 +23,8 @@ public class Button : Control
         return new(WidthOverride ?? fontSize.X + 5, HeightOverride ?? fontSize.Y + 2);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
-        => DrawButton(spriteBatch, drawOffset,
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+        => DrawButton(spriteBatch, parentOffset,
             BackgroundColor ?? Theme.ResolveBackgroundColor(UpdateParameters, Enabled),
             BorderColor ?? Theme.ControlBorderColor,
             Theme.ResolveTextColor(UpdateParameters, Enabled, false)

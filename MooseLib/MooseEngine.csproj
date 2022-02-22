@@ -6,7 +6,7 @@
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		<AssemblyName>Merthsoft.Moose.$(MSBuildProjectName)</AssemblyName>
-		<Copyright>2021 Merthsoft Creations</Copyright>
+		<Copyright>2022 Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
 		<VersionPrefix>0.4</VersionPrefix>
@@ -14,25 +14,16 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2082-develop" />
-		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2082-develop">
+		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2085-develop" />
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2085-develop">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="RoyT.AStar" Version="3.0.2" />
 		<PackageReference Include="SpriteFontPlus.MonoGame" Version="0.7.0.22" />
-	</ItemGroup>
-	<ItemGroup>
-		<Reference Include="MonoGame.Extended">
-			<HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.dll</HintPath>
-		</Reference>
-		<Reference Include="MonoGame.Extended.Content.Pipeline">
-			<HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Content.Pipeline.dll</HintPath>
-		</Reference>
-		<Reference Include="MonoGame.Extended.Graphics">
-			<HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Graphics.dll</HintPath>
-		</Reference>
-		<Reference Include="MonoGame.Extended.Tiled">
-			<HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Tiled.dll</HintPath>
-		</Reference>
+		<PackageReference Include="MonoGame.Extended" Version="3.9.0-alpha0051" />
+		<PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.9.0-alpha0051" />
+		<PackageReference Include="MonoGame.Extended.Graphics" Version="3.9.0-alpha0051" />
+		<PackageReference Include="MonoGame.Extended.Tiled" Version="3.9.0-alpha0051" />
+		<PackageReference Include="MonoGame.Extended.Tweening" Version="3.9.0-alpha0051" />
 	</ItemGroup>
 </Project>

@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Merthsoft.Moose.MooseEngine.Ui.Controls;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Merthsoft.Moose.MooseEngine.Ui;
 
-public record UpdateParameters(GameTime GameTime, Vector2 LocalMousePosition, MouseState RawMouseState, KeyboardState RawKeyState)
+public record UpdateParameters(GameTime GameTime, Vector2 ParentOffset, Vector2 LocalMousePosition, MouseState RawMouseState, KeyboardState RawKeyState, Control? FocusedControl)
 {
     public bool MouseOver { get; set; }
 
@@ -14,4 +15,11 @@ public record UpdateParameters(GameTime GameTime, Vector2 LocalMousePosition, Mo
     public bool LeftMouseDown { get; set; }
 
     public bool RightMouseDown { get; set; }
+
+    public Control? Prompt { get; set; }
+    public bool CenterPrompt { get; set; } = false;
+
+    public Control? FocusedControl { get; set; } = FocusedControl;
+
+    public UpdateParameters() : this(new(), default, default, default, default, null) { }
 }

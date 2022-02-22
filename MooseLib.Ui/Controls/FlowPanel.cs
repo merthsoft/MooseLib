@@ -2,7 +2,7 @@
 
 public abstract class FlowPanel : Panel
 {
-    public FlowPanel(Theme theme, int x, int y, int w, int h)
+    public FlowPanel(Theme theme, float x, float y, float w, float h)
         : base(theme, x, y, w, h) { }
 
     public override void PreControlUpdate(UpdateParameters updateParameters)
@@ -11,5 +11,5 @@ public abstract class FlowPanel : Panel
             Flow();
     }
 
-    protected abstract void Flow();
+    public abstract void Flow();
 }

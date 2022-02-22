@@ -6,20 +6,20 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class Slider : Control
 {
-    public long Min { get; }
-    public long Max { get; }
-    public long Value { get; set; }
+    public int Min { get; }
+    public int Max { get; }
+    public int Value { get; set; }
 
     public bool DrawLabel { get; set; } = true;
     public bool LeftLabel { get; set; } = false;
 
-    public int? WidthOverride { get; set; } = null;
-    public int? HeightOverride { get; set; } = null;
+    public float? WidthOverride { get; set; } = null;
+    public float? HeightOverride { get; set; } = null;
 
     public Color? TextColor { get; set; }
     public Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, false);
 
-    public Slider(Theme theme, int x, int y, long min, long max) : base(theme, x, y)
+    public Slider(Theme theme, float x, float y, int min, int max) : base(theme, x, y)
     {
         Min = min;
         Max = max;
@@ -45,7 +45,7 @@ public class Slider : Control
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
     {
         var width = WidthOverride ?? (Max - Min + 2);
-        var height = CalculatedRectangle.Height;
+        var height = Rectangle.Height;
 
         var (x, y) = Position + parentOffset;
 
@@ -54,7 +54,7 @@ public class Slider : Control
             var maxLength = Font.MeasureString(Max.ToString()).X + 3;
             var currentLength = Font.MeasureString(Value.ToString()).X + 3;
             spriteBatch.DrawString(Font, Value.ToString(), new(x + maxLength - currentLength, y), ResolvedTextColor);
-            x += Font.MeasureString(Max.ToString()).X + 3;
+            x += (int)Font.MeasureString(Max.ToString()).X + 3;
         }
 
         spriteBatch.FillRectangle(x, y, width, height, Theme.ResolveBackgroundColor(UpdateParameters, Enabled));
@@ -71,17 +71,17 @@ public class Slider : Control
     public override void Update(UpdateParameters updateParameters)
     {
         var width = WidthOverride ?? (Max - Min + 2);
-        var height = CalculatedRectangle.Height;
+        var height = Rectangle.Height;
 
         var startX = 1;
         if (DrawLabel && LeftLabel)
             startX += (int)Font.MeasureString(Max.ToString()).X + 3;
-        var sliderRect = new Rectangle(startX, 1, (int)width - 2, height - 2);
+        var sliderRect = new RectangleF(startX, 1, width - 2, height - 2);
 
         if (updateParameters.MouseOver && updateParameters.LeftMouseDown)
         {
-            var mouseX = updateParameters.LocalMousePosition.X;
-            var difference = (long)(mouseX - startX);
+            var mouseX = (int)updateParameters.LocalMousePosition.X;
+            var difference = mouseX - startX;
 
             if (difference >= Min && difference <= Max)
             {

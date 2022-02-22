@@ -46,7 +46,7 @@ public class Label : Control
     public Color? TextColor { get; set; }
     public Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, false, HighlightOnHover);
 
-    public Label(Theme theme, int x, int y) : base(theme, x, y)
+    public Label(Theme theme, float x, float y) : base(theme, x, y)
     {
     }
 
@@ -65,7 +65,7 @@ public class Label : Control
         if (strokeSize == 0)
             spriteBatch.DrawString(Font, Text, position, ResolvedTextColor);
         else
-            spriteBatch.Draw(renderedTexture, position, Microsoft.Xna.Framework.Color.White);
+            spriteBatch.Draw(renderedTexture, position, Color.White);
 
     }
 

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.MooseEngine;
 
@@ -64,6 +65,8 @@ public abstract class MooseGame : Game
     public Color DefaultBackgroundColor { get; set; } = Color.DarkCyan;
 
     protected FramesPerSecondCounter FramesPerSecondCounter { get; } = new();
+
+    public Tweener Tweener { get; protected set; } = new();
 
     public MooseGame()
     {
@@ -182,6 +185,8 @@ public abstract class MooseGame : Game
         CurrentKeyState = Keyboard.GetState();
 
         WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
+
+        Tweener?.Update(gameTime.GetElapsedSeconds());
 
         if (PreRenderUpdate(gameTime))
             foreach (var renderer in RendererDictionary.Values)
@@ -329,4 +334,18 @@ public abstract class MooseGame : Game
 
     public void MoveCameraTo(Vector2 destination)
         => MainCamera.LookAt(destination);
+
+    protected override void Dispose(bool disposing)
+    {
+        Tweener?.Dispose();
+        SpriteBatch?.Dispose();
+        GraphicsDevice?.Dispose();
+        base.Dispose(disposing);
+    }
+
+    protected void TweenToPosition(GameObjectBase gameObject, Vector2 position, float duration, float delay = 0f)
+        => gameObject.ActiveTween = Tweener.TweenTo(gameObject, o => o.WorldPosition, position, duration, delay);
+
+    protected void TweenToSize(GameObjectBase gameObject, Vector2 size, float duration, float delay = 0f)
+        => gameObject.ActiveTween = Tweener.TweenTo(gameObject, o => o.WorldSize, size, duration, delay);
 }

@@ -23,7 +23,7 @@ public class TextGrid : Control
     public int CellWidth => CellWidthOverride ?? Theme.TileDrawWidth;
     public int CellHeight => CellHeightOverride ?? Theme.TileDrawHeight;
 
-    public TextGrid(Theme theme, int x, int y, int gridWidth, IEnumerable<string> options) : base(theme, x, y)
+    public TextGrid(Theme theme, float x, float y, int gridWidth, IEnumerable<string> options) : base(theme, x, y)
     {
         Options.AddRange(options.Select(o => new Option(o)));
         GridWidth = gridWidth;
@@ -34,9 +34,9 @@ public class TextGrid : Control
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
     {
-        var mouseX = (int)UpdateParameters.LocalMousePosition.X / CellWidth;
-        var mouseY = (int)UpdateParameters.LocalMousePosition.Y / CellHeight;
-        MouseOverIndex = UpdateParameters.MouseOver ? mouseY * GridWidth + mouseX : -1;
+        var mouseX = UpdateParameters.LocalMousePosition.X / CellWidth;
+        var mouseY = UpdateParameters.LocalMousePosition.Y / CellHeight;
+        MouseOverIndex = (int)(UpdateParameters.MouseOver ? mouseY * GridWidth + mouseX : -1);
 
         var position = Position + parentOffset;
         for (var index = 0; index < Options.Count; index++)
@@ -65,8 +65,8 @@ public class TextGrid : Control
     {
         if (updateParameters.MouseOver)
         {
-            var mouseX = (int)updateParameters.LocalMousePosition.X / CellWidth;
-            var mouseY = (int)updateParameters.LocalMousePosition.Y / CellHeight;
+            var mouseX = (int)(updateParameters.LocalMousePosition.X / CellWidth);
+            var mouseY = (int)(updateParameters.LocalMousePosition.Y / CellHeight);
             MouseOverIndex = mouseY * GridWidth + mouseX;
             if (updateParameters.MouseOver && updateParameters.LeftMouseClick && MouseOverIndex < Options.Count)
             {

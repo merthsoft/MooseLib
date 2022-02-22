@@ -17,7 +17,7 @@ public class AnimatedGameObject : GameObjectBase
     public AnimatedSprite Sprite { get; set; }
 
     public SpriteEffects SpriteEffects { get; set; }
-
+    public float Rotation { get; set; }
     public Transform2 SpriteTransform { get; set; }
 
     public virtual string PlayKey => Direction == null ? State.ToLower() : $"{State.ToLower()}_{Direction.ToLower()}";
@@ -45,10 +45,10 @@ public class AnimatedGameObject : GameObjectBase
         }
 
         Sprite.Update(gameTime);
-
-        base.Update(gameTime);
     }
 
-    public override DrawParameters GetDrawParameters()
-        => new(Sprite.TextureRegion.Texture, (Rectangle)WorldRectangle, Sprite.TextureRegion.Bounds);
+    public override void Draw(SpriteBatch spriteBatch)
+        => spriteBatch.Draw(Sprite.TextureRegion.Texture,
+                (Rectangle)WorldRectangle, Sprite.TextureRegion.Bounds,
+                Color.White, Rotation, Def.Origin, SpriteEffects, 0);
 }

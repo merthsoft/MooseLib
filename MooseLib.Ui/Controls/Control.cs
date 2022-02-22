@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
@@ -9,39 +10,39 @@ public abstract class Control
 
     public Vector2 Position { get; set; }
 
-    public int X
+    public float X
     {
-        get => (int)Position.X;
+        get => Position.X;
         set => Position = Position with { X = value };
     }
 
-    public int Y
+    public float Y
     {
-        get => (int)Position.Y;
+        get => Position.Y;
         set => Position = Position with { Y = value };
     }
 
     public int FontIndex { get; set; }
     public SpriteFont Font => Theme.Fonts[FontIndex];
 
-    public bool IsHidden { get; set; }
+    public bool Hidden { get; set; }
     public bool Enabled { get; set; } = true;
+    public bool Remove { get; set; } = false;
 
-    public UpdateParameters UpdateParameters { get; set; } = new(new(), Vector2.Zero, default, default);
+    public UpdateParameters UpdateParameters { get; set; } = new();
 
-    protected Rectangle CalculatedRectangle { get; set; }
-    public Rectangle Rectangle
+    public RectangleF Rectangle
     {
         get
         {
-            var size = CalculateSize();
-            return CalculatedRectangle = new((int)Position.X, (int)Position.Y, (int)size.X, (int)size.Y);
+            var CalculatedSize = CalculateSize();
+            return new(Position.X, Position.Y, CalculatedSize.X, CalculatedSize.Y);
         }
     }
 
     public Action<Control, UpdateParameters>? Action { get; set; }
 
-    public Control(Theme theme, int x, int y)
+    public Control(Theme theme, float x, float y)
     {
         Theme = theme;
         Position = new(x, y);
@@ -49,13 +50,13 @@ public abstract class Control
 
     public Control Hide()
     {
-        IsHidden = true;
+        Hidden = true;
         return this;
     }
 
     public Control Show()
     {
-        IsHidden = false;
+        Hidden = false;
         return this;
     }
 
@@ -74,4 +75,7 @@ public abstract class Control
     }
 
     public abstract void Draw(SpriteBatch spriteBatch, Vector2 parentOffset);
+
+    public void Center(float width, float height)
+        => Position += new Vector2(width / 2 - Rectangle.Width / 2, height / 2 - Rectangle.Height / 2);
 }

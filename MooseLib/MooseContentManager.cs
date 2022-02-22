@@ -35,6 +35,9 @@ public class MooseContentManager
     public TContent Load<TContent>(string assetName)
         => Content.Load<TContent>(assetName);
 
+    public Texture2D LoadImage(string assetName)
+        => Content.Load<Texture2D>($"Images/{assetName}");
+
     public SpriteSheet LoadAnimatedSpriteSheet(string animationKey, bool replace = false)
     {
         if (replace || !AnimationSpriteSheets.ContainsKey(animationKey))

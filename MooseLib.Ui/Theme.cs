@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using System.Text;
 
 namespace Merthsoft.Moose.MooseEngine.Ui;
@@ -11,7 +12,7 @@ public class Theme
     internal Rectangle[] TextureRects = new Rectangle[16];
 
     private Texture2D windowTexture;
-    private Point textureOffset;
+    private Vector2 textureOffset;
     private int tileWidth;
     private int tileHeight;
 
@@ -27,7 +28,7 @@ public class Theme
         }
     }
 
-    public Point TextureOffset
+    public Vector2 TextureOffset
     {
         get => textureOffset;
         set
@@ -79,7 +80,7 @@ public class Theme
     public Color WindowBackgroundColor { get; set; } = new(113, 65, 59);
     public Color WindowBorderColor { get; set; } = new(219, 164, 99);
 
-    public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Point textureOffset = default, Vector2 controlDrawOffset = default)
+    public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Vector2 textureOffset = default, Vector2 controlDrawOffset = default)
     {
         (Name, TileWidth, TileHeight, this.windowTexture, this.textureOffset, TextureWindowControlDrawOffset)
          = (name, tileWidth, tileHeight, windowTexture, textureOffset, controlDrawOffset);
@@ -104,30 +105,41 @@ public class Theme
             (true, false) => ControlBackgroundColor
         };
 
-    public Vector2 DrawWindow(SpriteBatch spriteBatch, Rectangle rectangle, BackgroundDrawingMode backgroundDrawingMode)
+    public Color ResolvePointerColor(bool selected)
+        => selected ? SelectedMouseOverColor : ControlPointerColor;
+
+    public Vector2 DrawWindow(SpriteBatch spriteBatch, RectangleF rectangle, BackgroundDrawingMode backgroundDrawingMode)
     {
-        switch (backgroundDrawingMode)
+        _ = backgroundDrawingMode switch
         {
-            case BackgroundDrawingMode.Basic:
-                DrawWindowBasic(spriteBatch, rectangle);
-                return BasicWindowControlDrawOffset;
-            case BackgroundDrawingMode.Texture:
-                DrawWindowTexture(spriteBatch, rectangle);
-                return TextureWindowControlDrawOffset;
-        }
-        return Vector2.Zero;
+            BackgroundDrawingMode.Basic => DrawWindowBasic(spriteBatch, rectangle),
+            BackgroundDrawingMode.Texture => DrawWindowTexture(spriteBatch, rectangle),
+            _ => default,
+        };
+        return GetDrawOffset(backgroundDrawingMode);
     }
 
-    protected void DrawWindowBasic(SpriteBatch spriteBatch, Rectangle rectangle)
-        => spriteBatch.FillRect(rectangle, WindowBackgroundColor, WindowBorderColor);
+    public Vector2 GetDrawOffset(BackgroundDrawingMode backgroundDrawingMode)
+        => backgroundDrawingMode switch
+        {
+            BackgroundDrawingMode.Basic => BasicWindowControlDrawOffset,
+            BackgroundDrawingMode.Texture => TextureWindowControlDrawOffset,
+            _ => Vector2.Zero,
+        };
 
-    protected void DrawWindowTexture(SpriteBatch spriteBatch, int index, Point position, int xTileOffset, int yTileOffet)
+    protected RectangleF DrawWindowBasic(SpriteBatch spriteBatch, RectangleF rectangle)
     {
-        var destRect = new Rectangle(position.X + xTileOffset * TileDrawWidth, position.Y + yTileOffet * TileDrawHeight, TileDrawWidth, TileDrawHeight);
-        spriteBatch.Draw(WindowTexture, destRect, TextureRects[index], Color.White);
+        spriteBatch.FillRect(rectangle, WindowBackgroundColor, WindowBorderColor);
+        return rectangle;
     }
 
-    protected void DrawWindowTexture(SpriteBatch spriteBatch, Rectangle rectangle)
+    protected void DrawWindowTexture(SpriteBatch spriteBatch, int index, Vector2 position, int xTileOffset, int yTileOffet)
+    {
+        var destRect = new RectangleF(position.X + xTileOffset * TileDrawWidth, position.Y + yTileOffet * TileDrawHeight, TileDrawWidth, TileDrawHeight);
+        spriteBatch.Draw(WindowTexture, destRect.ToRectangle(), TextureRects[index], Color.White);
+    }
+
+    protected RectangleF DrawWindowTexture(SpriteBatch spriteBatch, RectangleF rectangle)
     {
         var numXTiles = rectangle.Width / TileDrawWidth;
         var numYTiles = rectangle.Height / TileDrawHeight;
@@ -179,22 +191,24 @@ public class Theme
                     index = bottomIndex;
                 else if (x == numXTiles - 1)
                     index = rightIndex;
-                DrawWindowTexture(spriteBatch, index, rectangle.Location, x, y);
+                DrawWindowTexture(spriteBatch, index, rectangle.Position, x, y);
             }
+
+        return new(rectangle.X, rectangle.Y, numXTiles * TileWidth, numYTiles * TileHeight);
     }
 
     protected void CalculateTextureRectangles()
     {
         for (var index = 0; index < 9; index++)
-            TextureRects[index] = new Rectangle((index % 3) * TileWidth + TextureOffset.X, index / 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
+            TextureRects[index] = new RectangleF((index % 3) * TileWidth + TextureOffset.X, index / 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight).ToRectangle();
 
         for (var index = 0; index < 3; index++)
         {
-            TextureRects[index + 9] = new Rectangle(index * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
-            TextureRects[index + 12] = new Rectangle(3 * TileWidth + TextureOffset.X, index * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
+            TextureRects[index + 9] = new RectangleF(index * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight).ToRectangle();
+            TextureRects[index + 12] = new RectangleF(3 * TileWidth + TextureOffset.X, index * TileHeight + TextureOffset.Y, TileWidth, TileHeight).ToRectangle();
         }
 
-        TextureRects[15] = new Rectangle(3 * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight);
+        TextureRects[15] = new RectangleF(3 * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight).ToRectangle();
     }
 
     public Vector2 MeasureString(string s, int fontIndex)
@@ -206,11 +220,11 @@ public class Theme
         if (totalLength < width)
             return s;
 
-        var length = MeasureString(truncationString, fontIndex).X.Ceiling();
+        var length = MeasureString(truncationString, fontIndex).X;
         var nameBuilder = new StringBuilder(s.Length);
         foreach (var c in s)
         {
-            length += MeasureString(c.ToString(), fontIndex).X.Ceiling();
+            length += MeasureString(c.ToString(), fontIndex).X;
             if (length >= width)
                 break;
             nameBuilder.Append(c);

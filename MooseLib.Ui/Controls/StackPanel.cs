@@ -3,27 +3,31 @@
 public class StackPanel : FlowPanel, IControlContainer
 {
     public StackDirection Direction { get; set; } = StackDirection.Vertical;
-    public int Padding { get; set; }
+    public float Padding { get; set; }
 
-    public StackPanel(Theme theme, int x, int y, int w, int h)
+    public StackPanel(Theme theme, float x, float y, float w, float h)
         : base(theme, x, y, w, h) { }
 
-    protected override void Flow()
+    public override void Flow()
     {
-        var x = 0;
-        var y = 0;
+        var x = 0f;
+        var y = 0f;
 
-        (var maxWidth, var maxHeight) = Controls.Aggregate((0, 0), (current, control) =>
+        (var maxWidth, var maxHeight) = Controls.Aggregate((0f, 0f), (current, control) =>
         {
+            if (control.Hidden)
+                return current;
             var size = control.CalculateSize();
-            return (MathF.Max(current.Item1, size.X).Ceiling(), MathF.Max(current.Item2, size.Y).Ceiling());
+            return (MathF.Max(current.Item1, size.X), MathF.Max(current.Item2, size.Y));
         });
 
         foreach (var control in Controls)
         {
+            if (control.Hidden)
+                continue;
             if (Direction == StackDirection.Vertical)
             {
-                var height = (int)Math.Ceiling(control.CalculateSize().Y);
+                var height = control.CalculateSize().Y;
                 if (y + height > Height)
                 {
                     x += maxWidth;
@@ -34,7 +38,7 @@ public class StackPanel : FlowPanel, IControlContainer
             }
             else
             {
-                var width = (int)Math.Ceiling(control.CalculateSize().X);
+                var width = control.CalculateSize().X;
                 if (x + width > Width)
                 {
                     y += maxHeight;

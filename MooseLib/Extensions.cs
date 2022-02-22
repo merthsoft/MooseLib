@@ -10,19 +10,31 @@ namespace Merthsoft.Moose.MooseEngine;
 
 public static class Extensions
 {
+
+    public static Vector2 AddAndVectorize(this Point p, Point other)
+        => new(p.X + other.X, p.Y + other.Y);
+
+    public static void MoveItem<T>(this List<T> list, int oldIndex, int newIndex)
+    {
+        T removedItem = list[oldIndex];
+
+        list.RemoveAt(oldIndex);
+        list.Insert(newIndex, removedItem);
+    }
+
     public static bool IsPrintableAscii(this char c)
         => char.IsLetterOrDigit(c)
         || char.IsPunctuation(c)
         || char.IsSymbol(c)
         || c == ' ';
 
-    public static SpriteBatch DrawRect(this SpriteBatch s, Rectangle r, Color c)
+    public static SpriteBatch DrawRect(this SpriteBatch s, RectangleF r, Color c)
     {
         s.DrawRectangle(r, c);
         return s;
     }
 
-    public static SpriteBatch FillRect(this SpriteBatch s, Rectangle r, Color fillColor, Color? borderColor = null)
+    public static SpriteBatch FillRect(this SpriteBatch s, RectangleF r, Color fillColor, Color? borderColor = null)
     {
         s.FillRectangle(r, fillColor);
         if (borderColor != null)
@@ -50,10 +62,10 @@ public static class Extensions
         return -1;
     }
 
-    public static Rectangle Move(this Rectangle rect, Vector2 delta)
-        => new(rect.X + (int)delta.X, rect.Y + (int)delta.Y, rect.Width, rect.Height);
+    public static RectangleF Move(this RectangleF rect, Vector2 delta)
+        => new(rect.X + delta.X, rect.Y + delta.Y, rect.Width, rect.Height);
 
-    public static bool Intersects(this Rectangle rect, float x, float y)
+    public static bool Intersects(this RectangleF rect, float x, float y)
         => x >= rect.X
             && x <= rect.X + rect.Width
         && y >= rect.Y
@@ -65,7 +77,13 @@ public static class Extensions
         && y >= rect.Y
             && y <= rect.Y + rect.Height;
 
-    public static bool Intersects(this Rectangle rect, Vector2 point)
+    public static bool Intersects(this RectangleF rect, Vector2 point)
+        => point.X >= rect.X
+            && point.X <= rect.X + rect.Width
+        && point.Y >= rect.Y
+            && point.Y <= rect.Y + rect.Height;
+
+    public static bool Intersects(this Rectangle rect, Point point)
         => point.X >= rect.X
             && point.X <= rect.X + rect.Width
         && point.Y >= rect.Y
@@ -134,6 +152,9 @@ public static class Extensions
 
     public static int Ceiling(this float f)
         => (int)MathF.Ceiling(f);
+
+    public static int Ceiling(this decimal f)
+        => (int)Math.Ceiling(f);
 
     public static float Round(this float f, int digits)
         => MathF.Round(f, digits);

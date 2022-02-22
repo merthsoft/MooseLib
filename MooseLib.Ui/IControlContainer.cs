@@ -9,14 +9,5 @@ public interface IControlContainer
     Theme Theme { get; set; }
 
     IControlContainer ClearControls();
-    IControlContainer RemoveControl(Control control);
-    IControlContainer RemoveControlAt(int index);
-
     IControlContainer AddControl(Control control);
-
-    TControl AddControlPassThrough<TControl>(TControl control) where TControl : Control
-    {
-        AddControl(control);
-        return control;
-    }
 }

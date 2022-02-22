@@ -1,7 +1,9 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.MooseEngine.GameObjects;
 
@@ -27,6 +29,8 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
 
     public IMap? ParentMap { get; set; }
 
+    public Tween? ActiveTween { get; set; }
+
     public GameObjectBase(GameObjectDef def, Vector2? position = null, int? layer = null, Vector2? size = null, string? direction = null)
     {
         Def = def;
@@ -36,12 +40,9 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
         Direction = direction;
     }
 
-    public virtual void Update(GameTime gameTime)
-    {
-        WorldPosition = WorldPosition.Round(Def.WorldSizeRound);
-    }
+    public abstract void Update(GameTime gameTime);
 
-    public abstract DrawParameters GetDrawParameters();
+    public abstract void Draw(SpriteBatch spriteBatch);
 
     public virtual void OnAdd() { }
 

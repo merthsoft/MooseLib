@@ -18,7 +18,7 @@ public class TextBox : Control
         {
             text = value ?? "";
 
-            if (text == "")
+            if (text == "" || CursorPosition - ScrollPosition > text.Length)
             {
                 CursorPosition = 0;
                 ScrollPosition = 0;
@@ -29,7 +29,7 @@ public class TextBox : Control
     public int CursorPosition { get; set; }
     public int ScrollPosition { get; set; }
 
-    public TextBox(Theme theme, int x, int y, int width) : base(theme, x, y)
+    public TextBox(Theme theme, float x, float y, int width) : base(theme, x, y)
         => Width = width;
 
     public override Vector2 CalculateSize()
@@ -53,7 +53,7 @@ public class TextBox : Control
         if (CursorPosition != 0)
         {
             var subString = Text.Substring(ScrollPosition, CursorPosition - ScrollPosition);
-            cursorX += MeasureString(subString).X.Ceiling();
+            cursorX += MeasureString(subString).X;
         }
         spriteBatch.DrawLine(cursorX, y + 3, cursorX, y + h - 3, Theme.ControlPointerColor, 3);
     }
@@ -187,7 +187,7 @@ public class TextBox : Control
         {
             var (w, h) = CalculateSize();
             var (clickX, clickY) = updateParameters.LocalMousePosition;
-            if (new Rectangle(0, 0, (int)w, (int)h).Intersects(clickX, clickY))
+            if (new RectangleF(0, 0, w, h).Intersects(clickX, clickY))
             {
                 clickX -= 3;
 
