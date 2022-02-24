@@ -29,7 +29,7 @@ public class TextBox : Control
     public int CursorPosition { get; set; }
     public int ScrollPosition { get; set; }
 
-    public TextBox(Theme theme, float x, float y, int width) : base(theme, x, y)
+    public TextBox(IControlContainer container, float x, float y, int width) : base(container, x, y)
         => Width = width;
 
     public override Vector2 CalculateSize()

@@ -2,13 +2,13 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Tweening;
-using System.Linq.Expressions;
 
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public abstract class Control
 {
-    public Theme Theme { get; set; }
+    public IControlContainer Container { get; }
+    public Theme Theme => Container.Theme;
 
     public Vector2 Position { get; set; }
 
@@ -45,9 +45,9 @@ public abstract class Control
     public Action<Control, UpdateParameters>? Action { get; set; }
     public List<Tween> ActiveTweens { get; } = new();
 
-    public Control(Theme theme, float x, float y)
+    public Control(IControlContainer container, float x, float y)
     {
-        Theme = theme;
+        Container = container;
         Position = new(x, y);
     }
 

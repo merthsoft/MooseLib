@@ -30,8 +30,9 @@ public record TiledMooseMapRenderer : ILayerRenderer
         GC.SuppressFinalize(this);
         MapRenderer.Dispose();
     }
+
     public void LoadContent(MooseContentManager contentManager)
     {
-        throw new NotImplementedException();
+        
     }
 }

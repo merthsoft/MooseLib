@@ -5,8 +5,8 @@ public class StackPanel : FlowPanel, IControlContainer
     public StackDirection Direction { get; set; } = StackDirection.Vertical;
     public float Padding { get; set; }
 
-    public StackPanel(Theme theme, float x, float y, float w, float h)
-        : base(theme, x, y, w, h) { }
+    public StackPanel(IControlContainer container, float x, float y, float w, float h)
+        : base(container, x, y, w, h) { }
 
     public override void Flow()
     {

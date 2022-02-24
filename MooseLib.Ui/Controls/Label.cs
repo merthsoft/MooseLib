@@ -46,7 +46,7 @@ public class Label : Control
     public Color? TextColor { get; set; }
     public Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, false, HighlightOnHover);
 
-    public Label(Theme theme, float x, float y) : base(theme, x, y)
+    public Label(IControlContainer container, float x, float y) : base(container, x, y)
     {
     }
 

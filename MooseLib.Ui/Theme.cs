@@ -7,8 +7,6 @@ namespace Merthsoft.Moose.MooseEngine.Ui;
 
 public class Theme
 {
-    public string Name { get; private set; }
-
     internal Rectangle[] TextureRects = new Rectangle[16];
 
     private Texture2D windowTexture;
@@ -80,10 +78,13 @@ public class Theme
     public Color WindowBackgroundColor { get; set; } = new(113, 65, 59);
     public Color WindowBorderColor { get; set; } = new(219, 164, 99);
 
-    public Theme(string name, Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Vector2 textureOffset = default, Vector2 controlDrawOffset = default)
+    public Theme(Texture2D windowTexture, int tileWidth, int tileHeight, IEnumerable<SpriteFont> fonts, Vector2 textureOffset = default, Vector2 controlDrawOffset = default)
     {
-        (Name, TileWidth, TileHeight, this.windowTexture, this.textureOffset, TextureWindowControlDrawOffset)
-         = (name, tileWidth, tileHeight, windowTexture, textureOffset, controlDrawOffset);
+        TileWidth = tileWidth;
+        TileHeight = tileHeight;
+        this.windowTexture = windowTexture;
+        this.textureOffset = textureOffset;
+        TextureWindowControlDrawOffset = controlDrawOffset;
         Fonts.AddRange(fonts);
     }
 
@@ -141,8 +142,8 @@ public class Theme
 
     protected RectangleF DrawWindowTexture(SpriteBatch spriteBatch, RectangleF rectangle)
     {
-        var numXTiles = rectangle.Width / TileDrawWidth;
-        var numYTiles = rectangle.Height / TileDrawHeight;
+        var numXTiles = (int)(rectangle.Width / TileDrawWidth);
+        var numYTiles = (int)(rectangle.Height / TileDrawHeight);
 
         var upperLeftIndex = 0;
         var upperIndex = 1;

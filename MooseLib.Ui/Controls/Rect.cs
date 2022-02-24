@@ -18,7 +18,7 @@ public class Rect : Control
 
     public override Vector2 CalculateSize() => Size;
 
-    public Rect(Theme theme, float x, float y, float w, float h, int thickness = 1) : base(theme, x, y)
+    public Rect(IControlContainer container, float x, float y, float w, float h, int thickness = 1) : base(container, x, y)
     {
         Size = new(w, h);
         Thickness = thickness;

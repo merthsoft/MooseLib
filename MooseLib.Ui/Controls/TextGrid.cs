@@ -23,7 +23,7 @@ public class TextGrid : Control
     public int CellWidth => CellWidthOverride ?? Theme.TileDrawWidth;
     public int CellHeight => CellHeightOverride ?? Theme.TileDrawHeight;
 
-    public TextGrid(Theme theme, float x, float y, int gridWidth, IEnumerable<string> options) : base(theme, x, y)
+    public TextGrid(IControlContainer container, float x, float y, int gridWidth, IEnumerable<string> options) : base(container, x, y)
     {
         Options.AddRange(options.Select(o => new Option(o)));
         GridWidth = gridWidth;

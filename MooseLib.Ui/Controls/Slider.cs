@@ -19,7 +19,7 @@ public class Slider : Control
     public Color? TextColor { get; set; }
     public Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, false);
 
-    public Slider(Theme theme, float x, float y, int min, int max) : base(theme, x, y)
+    public Slider(IControlContainer container, float x, float y, int min, int max) : base(container, x, y)
     {
         Min = min;
         Max = max;

@@ -6,24 +6,24 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Merthsoft.Moose.SnowballFight;
 
-class TeamSelectionWindow : Window
+class TeamSelectionWindow : Panel
 {
     private readonly Label headerLabel;
-    private readonly Window santaWindow;
-    private readonly Window krampusWindow;
+    private readonly Panel santaWindow;
+    private readonly Panel krampusWindow;
     private readonly int screenSize;
 
     public Action<TeamSelectionWindow, Team>? TeamSelected { get; set; }
 
-    public TeamSelectionWindow(GraphicsDevice graphicsDevice, Theme theme, int screenSize, Texture2D santaPicture, Texture2D krampusPicture)
-        : base(graphicsDevice, x: new(0, 0, screenSize, screenSize), y: theme)
+    public TeamSelectionWindow(IControlContainer container, int screenSize, Texture2D santaPicture, Texture2D krampusPicture)
+        : base(container, 0, 0, 0, 0)
     {
-        BackgroundDrawingMode = false;
+        BackgroundDrawingMode = BackgroundDrawingMode.None;
         this.screenSize = screenSize;
 
         headerLabel = this.AddLabel(144, 140, "Choose your team!", strokeSize: 3);
-        santaWindow = new(graphicsDevice, theme, 159, 215, 300, 300);
-        krampusWindow = new(graphicsDevice, theme, 501, 215, 300, 300);
+        santaWindow = new(this, 159, 215, 300, 300);
+        krampusWindow = new(this, 501, 215, 300, 300);
 
         santaWindow.AddPicture(5, 5, santaPicture, 14);
         santaWindow.AddLabel(1, 227, "Santa", 1);
@@ -34,7 +34,7 @@ class TeamSelectionWindow : Window
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (IsHidden)
+        if (Hidden)
             return;
 
         var (logoWidth, logoHeight) = headerLabel.CalculateSize();
@@ -57,20 +57,10 @@ class TeamSelectionWindow : Window
         base.Update(updateParameters);
     }
 
-    private bool HighlightIfHovering(UpdateParameters updateParameters, Window window)
+    private bool HighlightIfHovering(UpdateParameters updateParameters, Panel window)
     {
         var intersects = window.Rectangle.Intersects(updateParameters.LocalMousePosition);
         //TODO: window.Controls.OfType<Label>().ForEach(l => l.ForceHighlight = intersects);
         return intersects && updateParameters.LeftMouseClick;
-    }
-
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        if (IsHidden)
-            return;
-
-        santaWindow.Draw(spriteBatch);
-        krampusWindow.Draw(spriteBatch);
-        base.Draw(spriteBatch);
     }
 }

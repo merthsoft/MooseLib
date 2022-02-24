@@ -36,7 +36,7 @@ public class Snowball : AnimatedGameObject
     {
         if (State == States.Fly)
         {
-            WorldPosition = FlightPath.Dequeue();
+            Position = FlightPath.Dequeue();
             if (IsBlocked())
             {
                 State = States.Hit;
@@ -53,5 +53,5 @@ public class Snowball : AnimatedGameObject
     private bool IsBlocked()
         => FlightPath.Count == 0 || !ParentMap!.CellIsInBounds(GetCell())
         || (GetCell(ParentMap!) != StartCell
-            && ParentMap!.GetBlockingVector(WorldPosition).Skip(2).Take(3).Any(b => b != 0));
+            && ParentMap!.GetBlockingVector(Position).Skip(2).Take(3).Any(b => b != 0));
 }

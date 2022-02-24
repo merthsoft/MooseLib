@@ -68,8 +68,8 @@ internal class Unit : AnimatedGameObject
 
         void takeStep()
         {
-            WorldPosition += MoveDirection;
-            if (WorldPosition.GetFloor() == NextLocation.GetFloor())
+            Position += MoveDirection;
+            if (Position.GetFloor() == NextLocation.GetFloor())
                 MoveDirection = Vector2.Zero;
         }
     }
@@ -85,9 +85,9 @@ internal class Unit : AnimatedGameObject
     {
         if (targettedUnit != null)
         {
-            var startWorldPosition = WorldPosition + ParentMap!.HalfTileSize;
+            var startWorldPosition = Position + ParentMap!.HalfTileSize;
             var wiggle = AimDistribution.NextDouble();
-            var endWorldPosition = (targettedUnit.WorldPosition + ParentMap!.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
+            var endWorldPosition = (targettedUnit.Position + ParentMap!.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
             var flightPath = ParentMap!.FindWorldRay(startWorldPosition, endWorldPosition);
             SnowballFightGame.SpawnSnowball(flightPath.Select(p => p.WorldPosition));
         }

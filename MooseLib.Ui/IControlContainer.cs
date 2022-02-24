@@ -4,10 +4,9 @@ namespace Merthsoft.Moose.MooseEngine.Ui;
 
 public interface IControlContainer
 {
+    Theme Theme { get; }
     Control[] Controls { get; }
-
-    Theme Theme { get; set; }
-
+    
     IControlContainer ClearControls();
     IControlContainer AddControl(Control control);
 }

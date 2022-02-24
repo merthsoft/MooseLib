@@ -22,7 +22,9 @@ public class Window : IControlContainer
     protected List<Control> controls = new();
     public Control[] Controls => controls.ToArray();
 
-    public Theme Theme { get; set; }
+    public Theme Theme => Themes[ThemeIndex];
+    public List<Theme> Themes { get; } = new();
+    public int ThemeIndex { get; set; }
 
     public bool ShouldClose { get; protected set; }
 
@@ -74,11 +76,14 @@ public class Window : IControlContainer
     public float X => Rectangle.X;
     public float Y => Rectangle.Y;
 
-    public Window(Theme theme, float x, float y, float w = 0, float h = 0)
+    public Window(IEnumerable<Theme> themes, float x, float y, float w = 0, float h = 0)
     {
-        Theme = theme;
+        Themes.AddRange(themes);
         Rectangle = new(x, y, w, h);
     }
+
+    public Window(Theme theme, float x, float y, float w = 0, float h = 0)
+     : this(new[] { theme }, x, y, w, h) { }
 
     public virtual IControlContainer AddControl(Control control)
     {
@@ -192,7 +197,7 @@ public class Window : IControlContainer
         var pos = Position + Theme.DrawWindow(spriteBatch, Rectangle, BackgroundDrawingMode);
 
         foreach (var c in Controls)
-            if (!c.Hidden && !c.Remove)
+            if (!c.Hidden)
                 c.Draw(spriteBatch, pos);
 
         Prompt?.Draw(spriteBatch, pos);

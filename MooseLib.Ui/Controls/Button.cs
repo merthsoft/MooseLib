@@ -14,7 +14,7 @@ public class Button : Control
     public int? WidthOverride { get; set; }
     public int? HeightOverride { get; set; }
 
-    public Button(Theme theme, float x, float y, string text) : base(theme, x, y)
+    public Button(string text, IControlContainer container, float x, float y) : base(container, x, y)
         => Text = text;
 
     public override Vector2 CalculateSize()

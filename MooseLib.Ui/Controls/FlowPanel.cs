@@ -2,8 +2,8 @@
 
 public abstract class FlowPanel : Panel
 {
-    public FlowPanel(Theme theme, float x, float y, float w, float h)
-        : base(theme, x, y, w, h) { }
+    public FlowPanel(IControlContainer container, float x, float y, float w, float h)
+        : base(container, x, y, w, h) { }
 
     public override void PreControlUpdate(UpdateParameters updateParameters)
     {

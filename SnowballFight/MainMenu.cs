@@ -6,38 +6,28 @@ using System.Reflection;
 
 namespace Merthsoft.Moose.SnowballFight;
 
-class MainMenu : Window
-{
-    private readonly Label logo;
-    private readonly Label versionLabel;
-    private readonly int screenSize;
-
-    public MainMenu(Theme theme, int screenSize)
-        : base(theme, 0, 0, screenSize, screenSize)
+class MainMenu : Panel
+{   
+    public Action<string> Action { get; }
+    public MainMenu(Action<string> action, IControlContainer container)
+        : base(container, 0, 0, 0, 0)
     {
-        //"New Game", "Settings", "About", "Exit"
-        this.screenSize = screenSize;
+        Action = action;
+        BackgroundDrawingMode = BackgroundDrawingMode.None;
 
-        logo = this.AddLabel(0, 0, "Snowfight Tactics", 0, strokeSize: 3);
+        var logo = this.AddLabel(0, 0, "Snowfight Tactics", 0, strokeSize: 3);
+        var logoSize = MeasureString("Snowfight Tactics") + new Vector2(3, 3);
+        var size = MeasureString("New Game");
+        var width = size.X + 32;
+        var menuPanel = this.AddStackPanel(logoSize.X / 2 - width / 2, logoSize.Y + 3, width, size.Y * 4 + 32, BackgroundDrawingMode.Texture, StackDirection.Horizontal);
+        menuPanel.AddActionLabel(0, 0, "New Game", Emit);
+        menuPanel.AddActionLabel(0, 0, "Settings", null);
+        menuPanel.AddActionLabel(0, 0, "About  ", null);
+        menuPanel.AddActionLabel(0, 0, "Exit", Emit);
 
-        var assembly = Assembly.GetExecutingAssembly();
-        var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-        var version = fileVersionInfo.ProductVersion!.Split('-');
-
-        versionLabel = this.AddLabel(0, 0, $"v{version[0]}{version[1][0]} - {fileVersionInfo.LegalCopyright}", 2, Color.Black, 1, Color.White);
-
-        Center(screenSize, screenSize);
+        Size = new(logoSize.X, menuPanel.Size.Y + logoSize.Y + 3);
     }
 
-    public override void Update(UpdateParameters updateParameters)
-    {
-        if (IsHidden)
-            return;
-
-        var (logoWidth, logoHeight) = logo.CalculateSize();
-        logo.Position = new(-logoWidth / 4, -logoHeight - 8);
-        versionLabel.Position = new(-X, -Y + screenSize - 24);
-
-        base.Update(updateParameters);
-    }
+    private void Emit(Control c, UpdateParameters _)
+        => Action.Invoke((c as Label)?.Text ?? "");
 }

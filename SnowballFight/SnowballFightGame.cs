@@ -3,11 +3,14 @@ using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.TiledDriver;
 using Merthsoft.Moose.MooseEngine.Ui;
+using Merthsoft.Moose.MooseEngine.Ui.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace Merthsoft.Moose.SnowballFight;
 
@@ -26,10 +29,11 @@ public class SnowballFightGame : MooseGame
     public static int SnowballLayer { get; private set; } = 4;
     public static int WeatherLayer { get; private set; } = 5;
 
-    private WindowManager WindowManager = null!;
-    private Window StatsWindow = null!;
+    private Window UxWindow = null!;
+    private Panel StatsWindow = null!;
     private MainMenu MainMenu = null!;
     private TeamSelectionWindow TeamSelectionWindow = null!;
+    private SpriteFont DebugFont = null!;
 
     public OrthographicCamera StatsWindowCamera = null!;
 
@@ -138,6 +142,8 @@ public class SnowballFightGame : MooseGame
             ContentManager.BakeFont("Direct_Message", 40)
         };
 
+        DebugFont = mainMenuFonts[2];
+
         var gameFonts = new SpriteFont[]
         {
             ContentManager.BakeFont("Whacky_Joe", 32),
@@ -150,21 +156,23 @@ public class SnowballFightGame : MooseGame
             Content.Load<Texture2D>("Images/window2"),
         };
 
-        WindowManager = new WindowManager(GraphicsDevice, new Theme[] {
-            new("main menu", windowTextures[0], 32, 32, mainMenuFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
-            new("stats window", windowTextures[0], 32, 32, gameFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
-        });
+        var themes = new Theme[] {
+            new Theme (windowTextures[0], 32, 32, mainMenuFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
+            new(windowTextures[0], 32, 32, gameFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
+        };
 
-        MainMenu = new MainMenu(WindowManager.DefaultTheme, WindowSize);
-        WindowManager.AddWindow(MainMenu);
+        UxWindow = new Window(themes[0], 0, 0, WindowSize, WindowSize) { BackgroundDrawingMode = BackgroundDrawingMode.None };
+
+        MainMenu = new MainMenu(MainMenu_Clicked, UxWindow);
+        MainMenu.Center(WindowSize, WindowSize);
+        UxWindow.AddControl(MainMenu);
         MainMenu.Hide();
 
-        TeamSelectionWindow = new TeamSelectionWindow(GraphicsDevice, WindowManager.DefaultTheme, WindowSize, santaPortrait, krampusPortrait) { TeamSelected = TeamSelectionWindow_TeamSelected };
-        WindowManager.AddWindow(TeamSelectionWindow);
+        TeamSelectionWindow = new TeamSelectionWindow(UxWindow, WindowSize, santaPortrait, krampusPortrait) { TeamSelected = TeamSelectionWindow_TeamSelected };
+        UxWindow.AddControl(TeamSelectionWindow);
         TeamSelectionWindow.Hide();
 
-        StatsWindow = WindowManager.NewWindow(0, 416 * 2, 480 * 2, 64 * 2, "stats window");
-        StatsWindowCamera = new OrthographicCamera(GraphicsDevice) { Origin = MainCamera.Origin };
+        StatsWindow = UxWindow.AddPanel(0, 416 * 2, 480 * 2, 64 * 2);
         StatsWindow.Hide();
 
         ContentManager.LoadAnimatedSpriteSheet(Snowball.AnimationKey);
@@ -181,7 +189,7 @@ public class SnowballFightGame : MooseGame
             }, Random.Next(4, 26), Random.Next(21, 29));
     }
 
-    private void MainMenu_Clicked(Window _, string option)
+    private void MainMenu_Clicked(string option)
     {
         switch (option)
         {
@@ -283,7 +291,7 @@ public class SnowballFightGame : MooseGame
 
     protected override void PostObjectsUpdate(GameTime gameTime)
     {
-        WindowManager.Update(gameTime, IsActive, CurrentMouseState, CurrentKeyState);
+        UxWindow.Update(gameTime, IsActive, CurrentMouseState, CurrentKeyState);
         if (Mode == GameMode.Demo || Mode == GameMode.SelectingTeam)
             DemoUpdate();
     }
@@ -326,7 +334,19 @@ public class SnowballFightGame : MooseGame
     protected override void PostDraw(GameTime gameTime)
     {
         SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-        WindowManager.Draw(SpriteBatch);
+        UxWindow.Draw(SpriteBatch);
+
+        if (Mode == GameMode.Demo || Mode == GameMode.Paused) 
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            var version = fileVersionInfo.ProductVersion!.Split('-');
+
+            SpriteBatch.DrawString(DebugFont,
+                $"v{version[0]}{version[1][0]} - {fileVersionInfo.LegalCopyright}",
+                new(0, ScreenHeight - 10), Color.Black);
+        }
+
         SpriteBatch.End();
     }
 
@@ -465,8 +485,8 @@ public class SnowballFightGame : MooseGame
         var selectedUnitCell = SelectedUnit.GetCell();
         var targettedUnitCell = TargettedUnit.GetCell();
 
-        var startWorldPosition = SelectedUnit.WorldPosition + HalfTileSize;
-        var endWorldPosition = TargettedUnit.WorldPosition + HalfTileSize;
+        var startWorldPosition = SelectedUnit.Position + HalfTileSize;
+        var endWorldPosition = TargettedUnit.Position + HalfTileSize;
         var leftCone = endWorldPosition.RotateAround(startWorldPosition, 5).GetFloor();
         var rightCone = endWorldPosition.RotateAround(startWorldPosition, -5).GetFloor();
 
@@ -495,7 +515,7 @@ public class SnowballFightGame : MooseGame
         var transformMatrix = MainCamera.GetViewMatrix();
         SpriteBatch.Begin(transformMatrix: transformMatrix);
 
-        SpriteBatch.FillRectangle(SelectedUnit.WorldPosition, TileSize, Color.Red.HalveAlphaChannel());
+        SpriteBatch.FillRectangle(SelectedUnit.Position, TileSize, Color.Red.HalveAlphaChannel());
 
         SelectedUnitHintCells.ForEach(t =>
         {

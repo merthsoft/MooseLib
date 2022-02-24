@@ -25,8 +25,8 @@ public class Panel : Control, IControlContainer
     public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
     protected Control? FocusedControl { get; set; }
 
-    public Panel(Theme theme, float x, float y, float w, float h)
-        : base(theme, x, y)
+    public Panel(IControlContainer container, float x, float y, float w, float h)
+        : base(container, x, y)
     {
         Width = w;
         Height = h;
