@@ -34,10 +34,6 @@ public class TextGrid : Control
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
     {
-        var mouseX = UpdateParameters.LocalMousePosition.X / CellWidth;
-        var mouseY = UpdateParameters.LocalMousePosition.Y / CellHeight;
-        MouseOverIndex = (int)(UpdateParameters.MouseOver ? mouseY * GridWidth + mouseX : -1);
-
         var position = Position + parentOffset;
         for (var index = 0; index < Options.Count; index++)
             DrawCell(spriteBatch, index, MouseOverIndex, position);

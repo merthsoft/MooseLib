@@ -169,6 +169,7 @@ public class Window : IControlContainer
             }
 
             c.Update(updateParams);
+            c.UpdateParameters = updateParams;
             if (updateParams.Prompt != null)
             {
                 FocusedControl = Prompt = updateParams.Prompt;
