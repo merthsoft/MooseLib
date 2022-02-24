@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace Merthsoft.Moose.MooseEngine.Defs;
+﻿namespace Merthsoft.Moose.MooseEngine.Defs;
 
 public record TextureGameObjectDef(string DefName, string TextureName, Rectangle? SourceRectangle = null) : GameObjectDef(DefName)
 {

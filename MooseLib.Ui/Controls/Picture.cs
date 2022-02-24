@@ -25,7 +25,7 @@ public class Picture : Control
 
     public override Vector2 CalculateSize() => new((SourceRectangle.Width * Scale.X).Ceiling(), (SourceRectangle.Height * Scale.Y).Ceiling());
 
-    public Picture(IControlContainer container, float x, float y, Texture2D texture) : base(container, x, y) 
+    public Picture(IControlContainer container, float x, float y, Texture2D texture) : base(container, x, y)
         => Texture = texture;
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)

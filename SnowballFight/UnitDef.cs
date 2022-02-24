@@ -1,6 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine;
-using Merthsoft.Moose.MooseEngine.Defs;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Merthsoft.Moose.MooseEngine.Defs;
 
 namespace Merthsoft.Moose.SnowballFight;
 

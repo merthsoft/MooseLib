@@ -38,4 +38,14 @@
 		<ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Using Include="Microsoft.Xna.Framework" />
+		<Using Include="Microsoft.Xna.Framework.Graphics" />
+		<Using Include="Microsoft.Xna.Framework.Input" />
+		<Using Include="MonoGame.Extended" />
+		<Using Include="Merthsoft.Moose.MooseEngine" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Ui" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls" />
+	</ItemGroup>
+
 </Project>

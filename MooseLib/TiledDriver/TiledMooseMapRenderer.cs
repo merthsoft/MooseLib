@@ -1,6 +1,4 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled.Renderers;
 
 namespace Merthsoft.Moose.MooseEngine.TiledDriver;
@@ -33,6 +31,6 @@ public record TiledMooseMapRenderer : ILayerRenderer
 
     public void LoadContent(MooseContentManager contentManager)
     {
-        
+
     }
 }

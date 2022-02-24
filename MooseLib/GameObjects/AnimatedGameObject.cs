@@ -1,7 +1,4 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 
 namespace Merthsoft.Moose.MooseEngine.GameObjects;

@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Roy_T.AStar.Grids;
+﻿using Roy_T.AStar.Grids;
 using Roy_T.AStar.Primitives;
+using Size = Roy_T.AStar.Primitives.Size;
 
 namespace Merthsoft.Moose.MooseEngine.Interface;
 

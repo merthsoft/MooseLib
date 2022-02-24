@@ -1,8 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
-using MonoGame.Extended.Sprites;
+﻿using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tweening;
 using Roy_T.AStar.Grids;

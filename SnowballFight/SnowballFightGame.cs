@@ -1,13 +1,6 @@
-﻿using Merthsoft.Moose.MooseEngine;
-using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.TiledDriver;
-using Merthsoft.Moose.MooseEngine.Ui;
-using Merthsoft.Moose.MooseEngine.Ui.Controls;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using System.Diagnostics;
 using System.Reflection;
@@ -168,7 +161,7 @@ public class SnowballFightGame : MooseGame
         UxWindow.AddControl(MainMenu);
         MainMenu.Hide();
 
-        TeamSelectionWindow = new TeamSelectionWindow(UxWindow, WindowSize, santaPortrait, krampusPortrait) { TeamSelected = TeamSelectionWindow_TeamSelected };
+        TeamSelectionWindow = new TeamSelectionWindow(UxWindow, santaPortrait, krampusPortrait) { TeamSelected = TeamSelectionWindow_TeamSelected };
         UxWindow.AddControl(TeamSelectionWindow);
         TeamSelectionWindow.Hide();
 
@@ -336,7 +329,7 @@ public class SnowballFightGame : MooseGame
         SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
         UxWindow.Draw(SpriteBatch);
 
-        if (Mode == GameMode.Demo || Mode == GameMode.Paused) 
+        if (Mode == GameMode.Demo || Mode == GameMode.Paused)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);

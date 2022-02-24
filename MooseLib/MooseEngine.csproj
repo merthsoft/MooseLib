@@ -26,4 +26,12 @@
 		<PackageReference Include="MonoGame.Extended.Tiled" Version="3.9.0-alpha0051" />
 		<PackageReference Include="MonoGame.Extended.Tweening" Version="3.9.0-alpha0051" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Microsoft.Xna.Framework" />
+		<Using Include="Microsoft.Xna.Framework.Graphics" />
+		<Using Include="Microsoft.Xna.Framework.Input" />
+		<Using Include="MonoGame.Extended" />
+		<Using Include="Merthsoft.Moose.MooseEngine" />
+	</ItemGroup>
 </Project>

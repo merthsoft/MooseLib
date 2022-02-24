@@ -1,6 +1,5 @@
 ﻿using Merthsoft.Moose.MooseEngine.GameObjects;
 using Merthsoft.Moose.MooseEngine.Interface;
-using Microsoft.Xna.Framework;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
@@ -10,7 +9,7 @@ public class ObjectLayer : IObjectLayer
     public IReadOnlyList<GameObjectBase> Objects => objects.ToList().AsReadOnly();
 
     public string Name { get; }
-    public bool IsHidden { get; set; }
+    public bool IsHidden { get; set; } = false;
     public Vector2 DrawOffset { get; set; }
 
     public ObjectLayer(string name)

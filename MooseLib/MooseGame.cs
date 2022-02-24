@@ -1,10 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.GameObjects;
 using Merthsoft.Moose.MooseEngine.Interface;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
 using MonoGame.Extended.Tweening;
 using System.Linq.Expressions;
 
@@ -229,7 +225,7 @@ public abstract class MooseGame : Game
         }
 
         ObjectsToAdd.Clear();
-        
+
         PostObjectsUpdate(gameTime);
 
         PostUpdate(gameTime);

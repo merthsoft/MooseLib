@@ -1,6 +1,4 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Merthsoft.Moose.MooseEngine.GameObjects;
 

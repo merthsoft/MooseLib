@@ -1,5 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.Ui.Controls;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Merthsoft.Moose.MooseEngine.Ui;

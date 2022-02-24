@@ -1,7 +1,4 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 

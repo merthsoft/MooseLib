@@ -1,5 +1,3 @@
-﻿using Microsoft.Xna.Framework;
-
-namespace Merthsoft.Moose.MooseEngine;
+﻿namespace Merthsoft.Moose.MooseEngine;
 
 public record RayCell(Vector2 WorldPosition, IList<int> BlockedVector);

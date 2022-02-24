@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace Merthsoft.Moose.MooseEngine.GameObjects;
+﻿namespace Merthsoft.Moose.MooseEngine.GameObjects;
 
 public record DrawParameters(
     Texture2D Texture,

@@ -1,8 +1,5 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.Interface;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.MooseEngine.GameObjects;
@@ -42,7 +39,7 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
         Direction = direction;
     }
 
-    public abstract void Update(GameTime gameTime);        
+    public abstract void Update(GameTime gameTime);
 
     public void ClearCompletedTweens()
         => ActiveTweens.RemoveAll(t => !t.IsAlive);
@@ -63,7 +60,7 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
         bool autoReverse = false,
         Func<float, float>? easingFunction = null)
         => ActiveTweens.AddItem(
-            MooseGame.Instance.Tween(this, o => o.Position, 
+            MooseGame.Instance.Tween(this, o => o.Position,
                 toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
             ));
 
@@ -77,7 +74,7 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
         bool autoReverse = false,
         Func<float, float>? easingFunction = null)
         => ActiveTweens.AddItem(
-            MooseGame.Instance.Tween(this, o => o.WorldSize, 
+            MooseGame.Instance.Tween(this, o => o.WorldSize,
                 toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
             ));
 
@@ -91,7 +88,7 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
         bool autoReverse = false,
         Func<float, float>? easingFunction = null)
         => ActiveTweens.AddItem(
-            MooseGame.Instance.Tween(this, o => o.Rotation, 
+            MooseGame.Instance.Tween(this, o => o.Rotation,
                 toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
             ));
 

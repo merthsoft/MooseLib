@@ -1,9 +1,8 @@
-﻿using Merthsoft.Moose.MooseEngine;
-using Merthsoft.Moose.MooseEngine.Interface;
-using Microsoft.Xna.Framework;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
+using Size = Roy_T.AStar.Primitives.Size;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
