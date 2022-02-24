@@ -15,9 +15,11 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
 
     public int Layer { get; set; }
 
-    public Vector2 WorldPosition { get; set; }
+    public Vector2 Position { get; set; }
     public Vector2 WorldSize { get; set; }
-    public virtual RectangleF WorldRectangle => new(WorldPosition.X, WorldPosition.Y, WorldSize.X, WorldSize.Y);
+    public float Rotation { get; set; }
+
+    public virtual RectangleF WorldRectangle => new(Position.X, Position.Y, WorldSize.X, WorldSize.Y);
 
     public bool RemoveFlag { get; set; }
 
@@ -29,18 +31,21 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
 
     public IMap? ParentMap { get; set; }
 
-    public Tween? ActiveTween { get; set; }
+    public List<Tween> ActiveTweens { get; } = new();
 
     public GameObjectBase(GameObjectDef def, Vector2? position = null, int? layer = null, Vector2? size = null, string? direction = null)
     {
         Def = def;
         Layer = layer ?? Def.DefaultLayer;
-        WorldPosition = position ?? Def.DefaultPosition;
+        Position = position ?? Def.DefaultPosition;
         WorldSize = size ?? Def.DefaultSize;
         Direction = direction;
     }
 
-    public abstract void Update(GameTime gameTime);
+    public abstract void Update(GameTime gameTime);        
+
+    public void ClearCompletedTweens()
+        => ActiveTweens.RemoveAll(t => !t.IsAlive);
 
     public abstract void Draw(SpriteBatch spriteBatch);
 
@@ -48,18 +53,73 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
 
     public virtual void OnRemove() { }
 
+    public Tween TweenToPosition(Vector2 toValue,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+        => ActiveTweens.AddItem(
+            MooseGame.Instance.Tween(this, o => o.Position, 
+                toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
+            ));
+
+    public Tween TweenToSize(Vector2 toValue,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+        => ActiveTweens.AddItem(
+            MooseGame.Instance.Tween(this, o => o.WorldSize, 
+                toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
+            ));
+
+    public Tween TweenToRotation(float toValue,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+        => ActiveTweens.AddItem(
+            MooseGame.Instance.Tween(this, o => o.Rotation, 
+                toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
+            ));
+
+    public void ClearTweens(bool complete = false)
+    {
+        foreach (var tween in ActiveTweens.Where(t => t.IsAlive))
+        {
+            if (complete)
+                tween.CancelAndComplete();
+            else
+                tween.Cancel();
+        }
+
+        ActiveTweens.Clear();
+    }
+
     public virtual bool AtWorldPosition(Vector2 worldPosition)
         => WorldRectangle.Contains(worldPosition);
 
     public Vector2 GetCell(IMap? parentMap = null)
         => new Vector2(
-            WorldPosition.X / (parentMap ?? ParentMap)!.TileWidth,
-            WorldPosition.Y / (parentMap ?? ParentMap)!.TileHeight
+            Position.X / (parentMap ?? ParentMap)!.TileWidth,
+            Position.Y / (parentMap ?? ParentMap)!.TileHeight
         ).GetFloor();
 
     public bool InCell(int x, int y, IMap? parentMap = null)
-        => WorldPosition.X / (parentMap ?? ParentMap)!.TileWidth == x
-        && WorldPosition.Y / (parentMap ?? ParentMap)!.TileHeight == y;
+        => Position.X / (parentMap ?? ParentMap)!.TileWidth == x
+        && Position.Y / (parentMap ?? ParentMap)!.TileHeight == y;
 
     public bool InCell(int layer, int x, int y, IMap parentMap)
         => layer == Layer && InCell(x, y, parentMap);

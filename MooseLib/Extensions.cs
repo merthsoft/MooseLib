@@ -4,15 +4,33 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Sprites;
 using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tweening;
 using Roy_T.AStar.Grids;
+using System.Linq.Expressions;
 
 namespace Merthsoft.Moose.MooseEngine;
 
 public static class Extensions
 {
+    public static Tween Tween<TTarget, TMember>(this TTarget target, Expression<Func<TTarget, TMember>> expression,
+        TMember toValue,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+            where TMember : struct
+            where TTarget : class
+        => MooseGame.Instance.Tween(target, expression, toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction);
 
-    public static Vector2 AddAndVectorize(this Point p, Point other)
-        => new(p.X + other.X, p.Y + other.Y);
+    public static T AddItem<T>(this IList<T> list, T item)
+    {
+        list.Add(item);
+        return item;
+    }
 
     public static void MoveItem<T>(this List<T> list, int oldIndex, int newIndex)
     {
@@ -45,8 +63,8 @@ public static class Extensions
     public static SpriteBatch FillRect(this SpriteBatch s, Vector2 position, int width, int height, Color fillColor, Color? borderColor = null)
         => s.FillRect(new Rectangle((int)position.X, (int)position.Y, width, height), fillColor, borderColor);
 
-    public static void DrawEllipse(this SpriteBatch spriteBatch, Rectangle destinationRectangle, int sides, Color color, float thickness = 1f, float layerDepth = 0)
-        => spriteBatch.DrawEllipse(destinationRectangle.Center.ToVector2(), destinationRectangle.Size.ToVector2(), sides, color, thickness, layerDepth);
+    public static void DrawEllipse(this SpriteBatch spriteBatch, RectangleF rect, int sides, Color color, float thickness = 1f, float layerDepth = 0)
+        => spriteBatch.DrawEllipse(rect.Center, rect.Size, sides, color, thickness, layerDepth);
 
     public static Color Shade(this Color c, float delta)
         => new(Round(c.R * delta), Round(c.G * delta), Round(c.B * delta));

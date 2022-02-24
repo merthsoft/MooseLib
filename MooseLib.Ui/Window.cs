@@ -175,6 +175,8 @@ public class Window : IControlContainer
                 if (updateParams.CenterPrompt)
                     Prompt.Center(Width, Height);
             }
+
+            c.ClearCompletedTweens();
         }
     }
 

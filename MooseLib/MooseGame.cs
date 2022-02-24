@@ -6,21 +6,23 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tweening;
+using System.Linq.Expressions;
 
 namespace Merthsoft.Moose.MooseEngine;
 
 public abstract class MooseGame : Game
 {
-    protected Random Random = new();
+    public static MooseGame Instance { get; protected set; }
+
+    public Random Random { get; protected set; } = new();
+    public Tweener Tweener { get; protected set; } = new();
+    public MooseContentManager ContentManager { get; protected set; } = null!; // Set in initialize
+    public OrthographicCamera MainCamera { get; protected set; } = null!; // Set in load content
 
     protected bool ShouldQuit { get; set; } = false;
-
-    public static MooseContentManager ContentManager { get; set; } = null!; // Set in initialize
-
-    public OrthographicCamera MainCamera = null!; // Set in load content
-    public SpriteBatch SpriteBatch = null!; // Set in load content
-
     private GraphicsDeviceManager Graphics { get; set; } = null!;
+
+    public SpriteBatch SpriteBatch = null!; // Set in load 
 
     public IMap MainMap => ActiveMaps.Any() ? ActiveMaps[0] : NullMap.Instance;
     public IList<IMap> ActiveMaps = new List<IMap>();
@@ -66,10 +68,11 @@ public abstract class MooseGame : Game
 
     protected FramesPerSecondCounter FramesPerSecondCounter { get; } = new();
 
-    public Tweener Tweener { get; protected set; } = new();
 
     public MooseGame()
     {
+        Instance = this;
+
         IsMouseVisible = true;
         Graphics = new GraphicsDeviceManager(this);
     }
@@ -198,16 +201,21 @@ public abstract class MooseGame : Game
 
         if (PreObjectsUpdate(gameTime))
             foreach (var obj in Objects)
+            {
                 obj.Update(gameTime);
-        PostObjectsUpdate(gameTime);
+                obj.ClearCompletedTweens();
+            }
 
-        foreach (var obj in Objects.Where(obj => obj.RemoveFlag))
-            if (obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
+        foreach (var obj in Objects)
+        {
+            if (obj.RemoveFlag && obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
             {
                 layer.RemoveObject(obj);
                 obj.OnRemove();
                 obj.ParentMap = null;
+                continue;
             }
+        }
 
         Objects.RemoveWhere(obj => obj.RemoveFlag);
 
@@ -217,14 +225,17 @@ public abstract class MooseGame : Game
             var layer = obj.ParentMap?.Layers[obj.Layer] as IObjectLayer;
             layer?.AddObject(obj);
             obj.OnAdd();
+            obj.Update(gameTime);
         }
 
         ObjectsToAdd.Clear();
+        
+        PostObjectsUpdate(gameTime);
 
         PostUpdate(gameTime);
 
         if (ShouldQuit)
-            base.Exit();
+            Exit();
 
         FramesPerSecondCounter.Update(gameTime);
     }
@@ -343,9 +354,36 @@ public abstract class MooseGame : Game
         base.Dispose(disposing);
     }
 
-    protected void TweenToPosition(GameObjectBase gameObject, Vector2 position, float duration, float delay = 0f)
-        => gameObject.ActiveTween = Tweener.TweenTo(gameObject, o => o.WorldPosition, position, duration, delay);
+    public Tween<TMember> Tween<TTarget, TMember>(
+        TTarget target,
+        Expression<Func<TTarget, TMember>> expression,
+        TMember toValue,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null) where TTarget : class where TMember : struct
+    {
+        var tween = Tweener.TweenTo(target, expression, toValue, duration, delay);
+        if (onEnd != null)
+            tween.OnEnd(onEnd);
+        if (onBegin != null)
+            tween.OnBegin(onBegin);
 
-    protected void TweenToSize(GameObjectBase gameObject, Vector2 size, float duration, float delay = 0f)
-        => gameObject.ActiveTween = Tweener.TweenTo(gameObject, o => o.WorldSize, size, duration, delay);
+        if (repeatCount > 0)
+            tween.Repeat(repeatCount, repeatDelay);
+        else if (repeatCount < 0)
+            tween.RepeatForever(repeatDelay);
+
+        if (autoReverse)
+            tween.AutoReverse();
+
+        if (easingFunction != null)
+            tween.Easing(easingFunction);
+
+        return tween;
+    }
 }

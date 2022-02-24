@@ -105,6 +105,8 @@ public class Panel : Control, IControlContainer
                 updateParameters.Prompt = controlUpdateParameters.Prompt;
                 updateParameters.CenterPrompt = controlUpdateParameters.CenterPrompt;
             }
+
+            c.ClearCompletedTweens();
         }
     }
 

@@ -75,7 +75,7 @@ public class Label : Control
             Action?.Invoke(this, updateParameters);
 
         if (renderedTexture == null && StrokeSize > 0)
-            renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedTextColor, Vector2.One, StrokeSize, StrokeColor, MooseGame.ContentManager.GraphicsDevice);
+            renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedTextColor, Vector2.One, StrokeSize, StrokeColor, MooseGame.Instance.ContentManager.GraphicsDevice);
 
         base.Update(updateParameters);
     }

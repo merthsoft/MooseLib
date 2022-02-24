@@ -8,7 +8,6 @@ public class TextureGameObject : GameObjectBase
 {
     public new TextureGameObjectDef Def => (base.Def as TextureGameObjectDef)!;
 
-    public float Rotation { get; set; }
     public SpriteEffects SpriteEffects { get; set; }
 
     public TextureGameObject(TextureGameObjectDef def, Vector2? position = null, int? layer = null, Vector2? size = null, string? direction = null) : base(def, position, layer, size, direction)

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGame.Extended.Tweening;
+using System.Linq.Expressions;
 
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
@@ -41,6 +43,7 @@ public abstract class Control
     }
 
     public Action<Control, UpdateParameters>? Action { get; set; }
+    public List<Tween> ActiveTweens { get; } = new();
 
     public Control(Theme theme, float x, float y)
     {
@@ -68,6 +71,9 @@ public abstract class Control
 
     public abstract Vector2 CalculateSize();
 
+    public void ClearCompletedTweens()
+        => ActiveTweens.RemoveAll(t => !t.IsAlive);
+
     public virtual void Update(UpdateParameters updateParameters)
     {
         if (updateParameters.MouseOver && (updateParameters.LeftMouseClick || updateParameters.RightMouseClick))
@@ -78,4 +84,31 @@ public abstract class Control
 
     public void Center(float width, float height)
         => Position += new Vector2(width / 2 - Rectangle.Width / 2, height / 2 - Rectangle.Height / 2);
+
+    public Tween TweenToPosition(Vector2 toValue,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+        => ActiveTweens.AddItem(
+            MooseGame.Instance.Tween(this, o => o.Position,
+                toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
+            ));
+
+    public void ClearTweens(bool complete = false)
+    {
+        foreach (var tween in ActiveTweens.Where(t => t.IsAlive))
+        {
+            if (complete)
+                tween.CancelAndComplete();
+            else
+                tween.Cancel();
+        }
+
+        ActiveTweens.Clear();
+    }
 }

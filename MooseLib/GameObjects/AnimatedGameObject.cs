@@ -17,7 +17,6 @@ public class AnimatedGameObject : GameObjectBase
     public AnimatedSprite Sprite { get; set; }
 
     public SpriteEffects SpriteEffects { get; set; }
-    public float Rotation { get; set; }
     public Transform2 SpriteTransform { get; set; }
 
     public virtual string PlayKey => Direction == null ? State.ToLower() : $"{State.ToLower()}_{Direction.ToLower()}";
@@ -25,7 +24,7 @@ public class AnimatedGameObject : GameObjectBase
     private string PreviousPlayKey = "";
 
     public override RectangleF WorldRectangle
-        => Sprite.GetBoundingRectangle(WorldPosition + SpriteTransform.WorldPosition, SpriteTransform.WorldRotation, SpriteTransform.WorldScale);
+        => Sprite.GetBoundingRectangle(Position + SpriteTransform.WorldPosition, SpriteTransform.WorldRotation, SpriteTransform.WorldScale);
 
     public AnimatedGameObject(AnimatedGameObjectDef def, Vector2? position = null, int layer = 0, Vector2? transformLocation = null, float rotation = 0, Vector2? scale = null, string state = "", string? direction = null)
         : base(def, position, layer, direction: direction)
