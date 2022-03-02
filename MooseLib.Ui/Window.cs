@@ -1,9 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
-
-namespace Merthsoft.Moose.MooseEngine.Ui;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui;
 
 public class Window : IControlContainer
 {
@@ -17,15 +12,11 @@ public class Window : IControlContainer
 
     private RectangleF rectangle;
 
-    protected List<Control> controlsToAdd = new();
     protected List<Control> controls = new();
     public Control[] Controls => controls.ToArray();
 
-    public Theme Theme => Themes[ThemeIndex];
-    public List<Theme> Themes { get; } = new();
-    public int ThemeIndex { get; set; }
-
-    public bool ShouldClose { get; protected set; }
+    public Theme Theme { get; set; }
+    public OrthographicCamera? Camera { get; set; }
 
     public bool Hidden { get; set; } = false;
 
@@ -75,48 +66,38 @@ public class Window : IControlContainer
     public float X => Rectangle.X;
     public float Y => Rectangle.Y;
 
-    public Window(IEnumerable<Theme> themes, float x, float y, float w = 0, float h = 0)
+    public Window(Theme theme, float x, float y, float w = 0, float h = 0)
     {
-        Themes.AddRange(themes);
+        Theme = theme;
         Rectangle = new(x, y, w, h);
     }
 
-    public Window(Theme theme, float x, float y, float w = 0, float h = 0)
-     : this(new[] { theme }, x, y, w, h) { }
-
     public virtual IControlContainer AddControl(Control control)
     {
-        controlsToAdd.Add(control);
+        controls.Add(control);
         return this;
     }
 
     public virtual IControlContainer ClearControls()
     {
         controls.Clear();
-        controlsToAdd.Clear();
         return this;
     }
 
-    public virtual IControlContainer RemoveControl(Control control)
+    public void Update(GameTime gameTime)
     {
-        controls.Remove(control);
-        controlsToAdd.Remove(control);
-        return this;
-    }
+        CurrentMouseState = Mouse.GetState();
+        CurrentKeyState = Keyboard.GetState();
+        var gameHasFocus = MooseGame.Instance.IsActive;
+        var mousePosition = Camera?.ScreenToWorld(CurrentMouseState.Position.ToVector2())
+            ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
 
-    public virtual IControlContainer RemoveControlAt(int index)
-    {
-        controls.RemoveAt(index);
-        return this;
-    }
-
-    public void Update(GameTime gameTime, bool gameHasFocus, MouseState currentMouseState, KeyboardState currentKeyState, Vector2? worldMouse = null)
-    {
-        CurrentMouseState = currentMouseState;
-        CurrentKeyState = currentKeyState;
-        var mousePosition = worldMouse ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
-
-        var defaultUpdateParameters = new UpdateParameters(gameTime, Position + Theme.GetDrawOffset(BackgroundDrawingMode), mousePosition, currentMouseState, currentKeyState, FocusedControl);
+        var defaultUpdateParameters = new UpdateParameters(gameTime,
+            Position + Theme.GetDrawOffset(BackgroundDrawingMode),
+            mousePosition,
+            CurrentMouseState,
+            CurrentKeyState,
+            FocusedControl);
         var windowUpdateParameters = defaultUpdateParameters with
         {
             MouseOver = Rectangle.Intersects(mousePosition),
@@ -127,17 +108,15 @@ public class Window : IControlContainer
         };
 
         PreControlUpdate(windowUpdateParameters);
-        controls.AddRange(controlsToAdd);
-        controlsToAdd.Clear();
-
+        
         if (!windowUpdateParameters.LeftMouseDown && !windowUpdateParameters.RightMouseDown)
             FocusedControl = null;
 
         if (Prompt != null)
             updateControl(Prompt);
 
-        foreach (var c in Controls.Reverse())
-            updateControl(c);
+        for (var i = Controls.Length - 1; i >= 0 && i < Controls.Length; i--)
+            updateControl(Controls[i]);
 
         if (Prompt != null && FocusedControl != Prompt && (windowUpdateParameters.LeftMouseClick || windowUpdateParameters.RightMouseClick))
             Prompt.Remove = true;
@@ -153,9 +132,12 @@ public class Window : IControlContainer
 
         void updateControl(Control c)
         {
+            if (c.Remove)
+                return;
+
             var updateParams = defaultUpdateParameters with
             {
-                LocalMousePosition = mousePosition - c.Position - c.Theme.TextureWindowControlDrawOffset,
+                LocalMousePosition = mousePosition - c.Position - c.Theme.GetDrawOffset(BackgroundDrawingMode),
                 FocusedControl = FocusedControl,
             };
 
@@ -180,8 +162,7 @@ public class Window : IControlContainer
                 if (updateParams.CenterPrompt)
                     Prompt.Center(Width, Height);
             }
-
-            c.ClearCompletedTweens();
+            c.PostUpdate();
         }
     }
 
@@ -204,16 +185,4 @@ public class Window : IControlContainer
 
     public void Center(float width, float height)
         => Position += new Vector2(width / 2 - Width / 2, height / 2 - Height / 2);
-
-    public void Close()
-    {
-        ShouldClose = true;
-        Hidden = true;
-    }
-
-    public void Hide()
-        => Hidden = true;
-
-    public void Show()
-        => Hidden = false;
 }

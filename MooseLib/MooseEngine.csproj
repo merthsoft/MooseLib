@@ -6,15 +6,15 @@
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		<AssemblyName>Merthsoft.Moose.$(MSBuildProjectName)</AssemblyName>
-		<Copyright>2022 Merthsoft Creations</Copyright>
+		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-		<VersionPrefix>0.4</VersionPrefix>
+		<VersionPrefix>0.5</VersionPrefix>
 		<DebugType>embedded</DebugType>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2087-develop" />
+		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2089-develop" />
 		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>

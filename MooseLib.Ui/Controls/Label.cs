@@ -60,7 +60,8 @@ public class Label : Control
         if (Text == "")
             return;
 
-        var position = Position + parentOffset;
+        var position = (Position + parentOffset).GetFloor();
+            
 
         if (strokeSize == 0)
             spriteBatch.DrawString(Font, Text, position, ResolvedTextColor);
@@ -71,12 +72,9 @@ public class Label : Control
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (updateParameters.MouseOver && updateParameters.LeftMouseClick)
-            Action?.Invoke(this, updateParameters);
+        base.Update(updateParameters);
 
         if (renderedTexture == null && StrokeSize > 0)
             renderedTexture = StrokeEffect.CreateStrokeSpriteFont(Font, Text, ResolvedTextColor, Vector2.One, StrokeSize, StrokeColor, MooseGame.Instance.ContentManager.GraphicsDevice);
-
-        base.Update(updateParameters);
     }
 }

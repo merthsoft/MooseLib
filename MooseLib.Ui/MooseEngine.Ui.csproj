@@ -7,10 +7,10 @@
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		<AssemblyName>Merthsoft.Moose.$(MSBuildProjectName)</AssemblyName>
-		<Copyright>2022 Merthsoft Creations</Copyright>
+		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-		<VersionPrefix>0.4</VersionPrefix>
+		<VersionPrefix>0.5</VersionPrefix>
 		<DebugType>embedded</DebugType>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
@@ -46,6 +46,7 @@
 		<Using Include="Merthsoft.Moose.MooseEngine" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls.Prompts" />
 	</ItemGroup>
 
 </Project>

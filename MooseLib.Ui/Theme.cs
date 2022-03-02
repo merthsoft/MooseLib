@@ -109,6 +109,9 @@ public class Theme
     public Color ResolvePointerColor(bool selected)
         => selected ? SelectedMouseOverColor : ControlPointerColor;
 
+    public Vector2 DrawWindow(SpriteBatch spriteBatch, Vector2 position, Vector2 size, BackgroundDrawingMode backgroundDrawingMode)
+        => DrawWindow(spriteBatch, new(position, size), backgroundDrawingMode);
+
     public Vector2 DrawWindow(SpriteBatch spriteBatch, RectangleF rectangle, BackgroundDrawingMode backgroundDrawingMode)
     {
         _ = backgroundDrawingMode switch
@@ -140,10 +143,17 @@ public class Theme
         spriteBatch.Draw(WindowTexture, destRect.ToRectangle(), TextureRects[index], Color.White);
     }
 
+    public Vector2 CalculateNewSize(Vector2 size)
+    {
+        var numXTiles = (size.X / TileDrawWidth).Ceiling();
+        var numYTiles = (size.Y / TileDrawHeight).Ceiling();
+        return new(numXTiles * TileWidth, numYTiles * TileHeight);
+    }
+
     protected RectangleF DrawWindowTexture(SpriteBatch spriteBatch, RectangleF rectangle)
     {
-        var numXTiles = (int)(rectangle.Width / TileDrawWidth);
-        var numYTiles = (int)(rectangle.Height / TileDrawHeight);
+        var numXTiles = (rectangle.Width / TileDrawWidth).Ceiling();
+        var numYTiles = (rectangle.Height / TileDrawHeight).Ceiling();
 
         var upperLeftIndex = 0;
         var upperIndex = 1;

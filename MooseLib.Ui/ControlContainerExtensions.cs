@@ -111,4 +111,12 @@ public static class ControlContainerExtensions
             Padding = padding,
         });
 
+    public static SortedStackPanel<TControl, TKey> AddSortedStackPanel<TControl, TKey>(this IControlContainer container, Func<TControl, TKey> orderBy, float x, float y, float w, float h, BackgroundDrawingMode backgroundDrawingMode = BackgroundDrawingMode.Texture, StackDirection stackDirection = StackDirection.Vertical, int padding = 0)
+        where TControl : Control
+        => container.AddControlPassThrough(new SortedStackPanel<TControl, TKey>(orderBy, container, x, y, w, h)
+        {
+            BackgroundDrawingMode = backgroundDrawingMode,
+            Direction = stackDirection,
+            Padding = padding,
+        });
 }

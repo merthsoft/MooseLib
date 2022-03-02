@@ -10,7 +10,7 @@ public class ToggleButton : Button
     public ToggleButton(string text, IControlContainer container, float x, float y) : base(text, container, x, y) { }
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
-        => DrawButton(spriteBatch, parentOffset,
+        => DrawBasicButton(spriteBatch, parentOffset,
             BackgroundColor ?? Theme.ResolveBackgroundColor(UpdateParameters, Enabled),
             BorderColor ?? Theme.ControlBorderColor,
             Theme.ResolveTextColor(UpdateParameters, Enabled, Toggled)

@@ -13,9 +13,9 @@ public class SnowballFightGame : MooseGame
 
     private enum GameMode { Demo, SelectingTeam, Playing, Paused };
     private GameMode Mode { get; set; } = GameMode.Demo;
-    private Team PlayerTeam = Team.Santa;
+    private Team? PlayerTeam = null;
 
-    public static SnowballFightGame Instance { get; private set; } = null!;
+    public new static SnowballFightGame Instance { get; private set; } = null!;
 
     // TODO: Move layer values into something else
     public static int UnitLayer { get; private set; } = 2;
@@ -25,6 +25,7 @@ public class SnowballFightGame : MooseGame
     private Window UxWindow = null!;
     private Panel StatsWindow = null!;
     private MainMenu MainMenu = null!;
+    private PauseMenu PauseMenu = null!;
     private TeamSelectionWindow TeamSelectionWindow = null!;
     private SpriteFont DebugFont = null!;
 
@@ -40,10 +41,12 @@ public class SnowballFightGame : MooseGame
 
     private IEnumerable<Unit> Units => ReadObjects.OfType<Unit>();
 
-    private AnimatedGameObjectDef SnowballDef => (Defs["snowball"] as AnimatedGameObjectDef)!;
+    public static AnimatedGameObjectDef SnowballDef => GetDef<AnimatedGameObjectDef>("snowball")!;
 
     private readonly Dictionary<int, RenderHook> GameRenderHooks;
     public override IDictionary<int, RenderHook>? DefaultRenderHooks => Mode == GameMode.Playing ? GameRenderHooks : null;
+
+    public readonly string VersionString;
 
     public SnowballFightGame()
     {
@@ -54,6 +57,12 @@ public class SnowballFightGame : MooseGame
             { 1, new(PostHook: _ => DrawSelectedUnitDetails()) },
             { 4, new(PostHook: _ => DrawTargetLine()) },
         };
+
+        var assembly = Assembly.GetExecutingAssembly();
+        var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+        var version = fileVersionInfo.ProductVersion!.Split('-');
+
+        VersionString = $"v{version[0]}{version[1][0]} - {fileVersionInfo.LegalCopyright}";
     }
 
     protected override void Initialize()
@@ -64,6 +73,11 @@ public class SnowballFightGame : MooseGame
 
     protected override void Load()
     {
+        var assembly = Assembly.GetExecutingAssembly();
+        var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+        Window.Title += $"Snowfight - v{fileVersionInfo.ProductVersion}";
+
         AddDefaultRenderer<TiledMooseTileLayer>("map", new TiledMooseMapRenderer(GraphicsDevice));
         AddDefaultRenderer<TiledMooseObjectLayer>("object", new SpriteBatchObjectRenderer(SpriteBatch));
 
@@ -129,13 +143,16 @@ public class SnowballFightGame : MooseGame
 
         var mainMenuFonts = new SpriteFont[]
         {
-            ContentManager.BakeFont("Whacky_Joe", 64),
+            ContentManager.BakeFont("Formal_Future", 64),
             ContentManager.BakeFont("Direct_Message", 48),
             ContentManager.BakeFont("Tomorrow_Night", 16),
-            ContentManager.BakeFont("Direct_Message", 40)
+            ContentManager.BakeFont("Direct_Message", 40),
+            ContentManager.BakeFont("Royal_Decree", 20),
+            ContentManager.BakeFont("Formal_Future", 84),
+            ContentManager.BakeFont("Simply_Social", 40),
         };
 
-        DebugFont = mainMenuFonts[2];
+        DebugFont = ContentManager.BakeFont("Outward_Bound_Monospaced", 16);
 
         var gameFonts = new SpriteFont[]
         {
@@ -150,37 +167,37 @@ public class SnowballFightGame : MooseGame
         };
 
         var themes = new Theme[] {
-            new Theme (windowTextures[0], 32, 32, mainMenuFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
+            new(windowTextures[0], 32, 32, mainMenuFonts) { TextureWindowControlDrawOffset = new(8, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
             new(windowTextures[0], 32, 32, gameFonts) { TextureWindowControlDrawOffset = new(6, 6), TextColor = Color.White, TextMouseOverColor = Color.Yellow, TextBorderColor = Color.Black },
         };
 
         UxWindow = new Window(themes[0], 0, 0, WindowSize, WindowSize) { BackgroundDrawingMode = BackgroundDrawingMode.None };
 
+        PauseMenu = new PauseMenu(MainMenu_Clicked, UxWindow);
+        PauseMenu.Center(WindowSize, WindowSize);
+        PauseMenu.Position -= new Vector2(0, PauseMenu.Y + PauseMenu.Height);
+        UxWindow.AddControl(PauseMenu);
+
         MainMenu = new MainMenu(MainMenu_Clicked, UxWindow);
         MainMenu.Center(WindowSize, WindowSize);
+        MainMenu.Position -= new Vector2(0, 900);
+        MainMenu.TweenToCenter(WindowSize, WindowSize, 1f);
         UxWindow.AddControl(MainMenu);
-        MainMenu.Hide();
 
-        TeamSelectionWindow = new TeamSelectionWindow(UxWindow, santaPortrait, krampusPortrait) { TeamSelected = TeamSelectionWindow_TeamSelected };
+        TeamSelectionWindow = new TeamSelectionWindow(TeamSelectionWindow_TeamSelected, UxWindow, santaPortrait, krampusPortrait);
+        TeamSelectionWindow.Center(WindowSize, WindowSize);
+        TeamSelectionWindow.Position += new Vector2(0, WindowSize);
         UxWindow.AddControl(TeamSelectionWindow);
-        TeamSelectionWindow.Hide();
 
         StatsWindow = UxWindow.AddPanel(0, 416 * 2, 480 * 2, 64 * 2);
+        StatsWindow.Position -= new Vector2(WindowSize*2, 0);
         StatsWindow.Hide();
 
         ContentManager.LoadAnimatedSpriteSheet(Snowball.AnimationKey);
     }
 
     protected override void PostLoad()
-    {
-        for (var index = 0; index < 8; index++)
-            SpawnUnit(Random.Next(0, 3) switch
-            {
-                1 => "elf1",
-                2 => "elf2",
-                _ => "elf3"
-            }, Random.Next(4, 26), Random.Next(21, 29));
-    }
+        => StartDemo();
 
     private void MainMenu_Clicked(string option)
     {
@@ -189,16 +206,32 @@ public class SnowballFightGame : MooseGame
             case "New Game":
                 NewGame();
                 break;
+            case "Resume":
+                PauseMenu.TweenToOffset(new(0, -PauseMenu.Height), .5f,
+                        onEnd: _ => Mode = GameMode.Playing);
+                break;
+            case "Quit":
+                PauseMenu.TweenToOffset(new(0, -PauseMenu.Height), .5f,
+                    onEnd: _ => StartDemo());
+                MainMenu.TweenToCenter(ScreenWidth, ScreenHeight, .5f);
+                break;
             case "Exit":
                 ShouldQuit = true;
                 break;
         }
     }
 
-    private void TeamSelectionWindow_TeamSelected(TeamSelectionWindow _, Team team)
+    private void TeamSelectionWindow_TeamSelected(Team? team)
     {
-        PlayerTeam = team;
-        StartGame();
+        var tween = TeamSelectionWindow.TweenToOffset(new(0, WindowSize), .5f);
+        if (team == null)
+        {
+            MainMenu.TweenToCenter(ScreenWidth, ScreenHeight, .5f);
+            tween.OnEnd(_ => Mode = GameMode.Demo);
+            return;
+        }
+        tween.OnEnd(_ => StartGame());
+        PlayerTeam = team.Value;
     }
 
     private Unit SpawnUnit(string unitDef, int cellX, int cellY, string state = Unit.States.Idle)
@@ -209,7 +242,25 @@ public class SnowballFightGame : MooseGame
     }
 
     private void NewGame()
-        => Mode = GameMode.SelectingTeam;
+    {
+        Mode = GameMode.SelectingTeam;
+        MainMenu.TweenToPosition(new(MainMenu.X, -MainMenu.Height), .5f);
+        TeamSelectionWindow.TweenToCenter(ScreenWidth, ScreenHeight, .5f);
+    }
+
+    private void StartDemo()
+    {
+        Mode = GameMode.Demo;
+        LoadMap("title_screen");
+
+        for (var index = 0; index < 8; index++)
+            SpawnUnit(Random.Next(0, 3) switch
+            {
+                1 => "elf1",
+                2 => "elf2",
+                _ => "elf3"
+            }, Random.Next(4, 26), Random.Next(21, 29));
+    }
 
     private void StartGame()
     {
@@ -242,49 +293,18 @@ public class SnowballFightGame : MooseGame
     {
         if (!flightPath.Any())
             return null;
-        var snowBall = new Snowball(Instance.SnowballDef, flightPath);
-        Instance.AddObject(snowBall);
-        return snowBall;
+        return Instance.AddObject(new Snowball(flightPath));
     }
 
     protected override bool PreRenderUpdate(GameTime gameTime)
     {
-        DetermineOpenWindows();
         HandleInput();
         return true;
     }
 
-    private void DetermineOpenWindows()
-    {
-        switch (Mode)
-        {
-            case GameMode.Demo:
-                MainMenu.Show();
-                TeamSelectionWindow.Hide();
-                StatsWindow.Hide();
-                break;
-            case GameMode.SelectingTeam:
-                MainMenu.Hide();
-                TeamSelectionWindow.Show();
-                StatsWindow.Hide();
-                break;
-            case GameMode.Playing:
-                MainMenu.Hide();
-                TeamSelectionWindow.Hide();
-                if (SelectedUnit == null)
-                    StatsWindow.Hide();
-                break;
-            case GameMode.Paused:
-                MainMenu.Show();
-                TeamSelectionWindow.Hide();
-                StatsWindow.Hide();
-                break;
-        }
-    }
-
     protected override void PostObjectsUpdate(GameTime gameTime)
     {
-        UxWindow.Update(gameTime, IsActive, CurrentMouseState, CurrentKeyState);
+        UxWindow.Update(gameTime);
         if (Mode == GameMode.Demo || Mode == GameMode.SelectingTeam)
             DemoUpdate();
     }
@@ -329,15 +349,10 @@ public class SnowballFightGame : MooseGame
         SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
         UxWindow.Draw(SpriteBatch);
 
-        if (Mode == GameMode.Demo || Mode == GameMode.Paused)
+        if (Mode == GameMode.Demo)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            var version = fileVersionInfo.ProductVersion!.Split('-');
-
-            SpriteBatch.DrawString(DebugFont,
-                $"v{version[0]}{version[1][0]} - {fileVersionInfo.LegalCopyright}",
-                new(0, ScreenHeight - 10), Color.Black);
+            var stringHeight = DebugFont.MeasureString(VersionString).Y;
+            SpriteBatch.DrawString(DebugFont, VersionString, new(0, ScreenHeight - stringHeight), Color.Black);
         }
 
         SpriteBatch.End();
@@ -353,12 +368,12 @@ public class SnowballFightGame : MooseGame
             switch (Mode)
             {
                 case GameMode.Paused:
-                    Mode = GameMode.Playing;
-                    MainMenu.Hide();
+                    PauseMenu.TweenToOffset(new(0, -PauseMenu.Height), .5f,
+                        onEnd: _ => Mode = GameMode.Playing);
                     break;
                 case GameMode.Playing:
-                    Mode = GameMode.Paused;
-                    MainMenu.Show();
+                    PauseMenu.TweenToOffset(new(0, PauseMenu.Height), .5f,
+                        onEnd: _ => Mode = GameMode.Paused);
                     break;
             }
 

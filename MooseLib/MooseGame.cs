@@ -167,8 +167,8 @@ public abstract class MooseGame : Game
         return def;
     }
 
-    public TDef GetDef<TDef>(string defName) where TDef : Def
-        => ((Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
+    public static TDef GetDef<TDef>(string defName) where TDef : Def
+        => ((Instance.Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
 
     protected virtual bool PreRenderUpdate(GameTime gameTime) => true;
     protected virtual bool PreObjectsUpdate(GameTime gameTime) => true;
@@ -204,7 +204,7 @@ public abstract class MooseGame : Game
 
         foreach (var obj in Objects)
         {
-            if (obj.RemoveFlag && obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
+            if (obj.Remove && obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
             {
                 layer.RemoveObject(obj);
                 obj.OnRemove();
@@ -213,7 +213,7 @@ public abstract class MooseGame : Game
             }
         }
 
-        Objects.RemoveWhere(obj => obj.RemoveFlag);
+        Objects.RemoveWhere(obj => obj.Remove);
 
         foreach (var obj in ObjectsToAdd)
         {
@@ -237,7 +237,7 @@ public abstract class MooseGame : Game
     }
 
     protected void MarkAllObjectsForRemoval()
-        => Objects.ForEach(o => o.RemoveFlag = true);
+        => Objects.ForEach(o => o.Remove = true);
 
     protected override void Draw(GameTime gameTime)
     {

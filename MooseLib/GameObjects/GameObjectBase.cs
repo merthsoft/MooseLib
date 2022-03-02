@@ -18,7 +18,7 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
 
     public virtual RectangleF WorldRectangle => new(Position.X, Position.Y, WorldSize.X, WorldSize.Y);
 
-    public bool RemoveFlag { get; set; }
+    public bool Remove { get; set; }
 
     public string State { get; set; } = "";
 
@@ -43,6 +43,14 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
 
     public void ClearCompletedTweens()
         => ActiveTweens.RemoveAll(t => !t.IsAlive);
+
+    public virtual void PostUpdate()
+    {
+        if (Remove)
+            ClearTweens();
+        else
+            ClearCompletedTweens();
+    }
 
     public abstract void Draw(SpriteBatch spriteBatch);
 

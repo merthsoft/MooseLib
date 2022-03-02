@@ -1,12 +1,13 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
-public class StackPanel : FlowPanel
+public class SortedStackPanel<TControl, TKey> : StackPanel where TControl : Control
 {
-    public StackDirection Direction { get; set; } = StackDirection.Vertical;
-    public float Padding { get; set; }
+    private readonly Func<TControl, TKey> orderBy;
 
-    public StackPanel(IControlContainer container, float x, float y, float w, float h)
-        : base(container, x, y, w, h) { }
+    public SortedStackPanel(Func<TControl, TKey> orderBy, IControlContainer container, float x, float y, float w, float h)
+        : base(container, x, y, w, h) {
+        this.orderBy = orderBy;
+    }
 
     public override void Flow()
     {
@@ -15,7 +16,13 @@ public class StackPanel : FlowPanel
 
         var previousValue = 0f;
 
-        foreach (var control in Controls)
+        var sortedControls = Controls
+                                .Cast<TControl>()
+                                .OrderBy(orderBy)
+                                .ToArray();
+        controls.Clear();
+
+        foreach (var control in sortedControls)
         {
             if (control.Hidden)
                 continue;
@@ -46,5 +53,7 @@ public class StackPanel : FlowPanel
                 x += width + Padding;
             }
         }
+
+        controls.AddRange(sortedControls);
     }
 }

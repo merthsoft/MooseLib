@@ -8,6 +8,30 @@ namespace Merthsoft.Moose.MooseEngine;
 
 public static class Extensions
 {
+    public static void MoveToTop<T>(this List<T> list, int index)
+    {
+        T item = list[index];
+        for (int i = index; i > 0; i--)
+            list[i] = list[i - 1];
+        list[0] = item;
+    }
+
+    public static void MoveToBottom<T>(this List<T> list, int index)
+    {
+        T item = list[index];
+        for (int i = index; i < list.Count - 1; i++)
+            list[i] = list[i + 1];
+        list[list.Count - 1] = item;
+    }
+
+    public static void Swap<T>(this IList<T> list, int index1, int index2)
+    {
+        var track1 = list[index1];
+        var track2 = list[index2];
+        list[index1] = track2;
+        list[index2] = track1;
+    }
+
     public static Tween Tween<TTarget, TMember>(this TTarget target, Expression<Func<TTarget, TMember>> expression,
         TMember toValue,
         float duration,
@@ -26,14 +50,6 @@ public static class Extensions
     {
         list.Add(item);
         return item;
-    }
-
-    public static void MoveItem<T>(this List<T> list, int oldIndex, int newIndex)
-    {
-        T removedItem = list[oldIndex];
-
-        list.RemoveAt(oldIndex);
-        list.Insert(newIndex, removedItem);
     }
 
     public static bool IsPrintableAscii(this char c)

@@ -17,8 +17,8 @@ public class Snowball : AnimatedGameObject
     private Queue<Vector2> FlightPath { get; }
     private Vector2 StartCell { get; set; }
 
-    public Snowball(AnimatedGameObjectDef def, IEnumerable<Vector2> flightPath)
-        : base(def, flightPath.First(), SnowballFightGame.SnowballLayer, state: States.Fly)
+    public Snowball(IEnumerable<Vector2> flightPath)
+        : base(SnowballFightGame.SnowballDef, flightPath.First(), SnowballFightGame.SnowballLayer, state: States.Fly)
     {
         FlightPath = new(flightPath.Where((v, i) => i % 3 == 0));
 
@@ -44,7 +44,7 @@ public class Snowball : AnimatedGameObject
         }
 
         if (State == States.Dead)
-            RemoveFlag = true;
+            Remove = true;
 
         base.Update(gameTime);
     }

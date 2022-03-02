@@ -1,5 +1,5 @@
-﻿using Merthsoft.Moose.MooseEngine.GameObjects;
-using Troschuetz.Random.Distributions.Continuous;
+﻿using MathNet.Numerics.Distributions;
+using Merthsoft.Moose.MooseEngine.GameObjects;
 
 namespace Merthsoft.Moose.SnowballFight;
 
@@ -30,7 +30,7 @@ internal class Unit : AnimatedGameObject
     private Vector2 MoveDirection = Vector2.Zero;
     private Vector2 NextLocation = Vector2.Zero;
 
-    private readonly NormalDistribution AimDistribution;
+    private readonly Normal AimDistribution;
     private Unit? targettedUnit;
     private bool stepFlag;
 
@@ -38,7 +38,7 @@ internal class Unit : AnimatedGameObject
         : base(unitDef, new(worldX, worldY), SnowballFightGame.UnitLayer, state: state)
     {
         UnitDef = unitDef;
-        AimDistribution = new NormalDistribution(0, unitDef.AccuracySigma);
+        AimDistribution = new Normal(0, unitDef.AccuracySigma);
     }
 
     public override void Update(GameTime gameTime)
@@ -83,7 +83,7 @@ internal class Unit : AnimatedGameObject
         if (targettedUnit != null)
         {
             var startWorldPosition = Position + ParentMap!.HalfTileSize;
-            var wiggle = AimDistribution.NextDouble();
+            var wiggle = AimDistribution.Sample();
             var endWorldPosition = (targettedUnit.Position + ParentMap!.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
             var flightPath = ParentMap!.FindWorldRay(startWorldPosition, endWorldPosition);
             SnowballFightGame.SpawnSnowball(flightPath.Select(p => p.WorldPosition));

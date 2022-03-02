@@ -1,12 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
-using MonoGame.Extended.Tweening;
+﻿using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public abstract class Control
 {
+    public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
+
     public IControlContainer Container { get; }
     public Theme Theme => Container.Theme;
 
@@ -72,7 +71,7 @@ public abstract class Control
     public abstract Vector2 CalculateSize();
 
     public void ClearCompletedTweens()
-        => ActiveTweens.RemoveAll(t => !t.IsAlive);
+        => ActiveTweens.RemoveAll(t => !t.IsAlive); 
 
     public virtual void Update(UpdateParameters updateParameters)
     {
@@ -80,10 +79,30 @@ public abstract class Control
             Action?.Invoke(this, updateParameters);
     }
 
+    public virtual void PostUpdate()
+    {
+        if (Remove)
+            ClearTweens();
+        else
+            ClearCompletedTweens();
+    }
+
     public abstract void Draw(SpriteBatch spriteBatch, Vector2 parentOffset);
 
     public void Center(float width, float height)
-        => Position += new Vector2(width / 2 - Rectangle.Width / 2, height / 2 - Rectangle.Height / 2);
+        => Position += new Vector2(width / 2f - Rectangle.Width / 2f, height / 2f - Rectangle.Height / 2f);
+
+    public Tween TweenToCenter(float width, float height,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+        => TweenToPosition(new Vector2(width / 2f - Rectangle.Width / 2f, height / 2f - Rectangle.Height / 2f),
+            duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction);
 
     public Tween TweenToPosition(Vector2 toValue,
         float duration,
@@ -97,6 +116,20 @@ public abstract class Control
         => ActiveTweens.AddItem(
             MooseGame.Instance.Tween(this, o => o.Position,
                 toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
+            ));
+
+    public Tween TweenToOffset(Vector2 offset,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+        => ActiveTweens.AddItem(
+            MooseGame.Instance.Tween(this, o => o.Position,
+                Position + offset, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
             ));
 
     public void ClearTweens(bool complete = false)

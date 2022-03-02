@@ -11,16 +11,19 @@
 		<ApplicationIcon>Icon.ico</ApplicationIcon>
 		<AssemblyName>Snowfight Tactics</AssemblyName>
 		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-		<Copyright>2021 Merthsoft Creations</Copyright>
+		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-		<VersionPrefix>0.2</VersionPrefix>
+		<VersionPrefix>0.3</VersionPrefix>
 		<DebugType>embedded</DebugType>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Icon.ico" />
 		<None Remove="Icon.bmp" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Include="Content\Fonts\Bubbly_Bold.ttf" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Icon.ico">
@@ -37,9 +40,9 @@
 		<TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="MathNet.Numerics" Version="5.0.0-alpha16" />
 		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
-		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2087-develop" />
-		<PackageReference Include="Troschuetz.Random" Version="5.1.0" />
+		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2089-develop" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
@@ -105,11 +108,35 @@
 		<None Update="Content\Animations\units.sf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="Content\Fonts\Bubbly_Bold.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Bubbly_Bold_Cutout.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Content\Fonts\Capital_Hill.ttf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Content\Fonts\Direct_Message.ttf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Empty_Windows.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Formal_Future.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Outward_Bound_Monospaced.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Retro_Future_Spaced.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Royal_Decree.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Content\Fonts\Simply_Social.ttf">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Content\Fonts\Tomorrow_Night.ttf">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class Panel : Control, IControlContainer
 {
@@ -18,11 +15,9 @@ public class Panel : Control, IControlContainer
         }
     }
 
-    //protected List<Control> controlsToAdd = new();
     protected List<Control> controls = new();
     public Control[] Controls => controls.ToArray();
 
-    public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
     protected Control? FocusedControl { get; set; }
 
     public Panel(IControlContainer container, float x, float y, float w, float h)
@@ -37,7 +32,6 @@ public class Panel : Control, IControlContainer
 
     public virtual IControlContainer AddControl(Control control)
     {
-        //controlsToAdd.Add(control);
         controls.Add(control);
         return this;
     }
@@ -45,29 +39,14 @@ public class Panel : Control, IControlContainer
     public virtual IControlContainer ClearControls()
     {
         controls.Clear();
-        //controlsToAdd.Clear();
-        return this;
-    }
-
-    public virtual IControlContainer RemoveControl(Control control)
-    {
-        controls.Remove(control);
-        //controlsToAdd.Remove(control);
-        return this;
-    }
-
-    public virtual IControlContainer RemoveControlAt(int index)
-    {
-        controls.RemoveAt(index);
         return this;
     }
 
     public override void Update(UpdateParameters updateParameters)
     {
-        PreControlUpdate(updateParameters);
-
         var position = Position + updateParameters.ParentOffset;
-        position += Theme.GetDrawOffset(BackgroundDrawingMode);
+        var themeOffset = Theme.GetDrawOffset(BackgroundDrawingMode);
+        position += themeOffset;
 
         if (!updateParameters.LeftMouseDown && !updateParameters.RightMouseDown)
             FocusedControl = null;
@@ -76,15 +55,17 @@ public class Panel : Control, IControlContainer
             updateControl(c);
 
         controls.RemoveAll(c => c.Remove);
-        PostControlUpdate(updateParameters);
 
         void updateControl(Control c)
         {
+            if (c.Remove)
+                return;
+
             var controlUpdateParameters = new UpdateParameters(
                updateParameters.GameTime, position, updateParameters.LocalMousePosition - c.Position,
                updateParameters.RawMouseState, updateParameters.RawKeyState,
                FocusedControl);
-            if (c.Rectangle.Contains(updateParameters.LocalMousePosition)
+            if (c.Rectangle.Contains(updateParameters.LocalMousePosition - themeOffset)
                 && !Hidden && !c.Hidden
                 && updateParameters.MouseOver
                 && (FocusedControl == null || FocusedControl == c))
@@ -106,12 +87,12 @@ public class Panel : Control, IControlContainer
                 updateParameters.CenterPrompt = controlUpdateParameters.CenterPrompt;
             }
 
-            c.ClearCompletedTweens();
+            if (c is Panel p && p.FocusedControl != null)
+                FocusedControl = c;
+
+            c.PostUpdate();
         }
     }
-
-    public virtual void PreControlUpdate(UpdateParameters updateParameters) { }
-    public virtual void PostControlUpdate(UpdateParameters updateParameters) { }
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
     {
