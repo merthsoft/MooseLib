@@ -4,7 +4,7 @@ using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.MooseEngine.GameObjects;
 
-public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<GameObjectBase>
+public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>, IEquatable<GameObjectBase>
 {
     public Guid Id { get; } = Guid.NewGuid();
 
@@ -41,15 +41,12 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
 
     public abstract void Update(GameTime gameTime);
 
-    public void ClearCompletedTweens()
-        => ActiveTweens.RemoveAll(t => !t.IsAlive);
-
     public virtual void PostUpdate()
     {
         if (Remove)
-            ClearTweens();
+            this.ClearTweens();
         else
-            ClearCompletedTweens();
+            this.ClearCompletedTweens();
     }
 
     public abstract void Draw(SpriteBatch spriteBatch);
@@ -59,60 +56,29 @@ public abstract class GameObjectBase : IComparable<GameObjectBase>, IEquatable<G
     public virtual void OnRemove() { }
 
     public Tween TweenToPosition(Vector2 toValue,
-        float duration,
-        float delay = 0f,
-        Action<Tween>? onEnd = null,
-        Action<Tween>? onBegin = null,
-        int repeatCount = 0,
-        float repeatDelay = 0f,
-        bool autoReverse = false,
-        Func<float, float>? easingFunction = null)
-        => ActiveTweens.AddItem(
-            MooseGame.Instance.Tween(this, o => o.Position,
-                toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
-            ));
+        float duration, float delay = 0f,
+        Action<Tween>? onEnd = null, Action<Tween>? onBegin = null,
+        int repeatCount = 0, float repeatDelay = 0f,
+        bool autoReverse = false, Func<float, float>? easingFunction = null)
+        => this.AddTween(o => o.Position, toValue, duration, delay, onEnd, onBegin, 
+                repeatCount, repeatDelay, autoReverse, easingFunction);
 
     public Tween TweenToSize(Vector2 toValue,
-        float duration,
-        float delay = 0f,
-        Action<Tween>? onEnd = null,
-        Action<Tween>? onBegin = null,
-        int repeatCount = 0,
-        float repeatDelay = 0f,
-        bool autoReverse = false,
-        Func<float, float>? easingFunction = null)
-        => ActiveTweens.AddItem(
-            MooseGame.Instance.Tween(this, o => o.WorldSize,
-                toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
-            ));
+        float duration, float delay = 0f,
+        Action<Tween>? onEnd = null, Action<Tween>? onBegin = null,
+        int repeatCount = 0, float repeatDelay = 0f,
+        bool autoReverse = false, Func<float, float>? easingFunction = null)
+        => this.AddTween(o => o.WorldSize, toValue, duration, delay, onEnd, onBegin, 
+            repeatCount, repeatDelay, autoReverse, easingFunction);
 
     public Tween TweenToRotation(float toValue,
-        float duration,
-        float delay = 0f,
-        Action<Tween>? onEnd = null,
-        Action<Tween>? onBegin = null,
-        int repeatCount = 0,
-        float repeatDelay = 0f,
-        bool autoReverse = false,
-        Func<float, float>? easingFunction = null)
-        => ActiveTweens.AddItem(
-            MooseGame.Instance.Tween(this, o => o.Rotation,
-                toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
-            ));
-
-    public void ClearTweens(bool complete = false)
-    {
-        foreach (var tween in ActiveTweens.Where(t => t.IsAlive))
-        {
-            if (complete)
-                tween.CancelAndComplete();
-            else
-                tween.Cancel();
-        }
-
-        ActiveTweens.Clear();
-    }
-
+        float duration, float delay = 0f,
+        Action<Tween>? onEnd = null, Action<Tween>? onBegin = null,
+        int repeatCount = 0, float repeatDelay = 0f,
+        bool autoReverse = false, Func<float, float>? easingFunction = null)
+        => this.AddTween(o => o.Rotation, toValue, duration, delay, onEnd, onBegin, 
+            repeatCount, repeatDelay, autoReverse, easingFunction);
+    
     public virtual bool AtWorldPosition(Vector2 worldPosition)
         => WorldRectangle.Contains(worldPosition);
 

@@ -1,8 +1,9 @@
-﻿using MonoGame.Extended.Tweening;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
+using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
-public abstract class Control
+public abstract class Control : ITweenOwner
 {
     public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
 
@@ -70,9 +71,6 @@ public abstract class Control
 
     public abstract Vector2 CalculateSize();
 
-    public void ClearCompletedTweens()
-        => ActiveTweens.RemoveAll(t => !t.IsAlive); 
-
     public virtual void Update(UpdateParameters updateParameters)
     {
         if (updateParameters.MouseOver && (updateParameters.LeftMouseClick || updateParameters.RightMouseClick))
@@ -82,9 +80,9 @@ public abstract class Control
     public virtual void PostUpdate()
     {
         if (Remove)
-            ClearTweens();
+            this.ClearTweens();
         else
-            ClearCompletedTweens();
+            this.ClearCompletedTweens();
     }
 
     public abstract void Draw(SpriteBatch spriteBatch, Vector2 parentOffset);
@@ -113,10 +111,9 @@ public abstract class Control
         float repeatDelay = 0f,
         bool autoReverse = false,
         Func<float, float>? easingFunction = null)
-        => ActiveTweens.AddItem(
-            MooseGame.Instance.Tween(this, o => o.Position,
-                toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
-            ));
+        => this.AddTween(o => o.Position,
+                toValue, duration, delay, onEnd, onBegin, 
+                repeatCount, repeatDelay, autoReverse, easingFunction);
 
     public Tween TweenToOffset(Vector2 offset,
         float duration,
@@ -127,21 +124,7 @@ public abstract class Control
         float repeatDelay = 0f,
         bool autoReverse = false,
         Func<float, float>? easingFunction = null)
-        => ActiveTweens.AddItem(
-            MooseGame.Instance.Tween(this, o => o.Position,
-                Position + offset, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction
-            ));
-
-    public void ClearTweens(bool complete = false)
-    {
-        foreach (var tween in ActiveTweens.Where(t => t.IsAlive))
-        {
-            if (complete)
-                tween.CancelAndComplete();
-            else
-                tween.Cancel();
-        }
-
-        ActiveTweens.Clear();
-    }
+        => this.AddTween(o => o.Position,
+                Position + offset, duration, delay, onEnd, onBegin, 
+                repeatCount, repeatDelay, autoReverse, easingFunction);
 }

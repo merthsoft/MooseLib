@@ -1,6 +1,9 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Ui;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
+using MonoGame.Extended.Tweening;
 
-public class Window : IControlContainer
+namespace Merthsoft.Moose.MooseEngine.Ui;
+
+public class Window : IControlContainer, ITweenOwner
 {
     internal MouseState CurrentMouseState { get; set; }
 
@@ -66,10 +69,31 @@ public class Window : IControlContainer
     public float X => Rectangle.X;
     public float Y => Rectangle.Y;
 
+    public List<Tween> ActiveTweens { get; } = new();
+
+    private Color overlayColor;
+    public Color OverlayColor
+    {
+        get => overlayColor;
+        set
+        {
+            overlayColor = value;
+            foreach (var t in ActiveTweens.Where(t => t.MemberName == "OverlayColor"))
+                t.Cancel();
+        }
+    }
+
+    public float OverlayAlpha
+    {
+        get => OverlayColor.A / 255f;
+        set => OverlayColor = new Color(OverlayColor, value);
+    }
+
     public Window(Theme theme, float x, float y, float w = 0, float h = 0)
     {
         Theme = theme;
         Rectangle = new(x, y, w, h);
+        OverlayColor = Color.Transparent;
     }
 
     public virtual IControlContainer AddControl(Control control)
@@ -181,8 +205,60 @@ public class Window : IControlContainer
                 c.Draw(spriteBatch, pos);
 
         Prompt?.Draw(spriteBatch, pos);
+
+        spriteBatch.FillRectangle(Rectangle, OverlayColor);
     }
 
     public void Center(float width, float height)
         => Position += new Vector2(width / 2 - Width / 2, height / 2 - Height / 2);
+
+    public Tween TweenToCenter(float width, float height,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+        => TweenToPosition(new Vector2(width / 2f - Rectangle.Width / 2f, height / 2f - Rectangle.Height / 2f),
+            duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction);
+
+    public Tween TweenToPosition(Vector2 toValue,
+        float duration,
+        float delay = 0f,
+        Action<Tween>? onEnd = null,
+        Action<Tween>? onBegin = null,
+        int repeatCount = 0,
+        float repeatDelay = 0f,
+        bool autoReverse = false,
+        Func<float, float>? easingFunction = null)
+        => this.AddTween(o => o.Position,
+                toValue, duration, delay, onEnd, onBegin,
+                repeatCount, repeatDelay, autoReverse, easingFunction);
+
+    public Tween TweenToOffset(Vector2 offset,
+        float duration, float delay = 0f,
+        Action<Tween>? onEnd = null, Action<Tween>? onBegin = null,
+        int repeatCount = 0, float repeatDelay = 0f,
+        bool autoReverse = false, Func<float, float>? easingFunction = null)
+        => this.AddTween(o => o.Position, Position + offset, duration, delay, onEnd, onBegin,
+                repeatCount, repeatDelay, autoReverse, easingFunction);
+
+    public Tween TweenToOverlayAlpha(float alpha, float duration, float delay = 0f,
+        Action<Tween>? onEnd = null, Action<Tween>? onBegin = null,
+        int repeatCount = 0, float repeatDelay = 0f,
+        bool autoReverse = false, Func<float, float>? easingFunction = null)
+        => this.AddTween(o => o.OverlayAlpha, alpha, duration, delay, onEnd, onBegin,
+                repeatCount, repeatDelay, autoReverse, easingFunction);
+
+    public Tween FadeToColor(float duration, Color? color = null, float delay = 0f,
+        Action<Tween>? onEnd = null, Action<Tween>? onBegin = null,
+        int repeatCount = 0, float repeatDelay = 0f,
+        bool autoReverse = false, Func<float, float>? easingFunction = null)
+    {
+        OverlayColor = color.HasValue ? new(color.Value, 0) : OverlayColor;
+        return TweenToOverlayAlpha((color?.A ?? 255) / 255f, duration, delay, onEnd, onBegin,
+                repeatCount, repeatDelay, autoReverse, easingFunction);
+    }
 }

@@ -32,20 +32,6 @@ public static class Extensions
         list[index2] = track1;
     }
 
-    public static Tween Tween<TTarget, TMember>(this TTarget target, Expression<Func<TTarget, TMember>> expression,
-        TMember toValue,
-        float duration,
-        float delay = 0f,
-        Action<Tween>? onEnd = null,
-        Action<Tween>? onBegin = null,
-        int repeatCount = 0,
-        float repeatDelay = 0f,
-        bool autoReverse = false,
-        Func<float, float>? easingFunction = null)
-            where TMember : struct
-            where TTarget : class
-        => MooseGame.Instance.Tween(target, expression, toValue, duration, delay, onEnd, onBegin, repeatCount, repeatDelay, autoReverse, easingFunction);
-
     public static T AddItem<T>(this IList<T> list, T item)
     {
         list.Add(item);

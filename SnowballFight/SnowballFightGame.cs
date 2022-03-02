@@ -2,6 +2,7 @@
 using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.TiledDriver;
 using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tweening;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -172,6 +173,8 @@ public class SnowballFightGame : MooseGame
         };
 
         UxWindow = new Window(themes[0], 0, 0, WindowSize, WindowSize) { BackgroundDrawingMode = BackgroundDrawingMode.None };
+        UxWindow.OverlayColor = Color.Black;
+        var windowTween = UxWindow.TweenToOverlayAlpha(0f, 1f);
 
         PauseMenu = new PauseMenu(MainMenu_Clicked, UxWindow);
         PauseMenu.Center(WindowSize, WindowSize);
@@ -181,7 +184,9 @@ public class SnowballFightGame : MooseGame
         MainMenu = new MainMenu(MainMenu_Clicked, UxWindow);
         MainMenu.Center(WindowSize, WindowSize);
         MainMenu.Position -= new Vector2(0, 900);
-        MainMenu.TweenToCenter(WindowSize, WindowSize, 1f);
+        windowTween.OnEnd(_ => 
+            MainMenu.TweenToCenter(WindowSize, WindowSize, 1.7f, 
+                easingFunction: EasingFunctions.BounceOut));
         UxWindow.AddControl(MainMenu);
 
         TeamSelectionWindow = new TeamSelectionWindow(TeamSelectionWindow_TeamSelected, UxWindow, santaPortrait, krampusPortrait);
@@ -213,7 +218,9 @@ public class SnowballFightGame : MooseGame
             case "Quit":
                 PauseMenu.TweenToOffset(new(0, -PauseMenu.Height), .5f,
                     onEnd: _ => StartDemo());
-                MainMenu.TweenToCenter(ScreenWidth, ScreenHeight, .5f);
+                UxWindow.FadeToColor(.5f, 
+                    onEnd: _ => MainMenu.TweenToCenter(ScreenWidth, ScreenHeight, .5f), 
+                    autoReverse: true);
                 break;
             case "Exit":
                 ShouldQuit = true;
@@ -231,6 +238,7 @@ public class SnowballFightGame : MooseGame
             return;
         }
         tween.OnEnd(_ => StartGame());
+        UxWindow.FadeToColor(.5f, autoReverse: true);
         PlayerTeam = team.Value;
     }
 
@@ -250,8 +258,8 @@ public class SnowballFightGame : MooseGame
 
     private void StartDemo()
     {
-        Mode = GameMode.Demo;
         LoadMap("title_screen");
+        Mode = GameMode.Demo;
 
         for (var index = 0; index < 8; index++)
             SpawnUnit(Random.Next(0, 3) switch
