@@ -1,5 +1,4 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
-
 public class StackPanel : FlowPanel
 {
     public StackDirection Direction { get; set; } = StackDirection.Vertical;
@@ -19,9 +18,9 @@ public class StackPanel : FlowPanel
         {
             if (control.Hidden)
                 continue;
+            var size = control.CalculateSize();
             if (Direction == StackDirection.Vertical)
             {
-                var size = control.CalculateSize();
                 var height = size.Y;
                 if (y + height > Height)
                 {
@@ -34,7 +33,6 @@ public class StackPanel : FlowPanel
             }
             else
             {
-                var size = control.CalculateSize();
                 var width = size.X;
                 if (x + width > Width)
                 {

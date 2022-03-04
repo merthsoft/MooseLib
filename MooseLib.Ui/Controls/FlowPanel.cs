@@ -7,9 +7,9 @@ public abstract class FlowPanel : Panel
 
     public override void Update(UpdateParameters updateParameters)
     {
+        base.Update(updateParameters);
         if (Controls.Length > 0)
             Flow();
-        base.Update(updateParameters);
     }
 
     public abstract void Flow();

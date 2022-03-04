@@ -5,6 +5,10 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public abstract class Control : ITweenOwner
 {
+    protected virtual Color ResolvedBackgroundColor => Theme.ResolveBackgroundColor(UpdateParameters, Enabled);
+    protected virtual Color ResolvedBorderColor => Theme.ControlBorderColor;
+    protected virtual Color ResolvedTextColor => Theme.ResolveTextColor(UpdateParameters, Enabled, false);
+
     public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
 
     public IControlContainer Container { get; }

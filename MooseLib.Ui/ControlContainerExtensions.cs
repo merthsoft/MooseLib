@@ -81,6 +81,14 @@ public static class ControlContainerExtensions
             FontIndex = fontIndex,
         });
 
+    public static TextureButton AddTextureButton(this IControlContainer container, float x, float y, Texture2D texture, Action<Control, UpdateParameters> action, int fontIndex = 0, Rectangle? sourceRect = null)
+        => container.AddControlPassThrough(new TextureButton(texture, container, x, y)
+        {
+            Action = action,
+            FontIndex = fontIndex,
+            SourceRectangle = sourceRect,
+        });
+
     public static ToggleButton AddToggleButton(this IControlContainer container, float x, float y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0)
         => container.AddControlPassThrough(new ToggleButton(text, container, x, y)
         {
@@ -114,6 +122,14 @@ public static class ControlContainerExtensions
     public static SortedStackPanel<TControl, TKey> AddSortedStackPanel<TControl, TKey>(this IControlContainer container, Func<TControl, TKey> orderBy, float x, float y, float w, float h, BackgroundDrawingMode backgroundDrawingMode = BackgroundDrawingMode.Texture, StackDirection stackDirection = StackDirection.Vertical, int padding = 0)
         where TControl : Control
         => container.AddControlPassThrough(new SortedStackPanel<TControl, TKey>(orderBy, container, x, y, w, h)
+        {
+            BackgroundDrawingMode = backgroundDrawingMode,
+            Direction = stackDirection,
+            Padding = padding,
+        });
+
+    public static GrowPanel AddGrowPanel(this IControlContainer container, float x, float y, BackgroundDrawingMode backgroundDrawingMode = BackgroundDrawingMode.Texture, StackDirection stackDirection = StackDirection.Vertical, int padding = 0)
+        => container.AddControlPassThrough(new GrowPanel(container, x, y)
         {
             BackgroundDrawingMode = backgroundDrawingMode,
             Direction = stackDirection,
