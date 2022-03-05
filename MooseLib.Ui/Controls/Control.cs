@@ -5,13 +5,22 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public abstract class Control : ITweenOwner
 {
-    protected virtual Color ResolvedBackgroundColor => Theme.ResolveBackgroundColor(UpdateParameters, Enabled);
-    protected virtual Color ResolvedBorderColor => Theme.ControlBorderColor;
-    protected virtual Color ResolvedTextColor => Theme.ResolveTextColor(UpdateParameters, Enabled, false);
+    public IControlContainer Container { get; }
+ 
+    public int FontIndex { get; set; }
+    public SpriteFont Font => Theme.Fonts[FontIndex];
+
+    public object? Tag { get; set; }
+    public T? GetTag<T>() => (T)Tag;
+
+    public bool Hidden { get; set; }
+    public bool Enabled { get; set; } = true;
+    public bool Remove { get; set; } = false;
+    public bool Toggleable { get; set; }
+    public bool Toggled { get; set; }
 
     public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
 
-    public IControlContainer Container { get; }
     public Theme Theme => Container.Theme;
 
     public Vector2 Position { get; set; }
@@ -28,14 +37,16 @@ public abstract class Control : ITweenOwner
         set => Position = Position with { Y = value };
     }
 
-    public int FontIndex { get; set; }
-    public SpriteFont Font => Theme.Fonts[FontIndex];
-
-    public bool Hidden { get; set; }
-    public bool Enabled { get; set; } = true;
-    public bool Remove { get; set; } = false;
-
     public UpdateParameters UpdateParameters { get; set; } = new();
+
+    public Color? TextColor { get; set; }
+    public Color? BackgroundColor { get; set; }
+    public Color? BorderColor { get; set; }
+
+    protected virtual Color ResolvedBackgroundColor => BackgroundColor ?? Theme.ResolveBackgroundColor(UpdateParameters, Enabled);
+    protected virtual Color ResolvedBorderColor => BorderColor ?? Theme.ControlBorderColor;
+    protected virtual Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, Toggled);
+    protected virtual Color ResolvedPointerColor => Theme.ControlPointerColor;
 
     public RectangleF Rectangle
     {
@@ -78,7 +89,11 @@ public abstract class Control : ITweenOwner
     public virtual void Update(UpdateParameters updateParameters)
     {
         if (updateParameters.MouseOver && (updateParameters.LeftMouseClick || updateParameters.RightMouseClick))
+        {
+            if (Toggleable)
+                Toggled = !Toggled;
             Action?.Invoke(this, updateParameters);
+        }
     }
 
     public virtual void PostUpdate()

@@ -1,17 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
-
-namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class Rect : Control
 {
     public Vector2 Size { get; set; }
 
     public int Thickness { get; set; } = 1;
-
-    public Color? BorderColor { get; set; }
-    public Color? FillColor { get; set; }
 
     public bool DrawBorder { get; set; } = true;
     public bool DrawFill { get; set; } = true;
@@ -27,8 +20,8 @@ public class Rect : Control
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
     {
         if (DrawFill)
-            spriteBatch.FillRectangle(Position + parentOffset, Size, FillColor ?? Theme.ControlBackgroundColor);
+            spriteBatch.FillRectangle(Position + parentOffset, Size, Theme.ControlBackgroundColor);
         if (DrawBorder)
-            spriteBatch.DrawRectangle(Position + parentOffset, Size, BorderColor ?? Theme.ControlBorderColor, Thickness);
+            spriteBatch.DrawRectangle(Position + parentOffset, Size, Theme.ControlBorderColor, Thickness);
     }
 }

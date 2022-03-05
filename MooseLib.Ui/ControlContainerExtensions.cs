@@ -28,7 +28,7 @@ public static class ControlContainerExtensions
          => container.AddControlPassThrough(new Rect(container, x, y, w, h)
          {
              BorderColor = borderColor,
-             FillColor = fillColor,
+             BackgroundColor = fillColor,
          });
 
     public static Label AddLabel(this IControlContainer container, float x, float y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false)
@@ -81,19 +81,21 @@ public static class ControlContainerExtensions
             FontIndex = fontIndex,
         });
 
-    public static TextureButton AddTextureButton(this IControlContainer container, float x, float y, Texture2D texture, Action<Control, UpdateParameters> action, int fontIndex = 0, Rectangle? sourceRect = null)
-        => container.AddControlPassThrough(new TextureButton(texture, container, x, y)
+    public static Button AddTextureButton(this IControlContainer container, float x, float y, Texture2D texture, Action<Control, UpdateParameters> action, int fontIndex = 0, Rectangle? sourceRect = null)
+        => container.AddControlPassThrough(new Button("", container, x, y)
         {
             Action = action,
             FontIndex = fontIndex,
+            Texture = texture,
             SourceRectangle = sourceRect,
         });
 
-    public static ToggleButton AddToggleButton(this IControlContainer container, float x, float y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0)
-        => container.AddControlPassThrough(new ToggleButton(text, container, x, y)
+    public static Button AddToggleButton(this IControlContainer container, float x, float y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0)
+        => container.AddControlPassThrough(new Button(text, container, x, y)
         {
             Action = action,
             FontIndex = fontIndex,
+            Toggleable = true,
             Toggled = toggled,
         });
 

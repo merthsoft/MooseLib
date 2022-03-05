@@ -21,7 +21,7 @@ public static class Extensions
         T item = list[index];
         for (int i = index; i < list.Count - 1; i++)
             list[i] = list[i + 1];
-        list[list.Count - 1] = item;
+        list[^1] = item;
     }
 
     public static void Swap<T>(this IList<T> list, int index1, int index2)
@@ -132,11 +132,8 @@ public static class Extensions
         return bool.TryParse(property, out var result) && result;
     }
 
-    public static void Draw(this Sprite sprite, SpriteBatch spriteBatch, Vector2 position, Transform2 transform, SpriteEffects spriteEffects)
+    public static void Draw(this Sprite sprite!!, SpriteBatch spriteBatch!!, Vector2 position, Transform2 transform, SpriteEffects spriteEffects)
     {
-        _ = sprite ?? throw new ArgumentNullException(nameof(sprite));
-        _ = spriteBatch ?? throw new ArgumentNullException(nameof(spriteBatch));
-
         if (sprite.IsVisible)
         {
             var texture = sprite.TextureRegion.Texture;

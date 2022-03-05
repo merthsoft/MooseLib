@@ -3,6 +3,9 @@
 public class Button : Control
 {
     public string Text { get; set; }
+    
+    public Texture2D? Texture { get; set; }
+    public Rectangle? SourceRectangle { get; set; }
 
     public int? WidthOverride { get; set; }
     public int? HeightOverride { get; set; }
@@ -15,12 +18,21 @@ public class Button : Control
     public override Vector2 CalculateSize()
     {
         FontSize = MeasureString(Text.Length == 0 ? "X" : Text);
-        return BackgroundDrawingMode switch
+        var (w, h) = BackgroundDrawingMode switch
         {
             BackgroundDrawingMode.Basic => new(WidthOverride ?? FontSize.X + 5, HeightOverride ?? FontSize.Y + 2),
             BackgroundDrawingMode.Texture => Theme.CalculateNewSize(new(WidthOverride ?? FontSize.X, HeightOverride ?? FontSize.Y + 2)),
             _ => new(WidthOverride ?? FontSize.X, HeightOverride ?? FontSize.Y),
         };
+
+        if (Texture == null)
+            return new(w, h);
+
+        if (w < (SourceRectangle?.Width ?? Texture.Width))
+            w = SourceRectangle?.Width ?? Texture.Width;
+        if (h < (SourceRectangle?.Height ?? Texture.Height))
+            h = SourceRectangle?.Height ?? Texture.Height;
+        return new(w, h);
     }
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
@@ -39,7 +51,11 @@ public class Button : Control
         }
     }
 
-    protected virtual void PreLabelDraw(SpriteBatch spriteBatch, Vector2 drawOffset) { }
+    protected virtual void PreLabelDraw(SpriteBatch spriteBatch, Vector2 drawOffset)
+    {
+        if (Texture != null)
+            spriteBatch.Draw(Texture, Position + drawOffset + new Vector2(2f, 2f), SourceRectangle, Color.White);
+    }
 
     protected virtual void DrawEmptyButton(SpriteBatch spriteBatch, Vector2 drawOffset)
     {

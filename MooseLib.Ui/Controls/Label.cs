@@ -43,9 +43,6 @@ public class Label : Control
 
     private Texture2D? renderedTexture;
 
-    public Color? TextColor { get; set; }
-    public Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, false, HighlightOnHover);
-
     public Label(IControlContainer container, float x, float y) : base(container, x, y)
     {
     }
