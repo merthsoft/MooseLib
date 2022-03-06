@@ -4,7 +4,7 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
 public class SpriteBatchTextureRenderer : SpriteBatchRenderer
 {
-    private Texture2D SpriteSheet { get; }
+    protected Texture2D SpriteSheet { get; }
 
     public Color Color { get; set; } = Color.White;
     public float Rotation { get; set; }
@@ -32,7 +32,11 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
 
         for (int i = 0; i < tileLayer.Width; i++)
             for (int j = 0; j < tileLayer.Height; j++)
-                DrawSprite(tileLayer.GetTileValue(i, j), i, j, layerNumber, tileLayer);
+            {
+                var tile = tileLayer.GetTileValue(i, j);
+                if (tile >= 0)
+                    DrawSprite(tile, i, j, layerNumber, tileLayer);
+            }
     }
 
     public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ILayer layer, float layerDepth = 1f)
@@ -45,9 +49,9 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
     public Rectangle GetDestinationRectangle(int i, int j, Vector2 drawOffset)
         => new(i * TileWidth + (int)drawOffset.X, j * TileHeight + (int)drawOffset.Y, TileWidth, TileHeight);
 
-    public Rectangle GetSourceRectangle(int spriteIndex)
+    public Rectangle GetSourceRectangle(int spriteIndex, Texture2D? texture = null)
     {
-        var columns = SpriteSheet.Width / TileWidth;
+        var columns = (texture ?? SpriteSheet).Width / TileWidth;
 
         var sourceX = (spriteIndex % columns) * (TileWidth + TilePadding) + TextureMargin;
         var sourceY = (spriteIndex / columns) * (TileHeight + TilePadding) + TextureMargin;

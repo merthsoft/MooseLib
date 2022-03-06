@@ -16,6 +16,9 @@ public abstract class BaseMap : IMap
 
     protected List<int>[,] blockingMap = new List<int>[0, 0];
 
+    public TLayer GetLayer<TLayer>(int layerNumber) where TLayer : ILayer
+        => (TLayer)Layers[layerNumber];
+
     public bool CellIsInBounds(Vector2 cell)
         => cell.X >= 0 && cell.X < Width
         && cell.Y >= 0 && cell.Y < Height;

@@ -1,0 +1,88 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+		<PublishReadyToRun>false</PublishReadyToRun>
+		<TieredCompilation>false</TieredCompilation>
+		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationIcon>Icon.ico</ApplicationIcon>
+		<AssemblyName>Dungeon</AssemblyName>
+		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
+		<Deterministic>False</Deterministic>
+		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
+		<VersionPrefix>0.1</VersionPrefix>
+		<DebugType>embedded</DebugType>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationIcon>Icon.ico</ApplicationIcon>
+		<SignAssembly>False</SignAssembly>
+	</PropertyGroup>
+	<ItemGroup>
+		<MonoGameContentReference Include="Content\Content.mgcb" />
+	</ItemGroup>
+	<ItemGroup>
+		<TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2089-develop" />
+		<PackageReference Include="System.IO.Ports" Version="7.0.0-preview.1.22076.8" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\MOOSE\MooseLib.Ui\MooseEngine.Ui.csproj" />
+		<ProjectReference Include="..\..\MOOSE\MooseLib\MooseEngine.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Microsoft.Xna.Framework" />
+		<Using Include="Microsoft.Xna.Framework.Graphics" />
+		<Using Include="Microsoft.Xna.Framework.Input" />
+		<Using Include="MonoGame.Extended" />
+		<Using Include="Merthsoft.Moose.MooseEngine" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Ui" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls.Prompts" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Content\Fonts\MatchupPro.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\NewHiScore.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\pixel-ultima-bold.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\pixel-ultima-regular.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\PixelDevilsdeal.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\PixelRunes.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\Royal_Decree.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\StrangeScript.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\TooMuchInk2.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\Witchqueen.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\Wizard%27s Manse.otf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+</Project>

@@ -24,15 +24,17 @@ public class TileLayer<TTile> : ITileLayer<TTile>
         Tiles = new TTile[Width, Height];
     }
 
-    public ITile<TTile> GetTile(int x, int y)
-        => new SimpleTileReference<TTile>(Tiles[x, y]);
+    public TileLayer(string name, int width, int height, TTile defaultTile)
+        : this(name, width, height)
+    { 
+        for (var i = 0; i < width; i++)
+            for (var j = 0; j < height; j++)
+                Tiles[i, j] = defaultTile;
+    }
 
     public TTile GetTileValue(int x, int y)
         => Tiles[x, y];
 
-    public ITile<TTile> SetTile(int x, int y, TTile value)
-    {
-        Tiles[x, y] = value;
-        return GetTile(x, y);
-    }
+    public void SetTileValue(int x, int y, TTile value)
+        => Tiles[x, y] = value;
 }

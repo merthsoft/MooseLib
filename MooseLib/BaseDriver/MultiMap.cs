@@ -86,20 +86,13 @@ public class MultiMap<TTile> : BaseMap
             for (var x = 0; x < width; x++)
                 for (var y = 0; y < height; y++)
                     if (layer is TileLayer<TTile> tileLayer)
-                        tileLayer.SetTile(x + destX, y + destY,
+                        tileLayer.SetTileValue(x + destX, y + destY,
                             (sourceLayers[layerIndex] as TileLayer<TTile>)!.GetTileValue(x + sourceX, y + sourceY));
         }
     }
 
     protected override int IsBlockedAt(int layer, int x, int y)
         => 0;
-
-    public void SetTile(int layer, int x, int y, TTile value)
-    {
-        if (layers[layer] is not TileLayer<TTile> tileLayer)
-            return;
-        tileLayer.SetTile(x, y, value);
-    }
 
     public override void Update(GameTime gameTime)
         => base.Update(gameTime);

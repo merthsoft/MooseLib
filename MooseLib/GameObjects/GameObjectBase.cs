@@ -15,6 +15,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public Vector2 Position { get; set; }
     public Vector2 WorldSize { get; set; }
     public float Rotation { get; set; }
+    public SpriteEffects Effects { get; set; }
 
     public virtual RectangleF WorldRectangle => new(Position.X, Position.Y, WorldSize.X, WorldSize.Y);
 

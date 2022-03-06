@@ -23,9 +23,6 @@ public class MineMap : BaseMap
         };
     }
 
-    protected override int IsBlockedAt(int layer, int x, int y)
-        => 0;
-
     public override void Update(GameTime gameTime)
     {
 
