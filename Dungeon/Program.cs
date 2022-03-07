@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace Merthsoft.Moose.Dungeon;
 
-namespace Merthsoft.Moose.Dungeon
+public static class Program
 {
-    public static class Program
+    [STAThread]
+    static void Main()
     {
-        [STAThread]
-        static void Main()
-        {
-            using (var game = new DungeonGame())
-                game.Run();
-        }
+        using var game = new DungeonGame();
+        game.Run();
     }
 }

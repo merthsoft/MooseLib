@@ -4,7 +4,7 @@ using Merthsoft.Moose.MooseEngine.Interface;
 namespace Merthsoft.Moose.Dungeon;
 internal class DungeonLayer : TileLayer<Tile>, ITileLayer<int>
 {
-    public DungeonLayer(string name, int width, int height) : base(name, width, height, Tile.None)
+    public DungeonLayer(string name, int width, int height) : base(name, width, height, Tile.BrickWall, Tile.None)
     {
 
     }

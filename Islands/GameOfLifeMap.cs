@@ -1,9 +1,8 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Merthsoft.Moose.Islands;
 
-class GameOfLifeMap : MultiMap<int>
+class GameOfLifeMap : BaseMap<int>
 {
     private TimeSpan lastUpdate = TimeSpan.Zero;
 

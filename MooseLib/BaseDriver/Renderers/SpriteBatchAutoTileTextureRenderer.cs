@@ -6,6 +6,12 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
 {
     public Dictionary<int, Texture2D> AutoTileTextureMap { get; } = new();
 
+    public Texture2D this[int index]
+    {
+        get => AutoTileTextureMap[index];
+        set => AutoTileTextureMap[index] = value;
+    }
+
     public SpriteBatchAutoTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
     {
         
@@ -26,8 +32,25 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
             }
     }
 
-    protected virtual int GetTileIndex(int neighborCount)
+    protected virtual int GetTileIndex(int tile, int neighborCount)
         => neighborCount;
+
+    protected virtual int CountNeighbors(int tile, int x, int y, ITileLayer<int> layer)
+        => GetNeighborValue(tile, x +  0, y + -1, layer, 1) 
+         + GetNeighborValue(tile, x + -1, y +  0, layer, 2) 
+         + GetNeighborValue(tile, x +  1, y +  0, layer, 4) 
+         + GetNeighborValue(tile, x +  0, y +  1, layer, 8);
+
+    protected virtual int GetNeighborValue(int tile, int x, int y, ITileLayer<int> layer, int neighborValue)
+    {
+        if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
+            return 0;
+
+        if (layer.GetTileValue(x, y) != tile)
+            return 0;
+
+        return neighborValue;
+    }
 
     public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 0f)
     {
@@ -42,30 +65,13 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
             return;
         }
 
-        var neighborCount = countNeighbor(0, -1, 1)
-                          + countNeighbor(-1, 0, 2)
-                          + countNeighbor(1, 0, 4)
-                          + countNeighbor(0, 1, 8);
-        
+        var neighborCount = CountNeighbors(spriteIndex, i, j, layer);
 
-        var tileIndex = GetTileIndex(neighborCount);
+        var tileIndex = GetTileIndex(spriteIndex, neighborCount);
         SpriteBatch.Draw(texture,
                 destinationRectangle: GetDestinationRectangle(i, j, layer.DrawOffset),
                 sourceRectangle: GetSourceRectangle(tileIndex, texture),
                 color: Color, rotation: Rotation, effects: SpriteEffects,
                 origin: Vector2.Zero, layerDepth: layerDepth);
-
-        int countNeighbor(int x, int y, int countValue)
-        {
-            if (x == 0 && y == 0)
-                return 0;
-            var newX = x + i;
-            var newY = y + j;
-            return newX >= 0 && newY >= 0 && newX < layer.Width && newY < layer.Height
-                ? layer.GetTileValue(newX, newY) == spriteIndex 
-                    ? countValue 
-                    : 0
-                : 0;
-        }
     }
 }

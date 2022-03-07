@@ -8,6 +8,17 @@ namespace Merthsoft.Moose.MooseEngine;
 
 public static class Extensions
 {
+    public static T RandomElement<T>(this IList<T> items)
+        => items[MooseGame.Instance.Random.Next(items.Count)];
+
+    public static T RemoveRandomElement<T>(this IList<T> items)
+    {
+        var index = MooseGame.Instance.Random.Next(items.Count);
+        var item = items[index];
+        items.RemoveAt(index);
+        return item;
+    }
+
     public static void MoveToTop<T>(this List<T> list, int index)
     {
         T item = list[index];

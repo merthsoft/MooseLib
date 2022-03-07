@@ -3,19 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31512.422
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyberpunkRL", "CyberpunkRL\CyberpunkRL.csproj", "{9164FDF8-5777-457B-B47B-87D3D5D162D9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MooseEngine", "MooseLib\MooseEngine.csproj", "{FF85E572-1165-41AE-AAF5-3922C362D09B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowballFight", "SnowballFight\SnowballFight.csproj", "{72AE64E7-2B72-4261-A38D-610B93B5583B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MooseEngine.Ui", "MooseLib.Ui\MooseEngine.Ui.csproj", "{46A081EE-8F02-460A-8514-DD51F3979D83}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Islands", "Islands\Islands.csproj", "{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MidiChess", "..\Chess\moosechess\MidiChess.csproj", "{CB74696D-EA61-475E-AC3A-205A37391675}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miner", "Miner\Miner.csproj", "{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dungeon", "Dungeon\Dungeon.csproj", "{688D0689-8944-4D89-9E3E-B7B8E71BDB76}"
 EndProject
@@ -25,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9164FDF8-5777-457B-B47B-87D3D5D162D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9164FDF8-5777-457B-B47B-87D3D5D162D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9164FDF8-5777-457B-B47B-87D3D5D162D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9164FDF8-5777-457B-B47B-87D3D5D162D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FF85E572-1165-41AE-AAF5-3922C362D09B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FF85E572-1165-41AE-AAF5-3922C362D09B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF85E572-1165-41AE-AAF5-3922C362D09B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,18 +31,10 @@ Global
 		{46A081EE-8F02-460A-8514-DD51F3979D83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46A081EE-8F02-460A-8514-DD51F3979D83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46A081EE-8F02-460A-8514-DD51F3979D83}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1931AB17-91F4-4C7D-8521-1DC5C705E0E6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB74696D-EA61-475E-AC3A-205A37391675}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB74696D-EA61-475E-AC3A-205A37391675}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB74696D-EA61-475E-AC3A-205A37391675}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB74696D-EA61-475E-AC3A-205A37391675}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDAF5C19-DF4E-4305-9339-BE5FAF73B9B7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{688D0689-8944-4D89-9E3E-B7B8E71BDB76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{688D0689-8944-4D89-9E3E-B7B8E71BDB76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{688D0689-8944-4D89-9E3E-B7B8E71BDB76}.Release|Any CPU.ActiveCfg = Release|Any CPU

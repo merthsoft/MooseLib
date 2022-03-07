@@ -3,6 +3,7 @@ internal enum Tile
 {
     None = -1,
 
+    FLOOR_START = 0,
     GrayLargeCheckersFloor = 0,
     GraySmallCheckersFloor,
     GrayHollowCheckersFloor,
@@ -23,11 +24,14 @@ internal enum Tile
     RedPlusFloor,
     RedStoneFloor,
     RedDotsFloor,
+    FLOOR_END = RedDotsFloor + 1,
 
+    DOOR_START = 20,
     GreenDoorHorizontal = 20,
     GreenDoorVertical,
     RedDoorHorizontal,
     RedDoorVertical,
+    DOOR_END = RedDoorVertical + 1,
 
     BLOCKING_START = 30,
     
@@ -50,9 +54,10 @@ internal enum Tile
     ChairLeft,
     ChairDown,
     ChairUp,
-    BLOCKING_END = ChairUp,
+    BLOCKING_END = ChairUp+1,
     
     WALL_START = 80,
     StoneWall = 80,
     BrickWall,
+    WALL_END = BrickWall + 1,
 }

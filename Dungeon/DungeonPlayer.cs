@@ -11,6 +11,8 @@ class DungeonPlayer : GameObjectBase
     public const string Down = "Down";
 
     public bool CanMove { get; set; } = true;
+    
+    private readonly Stack<Keys> moveBuffer = new();
 
     public float AnimationRotation { get; set; }
 
@@ -26,38 +28,43 @@ class DungeonPlayer : GameObjectBase
     
     public override void Update(GameTime gameTime)
     {
-        if (CanMove)
+        bool keyPress(Keys key) => MooseGame.Instance.WasKeyJustPressed(key) || (CanMove && MooseGame.Instance.IsKeyHeldLong(key));
+
+        if (keyPress(Keys.Left))
+            moveBuffer.Push(Keys.Left);
+        else if (keyPress(Keys.Right))
+            moveBuffer.Push(Keys.Right);
+        else if (keyPress(Keys.Down))
+            moveBuffer.Push(Keys.Down);
+        else if (keyPress(Keys.Up))
+            moveBuffer.Push(Keys.Up);
+
+        if (CanMove && moveBuffer.Count > 0)
         {
             var moveDelta = Vector2.Zero;
-            var shouldRotate = false;
-            if (MooseGame.Instance.IsKeyDown(Keys.Left))
+            switch (moveBuffer.Pop())
             {
-                moveDelta = new(-1, 0);
-                Direction = Left;
-                shouldRotate = true;
-            }
-            else if (MooseGame.Instance.IsKeyDown(Keys.Right))
-            {
-                moveDelta = new(1, 0);
-                Direction = Right;
-                shouldRotate = true;
-            }
-            else if (MooseGame.Instance.IsKeyDown(Keys.Down))
-            {
-                moveDelta = new(0, 1);
-                Direction = Up;
-                shouldRotate = true;
-            }
-            else if (MooseGame.Instance.IsKeyDown(Keys.Up))
-            {
-                moveDelta = new(0, -1);
-                Direction = Down;
-                shouldRotate = true;
+                case Keys.Left:
+                    moveDelta = new(-1, 0);
+                    Direction = Left;
+                    break;
+                case Keys.Right:
+                    moveDelta = new(1, 0);
+                    Direction = Right;
+                    break;
+                case Keys.Down:
+                    moveDelta = new(0, 1);
+                    Direction = Up;
+                    break;
+                case Keys.Up:
+                    moveDelta = new(0, -1);
+                    Direction = Down;
+                    break;
             }
 
-            if (shouldRotate)
-                this.AddTween(p => p.AnimationRotation, Direction == Left ? -1 : 1, .1f, autoReverse: true, onEnd: _ => AnimationRotation = 0);
-            
+            this.AddTween(p => p.AnimationRotation, Direction == Left ? -1 : 1, .075f,
+                onEnd: _ => this.AddTween(p => p.AnimationRotation, 0, .075f));
+
             if (moveDelta != Vector2.Zero)
             {
                 CanMove = false;
@@ -65,8 +72,12 @@ class DungeonPlayer : GameObjectBase
                 var newTilePosition = Position / 16 + moveDelta;
                 var tile = DungeonGame.GetDungeonTile((int)newTilePosition.X, (int)newTilePosition.Y);
                 if (tile >= Tile.BLOCKING_START)
+                {
                     moveDelta = Vector2.Zero;
-                TweenToPosition(Position + moveDelta * 16, .2f, onEnd: _ => CanMove = true);
+                    moveBuffer.Clear();
+                    CanMove = true;
+                } else
+                    TweenToPosition(Position + moveDelta * 16, .2f, onEnd: _ => CanMove = true);
             }
 
         }

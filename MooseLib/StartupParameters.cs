@@ -8,4 +8,5 @@ public class StartupParameters
     public int ScreenHeight { get; set; }
     public bool Fullscreen { get; set; }
     public int? RandomSeed { get; set; }
+    public int StateStackSize { get; set; }
 }

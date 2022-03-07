@@ -15,17 +15,20 @@ public class TileLayer<TTile> : ITileLayer<TTile>
 
     public TTile[,] Tiles { get; }
 
-    public TileLayer(string name, int width, int height)
+    public TTile EdgeTile { get; set; }
+
+    public TileLayer(string name, int width, int height, TTile edgeTile)
     {
         Name = name;
         Width = width;
         Height = height;
+        EdgeTile = edgeTile;
 
         Tiles = new TTile[Width, Height];
     }
 
-    public TileLayer(string name, int width, int height, TTile defaultTile)
-        : this(name, width, height)
+    public TileLayer(string name, int width, int height, TTile edgeTile, TTile defaultTile)
+        : this(name, width, height, edgeTile)
     { 
         for (var i = 0; i < width; i++)
             for (var j = 0; j < height; j++)
@@ -33,8 +36,12 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     }
 
     public TTile GetTileValue(int x, int y)
-        => Tiles[x, y];
+        => x < 0 || x >= Width || y < 0 || y >= Height ? EdgeTile : Tiles[x, y];
 
     public void SetTileValue(int x, int y, TTile value)
-        => Tiles[x, y] = value;
+    {
+        if (x < 0 || x >= Width || y < 0 || y >= Height)
+            return;
+        Tiles[x, y] = value;
+    }
 }

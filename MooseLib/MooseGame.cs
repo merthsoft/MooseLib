@@ -25,11 +25,12 @@ public abstract class MooseGame : Game
 
     public IDictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
 
-    public MouseState PreviousMouseState { get; private set; }
-
+    public List<MouseState> PreviousMouseStates { get; } = new();
+    public MouseState PreviousMouseState => PreviousMouseStates[^1];
     public MouseState CurrentMouseState { get; private set; }
 
-    public KeyboardState PreviousKeyState { get; private set; }
+    public List<KeyboardState> PreviousKeyStates { get; } = new();
+    public KeyboardState PreviousKeyState => PreviousKeyStates[^1];
 
     public KeyboardState CurrentKeyState { get; private set; }
 
@@ -59,6 +60,7 @@ public abstract class MooseGame : Game
 
     public int ScreenWidth => GraphicsDevice.Viewport.Width;
     public int ScreenHeight => GraphicsDevice.Viewport.Height;
+    public Vector2 ScreenSize => new(ScreenWidth, ScreenHeight);
 
     public Color DefaultBackgroundColor { get; set; } = Color.DarkCyan;
 
@@ -82,6 +84,7 @@ public abstract class MooseGame : Game
             ScreenHeight = 800,
             Fullscreen = false,
             RandomSeed = null,
+            StateStackSize = 10,
         };
 
     protected override void Initialize()
@@ -99,6 +102,12 @@ public abstract class MooseGame : Game
 
         if (initialization.RandomSeed != null)
             Random = new(initialization.RandomSeed.Value);
+
+        for (var i = 0; i < initialization.StateStackSize; i++)
+        {
+            PreviousMouseStates.Add(default);
+            PreviousKeyStates.Add(default);
+        }
 
         base.Initialize();
     }
@@ -170,6 +179,7 @@ public abstract class MooseGame : Game
     public static TDef GetDef<TDef>(string defName) where TDef : Def
         => ((Instance.Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
 
+    protected virtual void PreUpdate(GameTime gameTime) { return; }
     protected virtual bool PreRenderUpdate(GameTime gameTime) => true;
     protected virtual bool PreObjectsUpdate(GameTime gameTime) => true;
     protected virtual void PostObjectsUpdate(GameTime gameTime) { return; }
@@ -178,11 +188,16 @@ public abstract class MooseGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        PreviousMouseState = CurrentMouseState;
+        PreviousMouseStates.RemoveAt(0);
+        PreviousMouseStates.Add(CurrentMouseState);
         CurrentMouseState = Mouse.GetState();
-        PreviousKeyState = CurrentKeyState;
+        
+        PreviousKeyStates.RemoveAt(0);
+        PreviousKeyStates.Add(CurrentKeyState);
         CurrentKeyState = Keyboard.GetState();
 
+        PreUpdate(gameTime);
+        
         WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
 
         Tweener?.Update(gameTime.GetElapsedSeconds());
@@ -318,6 +333,9 @@ public abstract class MooseGame : Game
     public bool WasKeyJustReleased(Keys key)
         => CurrentKeyState.IsKeyUp(key) && PreviousKeyState.IsKeyDown(key);
 
+    public bool WasKeyTapped(Keys key)
+        => WasKeyJustReleased(key) && PreviousKeyStates[^2].IsKeyUp(key);
+    
     public bool IsKeyDown(Keys key)
         => CurrentKeyState.IsKeyDown(key);
 
@@ -326,6 +344,9 @@ public abstract class MooseGame : Game
 
     public bool IsKeyHeld(Keys key)
         => CurrentKeyState.IsKeyDown(key) && PreviousKeyState.IsKeyDown(key);
+
+    public bool IsKeyHeldLong(Keys key)
+        => IsKeyHeld(key) && PreviousKeyStates[^2].IsKeyDown(key) && PreviousKeyStates[^3].IsKeyDown(key) && PreviousKeyStates[^4].IsKeyDown(key) && PreviousKeyStates[^5].IsKeyDown(key);
 
     public void ZoomIn(float deltaZoom)
         => MainCamera.ZoomIn(deltaZoom);
