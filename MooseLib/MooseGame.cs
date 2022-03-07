@@ -8,7 +8,7 @@ namespace Merthsoft.Moose.MooseEngine;
 
 public abstract class MooseGame : Game
 {
-    public static MooseGame Instance { get; protected set; }
+    public static MooseGame Instance { get; protected set; } = null!;
 
     public Random Random { get; protected set; } = new();
     public Tweener Tweener { get; protected set; } = new();
@@ -23,7 +23,7 @@ public abstract class MooseGame : Game
     public IMap MainMap => ActiveMaps.Any() ? ActiveMaps[0] : NullMap.Instance;
     public IList<IMap> ActiveMaps = new List<IMap>();
 
-    public IDictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
+    public Dictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
 
     public List<MouseState> PreviousMouseStates { get; } = new();
     public MouseState PreviousMouseState => PreviousMouseStates[^1];
@@ -56,7 +56,7 @@ public abstract class MooseGame : Game
 
     public virtual Vector2 HalfTileSize => MainMap?.HalfTileSize ?? new Vector2(0, 0); // TODO: Cache
 
-    public virtual IDictionary<int, RenderHook>? DefaultRenderHooks => null;
+    public virtual Dictionary<int, RenderHook>? DefaultRenderHooks => null;
 
     public int ScreenWidth => GraphicsDevice.Viewport.Width;
     public int ScreenHeight => GraphicsDevice.Viewport.Height;
@@ -223,7 +223,7 @@ public abstract class MooseGame : Game
             {
                 layer.RemoveObject(obj);
                 obj.OnRemove();
-                obj.ParentMap = null;
+                obj.ParentMap = null!;
                 continue;
             }
         }
@@ -264,7 +264,7 @@ public abstract class MooseGame : Game
     protected virtual bool PreMapDraw(GameTime gameTime) => true;
     protected virtual void PostDraw(GameTime gameTime) { return; }
 
-    protected void Draw(GameTime gameTime, IDictionary<int, RenderHook>? renderHooks)
+    protected void Draw(GameTime gameTime, Dictionary<int, RenderHook>? renderHooks)
     {
         if (PreClear(gameTime))
             GraphicsDevice.Clear(DefaultBackgroundColor);
@@ -278,7 +278,7 @@ public abstract class MooseGame : Game
         PostDraw(gameTime);
     }
 
-    private void DrawMap(IMap map, GameTime gameTime, IDictionary<int, RenderHook>? renderHooks, Matrix transformMatrix)
+    private void DrawMap(IMap map, GameTime gameTime, Dictionary<int, RenderHook>? renderHooks, Matrix transformMatrix)
     {
         for (var layerIndex = 0; layerIndex < map.Layers.Count; layerIndex++)
         {

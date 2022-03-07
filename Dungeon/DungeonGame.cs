@@ -54,17 +54,14 @@ public class DungeonGame : MooseGame
         AddDefaultRenderer<ObjectLayer>("objects", new SpriteBatchObjectRenderer(SpriteBatch));
 
         DungeonMap = new DungeonMap(DungeonSize, DungeonSize);
-        GenerateDungeon();
+        DungeonMap.GenerateRandomLevel();
         ActiveMaps.Add(DungeonMap);
 
         SetScreenSize(1280, 960);
-        ZoomIn(1);
+        ZoomIn(2);
         AddDef(PlayerDef);
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
     }
-
-    private void GenerateDungeon()
-        => DungeonMap.GenerateRandomLevel();
 
     protected override void PreUpdate(GameTime gameTime)
     {
@@ -73,9 +70,17 @@ public class DungeonGame : MooseGame
         if (WasKeyJustPressed(Keys.R))
         {
             Player.Position = Vector2.Zero;
-            GenerateDungeon();
+            Player.UseVisionCone = true;
+            DungeonMap.GenerateRandomLevel();
         }
-            
+
+        if (WasKeyJustPressed(Keys.T))
+        {
+            Player.Position = new(16, 16);
+            Player.UseVisionCone = false;
+            DungeonMap.GenerateTown(5, roomSizes);
+        }
+
     }
 
     protected override void PostLoad()

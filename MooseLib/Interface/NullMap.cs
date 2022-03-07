@@ -29,9 +29,6 @@ public class NullMap : IMap
     public IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null)
     { yield break; }
 
-    public IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
-    { yield break; }
-
     public IList<int> GetBlockingVector(int cellX, int cellY) 
         => Array.Empty<int>();
 

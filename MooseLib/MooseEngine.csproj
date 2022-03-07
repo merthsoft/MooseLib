@@ -33,5 +33,6 @@
 		<Using Include="Microsoft.Xna.Framework.Input" />
 		<Using Include="MonoGame.Extended" />
 		<Using Include="Merthsoft.Moose.MooseEngine" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Extension" />
 	</ItemGroup>
 </Project>

@@ -44,6 +44,7 @@
 		<Using Include="Microsoft.Xna.Framework.Input" />
 		<Using Include="MonoGame.Extended" />
 		<Using Include="Merthsoft.Moose.MooseEngine" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Extension" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls.Prompts" />

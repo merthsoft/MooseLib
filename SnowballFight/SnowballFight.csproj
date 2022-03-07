@@ -157,5 +157,6 @@
 		<Using Include="Merthsoft.Moose.MooseEngine" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Extension" />
 	</ItemGroup>
 </Project>

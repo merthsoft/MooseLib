@@ -30,8 +30,8 @@ internal class DungeonMap : BaseMap
         generator.GenerateA()
                  .DungeonOfSize(Width, Height)
                  .ABitRandom()
-                 .WithMediumChanceToRemoveDeadEnds()
-                 .WithLargeSizeRooms()
+                 .WithBigChanceToRemoveDeadEnds()
+                 .WithRoomSize(4, 20, 4, 20)
                  .SomewhatSparse()
                  .WithLargeNumberOfRooms()
                  .AndTellMeWhenItsDone(map =>
@@ -68,49 +68,7 @@ internal class DungeonMap : BaseMap
     private List<Point> GenerateDoors(List<Rectangle> rooms)
     {
         var doors = new List<Point>();
-        for (var y = 2; y < Height - 2; y++)
-        {
-            var potentialDoorGroup = new List<Point>();
-            for (var x = 2; x < Width - 2; x++)
-            {
-                if (GetDungeonTile(x, y) != Tile.None)
-                    continue;
-                var north = GetDungeonTile(x, y - 1);
-                var south = GetDungeonTile(x, y + 1);
-                var east = GetDungeonTile(x - 1, y);
-                var west = GetDungeonTile(x + 1, y);
-
-                if (
-                        north.IsWall() && south.IsWall() ||
-                        east.IsWall() && west.IsWall() ||
-                        north.IsWall() && south.IsFloor() ||
-                        north.IsFloor() && south.IsWall() ||
-                        east.IsWall() && west.IsFloor() ||
-                        east.IsFloor() && west.IsWall() ||
-                        north.IsFloor() && south.IsFloor() ||
-                        east.IsFloor() && west.IsFloor()
-                    )
-                    potentialDoorGroup.Add(new(x, y));
-            }
-            if (potentialDoorGroup.Count != 0)
-            {
-                var door = potentialDoorGroup.RemoveRandomElement();
-                var (doorX, doorY) = door;
-
-                var north = GetDungeonTile(doorX, doorY - 1);
-                var south = GetDungeonTile(doorX, doorY + 1);
-                var east = GetDungeonTile(doorX - 1, doorY);
-                var west = GetDungeonTile(doorX + 1, doorY);
-
-                if (north.IsDoor() || south.IsDoor() || east.IsDoor() || west.IsDoor())
-                    continue;
-
-                var randomDoor = (Tile)MooseGame.Instance.Random.Next((int)Tile.DOOR_START, (int)Tile.DOOR_END);
-                SetDungeonTile(doorX, doorY, randomDoor);
-                doors.Add(door);
-            }
-
-        }
+        
         return doors;
     }
 

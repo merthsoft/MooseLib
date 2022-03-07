@@ -20,8 +20,8 @@ class DungeonPlayer : GameObjectBase
 
     private bool[,] SightMap { get; set; } = new bool[0,0];
 
-    public bool IsUnderground { get; set; } = true;
-    public int ViewRadius { get; set; } = 12;
+    public bool UseVisionCone { get; set; } = true;
+    public int ViewRadius { get; set; } = 5;
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def)
     {
@@ -42,7 +42,7 @@ class DungeonPlayer : GameObjectBase
         var (playerX, playerY) = cell;
         SightMap[playerX, playerY] = true;
 
-        for (var d = 0f; d < 360; d+=.05f)
+        for (var d = 0f; d < MathF.PI * 2; d+=.01f)
             for (var delta = 1f; delta < ViewRadius; delta+=1)
             {
                 var posX = (playerX + delta * MathF.Cos(d)).Round();
@@ -161,12 +161,12 @@ class DungeonPlayer : GameObjectBase
     }
 
     public bool CanSee(int i, int j)
-        => ParentMap.CellIsInBounds(i, j) ? !IsUnderground || SightMap[i, j] : false;
+        => ParentMap.CellIsInBounds(i, j) ? !UseVisionCone || SightMap[i, j] : false;
 
     public bool CanSee(Vector2 worldPosition)
     {
         if (ParentMap.WorldIsInBounds(worldPosition))
-            return !IsUnderground || SightMap[(int)worldPosition.X / ParentMap.TileWidth, (int)worldPosition.Y / ParentMap.TileHeight];
+            return !UseVisionCone || SightMap[(int)worldPosition.X / ParentMap.TileWidth, (int)worldPosition.Y / ParentMap.TileHeight];
         else
             return false;
     }
