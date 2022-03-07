@@ -32,9 +32,9 @@ public class NullMap : IMap
     public IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
     { yield break; }
 
-    public IEnumerable<int> GetBlockingVector(int cellX, int cellY)
-    { yield break; }
+    public IList<int> GetBlockingVector(int cellX, int cellY) 
+        => Array.Empty<int>();
 
-    public void Update(GameTime gameTime)
+    public void Update(MooseGame game, GameTime gameTime)
     { }
 }

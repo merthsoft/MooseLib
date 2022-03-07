@@ -31,7 +31,7 @@ public class Snowball : AnimatedGameObject
     public override void OnAdd()
         => StartCell = GetCell();
 
-    public override void Update(GameTime gameTime)
+    public override void Update(MooseGame _game, GameTime gameTime)
     {
         if (State == States.Fly)
         {
@@ -46,7 +46,7 @@ public class Snowball : AnimatedGameObject
         if (State == States.Dead)
             Remove = true;
 
-        base.Update(gameTime);
+        base.Update(_game, gameTime);
     }
 
     private bool IsBlocked()

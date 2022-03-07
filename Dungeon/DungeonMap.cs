@@ -1,6 +1,6 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+﻿using Karcero.Engine;
+using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Interface;
-using Promethean.Core;
 
 namespace Merthsoft.Moose.Dungeon;
 internal class DungeonMap : BaseMap
@@ -22,69 +22,50 @@ internal class DungeonMap : BaseMap
         };
     }
 
-    void GenerateRandomLevel()
+    public void GenerateRandomLevel()
     {
-        var generator = new LevelGenerator(options);
-        var level = generator.Generate();
-        var renderedLevel = level.Render();
-        var xLength = tile.GetComponent<Renderer>().bounds.size.x;
-        var zLength = tile.GetComponent<Renderer>().bounds.size.z;
-
-        for (var x = 0; x < renderedLevel.GetLength(0); x++)
-        {
-            for (var y = 0; y < renderedLevel.GetLength(1); y++)
-            {
-                var value = renderedLevel[x, y];
-                if (value == Tile.Empty)
-                {
-                    continue;
-                }
-                else
-                {
-                    var currentTile = Instantiate(tile, new Vector3(xLength * x, 0, zLength * y), new Quaternion());
-
-                }
-            }
-        }
+        DrawRoom(Tile.StoneWall, Tile.None, 0, 0, Width - 1, Height - 1);
+        var generator = new DungeonGenerator<DungeonCell>();
+        generator.AddMapProcessor(new DungeonMapProcessor());
+        generator.GenerateA()
+                 .DungeonOfSize(Width, Height)
+                 .ABitRandom()
+                 .WithMediumChanceToRemoveDeadEnds()
+                 .WithLargeSizeRooms()
+                 .SomewhatSparse()
+                 .WithLargeNumberOfRooms()
+                 .AndTellMeWhenItsDone(map =>
+                 {
+                     for (var x = 1; x < Width - 1; x++)
+                         for (var y = 1; y < Height - 1; y++)
+                         {
+                             var t = map.GetCell(x - 1, y - 1);
+                             SetDungeonTile(x, y, t.Tile);
+                         }
+                 });
     }
 
-
-    public void GenerateDungeon(int numRooms, (int, int)[] roomSizes)
+    public List<Rectangle> GenerateTown(int numRooms, (int, int)[] roomSizes)
     {
         FillDungeon(Tile.None);
         DrawRoom(Tile.StoneWall, Tile.None, 0, 0, Width - 1, Height - 1);
-        Rooms = GenerateRooms(numRooms, roomSizes);
-        Coridors = GenerateCorridors();
-        Doors = GenerateDoors(true);
-        HollowOutRooms();
-        for (var x = 0; x < Width; x++)
-            for (var y = 0; y < Height; y++)
-            {
-                if (GetDungeonTile(x, y) == Tile.None)
-                    SetDungeonTile(x, y, Tile.StoneWall);
-            }
+        var rooms = GenerateRooms(numRooms, roomSizes);
+        GenerateCorridors(rooms);
+        GenerateDoors(rooms);
+        HollowOutRooms(rooms);
+        return rooms;
     }
 
-    public void GenerateTown(int numRooms, (int, int)[] roomSizes)
+    private void HollowOutRooms(List<Rectangle> rooms)
     {
-        FillDungeon(Tile.None);
-        DrawRoom(Tile.StoneWall, Tile.None, 0, 0, Width - 1, Height - 1);
-        Rooms = GenerateRooms(numRooms, roomSizes);
-        Coridors = GenerateCorridors();
-        Doors = GenerateDoors(false);
-        HollowOutRooms();
-    }
-
-    private void HollowOutRooms()
-    {
-        foreach (var (x, y, width, height) in Rooms)
+        foreach (var (x, y, width, height) in rooms)
         {
             var randomFloor = (Tile)MooseGame.Instance.Random.Next((int)Tile.FLOOR_START, (int)Tile.FLOOR_END);
             DrawRoom(GetDungeonTile(x, y), randomFloor, x, y, width, height);
         }
     }
 
-    private List<Point> GenerateDoors(bool connectCorridors)
+    private List<Point> GenerateDoors(List<Rectangle> rooms)
     {
         var doors = new List<Point>();
         for (var y = 2; y < Height - 2; y++)
@@ -100,16 +81,15 @@ internal class DungeonMap : BaseMap
                 var west = GetDungeonTile(x + 1, y);
 
                 if (
-                    north.IsWall() && south.IsWall() ||
-                    east.IsWall() && west.IsWall() ||
-                    north.IsWall() && south.IsFloor() ||
-                    north.IsFloor() && south.IsWall() ||
-                    east.IsWall() && west.IsFloor() ||
-                    east.IsFloor() && west.IsWall() ||
-                    (connectCorridors && (
+                        north.IsWall() && south.IsWall() ||
+                        east.IsWall() && west.IsWall() ||
+                        north.IsWall() && south.IsFloor() ||
+                        north.IsFloor() && south.IsWall() ||
+                        east.IsWall() && west.IsFloor() ||
+                        east.IsFloor() && west.IsWall() ||
                         north.IsFloor() && south.IsFloor() ||
                         east.IsFloor() && west.IsFloor()
-                    )))
+                    )
                     potentialDoorGroup.Add(new(x, y));
             }
             if (potentialDoorGroup.Count != 0)
@@ -134,7 +114,7 @@ internal class DungeonMap : BaseMap
         return doors;
     }
 
-    private List<Point> GenerateCorridors()
+    private List<Point> GenerateCorridors(List<Rectangle> rooms)
     {
         var startingPoints = new List<Point>();
         var visitedPoints = new HashSet<Point>();
@@ -157,8 +137,8 @@ internal class DungeonMap : BaseMap
 
             var pointsToVisit = new Stack<Point>();
             pointsToVisit.Push(startingPoint);
-            
-            while (pointsToVisit.Count > 0 && pointsToVisit.Count < 1000) 
+
+            while (pointsToVisit.Count > 0 && pointsToVisit.Count < 1000)
             {
                 var point = pointsToVisit.Pop();
 
@@ -167,7 +147,7 @@ internal class DungeonMap : BaseMap
                 visitedPoints.Add(point);
 
                 var directions = new List<Point>();
-                
+
                 if (CountNeighbors(x - 1, y) == 0 && !visitedPoints.Contains(new(x - 1, y)))
                     directions.Add(new(x - 1, y));
                 if (CountNeighbors(x + 1, y) == 0 && !visitedPoints.Contains(new(x + 1, y)))
@@ -241,7 +221,7 @@ internal class DungeonMap : BaseMap
     {
         for (var i = 0; i <= width; i++)
             for (var j = 0; j <= height; j++)
-                SetDungeonTile(i + x, j + y, 
+                SetDungeonTile(i + x, j + y,
                     i == 0 || j == 0 || i == width || j == height ? wallTile : floorTile);
     }
 
@@ -250,14 +230,13 @@ internal class DungeonMap : BaseMap
         for (var x = 0; x < Width; x++)
             for (var y = 0; y < Height; y++)
                 SetDungeonTile(x, y, tile);
-
-        Rooms.Clear();
-        Doors.Clear();
-        Coridors.Clear();
     }
 
-    protected override int IsBlockedAt(int layer, int x, int y) 
-        => DungeonLayer.GetTileValue(x, y) > Tile.BLOCKING_START ? 1 : 0;
+    protected override int IsBlockedAt(int layer, int x, int y)
+    {
+        var tile = DungeonLayer.GetTileValue(x, y);
+        return tile.IsDoor() || tile.IsWall() ? 100 : 0;
+    }
 
     public void SetDungeonTile(int x, int y, Tile t)
         => DungeonLayer.SetTileValue(x, y, t);

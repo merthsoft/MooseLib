@@ -5,13 +5,11 @@ namespace Merthsoft.Moose.Dungeon;
 
 public class DungeonGame : MooseGame
 {
-    internal static int BaseTileWidth = 16;
-    internal static int BaseTileHeight = 16;
     
-    internal static int DungeonSize = 40;
-
-    internal static int DungeonNumberOfRooms = 10;
-    internal static int TownNumberOfRooms = 5;
+    internal int BaseTileWidth = 16;
+    internal int BaseTileHeight = 16;
+    
+    internal int DungeonSize = 45;
 
     private readonly (int w, int h)[] roomSizes = new[]
         {
@@ -31,16 +29,16 @@ public class DungeonGame : MooseGame
     internal static DungeonMap DungeonMap { get; set; } = null!;
 
     DungeonPlayerDef PlayerDef { get; } = new();
-    DungeonPlayer Player { get; }
+    internal static DungeonPlayer Player { get; private set; } = null!;
 
     SpriteFont DebugFont = null!;
 
     public DungeonGame()
     {
-        Player = new(PlayerDef) { Position = new(DungeonSize / 2 * BaseTileWidth, DungeonSize / 2 * BaseTileHeight) };
+        Player = new(PlayerDef) { };
     }
 
-    internal static Tile GetDungeonTile(int x, int y)
+    internal Tile GetDungeonTile(int x, int y)
         => DungeonMap.GetLayer<DungeonLayer>(0).GetTileValue(x, y);
 
 
@@ -49,7 +47,7 @@ public class DungeonGame : MooseGame
         DefaultBackgroundColor = new(16, 16, 16);
         var tiles = ContentManager.LoadImage("Dungeon");
 
-        var dungeonRenderer = new DungeonRenderer(SpriteBatch, BaseTileWidth, BaseTileHeight, tiles);
+        var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, tiles);
         dungeonRenderer[(int)Tile.StoneWall] = ContentManager.LoadImage("StoneWall");
         dungeonRenderer[(int)Tile.BrickWall] = ContentManager.LoadImage("BrickWall");
         AddDefaultRenderer<DungeonLayer>("dungeon", dungeonRenderer);
@@ -66,19 +64,17 @@ public class DungeonGame : MooseGame
     }
 
     private void GenerateDungeon()
-        => DungeonMap.GenerateDungeon(DungeonNumberOfRooms, roomSizes);
-
-    private void GenerateTown()
-        => DungeonMap.GenerateTown(TownNumberOfRooms, roomSizes.Select(a => (a.w + 2, a.h + 2)).ToArray());
+        => DungeonMap.GenerateRandomLevel();
 
     protected override void PreUpdate(GameTime gameTime)
     {
         MainCamera.Position = Player.Position - ScreenSize / MainCamera.Zoom / 2;
 
-        if (WasKeyJustPressed(Keys.D))
+        if (WasKeyJustPressed(Keys.R))
+        {
+            Player.Position = Vector2.Zero;
             GenerateDungeon();
-        else if (WasKeyJustPressed(Keys.T))
-            GenerateTown();
+        }
             
     }
 

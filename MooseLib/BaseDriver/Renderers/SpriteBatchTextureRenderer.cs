@@ -25,7 +25,7 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
     }
 
 
-    public override void Draw(GameTime _, ILayer layer, int layerNumber)
+    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, int layerNumber)
     {
         if (layer is not ITileLayer<int> tileLayer)
             throw new Exception("TileLayer<int> layer expected");
@@ -39,7 +39,7 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
             }
     }
 
-    public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ILayer layer, float layerDepth = 1f)
+    public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 1f)
         => SpriteBatch.Draw(SpriteSheet,
             destinationRectangle: GetDestinationRectangle(i, j, layer.DrawOffset),
             sourceRectangle: GetSourceRectangle(spriteIndex),

@@ -18,17 +18,85 @@ class DungeonPlayer : GameObjectBase
 
     private DungeonPlayerDef PlayerDef => (Def as DungeonPlayerDef)!;
 
+    private bool[,] SightMap { get; set; } = new bool[0,0];
+
+    public bool IsUnderground { get; set; } = true;
+    public int ViewRadius { get; set; } = 12;
+
     public DungeonPlayer(DungeonPlayerDef def) : base(def)
     {
 
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
-        => spriteBatch.Draw(PlayerDef.Texture, WorldRectangle.Move(new(8, 8)).ToRectangle(), new(32, 48, 16, 16), Color.White, Rotation + AnimationRotation, new(8, 8), Effects, 1f);
-    
-    public override void Update(GameTime gameTime)
+    public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
     {
-        bool keyPress(Keys key) => MooseGame.Instance.WasKeyJustPressed(key) || (CanMove && MooseGame.Instance.IsKeyHeldLong(key));
+        var dungeonGame = (game as DungeonGame)!;
+
+        spriteBatch.Draw(PlayerDef.Texture, WorldRectangle.Move(new(8, 8)).ToRectangle(), new(32, 48, 16, 16), Color.White, Rotation + AnimationRotation, new(8, 8), Effects, 1f);
+    }
+
+    public void RebuildSightMap(int dungeonWidth, int dungeonHeight)
+    {
+        SightMap = new bool[dungeonWidth, dungeonHeight];
+        var cell = GetCell();
+        var (playerX, playerY) = cell;
+        SightMap[playerX, playerY] = true;
+
+        for (var d = 0f; d < 360; d+=.05f)
+            for (var delta = 1f; delta < ViewRadius; delta+=1)
+            {
+                var posX = (playerX + delta * MathF.Cos(d)).Round();
+                var posY = (playerY + delta * MathF.Sin(d)).Round();
+
+                if (posX < 0 || posY < 0 || posX >= dungeonWidth || posY >= dungeonHeight)
+                    continue;
+
+                SightMap[posX, posY] = true;
+                if (ParentMap.GetBlockingVector(posX, posY)[0] != 0)
+                    break;
+            }
+    }
+
+    void setSightMap(IEnumerable<Point> playerSight, int dungeonWidth, int dungeonHeight)
+    {
+        foreach (var (posX, posY) in playerSight)
+        {
+            if (posX < 0 || posY < 0 || posX >= dungeonWidth || posY >= dungeonHeight)
+                continue;
+
+            SightMap[posX, posY] = true;
+            if (ParentMap.GetBlockingVector(posX, posY)[0] != 0)
+                break;
+        }
+    }
+
+    void setSightMap(IEnumerable<Vector2> playerSight, int dungeonWidth, int dungeonHeight)
+    {
+        var cell = GetCell();
+        foreach (var position in playerSight)
+        {
+            var posX = (int)(position.X / 16f);
+            var posY = (int)(position.Y / 16f);
+            if (posX < 0 || posY < 0 || posX >= dungeonWidth || posY >= dungeonHeight)
+                continue;
+
+            if (SightMap[posX, posY])
+                continue;
+
+            if (posX == cell.X && posY == cell.Y)
+                continue;
+
+            if (ParentMap.GetBlockingVector(posX, posY)[0] != 0)
+                break;
+            else
+                SightMap[posX, posY] = true;
+        }
+    }
+
+    public override void Update(MooseGame game, GameTime gameTime)
+    {
+        var dungeonGame = (game as DungeonGame)!;
+        bool keyPress(Keys key) => dungeonGame.WasKeyJustPressed(key) || (CanMove && dungeonGame.IsKeyHeldLong(key));
 
         if (keyPress(Keys.Left))
             moveBuffer.Push(Keys.Left);
@@ -70,7 +138,7 @@ class DungeonPlayer : GameObjectBase
                 CanMove = false;
 
                 var newTilePosition = Position / 16 + moveDelta;
-                var tile = DungeonGame.GetDungeonTile((int)newTilePosition.X, (int)newTilePosition.Y);
+                var tile = dungeonGame.GetDungeonTile((int)newTilePosition.X, (int)newTilePosition.Y);
                 if (tile >= Tile.BLOCKING_START)
                 {
                     moveDelta = Vector2.Zero;
@@ -79,7 +147,6 @@ class DungeonPlayer : GameObjectBase
                 } else
                     TweenToPosition(Position + moveDelta * 16, .2f, onEnd: _ => CanMove = true);
             }
-
         }
 
         (Rotation, Effects) = Direction switch
@@ -89,5 +156,18 @@ class DungeonPlayer : GameObjectBase
             Left => (0, SpriteEffects.FlipHorizontally),
             _ => (0, SpriteEffects.None),
         };
+
+        RebuildSightMap(dungeonGame.DungeonSize, dungeonGame.DungeonSize);
+    }
+
+    public bool CanSee(int i, int j)
+        => ParentMap.CellIsInBounds(i, j) ? !IsUnderground || SightMap[i, j] : false;
+
+    public bool CanSee(Vector2 worldPosition)
+    {
+        if (ParentMap.WorldIsInBounds(worldPosition))
+            return !IsUnderground || SightMap[(int)worldPosition.X / ParentMap.TileWidth, (int)worldPosition.Y / ParentMap.TileHeight];
+        else
+            return false;
     }
 }

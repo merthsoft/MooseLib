@@ -204,16 +204,16 @@ public abstract class MooseGame : Game
 
         if (PreRenderUpdate(gameTime))
             foreach (var renderer in RendererDictionary.Values)
-                renderer.Update(gameTime);
+                renderer.Update(this, gameTime);
 
         if (PreMapUpdate(gameTime) && ActiveMaps.Any())
             foreach (var map in ActiveMaps)
-                map.Update(gameTime);
+                map.Update(this, gameTime);
 
         if (PreObjectsUpdate(gameTime))
             foreach (var obj in Objects)
             {
-                obj.Update(gameTime);
+                obj.Update(this, gameTime);
                 obj.ClearCompletedTweens();
             }
 
@@ -236,7 +236,7 @@ public abstract class MooseGame : Game
             var layer = obj.ParentMap?.Layers[obj.Layer] as IObjectLayer;
             layer?.AddObject(obj);
             obj.OnAdd();
-            obj.Update(gameTime);
+            obj.Update(this, gameTime);
         }
 
         ObjectsToAdd.Clear();
@@ -296,7 +296,7 @@ public abstract class MooseGame : Game
             hookTuple?.PreHook?.Invoke(layerIndex);
 
             if (!layer.IsHidden)
-                renderer?.Draw(gameTime, layer, layerIndex);
+                renderer?.Draw(this, gameTime, layer, layerIndex);
 
             hookTuple?.PostHook?.Invoke(layerIndex);
             renderer?.End();

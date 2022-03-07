@@ -4,8 +4,11 @@ using Merthsoft.Moose.MooseEngine.Interface;
 namespace Merthsoft.Moose.Dungeon;
 internal class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
 {
-    public DungeonRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
+    private readonly DungeonPlayer player;
+
+    public DungeonRenderer(DungeonPlayer player, SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
     {
+        this.player = player;
     }
 
     protected override int GetNeighborValue(int _tile, int x, int y, ITileLayer<int> layer, int neighborValue)
@@ -17,5 +20,11 @@ internal class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
             return 0;
 
         return neighborValue;
+    }
+
+    public override void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 1)
+    {
+        if (player.CanSee(i, j))
+            base.DrawSprite(spriteIndex, i, j, layerNumber, layer, layerDepth);
     }
 }

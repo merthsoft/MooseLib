@@ -27,7 +27,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public Action? StateCompleteAction { get; set; }
 
-    public IMap? ParentMap { get; set; }
+    public IMap ParentMap { get; set; } = null!;
 
     public List<Tween> ActiveTweens { get; } = new();
 
@@ -40,9 +40,9 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
         Direction = direction;
     }
 
-    public abstract void Update(GameTime gameTime);
+    public abstract void Update(MooseGame game, GameTime gameTime);
 
-    public virtual void PostUpdate()
+    public virtual void PostUpdate(MooseGame game, GameTime gameTime)
     {
         if (Remove)
             this.ClearTweens();
@@ -50,7 +50,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
             this.ClearCompletedTweens();
     }
 
-    public abstract void Draw(SpriteBatch spriteBatch);
+    public abstract void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch);
 
     public virtual void OnAdd() { }
 
@@ -83,11 +83,11 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public virtual bool AtWorldPosition(Vector2 worldPosition)
         => WorldRectangle.Contains(worldPosition);
 
-    public Vector2 GetCell(IMap? parentMap = null)
-        => new Vector2(
-            Position.X / (parentMap ?? ParentMap)!.TileWidth,
-            Position.Y / (parentMap ?? ParentMap)!.TileHeight
-        ).GetFloor();
+    public Point GetCell(IMap? parentMap = null)
+        => new Point(
+            (int)Position.X / (parentMap ?? ParentMap)!.TileWidth,
+            (int)Position.Y / (parentMap ?? ParentMap)!.TileHeight
+        );
 
     public bool InCell(int x, int y, IMap? parentMap = null)
         => Position.X / (parentMap ?? ParentMap)!.TileWidth == x

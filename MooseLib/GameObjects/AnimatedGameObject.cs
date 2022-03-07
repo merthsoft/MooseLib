@@ -32,7 +32,7 @@ public class AnimatedGameObject : GameObjectBase
         State = state;
     }
 
-    public override void Update(GameTime gameTime)
+    public override void Update(MooseGame game, GameTime gameTime)
     {
         if (PlayKey != PreviousPlayKey)
         {
@@ -43,7 +43,7 @@ public class AnimatedGameObject : GameObjectBase
         Sprite.Update(gameTime);
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
         => spriteBatch.Draw(Sprite.TextureRegion.Texture,
                 (Rectangle)WorldRectangle, Sprite.TextureRegion.Bounds,
                 Color.White, Rotation, Def.Origin, SpriteEffects, 0);

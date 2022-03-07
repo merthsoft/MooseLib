@@ -27,7 +27,7 @@ public abstract class BaseMap : IMap
         => cellX >= 0 && cellX < Width
         && cellY >= 0 && cellY < Height;
 
-    public virtual void Update(GameTime gameTime)
+    public virtual void Update(MooseGame _game, GameTime _gameTime)
         => BuildFullBlockingMap();
 
     protected virtual void BuildFullBlockingMap()
@@ -45,8 +45,8 @@ public abstract class BaseMap : IMap
 
     protected abstract int IsBlockedAt(int layer, int x, int y);
 
-    public virtual IEnumerable<int> GetBlockingVector(int x, int y)
-        => blockingMap[x, y].AsEnumerable();
+    public virtual IList<int> GetBlockingVector(int x, int y)
+        => blockingMap[x, y];
 
     protected virtual Grid BaseGrid
         => Grid.CreateGridWithLateralConnections(
@@ -56,59 +56,6 @@ public abstract class BaseMap : IMap
 
     public Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
         => BaseGrid.DisconnectWhere((x, y) => blockingMap[x, y].Any(t => t > 0) && !walkableOverrides.Contains(new(x, y)));
-
-    public virtual IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false)
-    {
-        var (x1, y1) = (endWorldPosition.X, endWorldPosition.Y);
-        var (x2, y2) = (startWorldPosition.X, startWorldPosition.Y);
-
-        var deltaX = (int)Math.Abs(x1 - x2);
-        var deltaZ = (int)Math.Abs(y1 - y2);
-
-        if (deltaX == 0 && deltaZ == 0)
-            yield break;
-
-        var stepX = x2 < x1 ? 1 : -1;
-        var stepZ = y2 < y1 ? 1 : -1;
-
-        var err = deltaX - deltaZ;
-
-        RayCell BuildReturnTuple(float x, float y)
-            => new(new Vector2(x, y), blockingMap[(int)(x / TileWidth), (int)(y / TileHeight)]);
-
-        while (true)
-        {
-            if (!WorldPositionIsInBounds(x2, y2))
-                break;
-
-            yield return BuildReturnTuple(x2, y2);
-            if (!extend && x2 == x1 && y2 == y1)
-                break;
-
-            var e2 = 2 * err;
-
-            if (e2 > -deltaZ)
-            {
-                err -= deltaZ;
-                x2 += stepX;
-            }
-
-            if (!WorldPositionIsInBounds(x2, y2))
-                break;
-
-            if (fillCorners)
-                yield return BuildReturnTuple(x2, y2);
-
-            if (!extend && x2 == x1 && y2 == y1)
-                break;
-
-            if (e2 < deltaX)
-            {
-                err += deltaX;
-                y2 += stepZ;
-            }
-        }
-    }
 
     public virtual IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null)
     {

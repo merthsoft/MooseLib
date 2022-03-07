@@ -12,9 +12,9 @@ public class TextureGameObject : GameObjectBase
     {
     }
 
-    public override void Update(GameTime gameTime) { }
+    public override void Update(MooseGame game, GameTime gameTime) { }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
         => spriteBatch.Draw(Def.Texture,
                 (Rectangle)base.WorldRectangle, Def.SourceRectangle,
                 Color.White, Rotation, Def.Origin, SpriteEffects, 0);

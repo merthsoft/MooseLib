@@ -12,13 +12,14 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
         set => AutoTileTextureMap[index] = value;
     }
 
-    public SpriteBatchAutoTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
+    public SpriteBatchAutoTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) 
+        : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
     {
         
     }
 
 
-    public override void Draw(GameTime _, ILayer layer, int layerNumber)
+    public override void Draw(MooseGame _game, GameTime _gameTime, ILayer layer, int layerNumber)
     {
         if (layer is not ITileLayer<int> tileLayer)
             throw new Exception("TileLayer<int> layer expected");
@@ -52,8 +53,8 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
         return neighborValue;
     }
 
-    public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 0f)
-    {
+    public override void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 1)
+    { 
         var texture = AutoTileTextureMap.GetValueOrDefault(spriteIndex);
         if (texture == null)
         {

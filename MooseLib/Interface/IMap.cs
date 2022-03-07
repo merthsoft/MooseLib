@@ -14,15 +14,18 @@ public interface IMap
 
     IReadOnlyList<ILayer> Layers { get; }
 
-    void Update(GameTime gameTime);
-    IEnumerable<int> GetBlockingVector(int cellX, int cellY);
-    IEnumerable<int> GetBlockingVector(Vector2 worldPosition)
+    void Update(MooseGame game, GameTime gameTime);
+    IList<int> GetBlockingVector(int cellX, int cellY);
+    IList<int> GetBlockingVector(Vector2 worldPosition)
         => GetBlockingVector((int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight));
 
     Grid BuildCollisionGrid(params Vector2[] walkableOverrides);
-    IEnumerable<RayCell> FindWorldRay(Vector2 startWorldPosition, Vector2 endWorldPosition, bool fillCorners = false, bool extend = false);
     IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null);
 
     public bool CellIsInBounds(Vector2 cell);
     public bool CellIsInBounds(int cellX, int cellY);
+
+    public bool WorldIsInBounds(Vector2 world)
+        => (int)world.X / TileWidth >= 0 && (int)world.X / TileWidth < Width
+        && (int)world.Y / TileHeight >= 0 && (int)world.Y / TileHeight < Height;
 }

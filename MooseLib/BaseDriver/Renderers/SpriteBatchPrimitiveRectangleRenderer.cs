@@ -16,7 +16,7 @@ public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
         Palette.AddRange(colors);
     }
 
-    public override void Draw(GameTime _, ILayer layer, int layerNumber)
+    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, int _layerNumber)
     {
         if (layer is not TileLayer<int> tileLayer)
             throw new Exception("TileLayer<int> layer expected");
