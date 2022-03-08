@@ -1,12 +1,18 @@
 ﻿namespace Merthsoft.Moose.Dungeon;
-internal static class Extensions
+public static class Extensions
 {
-    public static bool IsWall(this Tile t)
-        => t >= Tile.WALL_START && t < Tile.WALL_END;
+    public static bool IsWall(this DungeonTile t)
+        => t >= DungeonTile.WALL_START && t < DungeonTile.WALL_END;
 
-    public static bool IsFloor(this Tile t)
-        => t >= Tile.FLOOR_START && t < Tile.FLOOR_END;
+    public static bool IsFloor(this DungeonTile t)
+        => t >= DungeonTile.FLOOR_START && t < DungeonTile.FLOOR_END;
 
-    public static bool IsDoor(this Tile t)
-        => t >= Tile.DOOR_START && t < Tile.DOOR_END;
+    public static bool IsDoor(this DungeonTile t)
+        => t >= DungeonTile.DOOR_START && t < DungeonTile.DOOR_END;
+
+    public static bool IsBlocking(this DungeonTile t)
+        => t.IsWall();
+
+    public static bool BlocksSight(this DungeonTile t)
+        => t.IsWall() || t.IsDoor();
 }

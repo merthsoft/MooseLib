@@ -14,20 +14,21 @@ public class AnimatedGameObject : GameObjectBase
     public AnimatedSprite Sprite { get; set; }
 
     public SpriteEffects SpriteEffects { get; set; }
-    public Transform2 SpriteTransform { get; set; }
 
     public virtual string PlayKey => Direction == null ? State.ToLower() : $"{State.ToLower()}_{Direction.ToLower()}";
 
     private string PreviousPlayKey = "";
 
     public override RectangleF WorldRectangle
-        => Sprite.GetBoundingRectangle(Position + SpriteTransform.WorldPosition, SpriteTransform.WorldRotation, SpriteTransform.WorldScale);
+        => new(Position, (Sprite.TextureRegion.Size * Scale).ToSize());
 
     public AnimatedGameObject(AnimatedGameObjectDef def, Vector2? position = null, int layer = 0, Vector2? transformLocation = null, float rotation = 0, Vector2? scale = null, string state = "", string? direction = null)
         : base(def, position, layer, direction: direction)
     {
         Sprite = new AnimatedSprite(def.SpriteSheet) { Origin = def.Origin };
-        SpriteTransform = new(transformLocation ?? Vector2.Zero, rotation, scale);
+        DrawOffset = transformLocation ?? Vector2.Zero;
+        Rotation = rotation;
+        Scale = scale ?? Vector2.One;
         WorldSize = new(Sprite.TextureRegion.Width, Sprite.TextureRegion.Height);
         State = state;
     }

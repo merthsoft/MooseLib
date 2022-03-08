@@ -1,6 +1,6 @@
 ﻿namespace Merthsoft.Moose.Dungeon;
 
-record DungeonPlayerDef : DungeonObjectDef
+public record DungeonPlayerDef : DungeonObjectDef
 {
     public Texture2D Texture { get; private set; } = null!; // Loaded in LoadContent
 

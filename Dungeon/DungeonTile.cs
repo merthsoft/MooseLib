@@ -1,5 +1,5 @@
 ﻿namespace Merthsoft.Moose.Dungeon;
-internal enum Tile
+public enum DungeonTile
 {
     None = -1,
 
@@ -33,8 +33,6 @@ internal enum Tile
     RedDoorVertical,
     DOOR_END = RedDoorVertical + 1,
 
-    BLOCKING_START = 30,
-    
     GraySpikes = 30,
     RedSpikes = 31,
     Drawers = 32,
@@ -54,7 +52,6 @@ internal enum Tile
     ChairLeft,
     ChairDown,
     ChairUp,
-    BLOCKING_END = ChairUp+1,
     
     WALL_START = 80,
     StoneWall = 80,

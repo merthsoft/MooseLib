@@ -1,15 +1,20 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+﻿using Merthsoft.Moose.Dungeon.Spells;
+using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+using Merthsoft.Moose.MooseEngine.GameObjects;
 
 namespace Merthsoft.Moose.Dungeon;
 
 public class DungeonGame : MooseGame
 {
+    public SpellBook SpellBook { get; } = new();
+    public Texture2D Crosshair { get; set; } = null!;
+    public Vector2 CrosshairOrigin { get; set; }
+
+    public int BaseTileWidth = 16;
+    public int BaseTileHeight = 16;
     
-    internal int BaseTileWidth = 16;
-    internal int BaseTileHeight = 16;
-    
-    internal int DungeonSize = 45;
+    public int DungeonSize = 45;
 
     private readonly (int w, int h)[] roomSizes = new[]
         {
@@ -26,30 +31,43 @@ public class DungeonGame : MooseGame
             (4 + 2, 7 + 2),
         };
 
-    internal static DungeonMap DungeonMap { get; set; } = null!;
+    public static DungeonMap DungeonMap { get; set; } = null!;
 
     DungeonPlayerDef PlayerDef { get; } = new();
-    internal static DungeonPlayer Player { get; private set; } = null!;
+    public static DungeonPlayer Player { get; private set; } = null!;
 
     SpriteFont DebugFont = null!;
 
     public DungeonGame()
     {
         Player = new(PlayerDef) { };
+        IsMouseVisible = false;
     }
 
-    internal Tile GetDungeonTile(int x, int y)
-        => DungeonMap.GetLayer<DungeonLayer>(0).GetTileValue(x, y);
+    public DungeonTile GetDungeonTile(int x, int y)
+        => DungeonMap.DungeonLayer.GetTileValue(x, y);
 
+    public MonsterTile GetMonsterTile(int x, int y)
+    {
+        var p = new Point(x, y);
+        return MonsterTile.None;
+    }
+
+    public void Cast(SpellDef spellDef, GameObjectBase owner, Vector2 position)
+    {
+        AddObject(SpellBook.Cast(spellDef, owner, position));
+    }
 
     protected override void Load()
     {
-        DefaultBackgroundColor = new(16, 16, 16);
-        var tiles = ContentManager.LoadImage("Dungeon");
+        DefaultBackgroundColor = new(25, 15, 20);
+        Crosshair = ContentManager.LoadImage("Crosshair");
+        CrosshairOrigin = new(Crosshair.Width/2, Crosshair.Height/2);
 
+        var tiles = ContentManager.LoadImage("Dungeon");
         var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, tiles);
-        dungeonRenderer[(int)Tile.StoneWall] = ContentManager.LoadImage("StoneWall");
-        dungeonRenderer[(int)Tile.BrickWall] = ContentManager.LoadImage("BrickWall");
+        dungeonRenderer[(int)DungeonTile.StoneWall] = ContentManager.LoadImage("StoneWall");
+        dungeonRenderer[(int)DungeonTile.BrickWall] = ContentManager.LoadImage("BrickWall");
         AddDefaultRenderer<DungeonLayer>("dungeon", dungeonRenderer);
         AddDefaultRenderer<ObjectLayer>("objects", new SpriteBatchObjectRenderer(SpriteBatch));
 
@@ -61,6 +79,16 @@ public class DungeonGame : MooseGame
         ZoomIn(2);
         AddDef(PlayerDef);
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
+
+        var fireball = new FireballDef();
+        AddSpell(fireball, (def, owner, position) => new Fireball(def, owner, position));
+        Player.KnownSpells.Add(fireball);
+    }
+
+    private void AddSpell(SpellDef spellDef, Func<SpellDef, GameObjectBase, Vector2, Spell> generator)
+    {
+        AddDef(spellDef);
+        SpellBook.AddSpell(spellDef, (spellDef, owner, position) => new Fireball(spellDef, owner, position));
     }
 
     protected override void PreUpdate(GameTime gameTime)

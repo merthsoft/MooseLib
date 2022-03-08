@@ -16,6 +16,8 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public Vector2 WorldSize { get; set; }
     public float Rotation { get; set; }
     public SpriteEffects Effects { get; set; }
+    public Vector2 DrawOffset { get; set; }
+    public Vector2 Scale { get; set; }
 
     public virtual RectangleF WorldRectangle => new(Position.X, Position.Y, WorldSize.X, WorldSize.Y);
 
@@ -84,7 +86,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
         => WorldRectangle.Contains(worldPosition);
 
     public Point GetCell(IMap? parentMap = null)
-        => new Point(
+        => new(
             (int)Position.X / (parentMap ?? ParentMap)!.TileWidth,
             (int)Position.Y / (parentMap ?? ParentMap)!.TileHeight
         );

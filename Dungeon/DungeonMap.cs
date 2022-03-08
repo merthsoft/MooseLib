@@ -3,9 +3,10 @@ using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon;
-internal class DungeonMap : BaseMap
+public class DungeonMap : BaseMap
 {
     public readonly DungeonLayer DungeonLayer;
+    public readonly MonsterLayer MonsterLayer;
 
     public override int Height => DungeonLayer.Height;
     public override int Width => DungeonLayer.Width;
@@ -17,14 +18,17 @@ internal class DungeonMap : BaseMap
     {
         Layers = new ILayer[]
         {
-            DungeonLayer = new DungeonLayer("dungeon", width, height),
+            DungeonLayer = new DungeonLayer(width, height),
             new ObjectLayer("player"),
+            MonsterLayer = new MonsterLayer(),
+            new ObjectLayer("spells"),
+            new ObjectLayer("items"),
         };
     }
 
     public void GenerateRandomLevel()
     {
-        DrawRoom(Tile.StoneWall, Tile.None, 0, 0, Width - 1, Height - 1);
+        DrawRoom(DungeonTile.StoneWall, DungeonTile.None, 0, 0, Width - 1, Height - 1);
         var generator = new DungeonGenerator<DungeonCell>();
         generator.AddMapProcessor(new DungeonMapProcessor());
         generator.GenerateA()
@@ -47,8 +51,8 @@ internal class DungeonMap : BaseMap
 
     public List<Rectangle> GenerateTown(int numRooms, (int, int)[] roomSizes)
     {
-        FillDungeon(Tile.None);
-        DrawRoom(Tile.StoneWall, Tile.None, 0, 0, Width - 1, Height - 1);
+        FillDungeon(DungeonTile.None);
+        DrawRoom(DungeonTile.StoneWall, DungeonTile.None, 0, 0, Width - 1, Height - 1);
         var rooms = GenerateRooms(numRooms, roomSizes);
         GenerateCorridors(rooms);
         GenerateDoors(rooms);
@@ -60,7 +64,7 @@ internal class DungeonMap : BaseMap
     {
         foreach (var (x, y, width, height) in rooms)
         {
-            var randomFloor = (Tile)MooseGame.Instance.Random.Next((int)Tile.FLOOR_START, (int)Tile.FLOOR_END);
+            var randomFloor = (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.FLOOR_START, (int)DungeonTile.FLOOR_END);
             DrawRoom(GetDungeonTile(x, y), randomFloor, x, y, width, height);
         }
     }
@@ -82,14 +86,14 @@ internal class DungeonMap : BaseMap
             for (var x = 0; x < Width; x++)
                 for (var y = 0; y < Height; y++)
                 {
-                    if (GetDungeonTile(x, y) == Tile.None && CountNeighbors(x, y) == 0)
+                    if (GetDungeonTile(x, y) == DungeonTile.None && CountNeighbors(x, y) == 0)
                         startingPoints.Add(new(x, y));
                 }
 
             if (startingPoints.Count == 0)
                 return new List<Point>(visitedPoints);
 
-            var randomFloor = (Tile)MooseGame.Instance.Random.Next((int)Tile.FLOOR_START, (int)Tile.FLOOR_END);
+            var randomFloor = (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.FLOOR_START, (int)DungeonTile.FLOOR_END);
 
             var startingPoint = startingPoints.RandomElement();
 
@@ -145,7 +149,7 @@ internal class DungeonMap : BaseMap
         if (x < 0 || y < 0 || x >= Width || y >= Height)
             return 0;
 
-        return GetDungeonTile(x, y) != Tile.None ? 1 : 0;
+        return GetDungeonTile(x, y) != DungeonTile.None ? 1 : 0;
     }
 
     private List<Rectangle> GenerateRooms(int numRooms, (int, int)[] roomSizes)
@@ -160,22 +164,22 @@ internal class DungeonMap : BaseMap
             do
             {
                 (roomW, roomH) = roomSizes.RandomElement();
-                x = MooseGame.Instance.Random.Next(Width - roomW);
-                y = MooseGame.Instance.Random.Next(Height - roomH);
+                x = MooseGame.Instance.Random.Next(Width - roomW - 4) + 2;
+                y = MooseGame.Instance.Random.Next(Height - roomH - 4) + 2;
                 roomRect = new(x, y, roomW, roomH);
                 numTries++;
                 if (numTries > roomSizes.Length * 4)
                     break;
             } while (rooms.Any(r => r.Intersects(roomRect)));
 
-            var randomWall = (Tile)MooseGame.Instance.Random.Next((int)Tile.WALL_START, (int)Tile.WALL_END);
+            var randomWall = (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.WALL_START, (int)DungeonTile.WALL_END);
             DrawRoom(randomWall, randomWall, x, y, roomW, roomH);
             rooms.Add(new(x, y, roomW, roomH));
         }
         return rooms;
     }
 
-    private void DrawRoom(Tile wallTile, Tile floorTile, int x, int y, int width, int height)
+    private void DrawRoom(DungeonTile wallTile, DungeonTile floorTile, int x, int y, int width, int height)
     {
         for (var i = 0; i <= width; i++)
             for (var j = 0; j <= height; j++)
@@ -183,7 +187,7 @@ internal class DungeonMap : BaseMap
                     i == 0 || j == 0 || i == width || j == height ? wallTile : floorTile);
     }
 
-    public void FillDungeon(Tile tile)
+    public void FillDungeon(DungeonTile tile)
     {
         for (var x = 0; x < Width; x++)
             for (var y = 0; y < Height; y++)
@@ -192,13 +196,16 @@ internal class DungeonMap : BaseMap
 
     protected override int IsBlockedAt(int layer, int x, int y)
     {
+        if (layer > 0)
+            return 0;
+
         var tile = DungeonLayer.GetTileValue(x, y);
-        return tile.IsDoor() || tile.IsWall() ? 100 : 0;
+        return tile.IsBlocking() ? (int)tile : 0;
     }
 
-    public void SetDungeonTile(int x, int y, Tile t)
+    public void SetDungeonTile(int x, int y, DungeonTile t)
         => DungeonLayer.SetTileValue(x, y, t);
 
-    public Tile GetDungeonTile(int x, int y)
+    public DungeonTile GetDungeonTile(int x, int y)
         => DungeonLayer.GetTileValue(x, y);
 }

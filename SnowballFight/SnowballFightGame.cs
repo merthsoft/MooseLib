@@ -45,7 +45,7 @@ public class SnowballFightGame : MooseGame
     public static AnimatedGameObjectDef SnowballDef => GetDef<AnimatedGameObjectDef>("snowball")!;
 
     private readonly Dictionary<int, RenderHook> GameRenderHooks;
-    public override IDictionary<int, RenderHook>? DefaultRenderHooks => Mode == GameMode.Playing ? GameRenderHooks : null;
+    public override Dictionary<int, RenderHook>? DefaultRenderHooks => Mode == GameMode.Playing ? GameRenderHooks : null;
 
     public readonly string VersionString;
 

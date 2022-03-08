@@ -16,6 +16,8 @@ public class Theme
 
     public List<SpriteFont> Fonts { get; } = new();
 
+    public Texture2D? Cursor { get; set; }
+
     public Texture2D WindowTexture
     {
         get => windowTexture;

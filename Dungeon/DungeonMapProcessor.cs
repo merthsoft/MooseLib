@@ -2,12 +2,12 @@
 using Karcero.Engine.Models;
 
 namespace Merthsoft.Moose.Dungeon;
-internal class DungeonMapProcessor : IMapProcessor<DungeonCell>
+public class DungeonMapProcessor : IMapProcessor<DungeonCell>
 {
-    Tile RandomFloor() 
-        => (Tile)MooseGame.Instance.Random.Next((int)Tile.FLOOR_START, (int)Tile.FLOOR_END);
+    DungeonTile RandomFloor() 
+        => (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.FLOOR_START, (int)DungeonTile.FLOOR_END);
     
-    Tile NeighborFloor(Map<DungeonCell> map, int x, int y)
+    DungeonTile NeighborFloor(Map<DungeonCell> map, int x, int y)
     {
         var spot = map.GetCell(x - 1, y)?.Tile;
         if (spot?.IsFloor() ?? false)
@@ -34,9 +34,9 @@ internal class DungeonMapProcessor : IMapProcessor<DungeonCell>
                 var t = map.GetCell(x, y);
                 t.Tile = t.Terrain switch
                 {
-                    TerrainType.Door => Tile.DOOR_START,
+                    TerrainType.Door => DungeonTile.DOOR_START,
                     TerrainType.Floor => NeighborFloor(map, x, y),
-                    _ => Tile.WALL_START,
+                    _ => DungeonTile.WALL_START,
                 };
 
                 if (DungeonGame.Player.Position == Vector2.Zero && t.Terrain == TerrainType.Floor)

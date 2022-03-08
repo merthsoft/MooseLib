@@ -28,8 +28,8 @@ public static class GraphicsExtensions
 
 
     public static Color HalveAlphaChannel(this Color c)
-        => new(c, c.A / 2); 
-    
+        => c with { A = (byte)(c.A / 2) };
+
     public static void Draw(this Sprite sprite, SpriteBatch spriteBatch, Vector2 position, Transform2 transform, SpriteEffects spriteEffects)
     {
         if (sprite.IsVisible)

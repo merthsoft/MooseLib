@@ -37,10 +37,14 @@ public class MooseContentManager
     public Texture2D LoadImage(string assetName)
         => Content.Load<Texture2D>($"Images/{assetName}");
 
-    public SpriteSheet LoadAnimatedSpriteSheet(string animationKey, bool replace = false)
+    public SpriteSheet LoadAnimatedSpriteSheet(string animationKey, bool replace = false, bool usePrefix = true)
     {
+        var loadKey = $"{animationKey}.sf";
+        if (usePrefix)
+            loadKey = $"Animations/{loadKey}";
+
         if (replace || !AnimationSpriteSheets.ContainsKey(animationKey))
-            AnimationSpriteSheets[animationKey] = Content.Load<SpriteSheet>($"Animations/{animationKey}.sf", new JsonContentLoader());
+            AnimationSpriteSheets[animationKey] = Content.Load<SpriteSheet>(loadKey, new JsonContentLoader());
 
         return AnimationSpriteSheets[animationKey];
     }

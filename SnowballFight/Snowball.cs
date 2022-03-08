@@ -15,7 +15,7 @@ public class Snowball : AnimatedGameObject
     public const string AnimationKey = "snowball";
 
     private Queue<Vector2> FlightPath { get; }
-    private Vector2 StartCell { get; set; }
+    private Point StartCell { get; set; }
 
     public Snowball(IEnumerable<Vector2> flightPath)
         : base(SnowballFightGame.SnowballDef, flightPath.First(), SnowballFightGame.SnowballLayer, state: States.Fly)
@@ -25,7 +25,7 @@ public class Snowball : AnimatedGameObject
         if (FlightPath.Count == 0)
             State = States.Dead;
 
-        SpriteTransform = new(new(-8, -8), 0, Vector2.One);
+        DrawOffset = new(-8, -8);
     }
 
     public override void OnAdd()

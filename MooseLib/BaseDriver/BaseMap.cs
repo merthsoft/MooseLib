@@ -19,9 +19,13 @@ public abstract class BaseMap : IMap
     public TLayer GetLayer<TLayer>(int layerNumber) where TLayer : ILayer
         => (TLayer)Layers[layerNumber];
 
-    public bool CellIsInBounds(Vector2 cell)
+    public bool CellIsInBounds(Point cell)
         => cell.X >= 0 && cell.X < Width
         && cell.Y >= 0 && cell.Y < Height;
+
+    public bool PositionIsInBounds(Vector2 position)
+        => position.X >= 0 && position.X < Width * TileWidth
+        && position.Y >= 0 && position.Y < Height * TileHeight;
 
     public bool CellIsInBounds(int cellX, int cellY)
         => cellX >= 0 && cellX < Width
@@ -54,20 +58,20 @@ public abstract class BaseMap : IMap
             new Size(Distance.FromMeters(1), Distance.FromMeters(1)),
             Velocity.FromMetersPerSecond(1));
 
-    public Grid BuildCollisionGrid(params Vector2[] walkableOverrides)
+    public Grid BuildCollisionGrid(params Point[] walkableOverrides)
         => BaseGrid.DisconnectWhere((x, y) => blockingMap[x, y].Any(t => t > 0) && !walkableOverrides.Contains(new(x, y)));
 
-    public virtual IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null)
+    public virtual IEnumerable<Point> FindCellPath(Point startCell, Point endCell, Grid? grid = null)
     {
         if (!CellIsInBounds(startCell) || !CellIsInBounds(endCell))
-            return Enumerable.Empty<Vector2>();
+            return Enumerable.Empty<Point>();
 
         grid ??= BuildCollisionGrid(startCell);
 
-        var startX = (int)startCell.X;
-        var startY = (int)startCell.Y;
-        var endX = (int)endCell.X;
-        var endY = (int)endCell.Y;
+        var startX = startCell.X;
+        var startY = startCell.Y;
+        var endX = endCell.X;
+        var endY = endCell.Y;
 
         try
         {
@@ -75,15 +79,15 @@ public abstract class BaseMap : IMap
                 .FindPath(new GridPosition(startX, startY), new GridPosition(endX, endY), grid);
 
             if (path.Type != PathType.Complete)
-                return Enumerable.Empty<Vector2>();
+                return Enumerable.Empty<Point>();
 
             return path.Edges
-                .Select(e => new Vector2((int)e.End.Position.X, (int)e.End.Position.Y))
+                .Select(e => new Point((int)e.End.Position.X, (int)e.End.Position.Y))
                 .Distinct();
         }
         catch
         {
-            return Enumerable.Empty<Vector2>();
+            return Enumerable.Empty<Point>();
         }
     }
 

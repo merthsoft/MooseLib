@@ -2,7 +2,7 @@
 
 namespace Merthsoft.Moose.Dungeon;
 
-abstract record DungeonObjectDef : GameObjectDef
+public abstract record DungeonObjectDef : GameObjectDef
 {
     public DungeonObjectDef(string defName) : base(defName)
     {

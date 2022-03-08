@@ -16,13 +16,13 @@ public interface IMap
 
     void Update(MooseGame game, GameTime gameTime);
     IList<int> GetBlockingVector(int cellX, int cellY);
-    IList<int> GetBlockingVector(Vector2 worldPosition)
+    IList<int> GetBlockingVector(Point worldPosition)
         => GetBlockingVector((int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight));
 
-    Grid BuildCollisionGrid(params Vector2[] walkableOverrides);
-    IEnumerable<Vector2> FindCellPath(Vector2 startCell, Vector2 endCell, Grid? grid = null);
+    Grid BuildCollisionGrid(params Point[] walkableOverrides);
+    IEnumerable<Point> FindCellPath(Point startCell, Point endCell, Grid? grid = null);
 
-    public bool CellIsInBounds(Vector2 cell);
+    public bool CellIsInBounds(Point cell);
     public bool CellIsInBounds(int cellX, int cellY);
 
     public bool WorldIsInBounds(Vector2 world)

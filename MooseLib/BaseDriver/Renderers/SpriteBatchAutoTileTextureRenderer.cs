@@ -18,21 +18,6 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
         
     }
 
-
-    public override void Draw(MooseGame _game, GameTime _gameTime, ILayer layer, int layerNumber)
-    {
-        if (layer is not ITileLayer<int> tileLayer)
-            throw new Exception("TileLayer<int> layer expected");
-
-        for (int i = 0; i < tileLayer.Width; i++)
-            for (int j = 0; j < tileLayer.Height; j++)
-            {
-                var tile = tileLayer.GetTileValue(i, j);
-                if (tile >= 0)
-                    DrawSprite(tile, i, j, layerNumber, tileLayer);
-            }
-    }
-
     protected virtual int GetTileIndex(int tile, int neighborCount)
         => neighborCount;
 
@@ -47,7 +32,7 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
         if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
             return 0;
 
-        if (layer.GetTileValue(x, y) != tile)
+        if (Convert.ToInt32(layer.GetTileValue(x, y)) != tile)
             return 0;
 
         return neighborValue;

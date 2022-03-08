@@ -6,8 +6,8 @@ public record AnimatedGameObjectDef(string DefName, string AnimationKey) : GameO
 {
     public Vector2 Origin { get; set; } = Vector2.Zero;
 
-    public SpriteSheet SpriteSheet { get; private set; } = null!;
+    public SpriteSheet SpriteSheet { get; protected set; } = null!;
 
     public override void LoadContent(MooseContentManager contentManager)
-        => SpriteSheet = contentManager.LoadAnimatedSpriteSheet(AnimationKey);
+        => SpriteSheet = contentManager.LoadAnimatedSpriteSheet($"Animations/{AnimationKey}");
 }

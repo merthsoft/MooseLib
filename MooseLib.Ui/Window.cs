@@ -206,6 +206,13 @@ public class Window : IControlContainer, ITweenOwner
 
         Prompt?.Draw(spriteBatch, pos);
 
+        if (Theme.Cursor != null)
+        {
+            var mousePosition = Camera?.ScreenToWorld(CurrentMouseState.Position.ToVector2())
+                ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
+            spriteBatch.Draw(Theme.Cursor, mousePosition, Color.White);
+        }
+
         spriteBatch.FillRectangle(Rectangle, OverlayColor);
     }
 

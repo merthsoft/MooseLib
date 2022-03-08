@@ -2,7 +2,7 @@
 using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon;
-internal class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
+public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
 {
     private readonly DungeonPlayer player;
 
@@ -16,7 +16,7 @@ internal class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
         if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
             return 0;
 
-        if (layer.GetTileValue(x, y) < (int)Tile.WALL_START)
+        if (layer.GetTileValue(x, y) < (int)DungeonTile.WALL_START)
             return 0;
 
         return neighborValue;
