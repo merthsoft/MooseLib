@@ -41,13 +41,18 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
     public override void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 1)
     { 
         var texture = AutoTileTextureMap.GetValueOrDefault(spriteIndex);
+
+        var destRect = GetDestinationRectangle(i, j, layer.DrawOffset);
+        if (destRect == null)
+            return;
+
         if (texture == null)
         {
-            SpriteBatch.Draw(SpriteSheet,
-                destinationRectangle: GetDestinationRectangle(i, j, layer.DrawOffset),
-                sourceRectangle: GetSourceRectangle(spriteIndex),
-                color: Color, rotation: Rotation, effects: SpriteEffects,
-                origin: Vector2.Zero, layerDepth: layerDepth);
+                SpriteBatch.Draw(SpriteSheet,
+                    destinationRectangle: destRect.Value,
+                    sourceRectangle: GetSourceRectangle(spriteIndex),
+                    color: Color, rotation: Rotation, effects: SpriteEffects,
+                    origin: Vector2.Zero, layerDepth: layerDepth);
             return;
         }
 
@@ -55,7 +60,7 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
 
         var tileIndex = GetTileIndex(spriteIndex, neighborCount);
         SpriteBatch.Draw(texture,
-                destinationRectangle: GetDestinationRectangle(i, j, layer.DrawOffset),
+                destinationRectangle: destRect.Value,
                 sourceRectangle: GetSourceRectangle(tileIndex, texture),
                 color: Color, rotation: Rotation, effects: SpriteEffects,
                 origin: Vector2.Zero, layerDepth: layerDepth);

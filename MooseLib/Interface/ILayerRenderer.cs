@@ -2,6 +2,7 @@
 
 public interface ILayerRenderer : IDisposable
 {
+    RectangleF? RenderRectangle { get; set; }
     void LoadContent(MooseContentManager contentManager);
 
     void Update(MooseGame game, GameTime gameTime) { }

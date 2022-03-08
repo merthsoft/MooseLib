@@ -40,14 +40,25 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
     }
 
     public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 1f)
-        => SpriteBatch.Draw(SpriteSheet,
-            destinationRectangle: GetDestinationRectangle(i, j, layer.DrawOffset),
-            sourceRectangle: GetSourceRectangle(spriteIndex),
-            color: Color, rotation: Rotation, effects: SpriteEffects,
-            origin: Vector2.Zero, layerDepth: layerDepth);
+    {
+        var destRect = GetDestinationRectangle(i, j, layer.DrawOffset);
+        if (destRect != null)
+            SpriteBatch.Draw(SpriteSheet,
+                destinationRectangle: destRect.Value,
+                sourceRectangle: GetSourceRectangle(spriteIndex),
+                color: Color, rotation: Rotation, effects: SpriteEffects,
+                origin: Vector2.Zero, layerDepth: layerDepth);
+    }
 
-    public Rectangle GetDestinationRectangle(int i, int j, Vector2 drawOffset)
-        => new(i * TileWidth + (int)drawOffset.X, j * TileHeight + (int)drawOffset.Y, TileWidth, TileHeight);
+    public Rectangle? GetDestinationRectangle(int i, int j, Vector2 drawOffset)
+    {
+        var rect = new Rectangle(
+            i * TileWidth + (int)drawOffset.X + (int)(RenderRectangle?.X ?? 0), 
+            j * TileHeight + (int)drawOffset.Y + (int)(RenderRectangle?.Y ?? 0), 
+            TileWidth, TileHeight);
+
+        return (RenderRectangle?.Contains(rect) ?? true) ? rect : null;
+    }
 
     public Rectangle GetSourceRectangle(int spriteIndex, Texture2D? texture = null)
     {

@@ -16,6 +16,8 @@ public class DungeonGame : MooseGame
     
     public int DungeonSize = 45;
 
+    public Window UxWindow = null!;
+
     private readonly (int w, int h)[] roomSizes = new[]
         {
             (3 + 2, 3 + 2),
@@ -66,6 +68,7 @@ public class DungeonGame : MooseGame
 
         var tiles = ContentManager.LoadImage("Dungeon");
         var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, tiles);
+        
         dungeonRenderer[(int)DungeonTile.StoneWall] = ContentManager.LoadImage("StoneWall");
         dungeonRenderer[(int)DungeonTile.BrickWall] = ContentManager.LoadImage("BrickWall");
         AddDefaultRenderer<DungeonLayer>("dungeon", dungeonRenderer);
@@ -75,7 +78,7 @@ public class DungeonGame : MooseGame
         DungeonMap.GenerateRandomLevel();
         ActiveMaps.Add(DungeonMap);
 
-        SetScreenSize(1280, 960);
+        SetScreenSize(1600, 900);
         ZoomIn(2);
         AddDef(PlayerDef);
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
@@ -83,6 +86,8 @@ public class DungeonGame : MooseGame
         var fireball = new FireballDef();
         AddSpell(fireball, (def, owner, position) => new Fireball(def, owner, position));
         Player.KnownSpells.Add(fireball);
+
+        //UxWindow.
     }
 
     private void AddSpell(SpellDef spellDef, Func<SpellDef, GameObjectBase, Vector2, Spell> generator)

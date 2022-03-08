@@ -32,12 +32,12 @@ public class DungeonMap : BaseMap
         var generator = new DungeonGenerator<DungeonCell>();
         generator.AddMapProcessor(new DungeonMapProcessor());
         generator.GenerateA()
-                 .DungeonOfSize(Width, Height)
+                 .LargeDungeon()
                  .ABitRandom()
-                 .WithBigChanceToRemoveDeadEnds()
-                 .WithRoomSize(4, 20, 4, 20)
                  .SomewhatSparse()
+                 .WithBigChanceToRemoveDeadEnds()
                  .WithLargeNumberOfRooms()
+                 .WithLargeSizeRooms()
                  .AndTellMeWhenItsDone(map =>
                  {
                      for (var x = 1; x < Width - 1; x++)

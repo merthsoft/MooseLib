@@ -28,4 +28,7 @@ public static class RectangleExtensions
             && point.X <= rect.X + rect.Width
         && point.Y >= rect.Y
             && point.Y <= rect.Y + rect.Height;
+
+    public static bool Contains(this RectangleF rect, Rectangle otherRect)
+        => rect.Contains(otherRect.Location) && rect.Contains(otherRect.Location + otherRect.Size);
 }
