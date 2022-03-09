@@ -1,6 +1,11 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Extension;
+﻿using System.Collections.ObjectModel;
+
+namespace Merthsoft.Moose.MooseEngine.Extension;
 public static class CollectionsExtensions
 {
+    public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) where TKey : notnull
+        => new ReadOnlyDictionary<TKey, TValue>(dictionary);
+
     public static T RandomElement<T>(this IList<T> items)
            => items[MooseGame.Instance.Random.Next(items.Count)];
 

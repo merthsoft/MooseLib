@@ -50,15 +50,8 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
                 origin: Vector2.Zero, layerDepth: layerDepth);
     }
 
-    public Rectangle? GetDestinationRectangle(int i, int j, Vector2 drawOffset)
-    {
-        var rect = new Rectangle(
-            i * TileWidth + (int)drawOffset.X + (int)(RenderRectangle?.X ?? 0), 
-            j * TileHeight + (int)drawOffset.Y + (int)(RenderRectangle?.Y ?? 0), 
-            TileWidth, TileHeight);
-
-        return (RenderRectangle?.Contains(rect) ?? true) ? rect : null;
-    }
+    public Rectangle? GetDestinationRectangle(int i, int j, Vector2 drawOffset) 
+        => new Rectangle(i * TileWidth + (int)drawOffset.X, j * TileHeight + (int)drawOffset.Y, TileWidth, TileHeight);
 
     public Rectangle GetSourceRectangle(int spriteIndex, Texture2D? texture = null)
     {

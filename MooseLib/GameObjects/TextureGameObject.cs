@@ -8,7 +8,7 @@ public class TextureGameObject : GameObjectBase
 
     public SpriteEffects SpriteEffects { get; set; }
 
-    public TextureGameObject(TextureGameObjectDef def, Vector2? position = null, int? layer = null, Vector2? size = null, string? direction = null) : base(def, position, layer, size, direction)
+    public TextureGameObject(TextureGameObjectDef def, Vector2? position = null, string? direction = null, float? rotation = null, Vector2? size = null, string? layer = null) : base(def, position, direction, rotation, size, layer)
     {
     }
 

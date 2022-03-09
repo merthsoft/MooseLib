@@ -22,14 +22,12 @@ public class AnimatedGameObject : GameObjectBase
     public override RectangleF WorldRectangle
         => new(Position, (Sprite.TextureRegion.Size * Scale).ToSize());
 
-    public AnimatedGameObject(AnimatedGameObjectDef def, Vector2? position = null, int layer = 0, Vector2? transformLocation = null, float rotation = 0, Vector2? scale = null, string state = "", string? direction = null)
-        : base(def, position, layer, direction: direction)
+    public AnimatedGameObject(AnimatedGameObjectDef def, Vector2? position = null, string layer = null, Vector2? transformLocation = null, float rotation = 0, Vector2? scale = null, string state = "", string? direction = null)
+        : base(def, position, direction: direction, layer: layer)
     {
-        Sprite = new AnimatedSprite(def.SpriteSheet) { Origin = def.Origin };
+        Sprite = new AnimatedSprite(def.SpriteSheet) { Origin = Origin };
         DrawOffset = transformLocation ?? Vector2.Zero;
         Rotation = rotation;
-        Scale = scale ?? Vector2.One;
-        WorldSize = new(Sprite.TextureRegion.Width, Sprite.TextureRegion.Height);
         State = state;
     }
 
@@ -47,5 +45,5 @@ public class AnimatedGameObject : GameObjectBase
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
         => spriteBatch.Draw(Sprite.TextureRegion.Texture,
                 (Rectangle)WorldRectangle, Sprite.TextureRegion.Bounds,
-                Color.White, Rotation, Def.Origin, SpriteEffects, 0);
+                Color.White, Rotation, Origin, SpriteEffects, 0);
 }

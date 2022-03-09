@@ -67,7 +67,7 @@ public class DungeonGame : MooseGame
         CrosshairOrigin = new(Crosshair.Width/2, Crosshair.Height/2);
 
         var tiles = ContentManager.LoadImage("Dungeon");
-        var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, tiles);
+        var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, tiles); 
         
         dungeonRenderer[(int)DungeonTile.StoneWall] = ContentManager.LoadImage("StoneWall");
         dungeonRenderer[(int)DungeonTile.BrickWall] = ContentManager.LoadImage("BrickWall");
@@ -78,7 +78,7 @@ public class DungeonGame : MooseGame
         DungeonMap.GenerateRandomLevel();
         ActiveMaps.Add(DungeonMap);
 
-        SetScreenSize(1600, 900);
+        SetScreenSize(1280, 960);
         ZoomIn(2);
         AddDef(PlayerDef);
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
@@ -86,7 +86,7 @@ public class DungeonGame : MooseGame
         var fireball = new FireballDef();
         AddSpell(fireball, (def, owner, position) => new Fireball(def, owner, position));
         Player.KnownSpells.Add(fireball);
-
+        
         //UxWindow.
     }
 

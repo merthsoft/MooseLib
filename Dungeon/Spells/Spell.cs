@@ -13,7 +13,7 @@ public abstract class Spell : AnimatedGameObject
 
     public GameObjectBase Owner { get; }
 
-    public Spell(SpellDef def, GameObjectBase owner, Vector2 position) : base(def, position, 2, state: Cast)
+    public Spell(SpellDef def, GameObjectBase owner, Vector2 position) : base(def, position, "spells", state: Cast)
     {
         Owner = owner;
     }

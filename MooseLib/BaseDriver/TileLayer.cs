@@ -4,6 +4,8 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
 public class TileLayer<TTile> : ITileLayer<TTile>
 {
+    public string? RendererKey { get; set; }
+
     public int Height { get; }
     public int Width { get; }
 

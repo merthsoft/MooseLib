@@ -2,6 +2,7 @@
 using Merthsoft.Moose.MooseEngine.GameObjects;
 using Merthsoft.Moose.MooseEngine.Interface;
 using MonoGame.Extended.Tweening;
+using MonoGame.Extended.ViewportAdapters;
 using System.Linq.Expressions;
 
 namespace Merthsoft.Moose.MooseEngine;
@@ -20,7 +21,7 @@ public abstract class MooseGame : Game
 
     public SpriteBatch SpriteBatch = null!; // Set in load 
 
-    public IMap MainMap => ActiveMaps.Any() ? ActiveMaps[0] : NullMap.Instance;
+    public IMap MainMap => ActiveMaps.First();
     public IList<IMap> ActiveMaps = new List<IMap>();
 
     public Dictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
@@ -100,6 +101,11 @@ public abstract class MooseGame : Game
         Graphics.IsFullScreen = initialization.Fullscreen;
         Graphics.ApplyChanges();
 
+        var cameraRect = initialization.CameraRectangle ?? new(0, 0, initialization.ScreenWidth, initialization.ScreenHeight);
+
+        var cameraViewport = new BoxingViewportAdapter(Window, GraphicsDevice, cameraRect.Width, cameraRect.Height);
+        MainCamera = new OrthographicCamera(cameraViewport) { Origin = cameraRect.Location.ToVector2() };
+
         if (initialization.RandomSeed != null)
             Random = new(initialization.RandomSeed.Value);
 
@@ -126,8 +132,7 @@ public abstract class MooseGame : Game
     protected override void LoadContent()
     {
         SpriteBatch = new SpriteBatch(GraphicsDevice);
-        MainCamera = new OrthographicCamera(GraphicsDevice) { Origin = new(0, 0) };
-
+        
         Load();
 
         Defs.ForEach(kvp => kvp.Value.LoadContent(ContentManager));
@@ -219,7 +224,7 @@ public abstract class MooseGame : Game
 
         foreach (var obj in Objects)
         {
-            if (obj.Remove && obj.ParentMap != null && obj.ParentMap.Layers[obj.Layer] is IObjectLayer layer)
+            if (obj.Remove && obj.ParentMap != null && obj.ParentMap.LayerMap[obj.Layer] is IObjectLayer layer)
             {
                 layer.RemoveObject(obj);
                 obj.OnRemove();
@@ -233,7 +238,7 @@ public abstract class MooseGame : Game
         foreach (var obj in ObjectsToAdd)
         {
             Objects.Add(obj);
-            var layer = obj.ParentMap?.Layers[obj.Layer] as IObjectLayer;
+            var layer = obj.ParentMap?.LayerMap[obj.Layer] as IObjectLayer;
             layer?.AddObject(obj);
             obj.OnAdd();
             obj.Update(this, gameTime);
@@ -284,11 +289,12 @@ public abstract class MooseGame : Game
         {
             var hookTuple = renderHooks?.GetValueOrDefault(layerIndex);
             var layer = map.Layers[layerIndex];
-
+            var layerType = layer.GetType()!;
             ILayerRenderer? renderer = null;
-            var rendererKey = LayerRenderers.GetValueOrDefault(layerIndex);
+            
+            var rendererKey = layer.RendererKey ?? LayerRenderers.GetValueOrDefault(layerIndex);
             if (renderer == null)
-                rendererKey = DefaultRenderers.GetValueOrDefault(layer.GetType());
+                rendererKey = DefaultRenderers.GetValueOrDefault(layerType) ?? (DefaultRenderers.FirstOrDefault(r => layerType.IsAssignableTo(r.Key)).Value);
             if (rendererKey != null)
                 renderer = RendererDictionary[rendererKey];
 

@@ -6,7 +6,7 @@ public abstract record DungeonObjectDef : GameObjectDef
 {
     public DungeonObjectDef(string defName) : base(defName)
     {
-        DefaultLayer = 1;
+        DefaultLayer = "dungeon";
         DefaultSize = new(16, 16);
     }
 }

@@ -194,13 +194,13 @@ public class DungeonPlayer : GameObjectBase
 
         RebuildSightMap(dungeonGame);
 
-        if (CanMove && dungeonGame.WasLeftMouseJustPressed())
+        if (CanMove && (dungeonGame.WasLeftMouseJustPressed() || dungeonGame.WasRightMouseJustPressed()))
         {
             var mouse = new Vector2((int)game.WorldMouse.X / 16 * 16, (int)game.WorldMouse.Y / 16 * 16);
             var (x, y) = ((int)mouse.X / 16, (int)mouse.Y / 16);
-            if (dungeonGame.GetMonsterTile(x, y) > MonsterTile.None)
+            if (dungeonGame.WasRightMouseJustPressed() || dungeonGame.GetMonsterTile(x, y) > MonsterTile.None)
                 dungeonGame.Cast(KnownSpells.First(), this, dungeonGame.WorldMouse);
-            else if (!dungeonGame.GetDungeonTile(x, y).IsBlocking() && CanSee(x, y))
+            else if (dungeonGame.WasLeftMouseJustPressed() && !dungeonGame.GetDungeonTile(x, y).IsBlocking() && CanSee(x, y))
             {
                 var path = ParentMap.FindCellPath(GetCell(), new((int)dungeonGame.WorldMouse.X / 16, (int)dungeonGame.WorldMouse.Y / 16));
                 if (path.Any())

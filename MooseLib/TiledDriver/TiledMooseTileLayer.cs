@@ -5,6 +5,8 @@ namespace Merthsoft.Moose.MooseEngine.TiledDriver;
 
 public record TiledMooseTileLayer(TiledMapTileLayer Layer) : ITileLayer<TiledMapTile>
 {
+    public string? RendererKey { get; set; }
+
     public string Name => Layer.Name;
     public bool IsHidden
     {

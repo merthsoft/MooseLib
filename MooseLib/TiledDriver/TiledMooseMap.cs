@@ -13,9 +13,6 @@ public class TiledMooseMap : BaseMap
     public override int TileWidth => Map.TileWidth;
     public override int TileHeight => Map.TileHeight;
 
-    protected readonly List<ILayer> layerCache = new();
-    public override IReadOnlyList<ILayer> Layers => layerCache.AsReadOnly();
-
     public TiledMooseMap(TiledMap map)
     {
         Map = map;
@@ -33,7 +30,8 @@ public class TiledMooseMap : BaseMap
 
     protected virtual void BuildLayerCache()
     {
-        layerCache.Clear();
+        layers.Clear();
+        layerMap.Clear();
 
         for (var layerIndex = 0; layerIndex < Map.Layers.Count; layerIndex++)
         {
@@ -44,7 +42,7 @@ public class TiledMooseMap : BaseMap
                 _ => null as ILayer
             };
             if (mooseLayer != null)
-                layerCache.Add(mooseLayer);
+                AddLayer(mooseLayer);
         }
 
         BuildFullBlockingMap();
@@ -86,8 +84,8 @@ public class TiledMooseMap : BaseMap
         BuildLayerCache();
     }
 
-    protected override int IsBlockedAt(int layer, int x, int y)
-        => layerCache[layer] switch
+    protected override int IsBlockedAt(string layer, int x, int y)
+        => layerMap[layer] switch
         {
             TiledMooseObjectLayer objectLayer => objectLayer.Objects.Any(o => o.InCell(layer, x, y, this)) ? 1 : 0,
             TiledMooseTileLayer tileLayer => tileLayer.IsBlockedAt(x, y, this) ? 1 : 0,

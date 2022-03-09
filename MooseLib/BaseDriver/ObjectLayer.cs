@@ -5,6 +5,8 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
 public class ObjectLayer : IObjectLayer
 {
+    public string? RendererKey { get; set; }
+
     readonly SortedSet<GameObjectBase> objects = new();
     public IReadOnlyList<GameObjectBase> Objects => objects.ToList().AsReadOnly();
 

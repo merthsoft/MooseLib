@@ -12,12 +12,29 @@ public abstract class BaseMap : IMap
     public abstract int Width { get; }
     public abstract int TileWidth { get; }
     public abstract int TileHeight { get; }
-    public abstract IReadOnlyList<ILayer> Layers { get; }
+    
+    protected List<ILayer> layers = new();
+    public virtual IReadOnlyList<ILayer> Layers => layers.AsReadOnly();
+
+    protected Dictionary<string, ILayer> layerMap = new();
+    public virtual IReadOnlyDictionary<string, ILayer> LayerMap => layerMap.AsReadOnly();
+
 
     protected List<int>[,] blockingMap = new List<int>[0, 0];
 
+    public TLayer AddLayer<TLayer>(TLayer layer) where TLayer : ILayer
+    {
+        layers.Add(layer);
+        layerMap[layer.Name] = layer;
+
+        return layer;
+    }
+
     public TLayer GetLayer<TLayer>(int layerNumber) where TLayer : ILayer
         => (TLayer)Layers[layerNumber];
+
+    public TLayer GetLayer<TLayer>(string layerName) where TLayer : ILayer
+        => (TLayer)Layers.First(l => l.Name == layerName);
 
     public bool CellIsInBounds(Point cell)
         => cell.X >= 0 && cell.X < Width
@@ -42,12 +59,12 @@ public abstract class BaseMap : IMap
             for (var y = 0; y < Height; y++)
             {
                 blockingMap[x, y] = new();
-                for (var layerIndex = 0; layerIndex < Layers.Count; layerIndex++)
-                    blockingMap[x, y].Add(IsBlockedAt(layerIndex, x, y));
+                foreach (var layer in layers)
+                    blockingMap[x, y].Add(IsBlockedAt(layer.Name, x, y));
             }
     }
 
-    protected abstract int IsBlockedAt(int layer, int x, int y);
+    protected abstract int IsBlockedAt(string layer, int x, int y);
 
     public virtual IList<int> GetBlockingVector(int x, int y)
         => blockingMap[x, y];

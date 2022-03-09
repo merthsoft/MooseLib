@@ -10,7 +10,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public GameObjectDef Def { get; set; }
 
-    public int Layer { get; set; }
+    public string Layer { get; set; }
 
     public Vector2 Position { get; set; }
     public Vector2 WorldSize { get; set; }
@@ -18,6 +18,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public SpriteEffects Effects { get; set; }
     public Vector2 DrawOffset { get; set; }
     public Vector2 Scale { get; set; }
+    public Vector2 Origin { get; set; }
 
     public virtual RectangleF WorldRectangle => new(Position.X, Position.Y, WorldSize.X, WorldSize.Y);
 
@@ -33,12 +34,17 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public List<Tween> ActiveTweens { get; } = new();
 
-    public GameObjectBase(GameObjectDef def, Vector2? position = null, int? layer = null, Vector2? size = null, string? direction = null)
+    public GameObjectBase(GameObjectDef def, Vector2? position = null, string? direction = null, float? rotation = null, Vector2? size = null, string? layer = null)
     {
         Def = def;
         Layer = layer ?? Def.DefaultLayer;
         Position = position ?? Def.DefaultPosition;
         WorldSize = size ?? Def.DefaultSize;
+        Rotation = rotation ?? Def.DefaultRotation;
+        
+        Scale = Def.DefaultScale;
+        Origin = Def.DefaultOrigin;
+        
         Direction = direction;
     }
 
@@ -95,7 +101,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
         => Position.X / (parentMap ?? ParentMap)!.TileWidth == x
         && Position.Y / (parentMap ?? ParentMap)!.TileHeight == y;
 
-    public bool InCell(int layer, int x, int y, IMap parentMap)
+    public bool InCell(string layer, int x, int y, IMap parentMap)
         => layer == Layer && InCell(x, y, parentMap);
 
     public int CompareTo(GameObjectBase? other)

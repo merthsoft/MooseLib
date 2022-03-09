@@ -13,6 +13,7 @@ public interface IMap
     public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2);
 
     IReadOnlyList<ILayer> Layers { get; }
+    IReadOnlyDictionary<string, ILayer> LayerMap { get; }
 
     void Update(MooseGame game, GameTime gameTime);
     IList<int> GetBlockingVector(int cellX, int cellY);
@@ -28,4 +29,7 @@ public interface IMap
     public bool WorldIsInBounds(Vector2 world)
         => (int)world.X / TileWidth >= 0 && (int)world.X / TileWidth < Width
         && (int)world.Y / TileHeight >= 0 && (int)world.Y / TileHeight < Height;
+
+    TLayer GetLayer<TLayer>(int layerNumber) where TLayer : ILayer;
+    TLayer GetLayer<TLayer>(string layerName) where TLayer : ILayer;
 }

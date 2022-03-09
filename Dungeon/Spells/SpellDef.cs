@@ -7,7 +7,7 @@ public record SpellDef : AnimatedGameObjectDef
 
     public SpellDef(string spellDefName) : base(spellDefName, spellDefName)
     {
-        
+        DefaultLayer = "spells";
     }
 
     public override void LoadContent(MooseContentManager contentManager)

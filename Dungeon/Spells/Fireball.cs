@@ -6,7 +6,9 @@ public record FireballDef : SpellDef
 {
     public FireballDef() : base("Fireball")
     {
-        Origin = new(8,8);
+        DefaultOrigin = new(8,8);
+        DefaultSize = new(24, 24);
+        DefaultScale = new(2f / 3f, 2f / 3f);
     }
 }
 
@@ -26,7 +28,6 @@ public class Fireball : Spell
         float xDiff = x2 - x1;
         float yDiff = y2 - y1;
         Rotation = MathF.Atan2(yDiff, xDiff);
-        Scale = new(2f/3f, 2f/3f);
         
         StateCompleteAction = () => State = Active;
 

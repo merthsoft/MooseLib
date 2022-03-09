@@ -4,7 +4,7 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
 public abstract class SpriteBatchRenderer : ILayerRenderer
 {
-    public RectangleF? RenderRectangle { get; set; }
+    public string? RenderKey { get; set; }
     public SpriteBatch SpriteBatch { get; set; }
 
     protected SpriteBatchRenderer(SpriteBatch spriteBatch)

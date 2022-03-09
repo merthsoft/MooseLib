@@ -1,6 +1,5 @@
 ﻿using Karcero.Engine;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
-using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon;
 public class DungeonMap : BaseMap
@@ -12,18 +11,14 @@ public class DungeonMap : BaseMap
     public override int Width => DungeonLayer.Width;
     public override int TileWidth => 16;
     public override int TileHeight => 16;
-    public override IReadOnlyList<ILayer> Layers { get; }
 
     public DungeonMap(int width, int height)
     {
-        Layers = new ILayer[]
-        {
-            DungeonLayer = new DungeonLayer(width, height),
-            new ObjectLayer("player"),
-            MonsterLayer = new MonsterLayer(),
-            new ObjectLayer("spells"),
-            new ObjectLayer("items"),
-        };
+        AddLayer(DungeonLayer = new DungeonLayer(width, height));
+        AddLayer(new ObjectLayer("player"));
+        AddLayer(MonsterLayer = new MonsterLayer());
+        AddLayer(new ObjectLayer("spells"));
+        AddLayer(new ObjectLayer("items"));
     }
 
     public void GenerateRandomLevel()
@@ -194,9 +189,9 @@ public class DungeonMap : BaseMap
                 SetDungeonTile(x, y, tile);
     }
 
-    protected override int IsBlockedAt(int layer, int x, int y)
+    protected override int IsBlockedAt(string layer, int x, int y)
     {
-        if (layer > 0)
+        if (layer != "dungeon")
             return 0;
 
         var tile = DungeonLayer.GetTileValue(x, y);

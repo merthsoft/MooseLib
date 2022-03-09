@@ -5,6 +5,7 @@ namespace Merthsoft.Moose.MooseEngine.TiledDriver;
 
 public record TiledMooseMapRenderer : ILayerRenderer
 {
+    public string? RenderKey { get; set; }
     public RectangleF? RenderRectangle { get; set; }
     private TiledMapRenderer MapRenderer { get; }
     private Matrix transformMatrix;
