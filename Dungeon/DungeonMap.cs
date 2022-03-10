@@ -1,4 +1,5 @@
 ﻿using Karcero.Engine;
+using Karcero.Engine.Models;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 
 namespace Merthsoft.Moose.Dungeon;
@@ -12,18 +13,28 @@ public class DungeonMap : BaseMap
     public override int TileWidth => 16;
     public override int TileHeight => 16;
 
+    public Map<DungeonCell>? GeneratedMap { get; private set; }
+
     public DungeonMap(int width, int height)
     {
         AddLayer(DungeonLayer = new DungeonLayer(width, height));
         AddLayer(new ObjectLayer("player"));
         AddLayer(MonsterLayer = new MonsterLayer());
-        AddLayer(new ObjectLayer("spells"));
         AddLayer(new ObjectLayer("items"));
+        AddLayer(new ObjectLayer("spells"));
     }
 
-    public void GenerateRandomLevel()
+    public void ClearDungeon()
     {
+        foreach (var obj in Layers.Skip(2).OfType<ObjectLayer>().SelectMany(o => o.Objects))
+            obj.Remove = true;
+        
         DrawRoom(DungeonTile.StoneWall, DungeonTile.None, 0, 0, Width - 1, Height - 1);
+    }
+
+    public void GenerateRandomLevel(DungeonGame dungeonGame)
+    {
+        ClearDungeon();
         var generator = new DungeonGenerator<DungeonCell>();
         generator.AddMapProcessor(new DungeonMapProcessor());
         generator.GenerateA()
@@ -35,19 +46,26 @@ public class DungeonMap : BaseMap
                  .WithLargeSizeRooms()
                  .AndTellMeWhenItsDone(map =>
                  {
-                     for (var x = 1; x < Width - 1; x++)
-                         for (var y = 1; y < Height - 1; y++)
+                     GeneratedMap = null;
+                     for (var i = 1; i < Width - 1; i++)
+                         for (var j = 1; j < Height - 1; j++)
                          {
-                             var t = map.GetCell(x - 1, y - 1);
-                             SetDungeonTile(x, y, t.Tile);
+                             var t = map.GetCell(i - 1, j - 1);
+                             SetDungeonTile(i, j, t.Tile);
+                             if (t.Monster != MonsterTile.None)
+                                 dungeonGame.SpawnMonster(t.Monster, i, j);
                          }
+                     var firstRoom = map.Rooms.OrderBy(m => m.Column).ThenBy(m => m.Row).First();
+                     var x = firstRoom.Row + 1;
+                     var y = firstRoom.Column + 1;
+                     dungeonGame.Player.Position = new Vector2(x * 16, y * 16);
+                     SetDungeonTile(x + 1, y+1, DungeonTile.StairsUp);
                  });
     }
 
     public List<Rectangle> GenerateTown(int numRooms, (int, int)[] roomSizes)
     {
-        FillDungeon(DungeonTile.None);
-        DrawRoom(DungeonTile.StoneWall, DungeonTile.None, 0, 0, Width - 1, Height - 1);
+        ClearDungeon();
         var rooms = GenerateRooms(numRooms, roomSizes);
         GenerateCorridors(rooms);
         GenerateDoors(rooms);

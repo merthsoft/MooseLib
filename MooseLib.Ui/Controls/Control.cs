@@ -11,7 +11,7 @@ public abstract class Control : ITweenOwner
     public SpriteFont Font => Theme.Fonts[FontIndex];
 
     public object? Tag { get; set; }
-    public T? GetTag<T>() => (T)Tag;
+    public T? GetTag<T>() => (T)Tag!;
 
     public bool Hidden { get; set; }
     public bool Enabled { get; set; } = true;
@@ -21,7 +21,8 @@ public abstract class Control : ITweenOwner
 
     public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
 
-    public Theme Theme => Container.Theme;
+    private Theme theme;
+    public Theme Theme { get => theme ?? Container.Theme; set => theme = value; }
 
     public Vector2 Position { get; set; }
 

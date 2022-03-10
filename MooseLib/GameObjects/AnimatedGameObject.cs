@@ -17,7 +17,7 @@ public class AnimatedGameObject : GameObjectBase
 
     public virtual string PlayKey => Direction == null ? State.ToLower() : $"{State.ToLower()}_{Direction.ToLower()}";
 
-    private string PreviousPlayKey = "";
+    protected string PreviousPlayKey = "";
 
     public override RectangleF WorldRectangle
         => new(Position, (Sprite.TextureRegion.Size * Scale).ToSize());

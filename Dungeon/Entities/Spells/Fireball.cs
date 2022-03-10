@@ -1,14 +1,10 @@
-﻿using Merthsoft.Moose.MooseEngine.GameObjects;
-
-namespace Merthsoft.Moose.Dungeon.Spells;
+﻿namespace Merthsoft.Moose.Dungeon.Entities.Spells;
 
 public record FireballDef : SpellDef
 {
     public FireballDef() : base("Fireball")
     {
-        DefaultOrigin = new(8,8);
-        DefaultSize = new(24, 24);
-        DefaultScale = new(2f / 3f, 2f / 3f);
+        
     }
 }
 
@@ -16,7 +12,7 @@ public class Fireball : Spell
 {
     IEnumerator<Vector2> FlightPath { get; }
 
-    public Fireball(SpellDef def, GameObjectBase owner, Vector2 end) 
+    public Fireball(SpellDef def, DungeonObject owner, Vector2 end) 
         : base(def, owner, owner.Position)
     {
         Position = new Vector2((int)owner.Position.X / 16 * 16 + 8, (int)owner.Position.Y / 16 * 16 + 8);
@@ -34,6 +30,13 @@ public class Fireball : Spell
         FlightPath = Position.CastRay(end, true, true, true, true).GetEnumerator();
     }
 
+    public override void Effect(DungeonGame game)
+    {
+        var (x, y) = GetCell();
+        var target = game.GetMonster(x, y);
+        target?.TakeDamage(game, 1);
+    }
+
     public override void Update(MooseGame game, GameTime gameTime)
     {
         var dungeonGame = (game as DungeonGame)!;
@@ -47,7 +50,8 @@ public class Fireball : Spell
 
             Position = FlightPath.Current;
             var (x, y) = GetCell();
-            if (dungeonGame.GetDungeonTile(x, y).IsBlocking())
+            if (dungeonGame.GetDungeonTile(x, y).IsBlocking()
+                || dungeonGame.GetMonsterTile(x, y) != MonsterTile.None)
             {
                 State = Hit;
                 ActiveTweens.ForEach(t => t.Cancel());

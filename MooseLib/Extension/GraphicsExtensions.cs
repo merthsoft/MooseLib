@@ -3,6 +3,16 @@
 namespace Merthsoft.Moose.MooseEngine.Extension;
 public static class GraphicsExtensions
 {
+    public static Rectangle GetSourceRectangle(this Texture2D texture, int spriteIndex, int tileWidth, int tileHeight, int tilePadding = 0, int textureMargin = 0)
+    {
+        var columns = texture.Width / tileWidth;
+
+        var sourceX = (spriteIndex % columns) * (tileWidth + tilePadding) + textureMargin;
+        var sourceY = (spriteIndex / columns) * (tileHeight + tilePadding) + textureMargin;
+
+        return new(sourceX, sourceY, tileWidth, tileHeight);
+    }
+
     public static SpriteBatch DrawRect(this SpriteBatch s, RectangleF r, Color c)
     {
         s.DrawRectangle(r, c);
@@ -39,5 +49,4 @@ public static class GraphicsExtensions
             spriteBatch.Draw(texture, position + transform.WorldPosition, sourceRectangle, sprite.Color * sprite.Alpha, transform.WorldRotation, sprite.Origin, transform.WorldScale, spriteEffects, sprite.Depth);
         }
     }
-
 }

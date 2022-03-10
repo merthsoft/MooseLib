@@ -17,6 +17,8 @@ public class Window : IControlContainer, ITweenOwner
 
     protected List<Control> controls = new();
     public Control[] Controls => controls.ToArray();
+    public TControl GetControl<TControl>(int index) where TControl : Control
+        => (TControl)controls[index];
 
     public Theme Theme { get; set; }
     public OrthographicCamera? Camera { get; set; }
@@ -104,7 +106,9 @@ public class Window : IControlContainer, ITweenOwner
 
     public virtual IControlContainer ClearControls()
     {
-        controls.Clear();
+        foreach (var control in controls)
+            control.Remove = true;
+
         return this;
     }
 
@@ -148,7 +152,12 @@ public class Window : IControlContainer, ITweenOwner
         if (Prompt?.Remove ?? false)
             Prompt = null;
 
+        foreach (var control in controls)
+            if (control.Remove && control is IDisposable d)
+                d.Dispose();
+
         controls.RemoveAll(c => c.Remove);
+
         PostControlUpdate(windowUpdateParameters);
 
         PreviousMouseState = CurrentMouseState;

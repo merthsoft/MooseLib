@@ -20,7 +20,8 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public Vector2 Scale { get; set; }
     public Vector2 Origin { get; set; }
 
-    public virtual RectangleF WorldRectangle => new(Position.X, Position.Y, WorldSize.X, WorldSize.Y);
+    public virtual RectangleF WorldRectangle => new(Position.X, Position.Y, 
+        WorldSize.X * Scale.X, WorldSize.Y * Scale.Y);
 
     public bool Remove { get; set; }
 
@@ -115,6 +116,26 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public override int GetHashCode()
         => Id.GetHashCode();
+
+    public float DistanceTo(GameObjectBase obj)
+    {
+        var (x1, y1) = obj.Position;
+        var (x2, y2) = Position;
+        var xDiff = x2 - x1;
+        var yDiff = y2 - y1;
+
+        return MathF.Sqrt(xDiff * xDiff + yDiff * yDiff);
+    }
+
+    public float DistanceSquaredTo(GameObjectBase obj)
+    {
+        var (x1, y1) = obj.Position;
+        var (x2, y2) = Position;
+        var xDiff = x2 - x1;
+        var yDiff = y2 - y1;
+
+        return xDiff * xDiff + yDiff * yDiff;
+    }
 
     public static bool operator ==(GameObjectBase? left, GameObjectBase? right)
         => left is null ? right is null : left.Equals(right);

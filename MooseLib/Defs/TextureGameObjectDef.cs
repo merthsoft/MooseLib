@@ -6,5 +6,5 @@ public record TextureGameObjectDef(string DefName, string TextureName, Rectangle
     public Texture2D Texture { get; private set; } = null!;
 
     public override void LoadContent(MooseContentManager contentManager)
-        => Texture = contentManager.Load<Texture2D>(TextureName);
+        => Texture = contentManager.LoadImage(TextureName);
 }

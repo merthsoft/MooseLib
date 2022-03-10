@@ -1,9 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
-namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
-
-public class Picture : Control
+public class Picture : Control, IDisposable
 {
     public Texture2D Texture { get; set; }
 
@@ -30,4 +27,5 @@ public class Picture : Control
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
         => spriteBatch.Draw(Texture, Position + parentOffset, SourceRectangle, Color, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
+    public void Dispose() { }//((IDisposable)Texture).Dispose();
 }

@@ -14,6 +14,42 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Fonts/Border_Basic_Monospaced.ttf
+/copy:Fonts/Border_Basic_Monospaced.ttf
+
+#begin Fonts/MatchupPro.ttf
+/copy:Fonts/MatchupPro.ttf
+
+#begin Fonts/NewHiScore.ttf
+/copy:Fonts/NewHiScore.ttf
+
+#begin Fonts/PixelDevilsdeal.ttf
+/copy:Fonts/PixelDevilsdeal.ttf
+
+#begin Fonts/PixelRunes.ttf
+/copy:Fonts/PixelRunes.ttf
+
+#begin Fonts/pixel-ultima-bold.ttf
+/copy:Fonts/pixel-ultima-bold.ttf
+
+#begin Fonts/pixel-ultima-regular.ttf
+/copy:Fonts/pixel-ultima-regular.ttf
+
+#begin Fonts/Royal_Decree.ttf
+/copy:Fonts/Royal_Decree.ttf
+
+#begin Fonts/StrangeScript.ttf
+/copy:Fonts/StrangeScript.ttf
+
+#begin Fonts/TooMuchInk2.ttf
+/copy:Fonts/TooMuchInk2.ttf
+
+#begin Fonts/Witchqueen.ttf
+/copy:Fonts/Witchqueen.ttf
+
+#begin Fonts/Wizard's Manse.ttf
+/copy:Fonts/Wizard's Manse.ttf
+
 #begin Images/BrickWall.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -38,6 +74,18 @@
 /processorParam:TextureFormat=Color
 /build:Images/Crosshair.png
 
+#begin Images/Cursor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/Cursor.png
+
 #begin Images/Dungeon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -49,6 +97,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/Dungeon.png
+
+#begin Images/FireBallAllFrames.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/FireBallAllFrames.png
 
 #begin Images/Heroes.png
 /importer:TextureImporter
@@ -74,7 +134,7 @@
 /processorParam:TextureFormat=Color
 /build:Images/Items.png
 
-#begin Images/Mini-Map.png
+#begin Images/MapWindow.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -84,7 +144,31 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Mini-Map.png
+/build:Images/MapWindow.png
+
+#begin Images/MapWindowSmall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/MapWindowSmall.png
+
+#begin Images/MiniMap.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/MiniMap.png
 
 #begin Images/Monsters.png
 /importer:TextureImporter
@@ -98,6 +182,18 @@
 /processorParam:TextureFormat=Color
 /build:Images/Monsters.png
 
+#begin Images/ref. Mini-Map.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/ref. Mini-Map.png
+
 #begin Images/StoneWall.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -110,11 +206,74 @@
 /processorParam:TextureFormat=Color
 /build:Images/StoneWall.png
 
+#begin Images/Window.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/Window.png
+
+#begin Spells/Dark Shield/Animation.sf
+/copy:Spells/Dark Shield/Animation.sf
+
+#begin Spells/Dark Shield/Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/Dark Shield/Icon.png
+
+#begin Spells/Dark Shield/Image.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/Dark Shield/Image.png
+
+#begin Spells/Earth Shard/Animation.sf
+/copy:Spells/Earth Shard/Animation.sf
+
+#begin Spells/Earth Shard/Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/Earth Shard/Icon.png
+
+#begin Spells/Earth Shard/Image.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/Earth Shard/Image.png
+
 #begin Spells/Fireball/Animation.sf
-/importer:SpriteFactoryContentImporter
-/processor:SpriteFactoryContentProcessor
-/processorParam:ContentType=MonoGame.Extended MonoGame.Extended.Animations.SpriteFactory.SpriteFactoryFileReader, MonoGame.Extended.Animations
-/build:Spells/Fireball/Animation.sf
+/copy:Spells/Fireball/Animation.sf
 
 #begin Spells/Fireball/Icon.png
 /importer:TextureImporter
@@ -139,4 +298,31 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Spells/Fireball/Image.png
+
+#begin Spells/Lightning/Animation.sf
+/copy:Spells/Lightning/Animation.sf
+
+#begin Spells/Lightning/Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/Lightning/Icon.png
+
+#begin Spells/Lightning/Image.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/Lightning/Image.png
 

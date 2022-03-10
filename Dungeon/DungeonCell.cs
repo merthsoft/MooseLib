@@ -9,4 +9,5 @@ public record DungeonCell : ICell
     public int Column { get; set; }
 
     public DungeonTile Tile { get; set; } = DungeonTile.None;
+    public MonsterTile Monster { get; set; } = MonsterTile.None;
 }

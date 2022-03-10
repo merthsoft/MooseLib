@@ -10,4 +10,5 @@ public record StartupParameters
     public int? RandomSeed { get; set; }
     public int StateStackSize { get; set; }
     public Rectangle? CameraRectangle { get; set; }
+    public Color DefaultBackgroundColor { get; set; }
 }

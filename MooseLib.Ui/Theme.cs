@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
-using System.Text;
+﻿using System.Text;
 
 namespace Merthsoft.Moose.MooseEngine.Ui;
 
@@ -111,15 +108,15 @@ public class Theme
     public Color ResolvePointerColor(bool selected)
         => selected ? SelectedMouseOverColor : ControlPointerColor;
 
-    public Vector2 DrawWindow(SpriteBatch spriteBatch, Vector2 position, Vector2 size, BackgroundDrawingMode backgroundDrawingMode)
-        => DrawWindow(spriteBatch, new(position, size), backgroundDrawingMode);
+    public Vector2 DrawWindow(SpriteBatch spriteBatch, Vector2 position, Vector2 size, BackgroundDrawingMode backgroundDrawingMode, Color? colorShift = null)
+        => DrawWindow(spriteBatch, new(position, size), backgroundDrawingMode, colorShift);
 
-    public Vector2 DrawWindow(SpriteBatch spriteBatch, RectangleF rectangle, BackgroundDrawingMode backgroundDrawingMode)
+    public Vector2 DrawWindow(SpriteBatch spriteBatch, RectangleF rectangle, BackgroundDrawingMode backgroundDrawingMode, Color? colorShift = null)
     {
         _ = backgroundDrawingMode switch
         {
             BackgroundDrawingMode.Basic => DrawWindowBasic(spriteBatch, rectangle),
-            BackgroundDrawingMode.Texture => DrawWindowTexture(spriteBatch, rectangle),
+            BackgroundDrawingMode.Texture => DrawWindowTexture(spriteBatch, rectangle, colorShift),
             _ => default,
         };
         return GetDrawOffset(backgroundDrawingMode);
@@ -139,10 +136,10 @@ public class Theme
         return rectangle;
     }
 
-    protected void DrawWindowTexture(SpriteBatch spriteBatch, int index, Vector2 position, int xTileOffset, int yTileOffet)
+    protected void DrawWindowTexture(SpriteBatch spriteBatch, int index, Vector2 position, int xTileOffset, int yTileOffet, Color? colorShift = null)
     {
         var destRect = new RectangleF(position.X + xTileOffset * TileDrawWidth, position.Y + yTileOffet * TileDrawHeight, TileDrawWidth, TileDrawHeight);
-        spriteBatch.Draw(WindowTexture, destRect.ToRectangle(), TextureRects[index], Color.White);
+        spriteBatch.Draw(WindowTexture, destRect.ToRectangle(), TextureRects[index], colorShift ?? Color.White);
     }
 
     public Vector2 CalculateNewSize(Vector2 size)
@@ -152,7 +149,7 @@ public class Theme
         return new(numXTiles * TileWidth, numYTiles * TileHeight);
     }
 
-    protected RectangleF DrawWindowTexture(SpriteBatch spriteBatch, RectangleF rectangle)
+    protected RectangleF DrawWindowTexture(SpriteBatch spriteBatch, RectangleF rectangle, Color? colorShift = null)
     {
         var numXTiles = (rectangle.Width / TileDrawWidth).Ceiling();
         var numYTiles = (rectangle.Height / TileDrawHeight).Ceiling();
@@ -204,7 +201,7 @@ public class Theme
                     index = bottomIndex;
                 else if (x == numXTiles - 1)
                     index = rightIndex;
-                DrawWindowTexture(spriteBatch, index, rectangle.Position, x, y);
+                DrawWindowTexture(spriteBatch, index, rectangle.Position, x, y, colorShift);
             }
 
         return new(rectangle.X, rectangle.Y, numXTiles * TileWidth, numYTiles * TileHeight);

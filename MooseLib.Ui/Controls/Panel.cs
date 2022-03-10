@@ -5,6 +5,8 @@ public class Panel : Control, IControlContainer
     public float Width { get; set; }
     public float Height { get; set; }
 
+    public Color ColorShift { get; set; } = Color.White;
+
     public Vector2 Size
     {
         get => new(Width, Height);
@@ -17,6 +19,9 @@ public class Panel : Control, IControlContainer
 
     protected List<Control> controls = new();
     public Control[] Controls => controls.ToArray();
+
+    public TControl GetControl<TControl>(int index) where TControl : Control
+        => (TControl)controls[index];
 
     protected Control? FocusedControl { get; set; }
 
@@ -38,7 +43,9 @@ public class Panel : Control, IControlContainer
 
     public virtual IControlContainer ClearControls()
     {
-        controls.Clear();
+        foreach (var control in controls)
+            control.Remove = true;
+
         return this;
     }
 
@@ -53,6 +60,10 @@ public class Panel : Control, IControlContainer
 
         foreach (var c in Controls.Reverse())
             updateControl(c);
+
+        foreach (var control in controls)
+            if (control.Remove && control is IDisposable d)
+                d.Dispose();
 
         controls.RemoveAll(c => c.Remove);
 
@@ -100,7 +111,7 @@ public class Panel : Control, IControlContainer
             return;
 
         var position = Position + parentOffset;
-        position += Theme.DrawWindow(spriteBatch, Rectangle.Move(parentOffset), BackgroundDrawingMode);
+        position += Theme.DrawWindow(spriteBatch, Rectangle.Move(parentOffset), BackgroundDrawingMode, ColorShift);
 
         foreach (var c in Controls)
             if (!c.Hidden)

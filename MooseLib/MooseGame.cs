@@ -43,7 +43,7 @@ public abstract class MooseGame : Game
 
     private readonly Dictionary<Type, string> DefaultRenderers = new();
     private readonly Dictionary<string, ILayerRenderer> RendererDictionary = new();
-    private readonly Dictionary<int, string> LayerRenderers = new();
+    private readonly Dictionary<string, string> LayerRenderers = new();
 
     public virtual int MapHeight => MainMap?.Height ?? 0;
 
@@ -57,7 +57,7 @@ public abstract class MooseGame : Game
 
     public virtual Vector2 HalfTileSize => MainMap?.HalfTileSize ?? new Vector2(0, 0); // TODO: Cache
 
-    public virtual Dictionary<int, RenderHook>? DefaultRenderHooks => null;
+    public virtual Dictionary<string, RenderHook>? DefaultRenderHooks { get; set; } = null;
 
     public int ScreenWidth => GraphicsDevice.Viewport.Width;
     public int ScreenHeight => GraphicsDevice.Viewport.Height;
@@ -86,6 +86,8 @@ public abstract class MooseGame : Game
             Fullscreen = false,
             RandomSeed = null,
             StateStackSize = 10,
+            CameraRectangle = null,
+            DefaultBackgroundColor = Color.DarkCyan
         };
 
     protected override void Initialize()
@@ -101,10 +103,13 @@ public abstract class MooseGame : Game
         Graphics.IsFullScreen = initialization.Fullscreen;
         Graphics.ApplyChanges();
 
-        var cameraRect = initialization.CameraRectangle ?? new(0, 0, initialization.ScreenWidth, initialization.ScreenHeight);
-
-        var cameraViewport = new BoxingViewportAdapter(Window, GraphicsDevice, cameraRect.Width, cameraRect.Height);
-        MainCamera = new OrthographicCamera(cameraViewport) { Origin = cameraRect.Location.ToVector2() };
+        if (initialization.CameraRectangle != null)
+        {
+            var cameraRect = initialization.CameraRectangle.Value;
+            var cameraViewport = new BoxingViewportAdapter(Window, GraphicsDevice, cameraRect.Width, cameraRect.Height);
+            MainCamera = new OrthographicCamera(cameraViewport) { Origin = cameraRect.Location.ToVector2() };
+        } else
+            MainCamera = new OrthographicCamera(GraphicsDevice) { Origin = Vector2.Zero };
 
         if (initialization.RandomSeed != null)
             Random = new(initialization.RandomSeed.Value);
@@ -114,6 +119,8 @@ public abstract class MooseGame : Game
             PreviousMouseStates.Add(default);
             PreviousKeyStates.Add(default);
         }
+
+        DefaultBackgroundColor = initialization.DefaultBackgroundColor;
 
         base.Initialize();
     }
@@ -148,22 +155,17 @@ public abstract class MooseGame : Game
         where TRenderer : ILayerRenderer
         => (TRenderer)RendererDictionary[rendererKey];
 
-    public void AddDefaultRenderer<TLayer>(string rendererKey, ILayerRenderer renderer, params int[] layerIndexes)
+    public void AddDefaultRenderer<TLayer>(string rendererKey, ILayerRenderer renderer)
         where TLayer : ILayer
     {
         DefaultRenderers[typeof(TLayer)] = rendererKey;
-        AddRenderer(rendererKey, renderer, layerIndexes);
+        AddRenderer(rendererKey, renderer);
     }
 
-    public void AddRenderer(string rendererKey, ILayerRenderer renderer, params int[] layerIndexes)
+    public void AddRenderer(string rendererKey, ILayerRenderer renderer)
     {
         RendererDictionary[rendererKey] = renderer;
-        foreach (var layerIndex in layerIndexes)
-            LayerRenderers[layerIndex] = rendererKey;
     }
-
-    public void SetRenderer(int layerIndex, string rendererKey)
-        => LayerRenderers[layerIndex] = rendererKey;
 
     public void SetDefaultRenderer<TRenderer>(string rendererKey) where TRenderer : ILayer
         => DefaultRenderers[typeof(TRenderer)] = rendererKey;
@@ -219,7 +221,7 @@ public abstract class MooseGame : Game
             foreach (var obj in Objects)
             {
                 obj.Update(this, gameTime);
-                obj.ClearCompletedTweens();
+                obj.PostUpdate(this, gameTime);
             }
 
         foreach (var obj in Objects)
@@ -269,7 +271,7 @@ public abstract class MooseGame : Game
     protected virtual bool PreMapDraw(GameTime gameTime) => true;
     protected virtual void PostDraw(GameTime gameTime) { return; }
 
-    protected void Draw(GameTime gameTime, Dictionary<int, RenderHook>? renderHooks)
+    protected void Draw(GameTime gameTime, Dictionary<string, RenderHook>? renderHooks)
     {
         if (PreClear(gameTime))
             GraphicsDevice.Clear(DefaultBackgroundColor);
@@ -283,28 +285,29 @@ public abstract class MooseGame : Game
         PostDraw(gameTime);
     }
 
-    private void DrawMap(IMap map, GameTime gameTime, Dictionary<int, RenderHook>? renderHooks, Matrix transformMatrix)
+    private void DrawMap(IMap map, GameTime gameTime, Dictionary<string, RenderHook>? renderHooks, Matrix transformMatrix)
     {
         for (var layerIndex = 0; layerIndex < map.Layers.Count; layerIndex++)
         {
-            var hookTuple = renderHooks?.GetValueOrDefault(layerIndex);
             var layer = map.Layers[layerIndex];
+            var layerName = layer.Name;
+            var hookTuple = renderHooks?.GetValueOrDefault(layerName);
             var layerType = layer.GetType()!;
             ILayerRenderer? renderer = null;
             
-            var rendererKey = layer.RendererKey ?? LayerRenderers.GetValueOrDefault(layerIndex);
+            var rendererKey = layer.RendererKey ?? LayerRenderers.GetValueOrDefault(layerName);
             if (renderer == null)
                 rendererKey = DefaultRenderers.GetValueOrDefault(layerType) ?? (DefaultRenderers.FirstOrDefault(r => layerType.IsAssignableTo(r.Key)).Value);
             if (rendererKey != null)
                 renderer = RendererDictionary[rendererKey];
 
             renderer?.Begin(transformMatrix);
-            hookTuple?.PreHook?.Invoke(layerIndex);
+            hookTuple?.PreHook?.Invoke(layerName);
 
             if (!layer.IsHidden)
                 renderer?.Draw(this, gameTime, layer, layerIndex);
 
-            hookTuple?.PostHook?.Invoke(layerIndex);
+            hookTuple?.PostHook?.Invoke(layerName);
             renderer?.End();
         }
     }

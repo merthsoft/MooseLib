@@ -7,4 +7,6 @@ public interface IControlContainer
 
     IControlContainer ClearControls();
     IControlContainer AddControl(Control control);
+    
+    TControl GetControl<TControl>(int index) where TControl : Control;
 }
