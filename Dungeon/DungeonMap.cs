@@ -38,19 +38,22 @@ public class DungeonMap : BaseMap
         var generator = new DungeonGenerator<DungeonCell>();
         generator.AddMapProcessor(new DungeonMapProcessor());
         generator.GenerateA()
-                 .LargeDungeon()
+                 .MediumDungeon()
                  .ABitRandom()
                  .SomewhatSparse()
                  .WithBigChanceToRemoveDeadEnds()
                  .WithLargeNumberOfRooms()
-                 .WithLargeSizeRooms()
+                 .WithMediumSizeRooms()
                  .AndTellMeWhenItsDone(map =>
                  {
+                     dungeonGame.Player.Reset(dungeonGame);
                      GeneratedMap = null;
                      for (var i = 1; i < Width - 1; i++)
                          for (var j = 1; j < Height - 1; j++)
                          {
                              var t = map.GetCell(i - 1, j - 1);
+                             if (t == null)
+                                 continue;
                              SetDungeonTile(i, j, t.Tile);
                              if (t.Monster != MonsterTile.None)
                                  dungeonGame.SpawnMonster(t.Monster, i, j);

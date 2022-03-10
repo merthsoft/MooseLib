@@ -4,6 +4,8 @@ namespace Merthsoft.Moose.Dungeon.Entities.Spells;
 
 public abstract class Spell : AnimatedGameObject
 {
+    protected DungeonGame game;
+
     public new SpellDef Def => (SpellDef)base.Def;
 
     public const string Cast = "cast";
@@ -17,6 +19,7 @@ public abstract class Spell : AnimatedGameObject
 
     public Spell(SpellDef def, DungeonObject owner, Vector2 position) : base(def, position, "spells", state: Cast)
     {
+        game = DungeonGame.Instance;
         Owner = owner;
         owner.AddSpell(this);
     }
@@ -27,11 +30,11 @@ public abstract class Spell : AnimatedGameObject
         if (State == Hit && !hasHit)
         {
             hasHit = true;
-            Effect((game as DungeonGame)!);
+            Effect();
         }
         else if (State == Dead)
             Owner.RemoveSpell(this);
     }
 
-    public abstract void Effect(DungeonGame game);
+    public abstract void Effect();
 }

@@ -2,7 +2,7 @@
 
 public interface IControlContainer
 {
-    Theme Theme { get; }
+    Theme Theme { get; set; }
     Control[] Controls { get; }
 
     IControlContainer ClearControls();

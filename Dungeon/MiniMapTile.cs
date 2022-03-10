@@ -59,5 +59,6 @@ public enum MiniMapTile
     BrickWall,
     WALL_END = BrickWall + 1,
 
-    Player = 99
+    Monster = 90,
+    Player
 }

@@ -5,14 +5,14 @@ namespace Merthsoft.Moose.Dungeon.Ux;
 public class SpellBookBar : Panel
 {
     private readonly List<SpellDef> spellList = new();
-    private readonly DungeonPlayer player;
     private readonly Panel spellPanel;
+    private readonly DungeonPlayer player;
 
-    public SpellBookBar(DungeonPlayer player, IControlContainer container, float x, float y) : base(container, x, y, 320, 480)
+    public SpellBookBar(IControlContainer container, float x, float y) : base(container, x, y, 320, 475)
     {
+        player = DungeonPlayer.Instance;
         BackgroundDrawingMode = BackgroundDrawingMode.None;
 
-        this.player = player;
         this.AddActionLabel(0, -75, "Spells", (_, __) => { });
 
         spellPanel = this.AddPanel(0, 75, 320, 405, BackgroundDrawingMode.None);

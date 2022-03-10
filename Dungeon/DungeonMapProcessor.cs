@@ -30,24 +30,6 @@ public class DungeonMapProcessor : IMapProcessor<DungeonCell>
 
     public void ProcessMap(Map<DungeonCell> map, DungeonConfiguration configuration, IRandomizer randomizer)
     {
-
-        foreach (var room in map.Rooms)
-        {
-            var roomX = room.Row;
-            var roomY = room.Column;
-            var roomWidth = room.Size.Width;
-            var roomHeight = room.Size.Height;
-            var wallTile = RandomWall();
-            var floorTile = RandomFloor();
-
-            for (var x = 0; x < roomWidth; x++)
-                for (var y = 0; y < roomHeight; y++)
-                {
-                    var t = map.GetCell(i + x, j + y);
-                    t.Tile = i == 0 || j == 0 || i == roomWidth || j == roomHeight ? wallTile : floorTile;
-                }
-        }
-
         for (var y = 0; y < map.Height; y++)
             for (var x = 0; x < map.Width; x++)
             {
@@ -56,7 +38,7 @@ public class DungeonMapProcessor : IMapProcessor<DungeonCell>
                 {
                     TerrainType.Door => DungeonTile.DOOR_START,
                     TerrainType.Floor => NeighborFloor(map, x, y),
-                    _ => DungeonTile.None,
+                    _ => DungeonTile.WALL_START,
                 };
             }
         var firstRoom = map.Rooms.OrderBy(m => m.Column).ThenBy(m => m.Row).First();

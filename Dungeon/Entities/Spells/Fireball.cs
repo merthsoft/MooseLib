@@ -30,16 +30,15 @@ public class Fireball : Spell
         FlightPath = Position.CastRay(end, true, true, true, true).GetEnumerator();
     }
 
-    public override void Effect(DungeonGame game)
+    public override void Effect()
     {
         var (x, y) = GetCell();
         var target = game.GetMonster(x, y);
         target?.TakeDamage(game, 1);
     }
 
-    public override void Update(MooseGame game, GameTime gameTime)
+    public override void Update(MooseGame _, GameTime gameTime)
     {
-        var dungeonGame = (game as DungeonGame)!;
         if (State == Active)
         {
             FlightPath.MoveNext();
@@ -50,8 +49,8 @@ public class Fireball : Spell
 
             Position = FlightPath.Current;
             var (x, y) = GetCell();
-            if (dungeonGame.GetDungeonTile(x, y).IsBlocking()
-                || dungeonGame.GetMonsterTile(x, y) != MonsterTile.None)
+            if (game.GetDungeonTile(x, y).IsBlocking()
+                || game.GetMonsterTile(x, y) != MonsterTile.None)
             {
                 State = Hit;
                 ActiveTweens.ForEach(t => t.Cancel());

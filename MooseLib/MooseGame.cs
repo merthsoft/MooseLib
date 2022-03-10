@@ -83,7 +83,7 @@ public abstract class MooseGame : Game
             SamplerState = SamplerState.PointClamp,
             ScreenWidth = 800,
             ScreenHeight = 800,
-            Fullscreen = false,
+            IsFullscreen = false,
             RandomSeed = null,
             StateStackSize = 10,
             CameraRectangle = null,
@@ -100,7 +100,7 @@ public abstract class MooseGame : Game
 
         Graphics.PreferredBackBufferWidth = initialization.ScreenWidth;
         Graphics.PreferredBackBufferHeight = initialization.ScreenHeight;
-        Graphics.IsFullScreen = initialization.Fullscreen;
+        Graphics.IsFullScreen = initialization.IsFullscreen;
         Graphics.ApplyChanges();
 
         if (initialization.CameraRectangle != null)

@@ -11,6 +11,8 @@ public abstract class DungeonObject : TextureGameObject
     public const string Dying = "dying";
     public const string Inanimate = "inanimate";
 
+    protected DungeonGame game;
+
     public DungeonObjectDef DungeonObjectDef { get; }
 
     public int HitPoints { get; set; }
@@ -28,6 +30,8 @@ public abstract class DungeonObject : TextureGameObject
     public DungeonObject(DungeonObjectDef def, Vector2? position, string direction, float? rotation, Vector2? size, string layer)
         : base(def, position, direction, rotation, size, layer)
     {
+        game = DungeonGame.Instance;
+
         DungeonObjectDef = def;
         HitPoints = def.HitPoints;
         State = HitPoints < 0 ? Inanimate : Alive;

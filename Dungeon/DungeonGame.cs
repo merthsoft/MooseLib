@@ -9,6 +9,8 @@ namespace Merthsoft.Moose.Dungeon;
 
 public class DungeonGame : MooseGame
 {
+    public static new DungeonGame Instance { get; private set; } = null!;
+
     public SpellBook SpellBook { get; } = new();
     public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, DungeonMonster>)> MonsterFactory = new();
 
@@ -20,10 +22,9 @@ public class DungeonGame : MooseGame
     public int BaseTileWidth = 16;
     public int BaseTileHeight = 16;
 
-    public int DungeonSize = 45;
+    public int DungeonSize = 34;
 
     public Window UxWindow = null!;
-    public MapWindow MapWindow = null!;
 
     private readonly (int w, int h)[] roomSizes = new[]
         {
@@ -54,8 +55,11 @@ public class DungeonGame : MooseGame
 
     private Texture2D cursorTexture = null!;
 
+    public Theme MapTheme { get; private set; } = null!;
+
     public DungeonGame()
     {
+        Instance = this;
         Player = new(PlayerDef) { };
         IsMouseVisible = false;
 
@@ -114,6 +118,13 @@ public class DungeonGame : MooseGame
             ContentManager.BakeFont("Wizard's Manse", 60),
         };
 
+        MapTheme = new(ContentManager.LoadImage("MapWindowSmall"), 16, 16,
+                fonts, controlDrawOffset: new(8, 8))
+        {
+            TextColor = Color.DarkGray,
+            TextMouseOverColor = Color.DeepPink,
+        };
+
         UxWindow = new(
             new(ContentManager.LoadImage("Window"), 32, 32,
                 fonts, controlDrawOffset: new(16, 16))
@@ -121,15 +132,7 @@ public class DungeonGame : MooseGame
                 TextColor = Color.DarkGray,
                 TextMouseOverColor = Color.DeepPink,
             }, 0, 0, 320, 960) 
-        { BackgroundDrawingMode = BackgroundDrawingMode.Texture };
-
-        MapWindow = new(this, 
-            new(ContentManager.LoadImage("MapWindowSmall"), 16, 16,
-                fonts, controlDrawOffset: new(8, 8))
-            {
-                TextColor = Color.DarkGray,
-                TextMouseOverColor = Color.DeepPink,
-            }, 13, 480);
+        { BackgroundDrawingMode = BackgroundDrawingMode.None };
     }
 
     protected override void PostLoad()
@@ -137,7 +140,9 @@ public class DungeonGame : MooseGame
         AddObject(Player);
         Player.Reset(this);
         DungeonMap.GenerateRandomLevel(this);
-        UxWindow.AddControl(new SpellBookBar(Player, UxWindow, 0, 0));
+        var panel = UxWindow.AddStackPanel(0, 0, UxWindow.Width, UxWindow.Height);
+        var spellBook = panel.AddControlPassThrough(new SpellBookBar(UxWindow, 0, 0));
+        panel.AddControlPassThrough(new MapPanel(UxWindow, 0, spellBook.Height, 288, 288) { Theme = MapTheme });
     }
 
     private void AddMonsterDef(MonsterDef monsterDef, Func<MonsterDef, int, int, DungeonMonster> generator)
@@ -154,7 +159,18 @@ public class DungeonGame : MooseGame
     }
 
     public MiniMapTile GetMiniMapTile(int x, int y)
-        => (MiniMapTile)DungeonMap.DungeonLayer.GetTileValue(x, y);
+    {
+        var mapCell = new Point(x, y);
+        var (playerX, playerY) = Player.GetCell();
+        
+        if (x == playerX && y == playerY)
+            return MiniMapTile.Player;
+        
+        if (DungeonMap.MonsterLayer.Objects.Any(m => m.GetCell() == mapCell))
+            return MiniMapTile.Monster;
+        
+        return (MiniMapTile)DungeonMap.DungeonLayer.GetTileValue(x, y);
+    }
 
     public DungeonTile GetDungeonTile(int x, int y)
         => DungeonMap.DungeonLayer.GetTileValue(x, y);
@@ -208,12 +224,14 @@ public class DungeonGame : MooseGame
             DungeonMap.GenerateTown(5, roomSizes);
         }
 
+        if (WasKeyJustPressed(Keys.Escape))
+            ShouldQuit = true;
+
         FallingTexts.RemoveAll(text => text.Done || text.Age++ > 1500);
 
         CanPlay = !ReadObjects.OfType<DungeonObject>().Any(o => o.CurrentlyBlockingInput);
 
         UxWindow.Update(gameTime);
-        MapWindow.Update(gameTime);
     }
 
     protected override void PostDraw(GameTime gameTime)
@@ -221,7 +239,6 @@ public class DungeonGame : MooseGame
         SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
 
         UxWindow.Draw(SpriteBatch);
-        MapWindow.Draw(SpriteBatch);
 
         SpriteBatch.DrawString(DebugFont,
             $"FPS: {FramesPerSecondCounter.FramesPerSecond}",

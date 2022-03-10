@@ -14,6 +14,8 @@ public record DungeonPlayerDef : DungeonCreatureDef
 
 public class DungeonPlayer : DungeonCreature
 {
+    public static DungeonPlayer Instance { get; private set; } = null!;
+
     public override int DrawIndex => 22;
 
     public bool CanMove { get; set; } = true;
@@ -36,6 +38,8 @@ public class DungeonPlayer : DungeonCreature
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {
+        Instance = this;
+
         StartCursorTween();
         UseVisionCircle = true;
     }
@@ -273,4 +277,15 @@ public class DungeonPlayer : DungeonCreature
 
     public void LearnSpell(SpellDef spellDef)
         => KnownSpells.Add(spellDef);
+
+    public MiniMapTile GetMiniMapTile(int i, int j)
+    {
+        if (!UseVisionCircle)
+            return game.GetMiniMapTile(i, j);
+        var (x, y) = GetCell();
+        if (x == i && y == j)
+            return MiniMapTile.Player;
+
+        return MiniMap[i, j];
+    }
 }
