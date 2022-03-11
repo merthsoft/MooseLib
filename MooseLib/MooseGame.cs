@@ -305,7 +305,7 @@ public abstract class MooseGame : Game
             hookTuple?.PreHook?.Invoke(layerName);
 
             if (!layer.IsHidden)
-                renderer?.Draw(this, gameTime, layer, layerIndex);
+                renderer?.Draw(this, gameTime, layer, renderer.DrawOffset);
 
             hookTuple?.PostHook?.Invoke(layerName);
             renderer?.End();

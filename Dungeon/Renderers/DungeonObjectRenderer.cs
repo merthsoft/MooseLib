@@ -8,7 +8,7 @@ public class DungeonObjectRenderer : SpriteBatchRenderer
     public DungeonObjectRenderer(SpriteBatch spriteBatch)
         : base(spriteBatch) { }
 
-    public override void Draw(MooseGame game, GameTime gameTime, ILayer layer, int layerNumber)
+    public override void Draw(MooseGame game, GameTime gameTime, ILayer layer, Vector2 drawOffset)
     {
         var dungeonGame = (game as DungeonGame)!;
         if (layer is not IObjectLayer objectLayer)

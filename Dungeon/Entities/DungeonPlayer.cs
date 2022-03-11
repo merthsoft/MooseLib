@@ -263,7 +263,8 @@ public class DungeonPlayer : DungeonCreature
                 CanMove = true;
                 mouseBuffer = false;
             }
-            else {
+            else
+            {
                 AnimationPosition = Vector2.Zero;
                 moveDelta *= 16;
                 this.AddTween(p => p.AnimationPosition, moveDelta, .2f,
@@ -285,7 +286,7 @@ public class DungeonPlayer : DungeonCreature
 
     public MiniMapTile GetMiniMapTile(int i, int j)
     {
-        if (!UseVisionCircle || true)
+        if (!UseVisionCircle)
             return game.GetMiniMapTile(i, j);
         var (x, y) = GetCell();
         if (x == i && y == j)

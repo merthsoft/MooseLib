@@ -25,7 +25,7 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
     }
 
 
-    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, int layerNumber)
+    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
     {
         if (layer is not ITileLayer<int> tileLayer)
             throw new Exception("TileLayer<int> layer expected");
@@ -35,26 +35,24 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
             {
                 var tile = tileLayer.GetTileValue(i, j);
                 if (tile >= 0)
-                    DrawSprite(tile, i, j, layerNumber, tileLayer);
+                    DrawSprite(tile, i, j, tileLayer, drawOffset);
             }
     }
 
-    public virtual void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 1f)
+    public virtual void DrawSprite(int spriteIndex, int i, int j, ITileLayer<int> layer, Vector2 drawOffset, float layerDepth = 1f)
     {
-        var destRect = GetDestinationRectangle(i, j, layer.DrawOffset);
+        var destRect = GetDestinationRectangle(i, j, layer.DrawOffset + drawOffset);
         if (destRect != null)
-            SpriteBatch.Draw(SpriteSheet,
-                destinationRectangle: destRect.Value,
+            SpriteBatch.Draw(SpriteSheet, position: destRect.Value.Position,
                 sourceRectangle: GetSourceRectangle(spriteIndex),
                 color: Color, rotation: Rotation, effects: SpriteEffects,
-                origin: Vector2.Zero, layerDepth: layerDepth);
+                origin: Vector2.Zero, scale: DrawScale, layerDepth: layerDepth);
     }
 
-    public Rectangle? GetDestinationRectangle(int i, int j, Vector2 drawOffset) 
-        => new Rectangle(
-            i * TileWidth + (int)drawOffset.X, 
-            j * TileHeight + (int)drawOffset.Y, 
-            TileWidth, TileHeight);
+    public RectangleF? GetDestinationRectangle(int i, int j, Vector2 drawOffset) 
+        => new(i * TileWidth * DrawScale.X + drawOffset.X, 
+               j * TileHeight * DrawScale.Y + drawOffset.Y, 
+               TileWidth * DrawScale.X, TileHeight * DrawScale.Y);
 
     public Rectangle GetSourceRectangle(int spriteIndex, Texture2D? texture = null)
         => (texture ?? SpriteSheet).GetSourceRectangle(spriteIndex, TileWidth, TileHeight, TilePadding, TextureMargin);

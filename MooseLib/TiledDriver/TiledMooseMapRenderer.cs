@@ -5,6 +5,9 @@ namespace Merthsoft.Moose.MooseEngine.TiledDriver;
 
 public record TiledMooseMapRenderer : ILayerRenderer
 {
+    public Vector2 DrawOffset { get; set; }
+    public Vector2 DrawScale { get; set; }
+
     public string? RenderKey { get; set; }
     public RectangleF? RenderRectangle { get; set; }
     private TiledMapRenderer MapRenderer { get; }
@@ -22,7 +25,7 @@ public record TiledMooseMapRenderer : ILayerRenderer
     public void Begin(Matrix transformMatrix)
         => this.transformMatrix = transformMatrix;
 
-    public void Draw(MooseGame _game, GameTime _gameTime, ILayer layer, int _layerNumber)
+    public void Draw(MooseGame _game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
         => MapRenderer.Draw((layer as TiledMooseTileLayer)?.Layer, transformMatrix);
 
     public void Dispose()

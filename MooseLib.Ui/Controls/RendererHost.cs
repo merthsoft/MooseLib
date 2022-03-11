@@ -3,6 +3,8 @@
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 public class RendererHost : Control
 {
+    public Vector2 Scale { get; set; }
+
     public List<ILayerRenderer> Renderers = new();
     public List<ILayer> Layers = new();
 
@@ -20,12 +22,16 @@ public class RendererHost : Control
     
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
-        int layerNumber = 0;
         foreach (var(renderer, layer) in Renderers.Zip(Layers))
         {
-            layer.DrawOffset += Position + parentOffset;
-            renderer.Draw(MooseGame.Instance, gameTime, layer, layerNumber++);
-            layer.DrawOffset -= Position + parentOffset;
+            renderer.DrawScale = Scale;
+            renderer.Draw(MooseGame.Instance, gameTime, layer, Position + parentOffset + renderer.DrawOffset * renderer.DrawScale);
         }
+    }
+
+    public override void Update(UpdateParameters updateParameters)
+    {
+        foreach (var (renderer, _) in Renderers.Zip(Layers))
+            renderer.Update(MooseGame.Instance, updateParameters.GameTime);
     }
 }

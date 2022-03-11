@@ -4,6 +4,9 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
 public abstract class SpriteBatchRenderer : ILayerRenderer
 {
+    public Vector2 DrawOffset { get; set; }
+    public Vector2 DrawScale { get; set; } = Vector2.One;
+
     public string? RenderKey { get; set; }
     public SpriteBatch SpriteBatch { get; set; }
 
@@ -20,7 +23,7 @@ public abstract class SpriteBatchRenderer : ILayerRenderer
             effect: Effect,
             transformMatrix: viewMatrix);
 
-    public abstract void Draw(MooseGame game, GameTime gameTime, ILayer layer, int layerNumber);
+    public abstract void Draw(MooseGame game, GameTime gameTime, ILayer layer, Vector2 drawOffset);
     public virtual void Update(MooseGame game, GameTime gameTime) { }
     public virtual void LoadContent(MooseContentManager contentManager) { }
 

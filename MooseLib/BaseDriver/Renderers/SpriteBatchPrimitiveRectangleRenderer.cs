@@ -16,7 +16,7 @@ public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
         Palette.AddRange(colors);
     }
 
-    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, int _layerNumber)
+    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
     {
         if (layer is not TileLayer<int> tileLayer)
             throw new Exception("TileLayer<int> layer expected");
@@ -24,7 +24,7 @@ public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
         for (int i = 0; i < tileLayer.Width; i++)
             for (int j = 0; j < tileLayer.Height; j++)
                 SpriteBatch.FillRectangle(
-                    i * TileWidth, j * TileHeight,
+                    i * TileWidth + drawOffset.X, j * TileHeight + drawOffset.Y,
                     TileWidth, TileHeight,
                     Palette[tileLayer.Tiles[i, j]]);
     }

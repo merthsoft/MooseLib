@@ -24,9 +24,9 @@ public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
         return neighborValue;
     }
 
-    public override void DrawSprite(int spriteIndex, int i, int j, int layerNumber, ITileLayer<int> layer, float layerDepth = 1)
+    public override void DrawSprite(int spriteIndex, int i, int j, ITileLayer<int> layer,  Vector2 drawOffset, float layerDepth = 1)
     {
         if (player.CanSee(i, j))
-            base.DrawSprite(spriteIndex, i, j, layerNumber, layer, layerDepth);
+            base.DrawSprite(spriteIndex, i, j, layer, drawOffset, layerDepth);
     }
 }
