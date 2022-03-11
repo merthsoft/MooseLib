@@ -51,7 +51,10 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
     }
 
     public Rectangle? GetDestinationRectangle(int i, int j, Vector2 drawOffset) 
-        => new Rectangle(i * TileWidth + (int)drawOffset.X, j * TileHeight + (int)drawOffset.Y, TileWidth, TileHeight);
+        => new Rectangle(
+            i * TileWidth + (int)drawOffset.X, 
+            j * TileHeight + (int)drawOffset.Y, 
+            TileWidth, TileHeight);
 
     public Rectangle GetSourceRectangle(int spriteIndex, Texture2D? texture = null)
         => (texture ?? SpriteSheet).GetSourceRectangle(spriteIndex, TileWidth, TileHeight, TilePadding, TextureMargin);

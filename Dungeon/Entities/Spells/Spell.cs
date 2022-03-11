@@ -19,6 +19,7 @@ public abstract class Spell : AnimatedGameObject
 
     public Spell(SpellDef def, DungeonObject owner, Vector2 position) : base(def, position, "spells", state: Cast)
     {
+        Position = new((int)Position.X / 16 * 16, (int)Position.Y / 16 * 16);
         game = DungeonGame.Instance;
         Owner = owner;
         owner.AddSpell(this);
@@ -30,10 +31,14 @@ public abstract class Spell : AnimatedGameObject
         if (State == Hit && !hasHit)
         {
             hasHit = true;
+            StateCompleteAction = () => State = Dead;
             Effect();
         }
         else if (State == Dead)
+        {
             Owner.RemoveSpell(this);
+            Remove = true;
+        }
     }
 
     public abstract void Effect();

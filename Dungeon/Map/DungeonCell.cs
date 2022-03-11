@@ -1,7 +1,8 @@
 ﻿using Karcero.Engine.Contracts;
 using Karcero.Engine.Models;
+using Merthsoft.Moose.Dungeon.Tiles;
 
-namespace Merthsoft.Moose.Dungeon;
+namespace Merthsoft.Moose.Dungeon.Map;
 public record DungeonCell : ICell
 {
     public TerrainType Terrain { get; set; }

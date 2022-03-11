@@ -1,4 +1,4 @@
-﻿namespace Merthsoft.Moose.Dungeon;
+﻿namespace Merthsoft.Moose.Dungeon.Tiles;
 public enum MonsterTile
 {
     None = -1,

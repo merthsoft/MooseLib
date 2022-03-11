@@ -1,20 +1,23 @@
-﻿using Merthsoft.Moose.Dungeon.Tiles;
+﻿namespace Merthsoft.Moose.Dungeon.Entities.Spells;
 
-namespace Merthsoft.Moose.Dungeon.Entities.Spells;
-
-public record FireballDef : SpellDef
+public record SpinesDef : SpellDef
 {
-    public FireballDef() : base("Fireball")
+    public SpinesDef() : base("Earth Shard", "Spines")
     {
-        
+    }
+
+    public override void DrawExtraTargets(SpriteBatch spriteBatch)
+    {
+
     }
 }
 
-public class Fireball : Spell
+public class Spines : Spell
 {
-    IEnumerator<Vector2> FlightPath { get; }
+    readonly IEnumerator<Vector2> FlightPath;
+    readonly HashSet<DungeonObject> HitObjects = new();
 
-    public Fireball(SpellDef def, DungeonObject owner, Vector2 end) 
+    public Spines(SpellDef def, DungeonObject owner, Vector2 end)
         : base(def, owner, owner.Position)
     {
         Position = new Vector2((int)owner.Position.X / 16 * 16 + 8, (int)owner.Position.Y / 16 * 16 + 8);
@@ -26,7 +29,7 @@ public class Fireball : Spell
         float xDiff = x2 - x1;
         float yDiff = y2 - y1;
         Rotation = MathF.Atan2(yDiff, xDiff);
-        
+
         StateCompleteAction = () => State = Active;
 
         FlightPath = Position.CastRay(end, true, true, true, true).GetEnumerator();
@@ -36,7 +39,11 @@ public class Fireball : Spell
     {
         var (x, y) = GetCell();
         var target = game.GetMonster(x, y);
-        target?.TakeDamage(game, 3);
+        if (target != null && !HitObjects.Contains(target))
+        {
+            HitObjects.Add(target);
+            target.TakeDamage(game, 1);
+        }
     }
 
     public override void Update(MooseGame _, GameTime gameTime)
@@ -52,13 +59,14 @@ public class Fireball : Spell
 
             Position = FlightPath.Current;
             var (x, y) = GetCell();
-            if (game.GetDungeonTile(x, y).IsBlocking()
-                || game.GetMonsterTile(x, y) != MonsterTile.None)
+            var monster = game.GetMonster(x, y);
+            if (game.GetDungeonTile(x, y).IsBlocking())
             {
                 State = Hit;
                 StateCompleteAction = () => State = Dead;
                 ActiveTweens.ForEach(t => t.Cancel());
-            }
+            } else if (monster != null)
+                Effect();
         }
 
         base.Update(game, gameTime);

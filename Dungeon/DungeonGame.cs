@@ -1,23 +1,27 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
 using Merthsoft.Moose.Dungeon.Entities.Monster;
 using Merthsoft.Moose.Dungeon.Entities.Spells;
+using Merthsoft.Moose.Dungeon.Map;
+using Merthsoft.Moose.Dungeon.Renderers;
+using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.Dungeon.Ux;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.Interface;
 using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.Dungeon;
 
 public class DungeonGame : MooseGame
 {
-    public static new DungeonGame Instance { get; private set; } = null!;
+    public static new DungeonGame Instance = null!;
 
-    public SpellBook SpellBook { get; } = new();
+    public SpellBook SpellBook = new();
     public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, DungeonMonster>)> MonsterFactory = new();
 
-    public Texture2D Crosshair { get; set; } = null!;
-    public Vector2 CrosshairOrigin { get; set; }
+    public Texture2D CrosshairTexture = null!;
+    public Vector2 CrosshairOrigin;
 
-    public Texture2D MiniMapTiles { get; set; } = null!;
+    public Texture2D MiniMapTiles = null!;
 
     public int BaseTileWidth = 16;
     public int BaseTileHeight = 16;
@@ -25,6 +29,10 @@ public class DungeonGame : MooseGame
     public int DungeonSize = 34;
 
     public Window UxWindow = null!;
+
+    public MapPanel MapPanel = null!;
+
+    public int ViewingMap = 0;
 
     private readonly (int w, int h)[] roomSizes = new[]
         {
@@ -41,21 +49,22 @@ public class DungeonGame : MooseGame
             (4 + 2, 7 + 2),
         };
 
-    public DungeonMap DungeonMap { get; set; } = null!;
+    public DungeonMap DungeonMap = null!;
 
-    DungeonPlayerDef PlayerDef { get; } = new();
-    public DungeonPlayer Player { get; private set; } = null!;
+    DungeonPlayerDef PlayerDef = new();
+    public DungeonPlayer Player = null!;
 
     SpriteFont DebugFont = null!;
     SpriteFont FallingTextFont = null!;
 
     List<FallingText> FallingTexts = new List<FallingText>();
 
-    public bool CanPlay { get; set; } = true;
+    public bool CanPlay = true;
 
-    private Texture2D cursorTexture = null!;
+    private Texture2D CursorTexture = null!;
 
-    public Theme MapTheme { get; private set; } = null!;
+    public Texture2D MapTexture = null!;
+    public Texture2D MapCornerTexture = null!;
 
     public DungeonGame()
     {
@@ -80,12 +89,13 @@ public class DungeonGame : MooseGame
 
     protected override void Load()
     {
-        Crosshair = ContentManager.LoadImage("Crosshair");
-        CrosshairOrigin = new(Crosshair.Width/2, Crosshair.Height/2);
-
-        cursorTexture = ContentManager.LoadImage("Cursor");
-
+        CrosshairTexture = ContentManager.LoadImage("Crosshair");
+        CursorTexture = ContentManager.LoadImage("Cursor");
         MiniMapTiles = ContentManager.LoadImage("MiniMap");
+        MapTexture = ContentManager.LoadImage("MapWindow");
+        MapCornerTexture = ContentManager.LoadImage("MapCorner");
+
+        CrosshairOrigin = new(CrosshairTexture.Width/2, CrosshairTexture.Height/2);
 
         var tiles = ContentManager.LoadImage("Dungeon");
         var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, tiles); 
@@ -104,9 +114,20 @@ public class DungeonGame : MooseGame
         FallingTextFont = ContentManager.BakeFont("Border_Basic_Monospaced", 24);
 
         Player.LearnSpell(AddSpellDef(new FireballDef(), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new SpellDef("Lightning"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new SpellDef("Earth Shard", "Spines"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new SpellDef("Dark Shield", "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
+        Player.LearnSpell(AddSpellDef(new MeteorDef(), (spellDef, owner, position)
+            => 
+            new SpellContainer(owner)
+                .Add(new Meteor(spellDef, owner, position))
+                .Add(new Meteor(spellDef, owner, position - new Vector2(16, 0)))
+                .Add(new Meteor(spellDef, owner, position - new Vector2(-16, 0)))
+                .Add(new Meteor(spellDef, owner, position - new Vector2(0, 16)))
+                .Add(new Meteor(spellDef, owner, position - new Vector2(0, -16)))
+            ));
+        Player.LearnSpell(AddSpellDef(new SpinesDef(), (spellDef, owner, position) => new Spines(spellDef, owner, position)));
+        AddSpellDef(new SpellDef("Dark Shield", "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+        AddSpellDef(new SpellDef("AnimateDead", "Raise Dead"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+        AddSpellDef(new SpellDef("Slow", "Slow"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+        AddSpellDef(new SpellDef("Lightning"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
 
         AddMonsterDef(new MonsterDef("Marshall", MonsterTile.Marshall)
         {
@@ -115,14 +136,7 @@ public class DungeonGame : MooseGame
 
         var fonts = new[] {
             ContentManager.BakeFont("Wizard's Manse", 180),
-            ContentManager.BakeFont("Wizard's Manse", 60),
-        };
-
-        MapTheme = new(ContentManager.LoadImage("MapWindowSmall"), 16, 16,
-                fonts, controlDrawOffset: new(8, 8))
-        {
-            TextColor = Color.DarkGray,
-            TextMouseOverColor = Color.DeepPink,
+            ContentManager.BakeFont("Wizard's Manse", 50),
         };
 
         UxWindow = new(
@@ -131,6 +145,8 @@ public class DungeonGame : MooseGame
             {
                 TextColor = Color.DarkGray,
                 TextMouseOverColor = Color.DeepPink,
+                SelectedColor = Color.Gold,
+                SelectedMouseOverColor = Color.HotPink,
             }, 0, 0, 320, 960) 
         { BackgroundDrawingMode = BackgroundDrawingMode.None };
     }
@@ -138,11 +154,11 @@ public class DungeonGame : MooseGame
     protected override void PostLoad()
     {
         AddObject(Player);
-        Player.Reset(this);
-        DungeonMap.GenerateRandomLevel(this);
-        var panel = UxWindow.AddStackPanel(0, 0, UxWindow.Width, UxWindow.Height);
+        
+        DungeonMap.GenerateRandomLevel();
+        var panel = UxWindow.AddPanel(0, 0, UxWindow.Width, UxWindow.Height);
         var spellBook = panel.AddControlPassThrough(new SpellBookBar(UxWindow, 0, 0));
-        panel.AddControlPassThrough(new MapPanel(UxWindow, 0, spellBook.Height, 288, 288) { Theme = MapTheme });
+        MapPanel = panel.AddControlPassThrough(new MapPanel(UxWindow, 0, spellBook.Height, 288, 288));
     }
 
     private void AddMonsterDef(MonsterDef monsterDef, Func<MonsterDef, int, int, DungeonMonster> generator)
@@ -189,7 +205,15 @@ public class DungeonGame : MooseGame
 
     public void Cast(SpellDef spellDef, DungeonObject owner, Vector2 position)
     {
-        AddObject(SpellBook.Cast(spellDef, owner, position));
+        var spell = SpellBook.Cast(spellDef, owner, position);
+        if (spell is SpellContainer container)
+        {
+            owner.RemoveSpell(spell);
+            foreach (var childSpell in container)
+                AddObject(childSpell);
+        }
+        else
+            AddObject(spell);
     }
 
     public void SpawnFallingText(FallingText text)
@@ -210,27 +234,51 @@ public class DungeonGame : MooseGame
             X = MainCamera.Position.X - 320 / 4
         };
 
-        if (WasKeyJustPressed(Keys.R))
+        if (WasKeyJustPressed(Keys.D))
         {
-            Player.Reset(this);
-            DungeonMap.GenerateRandomLevel(this);
+            DungeonMap.GenerateRandomLevel();
+            Player.UseVisionCircle = true;
         }
-
-        if (WasKeyJustPressed(Keys.T))
+        else if (WasKeyJustPressed(Keys.T))
         {
-            Player.Reset(this);
+            DungeonMap.GenerateTown(5, roomSizes);
             Player.Position = new(16, 16);
             Player.UseVisionCircle = false;
-            DungeonMap.GenerateTown(5, roomSizes);
         }
-
-        if (WasKeyJustPressed(Keys.Escape))
+        else if (WasKeyJustPressed(Keys.Escape))
             ShouldQuit = true;
+        else if (WasKeyJustPressed(Keys.M))
+        {
+            if (ViewingMap == 0)
+            {
+                ViewingMap++;
+                MapPanel.TweenToPosition(MapPanel.ZoomPosition, .5f, onEnd: _ => ViewingMap++);
+                MapPanel.AddTween(t => t.Scale, 3, .5f);
+            }
+            else if (ViewingMap == 2)
+            {
+                ViewingMap--;
+                MapPanel.TweenToPosition(MapPanel.NormalPosition, .5f, onEnd: _ => ViewingMap--);
+                MapPanel.AddTween(t => t.Scale, 1, .5f);
+            }
+
+        }
+        else if (WasKeyJustPressed(Keys.D1) && Player.KnownSpells.Count > 0)
+            Player.SelectedSpell = 0;
+        else if (WasKeyJustPressed(Keys.D2) && Player.KnownSpells.Count > 1)
+            Player.SelectedSpell = 1;
+        else if (WasKeyJustPressed(Keys.D3) && Player.KnownSpells.Count > 2)
+            Player.SelectedSpell = 2;
+        else if (WasKeyJustPressed(Keys.D4) && Player.KnownSpells.Count > 3)
+            Player.SelectedSpell = 3;
+        else if (WasKeyJustPressed(Keys.D5) && Player.KnownSpells.Count > 4)
+            Player.SelectedSpell = 4;
+        else if (WasKeyJustPressed(Keys.D6) && Player.KnownSpells.Count > 5)
+            Player.SelectedSpell = 5;
+
+        CanPlay = ViewingMap == 0 && !ReadObjects.OfType<DungeonObject>().Any(o => o.CurrentlyBlockingInput);
 
         FallingTexts.RemoveAll(text => text.Done || text.Age++ > 1500);
-
-        CanPlay = !ReadObjects.OfType<DungeonObject>().Any(o => o.CurrentlyBlockingInput);
-
         UxWindow.Update(gameTime);
     }
 
@@ -244,7 +292,7 @@ public class DungeonGame : MooseGame
             $"FPS: {FramesPerSecondCounter.FramesPerSecond}",
             new(15, 920), DefaultBackgroundColor.Shade(3f));
 
-        SpriteBatch.Draw(cursorTexture, CurrentMouseState.Position.ToVector2(), null, Color.White, 0, Vector2.Zero, 3, SpriteEffects.None, 1);
+        SpriteBatch.Draw(CursorTexture, CurrentMouseState.Position.ToVector2(), null, Color.White, 0, Vector2.Zero, 3, SpriteEffects.None, 1);
         SpriteBatch.End();
     }
 

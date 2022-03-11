@@ -20,4 +20,6 @@ public record SpellDef : AnimatedGameObjectDef
         SpriteSheet = contentManager.LoadAnimatedSpriteSheet($"Spells/{DefName}/Animation", true, false);
         Icon = contentManager.Load<Texture2D>($"Spells/{DefName}/Icon");
     }
+
+    public virtual void DrawExtraTargets(SpriteBatch spriteBatch) { }
 }

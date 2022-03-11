@@ -4,7 +4,7 @@ public interface ILayer
 {
     string Name { get; }
     bool IsHidden { get; set; }
-    Vector2 DrawOffset { get; }
+    Vector2 DrawOffset { get; set; }
 
     string? RendererKey { get; }
 }

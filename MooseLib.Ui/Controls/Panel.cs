@@ -71,17 +71,17 @@ public class Panel : Control, IControlContainer
         {
             if (c.Remove)
                 return;
-
+            var t = themeOffset;
             var controlUpdateParameters = new UpdateParameters(
                updateParameters.GameTime, position, updateParameters.LocalMousePosition - c.Position,
                updateParameters.RawMouseState, updateParameters.RawKeyState,
                FocusedControl);
-            if (c.Rectangle.Contains(updateParameters.LocalMousePosition - themeOffset)
+            if (c.Rectangle.Contains(updateParameters.LocalMousePosition - updateParameters.ParentOffset)
                 && !Hidden && !c.Hidden
                 && updateParameters.MouseOver
                 && (FocusedControl == null || FocusedControl == c))
             {
-                if (FocusedControl == null)
+                if (FocusedControl == null && (updateParameters.LeftMouseClick || updateParameters.RightMouseClick))
                     updateParameters.FocusedControl = controlUpdateParameters.FocusedControl = FocusedControl = c;
                 controlUpdateParameters.MouseOver = true;
                 controlUpdateParameters.LeftMouseClick = updateParameters.LeftMouseClick;

@@ -1,6 +1,5 @@
-﻿namespace Merthsoft.Moose.Dungeon;
-
-public enum MiniMapTile
+﻿namespace Merthsoft.Moose.Dungeon.Tiles;
+public enum DungeonTile
 {
     None = -1,
 
@@ -45,7 +44,7 @@ public enum MiniMapTile
 
     StairsDown = 40,
     StairsUp,
-
+    
     TableLeft = 60,
     TableMiddle,
     TableRight,
@@ -53,12 +52,9 @@ public enum MiniMapTile
     ChairLeft,
     ChairDown,
     ChairUp,
-
+    
     WALL_START = 80,
     StoneWall = 80,
     BrickWall,
     WALL_END = BrickWall + 1,
-
-    Monster = 90,
-    Player
 }

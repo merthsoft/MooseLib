@@ -25,7 +25,7 @@ public class AnimatedGameObject : GameObjectBase
     public AnimatedGameObject(AnimatedGameObjectDef def, Vector2? position = null, string layer = null, Vector2? transformLocation = null, float rotation = 0, Vector2? scale = null, string state = "", string? direction = null)
         : base(def, position, direction: direction, layer: layer)
     {
-        Sprite = new AnimatedSprite(def.SpriteSheet) { Origin = Origin };
+        Sprite = def.SpriteSheet == null ? null! : new AnimatedSprite(def.SpriteSheet) { Origin = Origin };
         DrawOffset = transformLocation ?? Vector2.Zero;
         Rotation = rotation;
         State = state;

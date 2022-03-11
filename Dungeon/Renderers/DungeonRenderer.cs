@@ -1,8 +1,9 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
+using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.Dungeon;
+namespace Merthsoft.Moose.Dungeon.Renderers;
 public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
 {
     private readonly DungeonPlayer player;

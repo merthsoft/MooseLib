@@ -105,7 +105,7 @@ public abstract class Control : ITweenOwner
             this.ClearCompletedTweens();
     }
 
-    public abstract void Draw(SpriteBatch spriteBatch, Vector2 parentOffset);
+    public abstract void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime);
 
     public void Center(float width, float height)
         => Position += new Vector2(width / 2f - Rectangle.Width / 2f, height / 2f - Rectangle.Height / 2f);

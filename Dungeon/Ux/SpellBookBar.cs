@@ -8,14 +8,14 @@ public class SpellBookBar : Panel
     private readonly Panel spellPanel;
     private readonly DungeonPlayer player;
 
-    public SpellBookBar(IControlContainer container, float x, float y) : base(container, x, y, 320, 475)
+    public SpellBookBar(IControlContainer container, float x, float y) : base(container, x, y, 320, 600)
     {
         player = DungeonPlayer.Instance;
         BackgroundDrawingMode = BackgroundDrawingMode.None;
 
         this.AddActionLabel(0, -75, "Spells", (_, __) => { });
 
-        spellPanel = this.AddPanel(0, 75, 320, 405, BackgroundDrawingMode.None);
+        spellPanel = this.AddPanel(0, 75, 320, Height, BackgroundDrawingMode.None);
         RebuildSpells();
     }
 
@@ -25,15 +25,28 @@ public class SpellBookBar : Panel
         spellList.Clear();
         spellList.AddRange(player.KnownSpells);
         var spellIndex = 0;
-        for (var i = 0; i < 2; i++)
-            for (var j = 0; j < 2; j++)
+        
+        for (var j = 0; j < 3; j++)
+            for (var i = 0; i < 2; i++)
             {
-                var panel = spellPanel.AddPanel(i * 150, j * 165, 128, 128, BackgroundDrawingMode.Texture);
+                var index = spellIndex;
+                var button = spellPanel.AddButton(i * 150, j * 165, "", (c, u) => {
+                    c.Toggled = false;
+                    player.SelectedSpell = index < spellList.Count ? index : player.SelectedSpell;
+                }, 1);
+                button.Toggleable = true;
+                button.Toggled = spellIndex == player.SelectedSpell;
+
+                button.WidthOverride = 128;
+                button.HeightOverride = 158;
+                button.BackgroundDrawingMode = BackgroundDrawingMode.Texture;
+                
                 if (spellIndex < spellList.Count)
                 {
                     var spell = spellList[spellIndex];
-                    panel.AddPicture(0, 0, spell.Icon, 6f);
-                    spellPanel.AddLabel(i * 150 + 5, j * 165 + 110, spell.Name, 1);
+                    button.Text = spell.Name;
+                    button.Texture = spell.Icon;
+                    button.TextureScale = new(6, 6);
                 }
                 spellIndex++;
             }
@@ -41,24 +54,8 @@ public class SpellBookBar : Panel
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (!spellList.SequenceEqual(player.KnownSpells))
+        if (!spellList.SequenceEqual(player.KnownSpells) || true)
             RebuildSpells();
         base.Update(updateParameters);
-
-        for (var index = 0; index < spellPanel.Controls.Length; index += 2)
-        {
-            var panel = spellPanel.GetControl<Panel>(index);
-            var label = spellPanel.Controls[index + 1];
-            if (panel.UpdateParameters.MouseOver || label.UpdateParameters.MouseOver)
-            {
-                label.UpdateParameters.MouseOver = true;
-                panel.ColorShift = Color.DeepPink;
-            }
-            else
-                panel.ColorShift = index == player.SelectedSpell ? panel.ColorShift = Color.Gold : Color.White;
-
-            if (panel.UpdateParameters.LeftMouseClick || label.UpdateParameters.LeftMouseClick)
-                player.SelectedSpell = index;
-        }
     }
 }

@@ -54,8 +54,6 @@ public abstract class DungeonCreature : DungeonObject
                     continue;
 
                 SetTileVisible(dungeonGame, posX, posY);
-                if (dungeonGame.GetDungeonTile(posX, posY).BlocksSight())
-                    break;
 
                 var monster = dungeonGame.GetMonster(posX, posY);
                 if (monster != null && monster != this)
@@ -63,6 +61,8 @@ public abstract class DungeonCreature : DungeonObject
                     var distance = DistanceSquaredTo(monster);
                     visibleMonsters.Add((distance, monster));
                 }
+                else if (dungeonGame.GetDungeonTile(posX, posY).BlocksSight())
+                    break;
             }
 
         VisibleMonsters.Clear();

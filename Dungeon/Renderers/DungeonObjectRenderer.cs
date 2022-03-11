@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
-namespace Merthsoft.Moose.Dungeon;
+namespace Merthsoft.Moose.Dungeon.Renderers;
 
 public class DungeonObjectRenderer : SpriteBatchRenderer
 {

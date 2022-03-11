@@ -1,4 +1,6 @@
-﻿namespace Merthsoft.Moose.Dungeon;
+﻿using Merthsoft.Moose.Dungeon.Tiles;
+
+namespace Merthsoft.Moose.Dungeon;
 public static class Extensions
 {
     public static bool IsWall(this DungeonTile t)

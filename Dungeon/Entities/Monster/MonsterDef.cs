@@ -1,4 +1,6 @@
-﻿namespace Merthsoft.Moose.Dungeon.Entities.Monster;
+﻿using Merthsoft.Moose.Dungeon.Tiles;
+
+namespace Merthsoft.Moose.Dungeon.Entities.Monster;
 public record MonsterDef : DungeonCreatureDef
 {
     public MonsterTile Monster { get; set; }

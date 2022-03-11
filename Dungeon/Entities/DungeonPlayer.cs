@@ -1,4 +1,5 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities.Spells;
+using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Entities;
@@ -50,8 +51,9 @@ public class DungeonPlayer : DungeonCreature
         MiniMap[x, y] = dungeonGame.GetMiniMapTile(x, y);
     }
 
-    public void Reset(DungeonGame dungeonGame)
+    public void ResetVision()
     {
+        var dungeonGame = DungeonGame.Instance;
         VisibleMonsters.Clear();
         SightMap = new bool[dungeonGame.DungeonSize, dungeonGame.DungeonSize];
         MiniMap = new MiniMapTile[dungeonGame.DungeonSize, dungeonGame.DungeonSize];
@@ -71,7 +73,7 @@ public class DungeonPlayer : DungeonCreature
         if (dungeonGame.GetMonsterTile(x, y) > MonsterTile.None && CanMove && CanSee(x, y))
         { 
             position += new Vector2(8, 8);
-            spriteBatch.Draw(dungeonGame.Crosshair, position, null,
+            spriteBatch.Draw(dungeonGame.CrosshairTexture, position, null,
                 CrosshairColor, CrosshairRotation,
                 dungeonGame.CrosshairOrigin, CrosshairScale,
                 SpriteEffects.None, 1f);
@@ -87,7 +89,7 @@ public class DungeonPlayer : DungeonCreature
         {
             var monster = VisibleMonsters.First();
             var monsterPosition = monster.Position + new Vector2(8, 8) + monster.AnimationPosition;
-            spriteBatch.Draw(dungeonGame.Crosshair, monsterPosition, null,
+            spriteBatch.Draw(dungeonGame.CrosshairTexture, monsterPosition, null,
                 CrosshairColor, CrosshairRotation,
                 dungeonGame.CrosshairOrigin, CrosshairScale,
                 SpriteEffects.None, 1f);
@@ -153,7 +155,7 @@ public class DungeonPlayer : DungeonCreature
         } else if (keyPress(Keys.Space) && CanMove)
         {
             if (VisibleMonsters.Any())
-                dungeonGame.Cast(KnownSpells.First(), this, VisibleMonsters[0].Position + new Vector2(8, 8));
+                dungeonGame.Cast(KnownSpells[SelectedSpell], this, VisibleMonsters[0].Position + new Vector2(8, 8));
             keyPressed = true;
         }
 
@@ -181,7 +183,7 @@ public class DungeonPlayer : DungeonCreature
             var (x, y) = ((int)mouse.X / 16, (int)mouse.Y / 16);
             if (dungeonGame.WasRightMouseJustPressed() || dungeonGame.GetMonsterTile(x, y) > MonsterTile.None)
             {
-                dungeonGame.Cast(KnownSpells.First(), this, dungeonGame.WorldMouse);
+                dungeonGame.Cast(KnownSpells[SelectedSpell], this, dungeonGame.WorldMouse);
             }
             else if (dungeonGame.WasLeftMouseJustPressed() && !dungeonGame.GetDungeonTile(x, y).IsBlocking() && CanSee(x, y))
             {
@@ -276,11 +278,14 @@ public class DungeonPlayer : DungeonCreature
     }
 
     public void LearnSpell(SpellDef spellDef)
-        => KnownSpells.Add(spellDef);
+    {
+        KnownSpells.Add(spellDef);
+        SelectedSpell = KnownSpells.Count - 1;
+    }
 
     public MiniMapTile GetMiniMapTile(int i, int j)
     {
-        if (!UseVisionCircle)
+        if (!UseVisionCircle || true)
             return game.GetMiniMapTile(i, j);
         var (x, y) = GetCell();
         if (x == i && y == j)
