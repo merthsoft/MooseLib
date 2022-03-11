@@ -2,7 +2,7 @@
 
 public record SpinesDef : SpellDef
 {
-    public SpinesDef() : base("Earth Shard", "Spines")
+    public SpinesDef() : base("Earth Shard", 2, "Spines")
     {
     }
 

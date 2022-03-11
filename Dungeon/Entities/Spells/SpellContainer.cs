@@ -4,8 +4,9 @@ namespace Merthsoft.Moose.Dungeon.Entities.Spells;
 public class SpellContainer : Spell, IEnumerable<Spell>
 {
     public List<Spell> Spells = new List<Spell>();
+    public int ManaCost = 0;
 
-    public SpellContainer(DungeonObject owner) : base(new SpellDef("container", "container"), owner, Vector2.Zero)
+    public SpellContainer(DungeonObject owner) : base(new SpellDef("container", 0, "container"), owner, Vector2.Zero)
     {
         State = Active;
     }
@@ -13,6 +14,8 @@ public class SpellContainer : Spell, IEnumerable<Spell>
     public SpellContainer Add(Spell spell)
     {
         Spells.Add(spell);
+        if (ManaCost < spell.Def.ManaCost)
+            ManaCost = spell.Def.ManaCost;
         return this;
     }
 

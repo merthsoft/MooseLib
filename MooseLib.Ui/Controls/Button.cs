@@ -75,7 +75,7 @@ public class Button : Control
         PreLabelDraw(spriteBatch, drawOffset + themeOffset);
         var position = Position + drawOffset + themeOffset + LabelOffset;
         if (Texture != null)
-            position = new(position.X, Position.Y + drawOffset.Y + Theme.CalculateNewSize(size).Y - FontSize.Y);
+            position = new(position.X, Position.Y + drawOffset.Y + Theme.CalculateNewSize(size).Y - FontSize.Y + LabelOffset.Y);
         
         spriteBatch.DrawString(Font, Text, position, ResolvedTextColor);
     }

@@ -2,7 +2,7 @@
 
 public record MeteorDef : SpellDef
 {
-    public MeteorDef() : base("MeteorShower", "Meteor")
+    public MeteorDef() : base("MeteorShower", 3, "Meteor")
     {
     }
 

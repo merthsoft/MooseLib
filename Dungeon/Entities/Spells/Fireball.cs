@@ -4,7 +4,7 @@ namespace Merthsoft.Moose.Dungeon.Entities.Spells;
 
 public record FireballDef : SpellDef
 {
-    public FireballDef() : base("Fireball")
+    public FireballDef() : base("Fireball", 5)
     {
         
     }

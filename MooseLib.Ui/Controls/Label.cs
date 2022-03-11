@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame;
+﻿using MonoGame;
 
 namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 

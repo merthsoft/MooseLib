@@ -18,23 +18,28 @@ public class DungeonPlayer : DungeonCreature
 
     public override int DrawIndex => 22;
 
-    public bool CanMove { get; set; } = true;
-    public bool HasInputThisFrame { get; set; }
-    public bool HasActiveSpells { get; set; }
+    public bool CanMove = true;
+    public bool HasInputThisFrame;
+    public bool HasActiveSpells;
     
     private readonly Queue<string> moveBuffer = new();
     private bool mouseBuffer = false;
 
-    public float CrosshairRotation { get; set; }
+    public float CrosshairRotation;
     public Color CrosshairColor => ColorHelper.FromHsl(CrosshairHue, 1, .5f);
-    public float CrosshairScale { get; set; }
+    public float CrosshairScale;
 
-    public float CrosshairHue { get; set; }
+    public float CrosshairHue;
 
-    public List<SpellDef> KnownSpells { get; } = new();
-    public int SelectedSpell { get; set; }
+    public List<SpellDef> KnownSpells = new();
+    public int SelectedSpell;
 
-    public MiniMapTile[,] MiniMap { get; set; } = new MiniMapTile[0, 0];
+    public MiniMapTile[,] MiniMap = new MiniMapTile[0, 0];
+
+    public string Name = "Wizz";
+    public int Health = 1;
+    public int Mana = 10;
+    public int Gold = 0;
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {
@@ -58,6 +63,17 @@ public class DungeonPlayer : DungeonCreature
         for (var i = 0; i < game.DungeonSize; i++)
             for (var j = 0; j < game.DungeonSize; j++)
                 MiniMap[i, j] = MiniMapTile.None;
+
+        if (VisibleMonsters.Count > 0)
+        {
+            moveBuffer.Clear();
+            mouseBuffer = false;
+        }
+
+        Health = 1;
+        Mana = 10;
+        Gold = 0;
+
     }
 
     public void DrawCursor(MooseGame mooseGame, Vector2 position, SpriteBatch spriteBatch)

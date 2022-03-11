@@ -20,8 +20,8 @@ public class Rect : Control
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
         if (DrawFill)
-            spriteBatch.FillRectangle(Position + parentOffset, Size, Theme.ControlBackgroundColor);
+            spriteBatch.FillRectangle(Position + parentOffset, Size, BackgroundColor ?? Theme.ResolveBackgroundColor(UpdateParameters, true, false));
         if (DrawBorder)
-            spriteBatch.DrawRectangle(Position + parentOffset, Size, Theme.ControlBorderColor, Thickness);
+            spriteBatch.DrawRectangle(Position + parentOffset, Size, BorderColor ?? Theme.ControlBorderColor, Thickness);
     }
 }

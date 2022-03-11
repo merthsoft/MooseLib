@@ -126,11 +126,11 @@ public class DungeonGame : MooseGame
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, 16)))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, -16)))
             ));
-        Player.LearnSpell(AddSpellDef(new SpinesDef(), (spellDef, owner, position) => new Spines(spellDef, owner, position)));
-        AddSpellDef(new SpellDef("Dark Shield", "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
-        AddSpellDef(new SpellDef("AnimateDead", "Raise Dead"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
-        AddSpellDef(new SpellDef("Slow", "Tanglefoot"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
-        AddSpellDef(new SpellDef("Lightning"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+        //Player.LearnSpell(AddSpellDef(new SpinesDef(), (spellDef, owner, position) => new Spines(spellDef, owner, position)));
+        Player.LearnSpell(AddSpellDef(new SpellDef("Lightning", 1), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
+        Player.LearnSpell(AddSpellDef(new SpellDef("Dark Shield", 1, "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
+        Player.LearnSpell(AddSpellDef(new SpellDef("AnimateDead", 1, "Raise"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
+        Player.LearnSpell(AddSpellDef(new SpellDef("Slow", 1, "Tangle"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
 
         AddMonsterDef(new MonsterDef("Marshall", MonsterTile.Marshall)
         {
@@ -138,8 +138,9 @@ public class DungeonGame : MooseGame
         }, (def, x, y) => new Marshall(def, new Vector2(x * 16, y * 16)));
 
         var fonts = new[] {
-            ContentManager.BakeFont("Wizard's Manse", 180),
-            ContentManager.BakeFont("Wizard's Manse", 50),
+            ContentManager.BakeFont("BrightLinger", 70),
+            ContentManager.BakeFont("Wizard's Manse", 42),
+            ContentManager.BakeFont("BrightLinger_monospace", 30)
         };
 
         UxWindow = new(
@@ -155,8 +156,10 @@ public class DungeonGame : MooseGame
 
 
         var panel = UxWindow.AddPanel(0, 0, UxWindow.Width, UxWindow.Height);
-        var spellBook = panel.AddControlPassThrough(new SpellBookBar(UxWindow, 0, 0));
-        MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, spellBook.Height, 288, 288));
+        var spellBook = panel.AddControlPassThrough(new SpellBookPanel(UxWindow, 0, 0));
+        MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, spellBook.Height));
+        panel.AddControl(new PlayerPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));
+
     }
 
     protected override void PostLoad()
@@ -211,14 +214,28 @@ public class DungeonGame : MooseGame
     public void Cast(SpellDef spellDef, DungeonObject owner, Vector2 position)
     {
         var spell = SpellBook.Cast(spellDef, owner, position);
+        if (spellDef.ManaCost > Player.Mana)
+        {
+            owner.RemoveSpell(spell);
+            SpawnFallingText(new("Low mana", owner.Position, Color.Black));
+            return;
+        }
+
+        var manaDiff = Player.Mana;
         if (spell is SpellContainer container)
         {
+            Player.Mana -= container.ManaCost;
             owner.RemoveSpell(spell);
             foreach (var childSpell in container)
                 AddObject(childSpell);
         }
         else
+        {
+            Player.Mana -= spellDef.ManaCost;
             AddObject(spell);
+        }
+        manaDiff = Player.Mana - manaDiff;
+        SpawnFallingText(new(manaDiff.ToString(), owner.Position, Color.Blue));
     }
 
     public void SpawnFallingText(FallingText text)

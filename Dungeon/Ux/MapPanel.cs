@@ -13,7 +13,7 @@ public class MapPanel : Panel
     private readonly Picture mapCornerPicture;
     private readonly RendererHost rendererHost;
 
-    public MapPanel(ILayerRenderer renderer, IControlContainer container, float x, float y, float w, float h) : base(container, x, y, w, h)
+    public MapPanel(ILayerRenderer renderer, IControlContainer container, float x, float y) : base(container, x, y, 288, 288)
     {
         BackgroundDrawingMode = BackgroundDrawingMode.None;
         
