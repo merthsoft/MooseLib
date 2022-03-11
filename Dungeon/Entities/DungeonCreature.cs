@@ -6,12 +6,16 @@ public abstract class DungeonCreature : DungeonObject
     public const string Up = "Up";
     public const string Down = "Down";
 
-    public DungeonCreatureDef DungeonCreatureDef { get; }
-    protected FogOfWar[,] SightMap { get; set; } = new FogOfWar[0, 0];
-    public int ViewRadius { get; set; } = 8;
-    public bool UseVisionCircle { get; set; } = true;
+    public DungeonCreatureDef DungeonCreatureDef;
+    protected FogOfWar[,] SightMap = new FogOfWar[0, 0];
+    public int ViewRadius = 8;
+    public bool UseVisionCircle = true;
 
-    public List<DungeonCreature> VisibleMonsters { get; } = new();
+    public readonly List<DungeonCreature> VisibleMonsters = new();
+
+    public int FrozenTurnCount;
+
+    public int SeenCount = 0;
 
     public DungeonCreature(DungeonCreatureDef def, Vector2? position, string direction, float? rotation = null, Vector2? size = null, string layer = "")
         : base(def, position, direction, rotation, size, layer)
@@ -28,8 +32,17 @@ public abstract class DungeonCreature : DungeonObject
 
     public override void PostUpdate(MooseGame game, GameTime gameTime)
     {
+        FrozenTurnCount--;
         RebuildSightMap((game as DungeonGame)!);
         base.PostUpdate(game, gameTime);
+    }
+
+    public virtual void ResetVision()
+    {
+        var dungeonGame = DungeonGame.Instance;
+        VisibleMonsters.Clear();
+        SightMap = new FogOfWar[dungeonGame.DungeonSize, dungeonGame.DungeonSize];
+        UseVisionCircle = true;
     }
 
     protected virtual void SetTileVisible(DungeonGame dungeonGame, int x, int y)
@@ -39,6 +52,9 @@ public abstract class DungeonCreature : DungeonObject
     {
         var (dungeonWidth, dungeonHeight) = (dungeonGame.DungeonSize, dungeonGame.DungeonSize);
 
+        if (SightMap.Length == 0)
+            ResetVision();
+
         for (var x = 0; x < dungeonWidth; x++)
             for (var y = 0; y < dungeonHeight; y++)
                 SightMap[x, y] = 
@@ -46,7 +62,7 @@ public abstract class DungeonCreature : DungeonObject
                     ? FogOfWar.Half 
                     : SightMap[x, y];
 
-        var visibleMonsters = new List<(float, DungeonCreature)>();
+        var visibleMonsters = new List<(float distance, DungeonCreature creature)>();
         var cell = GetCell();
         var (creatureX, creatureY) = cell;
         SetTileVisible(dungeonGame, creatureX, creatureY);
@@ -63,10 +79,11 @@ public abstract class DungeonCreature : DungeonObject
                 SetTileVisible(dungeonGame, posX, posY);
 
                 var monster = dungeonGame.GetMonster(posX, posY);
-                if (monster != null && monster != this)
+                if (monster != null && monster != this && !visibleMonsters.Any(t => t.creature == monster))
                 {
                     var distance = DistanceSquaredTo(monster);
                     visibleMonsters.Add((distance, monster));
+                    monster.SeenCount++;
                 }
                 else if (dungeonGame.GetDungeonTile(posX, posY).BlocksSight())
                     break;

@@ -73,12 +73,12 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
         => this.AddTween(o => o.Position, toValue, duration, delay, onEnd, onBegin, 
                 repeatCount, repeatDelay, autoReverse, easingFunction);
 
-    public Tween TweenToSize(Vector2 toValue,
+    public Tween TweenToScale(Vector2 toValue,
         float duration, float delay = 0f,
         Action<Tween>? onEnd = null, Action<Tween>? onBegin = null,
         int repeatCount = 0, float repeatDelay = 0f,
         bool autoReverse = false, Func<float, float>? easingFunction = null)
-        => this.AddTween(o => o.WorldSize, toValue, duration, delay, onEnd, onBegin, 
+        => this.AddTween(o => o.Scale, toValue, duration, delay, onEnd, onBegin, 
             repeatCount, repeatDelay, autoReverse, easingFunction);
 
     public Tween TweenToRotation(float toValue,

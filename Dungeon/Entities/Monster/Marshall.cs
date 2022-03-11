@@ -8,20 +8,22 @@ public class Marshall : DungeonMonster
 
     }
 
-    protected override void MonsterUpdate(DungeonGame dungeonGame, GameTime gameTime)
+    protected override void MonsterUpdate(GameTime gameTime)
     {
+        if (SeenCount == 0)
+            return;
         var myCell = GetCell();
-        var path = ParentMap.FindCellPath(myCell, dungeonGame.Player.GetCell());
+        var path = ParentMap.FindCellPath(myCell, game.Player.GetCell());
         if (!path.Any())
             return;
         var cell = path.FirstOrDefault();
         var nextMove = DirectionFrom(myCell - cell);
         if (nextMove == null)
             return;
-        ProcessMove(dungeonGame, nextMove);
+        ProcessMove(nextMove);
     }
 
-    private void ProcessMove(DungeonGame dungeonGame, string move)
+    private void ProcessMove(string move)
     {
         var moveDelta = Vector2.Zero;
         var newDirection = "";
@@ -53,8 +55,8 @@ public class Marshall : DungeonMonster
         if (moveDelta != Vector2.Zero)
         {
             var newcell = Position / 16 + moveDelta;
-            var tile = dungeonGame.GetDungeonTile((int)newcell.X, (int)newcell.Y);
-            var playerCell = dungeonGame.Player.GetCell();
+            var tile = game.GetDungeonTile((int)newcell.X, (int)newcell.Y);
+            var playerCell = game.Player.GetCell();
             if (!tile.IsBlocking() && playerCell != newcell.ToPoint())
             {
                 AnimationPosition = Vector2.Zero;

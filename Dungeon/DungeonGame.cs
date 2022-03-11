@@ -111,7 +111,7 @@ public class DungeonGame : MooseGame
         DungeonMap = new DungeonMap(DungeonSize, DungeonSize);
         ActiveMaps.Add(DungeonMap);
 
-        ZoomIn(2);
+        MainCamera.Zoom = 3f;
         AddDef(PlayerDef);
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
         FallingTextFont = ContentManager.BakeFont("Border_Basic_Monospaced", 24);
@@ -233,10 +233,10 @@ public class DungeonGame : MooseGame
 
     protected override void PreUpdate(GameTime gameTime)
     {
-        MainCamera.Position = Player.Position - ScreenSize / MainCamera.Zoom / 2;
+        MainCamera.Position = Player.Position - ScreenSize / MainCamera.Zoom / 2f;
         MainCamera.Position = MainCamera.Position with
         {
-            X = MainCamera.Position.X - 320 / 4
+            X = MainCamera.Position.X - 320f / 4f
         };
 
         if (WasKeyJustPressed(Keys.D))
@@ -280,6 +280,13 @@ public class DungeonGame : MooseGame
             Player.SelectedSpell = 4;
         else if (WasKeyJustPressed(Keys.D6) && Player.KnownSpells.Count > 5)
             Player.SelectedSpell = 5;
+        else if (WasKeyJustPressed(Keys.Z))
+        {
+            if (MainCamera.Zoom == 3)
+                Tweener.TweenTo(MainCamera, m => m.Zoom, 2, .35f);
+            else if (MainCamera.Zoom == 2)
+                Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .35f);
+        }
 
         CanPlay = ViewingMap == 0 && !ReadObjects.OfType<DungeonObject>().Any(o => o.CurrentlyBlockingInput);
 

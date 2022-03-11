@@ -26,7 +26,13 @@ public class MiniMapRenderer : SpriteBatchAutoTileTextureRenderer<MiniMapTile>
 
     public override void DrawSprite(int spriteIndex, MiniMapTile tile, int i, int j, ITileLayer<MiniMapTile> layer, Vector2 drawOffset, float layerDepth = 1)
     {
+        var rect = GetDestinationRectangle(i, j, drawOffset);
+        if (rect == null)
+            return;
+
         if (DungeonPlayer.Instance.GetMiniMapTile(i, j) != MiniMapTile.None)
             base.DrawSprite(spriteIndex, tile, i, j, layer, drawOffset, layerDepth);
+        if (DungeonPlayer.Instance.CanSee(i, j) == FogOfWar.Half)
+            SpriteBatch.FillRectangle(rect.Value, Color.Black.HalveAlphaChannel(), 1f);
     }
 }

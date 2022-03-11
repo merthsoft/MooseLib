@@ -42,9 +42,6 @@ public class DungeonMap : BaseMap
     DungeonTile RandomFloor()
         => (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.FLOOR_START, (int)DungeonTile.FLOOR_END);
 
-    DungeonTile RandomWall()
-        => (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.WALL_START, (int)DungeonTile.WALL_END);
-
     DungeonTile NeighborFloor(Map<DungeonCell> map, int x, int y)
     {
         var spot = map.GetCell(x - 1, y)?.Tile;
@@ -61,109 +58,6 @@ public class DungeonMap : BaseMap
             return spot.Value;
 
         return RandomFloor();
-    }
-
-    DungeonTile NeighborWall(Map<DungeonCell> map, int x, int y)
-    {
-        var spot = map.GetCell(x - 1, y);
-        if (spot != null && spot.Terrain == TerrainType.Floor)
-            return spot.Tile;
-        spot = map.GetCell(x + 1, y);
-        if (spot != null && spot.Terrain == TerrainType.Floor)
-            return spot.Tile;
-        spot = map.GetCell(x, y - 1);
-        if (spot != null && spot.Terrain == TerrainType.Floor)
-            return spot.Tile;
-        spot = map.GetCell(x, y + 1);
-        if (spot != null && spot.Terrain == TerrainType.Floor)
-            return spot.Tile;
-
-        return RandomFloor();
-    }
-
-    int EigthWayNeighbors(Map<DungeonCell> map, int x, int y)
-    {
-        var count = 0;
-        var spot = map.GetCell(x - 1, y)?.Terrain;
-        if (spot.HasValue && spot.Value == TerrainType.Floor)
-            count++;
-        
-        spot = map.GetCell(x + 1, y)?.Terrain;
-        if (spot.HasValue && spot.Value == TerrainType.Floor)
-            count++;
-        
-        spot = map.GetCell(x, y - 1)?.Terrain;
-        if (spot.HasValue && spot.Value == TerrainType.Floor)
-            count++;
-
-        spot = map.GetCell(x, y + 1)?.Terrain;
-        if (spot.HasValue && spot.Value == TerrainType.Floor)
-            count++;
-
-        //spot = map.GetCell(x+1, y + 1)?.Terrain;
-        //if (spot.HasValue && spot.Value == TerrainType.Floor)
-        //    count++;
-
-        //spot = map.GetCell(x-1, y + 1)?.Terrain;
-        //if (spot.HasValue && spot.Value == TerrainType.Floor)
-        //    count++;
-
-        //spot = map.GetCell(x-1, y - 1)?.Terrain;
-        //if (spot.HasValue && spot.Value == TerrainType.Floor)
-        //    count++;
-
-        //spot = map.GetCell(x+1, y - 1)?.Terrain;
-        //if (spot.HasValue && spot.Value == TerrainType.Floor)
-        //    count++;
-
-        return count;
-    }
-
-    private IEnumerable<Rectangle> FindRooms(Map<DungeonCell> map)
-    {
-        var rooms = new List<Rectangle>();
-        var visitedCells = new HashSet<Point>();
-        
-        for (var x = 0; x <= map.Width; x++)
-            for (var y = 0; y <= map.Height; y++)
-            {
-                var cell = new Point(x, y);
-                if (visitedCells.Contains(cell))
-                    continue;
-                visitedCells.Add(cell);
-
-                var numNeighbors = EigthWayNeighbors(map, x, y);
-                if (numNeighbors >= 4)
-                {
-                    var xTrace = x + 1;
-                    while (map.GetCell(xTrace, y) != null && map.GetCell(xTrace, y).Terrain == TerrainType.Floor)
-                    {
-                        visitedCells.Add(cell);
-                        xTrace++;
-                    }
-
-                    if (map.GetCell(xTrace, y) == null)
-                        xTrace--;
-
-                    var yTrace = y + 1;
-                    while (map.GetCell(x, yTrace) != null && map.GetCell(x, yTrace).Terrain == TerrainType.Floor)
-                    {
-                        visitedCells.Add(cell);
-                        yTrace++;
-                    }
-
-                    if (map.GetCell(x, yTrace) == null)
-                        yTrace--;
-
-                    for (var i = x; i < xTrace; i++)
-                        for (var j = y; j < yTrace; j++)
-                            visitedCells.Add(new Point(i, j));
-
-                    rooms.Add(new(x - 1, y - 1, xTrace - x + 2, yTrace - y + 2));
-                }
-            }
-
-        return rooms.OrderBy(m => m.Left).ThenBy(m => m.Top);
     }
 
     public void GenerateDungeon(int? seed = null)
@@ -187,12 +81,11 @@ public class DungeonMap : BaseMap
         dungeonGame.Player.ResetVision();
         GeneratedMap = map;
 
-        foreach (var room in FindRooms(map))
+        foreach (var room in map.Rooms)
         {
-            Rooms.Add(room);
-            OverlayWalls(DungeonTile.BrickWall, room.Left, room.Top, room.Size.X, room.Size.Y);
+            Rooms.Add(new (room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1));
+            OverlayWalls(DungeonTile.BrickWall, room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1);
         }
-
 
         for (var i = 1; i < Width - 1; i++)
             for (var j = 1; j < Height - 1; j++)
@@ -213,7 +106,6 @@ public class DungeonMap : BaseMap
                 SetDungeonTile(i, j, tile);
             }
         var firstRoom = Rooms.First();
-        //dungeonGame.SpawnMonster(MonsterTile.Marshall, firstRoom.Bottom - 1, firstRoom.Right - 1);
 
         var x = firstRoom.X + 1;
         var y = firstRoom.Y + 1;
@@ -224,6 +116,7 @@ public class DungeonMap : BaseMap
         x = ranomRoom.X + 1;
         y = ranomRoom.Y + 1;
         SetDungeonTile(x + 1, y + 1, DungeonTile.StairsDown);
+        dungeonGame.SpawnMonster(MonsterTile.Marshall, x, y);
     }
 
     public void GenerateTown(int numRooms, (int, int)[] roomSizes, int? seed = null)

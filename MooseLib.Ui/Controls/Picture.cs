@@ -1,6 +1,6 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
-public class Picture : Control, IDisposable
+public class Picture : Control
 {
     public Texture2D Texture { get; set; }
 
@@ -27,5 +27,4 @@ public class Picture : Control, IDisposable
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
         => spriteBatch.Draw(Texture, Position + parentOffset, SourceRectangle, Color, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
-    public void Dispose() { }//((IDisposable)Texture).Dispose();
 }

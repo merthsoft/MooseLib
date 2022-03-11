@@ -16,7 +16,6 @@ public class SpellBookBar : Panel
         this.AddActionLabel(0, -75, "Spells", (_, __) => { });
 
         spellPanel = this.AddPanel(0, 75, 320, Height, BackgroundDrawingMode.None);
-        RebuildSpells();
     }
 
     private void RebuildSpells()
