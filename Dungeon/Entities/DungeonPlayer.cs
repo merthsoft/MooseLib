@@ -74,7 +74,7 @@ public class DungeonPlayer : DungeonCreature
         Mana = 10;
         Gold = 0;
 
-    }
+    } 
 
     public void DrawCursor(MooseGame mooseGame, Vector2 position, SpriteBatch spriteBatch)
     {        
