@@ -38,7 +38,7 @@ public class Button : Control
         return Theme.CalculateNewSize(new(w, h));
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 drawOffset, GameTime gameTime)
     {
         switch (BackgroundDrawingMode)
         {

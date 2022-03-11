@@ -20,6 +20,6 @@ public class Line : Control
         Thickness = thickness;
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
         => spriteBatch.DrawLine(Position + parentOffset, End + parentOffset, Color ?? Theme.ControlBorderColor, Thickness);
 }

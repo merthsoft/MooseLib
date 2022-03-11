@@ -105,7 +105,7 @@ public class Panel : Control, IControlContainer
         }
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
         if (Hidden)
             return;
@@ -115,6 +115,6 @@ public class Panel : Control, IControlContainer
 
         foreach (var c in Controls)
             if (!c.Hidden)
-                c.Draw(spriteBatch, position);
+                c.Draw(spriteBatch, position, gameTime);
     }
 }

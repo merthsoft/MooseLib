@@ -39,7 +39,7 @@ public class Slider : Control
         return new(width, height);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
         var width = WidthOverride ?? (Max - Min + 2);
         var height = Rectangle.Height;

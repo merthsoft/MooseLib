@@ -286,7 +286,7 @@ public class DungeonGame : MooseGame
     {
         SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
 
-        UxWindow.Draw(SpriteBatch);
+        UxWindow.Draw(SpriteBatch, gameTime);
 
         SpriteBatch.DrawString(DebugFont,
             $"FPS: {FramesPerSecondCounter.FramesPerSecond}",

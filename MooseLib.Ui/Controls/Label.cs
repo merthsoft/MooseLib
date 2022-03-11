@@ -52,7 +52,7 @@ public class Label : Control
             ? MeasureString(Text ?? "")
             : new(renderedTexture?.Width ?? 0, renderedTexture?.Height ?? 0);
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
         if (Text == "")
             return;

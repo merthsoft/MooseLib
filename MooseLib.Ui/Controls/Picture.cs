@@ -25,7 +25,7 @@ public class Picture : Control, IDisposable
     public Picture(IControlContainer container, float x, float y, Texture2D texture) : base(container, x, y)
         => Texture = texture;
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
         => spriteBatch.Draw(Texture, Position + parentOffset, SourceRectangle, Color, Rotation, Vector2.Zero, Scale, SpriteEffects, 1);
     public void Dispose() { }//((IDisposable)Texture).Dispose();
 }

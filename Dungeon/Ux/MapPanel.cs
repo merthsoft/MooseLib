@@ -21,11 +21,11 @@ public class MapPanel : Panel
         NormalPosition = Position;
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
         mapPicture.Scale = new(Scale, Scale);
         mapCornerPicture.Scale = new(Scale, Scale);
-        base.Draw(spriteBatch, parentOffset);
+        base.Draw(spriteBatch, parentOffset, gameTime);
 
         var cornerPosition = Position + parentOffset;
         var position = cornerPosition + new Vector2(10*Scale, 10*Scale);
@@ -44,7 +44,7 @@ public class MapPanel : Panel
                         0, Vector2.Zero, Scale, SpriteEffects.None, 1);
             }
 
-        mapCornerPicture.Draw(spriteBatch, cornerPosition);
+        mapCornerPicture.Draw(spriteBatch, cornerPosition, gameTime);
     }
 
     public override void Update(UpdateParameters updateParameters) {

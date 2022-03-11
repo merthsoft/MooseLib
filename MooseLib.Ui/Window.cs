@@ -202,7 +202,7 @@ public class Window : IControlContainer, ITweenOwner
     public virtual void PreControlUpdate(UpdateParameters updateParameters) { }
     public virtual void PostControlUpdate(UpdateParameters updateParameters) { }
 
-    public virtual void Draw(SpriteBatch spriteBatch)
+    public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         if (Hidden)
             return;
@@ -211,9 +211,9 @@ public class Window : IControlContainer, ITweenOwner
 
         foreach (var c in Controls)
             if (!c.Hidden)
-                c.Draw(spriteBatch, pos);
+                c.Draw(spriteBatch, pos, gameTime);
 
-        Prompt?.Draw(spriteBatch, pos);
+        Prompt?.Draw(spriteBatch, pos, gameTime);
 
         if (Theme.Cursor != null)
         {

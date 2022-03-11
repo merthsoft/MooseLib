@@ -17,7 +17,7 @@ public class Rect : Control
         Thickness = thickness;
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
         if (DrawFill)
             spriteBatch.FillRectangle(Position + parentOffset, Size, Theme.ControlBackgroundColor);

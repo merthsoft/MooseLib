@@ -35,7 +35,7 @@ public class TextBox : Control
     public override Vector2 CalculateSize()
         => new(Width, MeasureString("M").Y + 1);
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
         var backgroundColor = Theme.ResolveBackgroundColor(UpdateParameters, Enabled);
         var borderColor = Theme.ControlBorderColor;
