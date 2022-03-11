@@ -1,6 +1,5 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Tiles;
-using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Entities;
 
@@ -55,7 +54,7 @@ public class DungeonPlayer : DungeonCreature
     {
         var dungeonGame = DungeonGame.Instance;
         VisibleMonsters.Clear();
-        SightMap = new bool[dungeonGame.DungeonSize, dungeonGame.DungeonSize];
+        SightMap = new FogOfWar[dungeonGame.DungeonSize, dungeonGame.DungeonSize];
         MiniMap = new MiniMapTile[dungeonGame.DungeonSize, dungeonGame.DungeonSize];
         for (var i = 0; i < dungeonGame.DungeonSize; i++)
             for (var j = 0; j < dungeonGame.DungeonSize; j++)
@@ -70,14 +69,14 @@ public class DungeonPlayer : DungeonCreature
         var dungeonGame = (mooseGame as DungeonGame)!;
         
         var (x, y) = ((int)position.X / 16, (int)position.Y / 16);
-        if (dungeonGame.GetMonsterTile(x, y) > MonsterTile.None && CanMove && CanSee(x, y))
+        if (dungeonGame.GetMonsterTile(x, y) > MonsterTile.None && CanMove && CanSee(x, y) == FogOfWar.None)
         { 
             position += new Vector2(8, 8);
             spriteBatch.Draw(dungeonGame.CrosshairTexture, position, null,
                 CrosshairColor, CrosshairRotation,
                 dungeonGame.CrosshairOrigin, CrosshairScale,
                 SpriteEffects.None, 1f);
-        } else if (!dungeonGame.GetDungeonTile(x, y).IsBlocking() && CanMove && CanSee(x, y))
+        } else if (!dungeonGame.GetDungeonTile(x, y).IsBlocking() && CanMove && CanSee(x, y) != FogOfWar.Full)
         {
             spriteBatch.FillRect(position, 16, 16, Color.Cyan with { A = 100 });
             var path = ParentMap.FindCellPath(GetCell(), new((int)dungeonGame.WorldMouse.X / 16, (int)dungeonGame.WorldMouse.Y / 16));
@@ -185,7 +184,7 @@ public class DungeonPlayer : DungeonCreature
             {
                 dungeonGame.Cast(KnownSpells[SelectedSpell], this, dungeonGame.WorldMouse);
             }
-            else if (dungeonGame.WasLeftMouseJustPressed() && !dungeonGame.GetDungeonTile(x, y).IsBlocking() && CanSee(x, y))
+            else if (dungeonGame.WasLeftMouseJustPressed() && !dungeonGame.GetDungeonTile(x, y).IsBlocking() && CanSee(x, y) != FogOfWar.Full)
             {
                 var path = ParentMap.FindCellPath(GetCell(), new((int)dungeonGame.WorldMouse.X / 16, (int)dungeonGame.WorldMouse.Y / 16));
                 if (path.Any())
@@ -194,7 +193,7 @@ public class DungeonPlayer : DungeonCreature
                     Direction = null;
                     foreach (var p in path)
                     {
-                        if (!CanSee(p.X, p.Y))
+                        if (CanSee(p.X, p.Y) == FogOfWar.Full)
                             break;
 
                         var diff = lastCell - p;
@@ -279,10 +278,7 @@ public class DungeonPlayer : DungeonCreature
     }
 
     public void LearnSpell(SpellDef spellDef)
-    {
-        KnownSpells.Add(spellDef);
-        SelectedSpell = KnownSpells.Count - 1;
-    }
+        => KnownSpells.Add(spellDef);
 
     public MiniMapTile GetMiniMapTile(int i, int j)
     {

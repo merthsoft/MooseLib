@@ -23,6 +23,7 @@ public record TiledMooseTileLayer(TiledMapTileLayer Layer) : ITileLayer<TiledMap
     public int Height => Layer.Height;
 
     public Vector2 DrawOffset { get; set; }
+    public Vector2 DrawSize { get; set; }
 
     public TiledMapTile GetTileValue(int x, int y)
         => Layer.GetTile((ushort)x, (ushort)y);

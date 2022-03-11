@@ -7,7 +7,7 @@ public abstract class DungeonCreature : DungeonObject
     public const string Down = "Down";
 
     public DungeonCreatureDef DungeonCreatureDef { get; }
-    protected bool[,] SightMap { get; set; } = new bool[0, 0];
+    protected FogOfWar[,] SightMap { get; set; } = new FogOfWar[0, 0];
     public int ViewRadius { get; set; } = 8;
     public bool UseVisionCircle { get; set; } = true;
 
@@ -33,18 +33,25 @@ public abstract class DungeonCreature : DungeonObject
     }
 
     protected virtual void SetTileVisible(DungeonGame dungeonGame, int x, int y)
-        => SightMap[x, y] = true;
+        => SightMap[x, y] = FogOfWar.None;
 
     public virtual void RebuildSightMap(DungeonGame dungeonGame)
     {
         var (dungeonWidth, dungeonHeight) = (dungeonGame.DungeonSize, dungeonGame.DungeonSize);
-        SightMap = new bool[dungeonWidth, dungeonHeight];
+
+        for (var x = 0; x < dungeonWidth; x++)
+            for (var y = 0; y < dungeonHeight; y++)
+                SightMap[x, y] = 
+                    SightMap[x, y] == FogOfWar.None 
+                    ? FogOfWar.Half 
+                    : SightMap[x, y];
+
         var visibleMonsters = new List<(float, DungeonCreature)>();
         var cell = GetCell();
         var (creatureX, creatureY) = cell;
         SetTileVisible(dungeonGame, creatureX, creatureY);
 
-        for (var d = 0f; d < MathF.PI * 2; d += .01f)
+        for (var d = 0f; d < MathF.PI * 2; d += .1f)
             for (var delta = 1f; delta < ViewRadius; delta += 1)
             {
                 var posX = (creatureX + delta * MathF.Cos(d)).Round();
@@ -69,16 +76,15 @@ public abstract class DungeonCreature : DungeonObject
         VisibleMonsters.AddRange(visibleMonsters.OrderBy(v => v.Item1).Select(v => v.Item2));
     }
 
-    public bool CanSee(int i, int j)
-        => ParentMap.CellIsInBounds(i, j) && (!UseVisionCircle || SightMap[i, j]);
+    public FogOfWar CanSee(int i, int j)
+        => !ParentMap.CellIsInBounds(i, j)
+            ? FogOfWar.Full
+            : UseVisionCircle
+                ? SightMap[i, j]
+                : FogOfWar.None;
 
-    public bool CanSee(Vector2 worldPosition)
-    {
-        if (ParentMap.WorldIsInBounds(worldPosition))
-            return !UseVisionCircle || SightMap[(int)worldPosition.X / ParentMap.TileWidth, (int)worldPosition.Y / ParentMap.TileHeight];
-        else
-            return false;
-    }
+    public FogOfWar CanSee(Vector2 worldPosition)
+        => CanSee((int)(worldPosition.X / 16), (int)(worldPosition.Y / 16));
 
     protected static string? DirectionFrom(Point diff) => (diff.X, diff.Y) switch
     {

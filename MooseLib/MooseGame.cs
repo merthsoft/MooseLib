@@ -76,6 +76,9 @@ public abstract class MooseGame : Game
         Graphics = new GraphicsDeviceManager(this);
     }
 
+    public void SetSeed(int seed)
+        => Random = new Random(seed);
+
     protected virtual StartupParameters Startup()
         => new()
         {

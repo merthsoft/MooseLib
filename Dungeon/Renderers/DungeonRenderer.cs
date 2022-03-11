@@ -4,7 +4,7 @@ using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Renderers;
-public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
+public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer<DungeonTile>
 {
     private readonly DungeonPlayer player;
 
@@ -13,20 +13,26 @@ public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer
         this.player = player;
     }
 
-    protected override int GetNeighborValue(int _tile, int x, int y, ITileLayer<int> layer, int neighborValue)
+    protected override int GetNeighborValue(DungeonTile _tile, int x, int y, ITileLayer<DungeonTile> layer, int neighborValue)
     {
         if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
             return 0;
 
-        if (layer.GetTileValue(x, y) < (int)DungeonTile.WALL_START)
+        if (layer.GetTileValue(x, y) < DungeonTile.WALL_START)
             return 0;
 
         return neighborValue;
     }
 
-    public override void DrawSprite(int spriteIndex, int i, int j, ITileLayer<int> layer,  Vector2 drawOffset, float layerDepth = 1)
+    public override void DrawSprite(int spriteIndex, DungeonTile tile, int i, int j, ITileLayer<DungeonTile> layer,  Vector2 drawOffset, float layerDepth = 1)
     {
-        if (player.CanSee(i, j))
-            base.DrawSprite(spriteIndex, i, j, layer, drawOffset, layerDepth);
+        var rect = GetDestinationRectangle(i, j, drawOffset);
+        if (rect == null)
+            return;
+
+        if (player.CanSee(i, j) != FogOfWar.Full)
+            base.DrawSprite(spriteIndex, tile, i, j, layer, drawOffset, layerDepth);
+        if (player.CanSee(i, j) == FogOfWar.Half)
+            SpriteBatch.FillRectangle(rect.Value, Color.Black.HalveAlphaChannel(), 1f);
     }
 }

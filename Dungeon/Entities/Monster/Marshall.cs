@@ -1,5 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.Interface;
-
+﻿
 namespace Merthsoft.Moose.Dungeon.Entities.Monster;
 
 public class Marshall : DungeonMonster

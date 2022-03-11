@@ -13,6 +13,7 @@ public class ObjectLayer : IObjectLayer
     public string Name { get; }
     public bool IsHidden { get; set; } = false;
     public Vector2 DrawOffset { get; set; }
+    public Vector2 DrawSize { get; set; }
 
     public ObjectLayer(string name)
         => Name

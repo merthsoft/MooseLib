@@ -54,7 +54,7 @@ public class SpellBookBar : Panel
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (!spellList.SequenceEqual(player.KnownSpells) || true)
+        if (!spellList.SequenceEqual(player.KnownSpells))
             RebuildSpells();
         base.Update(updateParameters);
     }

@@ -15,7 +15,7 @@ public class DungeonObjectRenderer : SpriteBatchRenderer
             throw new Exception("Object layer expected");
 
         foreach (var obj in objectLayer)
-            if (dungeonGame.Player.CanSee(obj.Position))
+            if (dungeonGame.Player.CanSee(obj.Position) == Entities.FogOfWar.None)
                 obj.Draw(game, gameTime, SpriteBatch);
     }
 }

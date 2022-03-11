@@ -2,11 +2,11 @@
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
-public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
+public class SpriteBatchAutoTileTextureRenderer<TTile> : SpriteBatchTextureRenderer<TTile> where TTile : struct
 {
-    public Dictionary<int, Texture2D> AutoTileTextureMap { get; } = new();
+    public Dictionary<TTile, Texture2D> AutoTileTextureMap { get; } = new();
 
-    public Texture2D this[int index]
+    public Texture2D this[TTile index]
     {
         get => AutoTileTextureMap[index];
         set => AutoTileTextureMap[index] = value;
@@ -18,29 +18,29 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
         
     }
 
-    protected virtual int GetTileIndex(int tile, int neighborCount)
+    protected virtual int GetTileIndex(TTile tile, int neighborCount)
         => neighborCount;
 
-    protected virtual int CountNeighbors(int tile, int x, int y, ITileLayer<int> layer)
+    protected virtual int CountNeighbors(TTile tile, int x, int y, ITileLayer<TTile> layer)
         => GetNeighborValue(tile, x +  0, y + -1, layer, 1) 
          + GetNeighborValue(tile, x + -1, y +  0, layer, 2) 
          + GetNeighborValue(tile, x +  1, y +  0, layer, 4) 
          + GetNeighborValue(tile, x +  0, y +  1, layer, 8);
 
-    protected virtual int GetNeighborValue(int tile, int x, int y, ITileLayer<int> layer, int neighborValue)
+    protected virtual int GetNeighborValue(TTile tile, int x, int y, ITileLayer<TTile> layer, int neighborValue)
     {
         if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
             return 0;
 
-        if (Convert.ToInt32(layer.GetTileValue(x, y)) != tile)
+        if (EqualityComparer<TTile>.Default.Equals(tile, layer.GetTileValue(x, y)))
             return 0;
 
         return neighborValue;
     }
 
-    public override void DrawSprite(int spriteIndex, int i, int j, ITileLayer<int> layer, Vector2 drawOffset, float layerDepth = 1)
-    { 
-        var texture = AutoTileTextureMap.GetValueOrDefault(spriteIndex);
+    public override void DrawSprite(int spriteIndex, TTile tile, int i, int j, ITileLayer<TTile> layer, Vector2 drawOffset, float layerDepth = 1)
+    {
+        var texture = AutoTileTextureMap.GetValueOrDefault(tile);
 
         var destRect = GetDestinationRectangle(i, j, layer.DrawOffset + drawOffset);
         if (destRect == null)
@@ -56,9 +56,9 @@ public class SpriteBatchAutoTileTextureRenderer : SpriteBatchTextureRenderer
             return;
         }
 
-        var neighborCount = CountNeighbors(spriteIndex, i, j, layer);
+        var neighborCount = CountNeighbors(tile, i, j, layer);
 
-        var tileIndex = GetTileIndex(spriteIndex, neighborCount);
+        var tileIndex = GetTileIndex(tile, neighborCount);
         SpriteBatch.Draw(texture,
                 position: destRect.Value.Position, scale: DrawScale,
                 sourceRectangle: GetSourceRectangle(tileIndex, texture),

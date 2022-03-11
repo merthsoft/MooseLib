@@ -1,6 +1,5 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.MooseEngine.GameObjects;
-using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Entities;
 

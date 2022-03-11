@@ -2,7 +2,7 @@
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
-public class SpriteBatchTextureRenderer : SpriteBatchRenderer
+public class SpriteBatchTextureRenderer<TTile> : SpriteBatchRenderer where TTile : struct
 {
     protected Texture2D SpriteSheet { get; }
 
@@ -27,19 +27,20 @@ public class SpriteBatchTextureRenderer : SpriteBatchRenderer
 
     public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
     {
-        if (layer is not ITileLayer<int> tileLayer)
-            throw new Exception("TileLayer<int> layer expected");
+        if (layer is not ITileLayer<TTile> tileLayer)
+            throw new Exception("TileLayer<TTile> layer expected");
 
         for (int i = 0; i < tileLayer.Width; i++)
             for (int j = 0; j < tileLayer.Height; j++)
             {
                 var tile = tileLayer.GetTileValue(i, j);
-                if (tile >= 0)
-                    DrawSprite(tile, i, j, tileLayer, drawOffset);
+                int tileValue = (int)Enum.ToObject(typeof(TTile), tile);
+                if (tileValue >= 0)
+                    DrawSprite(tileValue, tile, i, j, tileLayer, drawOffset);
             }
     }
 
-    public virtual void DrawSprite(int spriteIndex, int i, int j, ITileLayer<int> layer, Vector2 drawOffset, float layerDepth = 1f)
+    public virtual void DrawSprite(int spriteIndex, TTile tile, int i, int j, ITileLayer<TTile> layer, Vector2 drawOffset, float layerDepth = 1f)
     {
         var destRect = GetDestinationRectangle(i, j, layer.DrawOffset + drawOffset);
         if (destRect != null)

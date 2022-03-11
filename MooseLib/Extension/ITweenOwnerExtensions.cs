@@ -1,7 +1,8 @@
 ﻿using MonoGame.Extended.Tweening;
 using System.Linq.Expressions;
+using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.Interface;
+namespace Merthsoft.Moose.MooseEngine.Extension;
 public static class ITweenOwnerExtensions
 {
     public static Tween AddTween<TTarget, TMember>(

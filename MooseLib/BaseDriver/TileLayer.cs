@@ -14,6 +14,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     public bool IsHidden { get; set; } = false;
     public float Opacity { get; set; }
     public virtual Vector2 DrawOffset { get; set; }
+    public virtual Vector2 DrawSize { get; set; }
 
     public TTile[,] Tiles { get; }
 

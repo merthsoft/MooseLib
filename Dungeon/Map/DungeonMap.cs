@@ -14,7 +14,11 @@ public class DungeonMap : BaseMap
     public override int TileWidth => 16;
     public override int TileHeight => 16;
 
-    public Map<DungeonCell>? GeneratedMap { get; private set; }
+    public int SeedUsed;
+    public Map<DungeonCell>? GeneratedMap;
+
+    public List<Rectangle> Rooms = new();
+
 
     public DungeonMap(int width, int height)
     {
@@ -27,62 +31,217 @@ public class DungeonMap : BaseMap
 
     public void ClearDungeon()
     {
+        Rooms.Clear();
         foreach (var obj in Layers.Skip(2).OfType<ObjectLayer>().SelectMany(o => o.Objects))
             obj.Remove = true;
         
         DrawRoom(DungeonTile.StoneWall, DungeonTile.None, 0, 0, Width - 1, Height - 1);
+        SeedUsed = -1;
     }
 
-    public void GenerateRandomLevel()
+    DungeonTile RandomFloor()
+        => (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.FLOOR_START, (int)DungeonTile.FLOOR_END);
+
+    DungeonTile RandomWall()
+        => (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.WALL_START, (int)DungeonTile.WALL_END);
+
+    DungeonTile NeighborFloor(Map<DungeonCell> map, int x, int y)
+    {
+        var spot = map.GetCell(x - 1, y)?.Tile;
+        if (spot?.IsFloor() ?? false)
+            return spot.Value;
+        spot = map.GetCell(x + 1, y)?.Tile;
+        if (spot?.IsFloor() ?? false)
+            return spot.Value;
+        spot = map.GetCell(x, y - 1)?.Tile;
+        if (spot?.IsFloor() ?? false)
+            return spot.Value;
+        spot = map.GetCell(x, y + 1)?.Tile;
+        if (spot?.IsFloor() ?? false)
+            return spot.Value;
+
+        return RandomFloor();
+    }
+
+    DungeonTile NeighborWall(Map<DungeonCell> map, int x, int y)
+    {
+        var spot = map.GetCell(x - 1, y);
+        if (spot != null && spot.Terrain == TerrainType.Floor)
+            return spot.Tile;
+        spot = map.GetCell(x + 1, y);
+        if (spot != null && spot.Terrain == TerrainType.Floor)
+            return spot.Tile;
+        spot = map.GetCell(x, y - 1);
+        if (spot != null && spot.Terrain == TerrainType.Floor)
+            return spot.Tile;
+        spot = map.GetCell(x, y + 1);
+        if (spot != null && spot.Terrain == TerrainType.Floor)
+            return spot.Tile;
+
+        return RandomFloor();
+    }
+
+    int EigthWayNeighbors(Map<DungeonCell> map, int x, int y)
+    {
+        var count = 0;
+        var spot = map.GetCell(x - 1, y)?.Terrain;
+        if (spot.HasValue && spot.Value == TerrainType.Floor)
+            count++;
+        
+        spot = map.GetCell(x + 1, y)?.Terrain;
+        if (spot.HasValue && spot.Value == TerrainType.Floor)
+            count++;
+        
+        spot = map.GetCell(x, y - 1)?.Terrain;
+        if (spot.HasValue && spot.Value == TerrainType.Floor)
+            count++;
+
+        spot = map.GetCell(x, y + 1)?.Terrain;
+        if (spot.HasValue && spot.Value == TerrainType.Floor)
+            count++;
+
+        //spot = map.GetCell(x+1, y + 1)?.Terrain;
+        //if (spot.HasValue && spot.Value == TerrainType.Floor)
+        //    count++;
+
+        //spot = map.GetCell(x-1, y + 1)?.Terrain;
+        //if (spot.HasValue && spot.Value == TerrainType.Floor)
+        //    count++;
+
+        //spot = map.GetCell(x-1, y - 1)?.Terrain;
+        //if (spot.HasValue && spot.Value == TerrainType.Floor)
+        //    count++;
+
+        //spot = map.GetCell(x+1, y - 1)?.Terrain;
+        //if (spot.HasValue && spot.Value == TerrainType.Floor)
+        //    count++;
+
+        return count;
+    }
+
+    private IEnumerable<Rectangle> FindRooms(Map<DungeonCell> map)
+    {
+        var rooms = new List<Rectangle>();
+        var visitedCells = new HashSet<Point>();
+        
+        for (var x = 0; x <= map.Width; x++)
+            for (var y = 0; y <= map.Height; y++)
+            {
+                var cell = new Point(x, y);
+                if (visitedCells.Contains(cell))
+                    continue;
+                visitedCells.Add(cell);
+
+                var numNeighbors = EigthWayNeighbors(map, x, y);
+                if (numNeighbors >= 4)
+                {
+                    var xTrace = x + 1;
+                    while (map.GetCell(xTrace, y) != null && map.GetCell(xTrace, y).Terrain == TerrainType.Floor)
+                    {
+                        visitedCells.Add(cell);
+                        xTrace++;
+                    }
+
+                    if (map.GetCell(xTrace, y) == null)
+                        xTrace--;
+
+                    var yTrace = y + 1;
+                    while (map.GetCell(x, yTrace) != null && map.GetCell(x, yTrace).Terrain == TerrainType.Floor)
+                    {
+                        visitedCells.Add(cell);
+                        yTrace++;
+                    }
+
+                    if (map.GetCell(x, yTrace) == null)
+                        yTrace--;
+
+                    for (var i = x; i < xTrace; i++)
+                        for (var j = y; j < yTrace; j++)
+                            visitedCells.Add(new Point(i, j));
+
+                    rooms.Add(new(x - 1, y - 1, xTrace - x + 2, yTrace - y + 2));
+                }
+            }
+
+        return rooms.OrderBy(m => m.Left).ThenBy(m => m.Top);
+    }
+
+    public void GenerateDungeon(int? seed = null)
     {
         var dungeonGame = DungeonGame.Instance;
         ClearDungeon();
         var generator = new DungeonGenerator<DungeonCell>();
-        generator.AddMapProcessor(new DungeonMapProcessor());
+        if (seed != null)
+            SeedUsed = seed.Value;
+        else
+            SeedUsed = (int)DateTime.UtcNow.Ticks;
         var map = generator.GenerateA()
-                 .DungeonOfSize(dungeonGame.DungeonSize, dungeonGame.DungeonSize)
-                 .SomewhatSparse()
+                 .DungeonOfSize(dungeonGame.DungeonSize - 2, dungeonGame.DungeonSize - 2)
+                 .ABitRandom()
                  .ABitSparse()
                  .WithBigChanceToRemoveDeadEnds()
-                 .WithLargeNumberOfRooms()
+                 .WithRoomCountByPercentage(.9f)
                  .WithLargeSizeRooms()
+                 .WithSeed(SeedUsed)
                  .Now();
         dungeonGame.Player.ResetVision();
-        GeneratedMap = null;
+        GeneratedMap = map;
+
+        foreach (var room in FindRooms(map))
+        {
+            Rooms.Add(room);
+            OverlayWalls(DungeonTile.BrickWall, room.Left, room.Top, room.Size.X, room.Size.Y);
+        }
+
+
         for (var i = 1; i < Width - 1; i++)
             for (var j = 1; j < Height - 1; j++)
             {
                 var t = map.GetCell(i - 1, j - 1);
                 if (t == null)
                     continue;
-                SetDungeonTile(i, j, t.Tile);
-                if (t.Monster != MonsterTile.None)
-                    dungeonGame.SpawnMonster(t.Monster, i, j);
+
+                var mapTile = DungeonLayer.GetTileValue(i, j);
+                var tile = t.Terrain switch
+                {
+                    TerrainType.Door => DungeonTile.DOOR_START,
+                    TerrainType.Floor => NeighborFloor(map, i - 1, j - 1),
+                    _ => mapTile.IsWall() ? DungeonLayer.GetTileValue(i, j) : DungeonTile.StoneWall,
+                };
+
+                t.Tile = tile;
+                SetDungeonTile(i, j, tile);
             }
-        var orderedRooms = map.Rooms.OrderBy(m => m.Column).ThenBy(m => m.Row).ToList();
-        var firstRoom = orderedRooms.First();
-        
-        var x = firstRoom.Row + 1;
-        var y = firstRoom.Column + 1;
+        var firstRoom = Rooms.First();
+        //dungeonGame.SpawnMonster(MonsterTile.Marshall, firstRoom.Bottom - 1, firstRoom.Right - 1);
+
+        var x = firstRoom.X + 1;
+        var y = firstRoom.Y + 1;
         dungeonGame.Player.Position = new Vector2(x * 16, y * 16);
         SetDungeonTile(x + 1, y + 1, DungeonTile.StairsUp);
 
-        var ranomRoom = orderedRooms.TakeLast(4).ToList().RandomElement();
-        x = ranomRoom.Row + 1;
-        y = ranomRoom.Column + 1;
+        var ranomRoom = Rooms.TakeLast(4).ToList().RandomElement();
+        x = ranomRoom.X + 1;
+        y = ranomRoom.Y + 1;
         SetDungeonTile(x + 1, y + 1, DungeonTile.StairsDown);
     }
 
-    public List<Rectangle> GenerateTown(int numRooms, (int, int)[] roomSizes)
+    public void GenerateTown(int numRooms, (int, int)[] roomSizes, int? seed = null)
     {
+        if (seed != null)
+            SeedUsed = seed.Value;
+        else
+            SeedUsed = (int)DateTime.UtcNow.Ticks;
+
+        DungeonGame.Instance.SetSeed(SeedUsed);
+
         DungeonGame.Instance.Player.ResetVision();
         GeneratedMap = null;
         ClearDungeon();
-        var rooms = GenerateRooms(numRooms, roomSizes);
-        GenerateCorridors(rooms);
-        GenerateDoors(rooms);
-        HollowOutRooms(rooms);
-        return rooms;
+        Rooms.AddRange(GenerateRooms(numRooms, roomSizes));
+        GenerateCorridors(Rooms);
+        GenerateDoors(Rooms);
+        HollowOutRooms(Rooms);
     }
 
     private void HollowOutRooms(List<Rectangle> rooms)
@@ -210,6 +369,20 @@ public class DungeonMap : BaseMap
             for (var j = 0; j <= height; j++)
                 SetDungeonTile(i + x, j + y,
                     i == 0 || j == 0 || i == width || j == height ? wallTile : floorTile);
+    }
+
+    private void OverlayWalls(DungeonTile wallTile, int x, int y, int width, int height)
+    {
+        for (var i = 0; i <= width; i++)
+        {
+            SetDungeonTile(i + x, y, wallTile);
+            SetDungeonTile(i + x, y + height, wallTile);
+        }
+        for (var j = 0; j <= height; j++)
+        {
+            SetDungeonTile(x, j + y, wallTile);
+            SetDungeonTile(x + width, j + y, wallTile);
+        }
     }
 
     public void FillDungeon(DungeonTile tile)

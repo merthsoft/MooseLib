@@ -1,5 +1,5 @@
 ﻿using Merthsoft.Moose.Dungeon.Map;
-using Merthsoft.Moose.Dungeon.Renderers;
+using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Ux;
 public class MapPanel : Panel
@@ -13,7 +13,7 @@ public class MapPanel : Panel
     private readonly Picture mapCornerPicture;
     private readonly RendererHost rendererHost;
 
-    public MapPanel(IControlContainer container, float x, float y, float w, float h) : base(container, x, y, w, h)
+    public MapPanel(ILayerRenderer renderer, IControlContainer container, float x, float y, float w, float h) : base(container, x, y, w, h)
     {
         BackgroundDrawingMode = BackgroundDrawingMode.None;
         
@@ -21,8 +21,7 @@ public class MapPanel : Panel
         rendererHost = this.AddControlPassThrough(new RendererHost(this, 0, 0));
         mapCornerPicture = this.AddPicture(0, 0, DungeonGame.Instance.MapCornerTexture);
 
-        rendererHost.AddLayer(new MiniMapLayer("minimap", DungeonGame.Instance.DungeonSize, DungeonGame.Instance.DungeonSize), 
-            new MiniMapRenderer(DungeonGame.Instance.SpriteBatch, 8, 8, DungeonGame.Instance.MiniMapTiles));
+        rendererHost.AddLayer(new MiniMapLayer("minimap", DungeonGame.Instance.DungeonSize, DungeonGame.Instance.DungeonSize), renderer);
 
         NormalPosition = Position;
     }
