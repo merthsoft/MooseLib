@@ -20,6 +20,12 @@ public class TextureGameObject : GameObjectBase
     
     private HslColor colorHsl;
 
+    public float ColorA
+    {
+        get => color.A;
+        set => color.A = (byte)(value * 255);
+    }
+
     public float ColorH
     {
         get => colorHsl.H;

@@ -1,6 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.Defs;
-
-namespace Merthsoft.Moose.Dungeon.Entities;
+﻿namespace Merthsoft.Moose.Dungeon.Entities;
 
 public abstract record DungeonCreatureDef : DungeonObjectDef
 {

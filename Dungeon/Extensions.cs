@@ -17,4 +17,26 @@ public static class Extensions
 
     public static bool BlocksSight(this DungeonTile t)
         => t.IsWall() || t.IsDoor();
+
+    public static int TreasureValue(this ItemTile t)
+        => t switch
+        {
+            var x when x < ItemTile.TREASURE_START => -1,
+            var x when x >= ItemTile.TREASURE_END => -1,
+            ItemTile.SmallSilverPile => 1,
+            ItemTile.MediumSilverPile => 2,
+            ItemTile.LargeSilverPile => 3,
+            ItemTile.SmallGoldPile => 4,
+            ItemTile.MediumGoldPile => 5,
+            ItemTile.LargeGoldPile => 6,
+            ItemTile.SilverRing => 7,
+            ItemTile.BronzeRing => 8,
+            ItemTile.GoldenRing => 9,
+            ItemTile.EmeraldNecklace => 10,
+            ItemTile.FoxNecklace => 11,
+            ItemTile.TopazNecklace => 12,
+            ItemTile.DiamondNecklace => 13,
+            ItemTile.JadeNecklace => 14,
+            _ => -1
+        };
 }

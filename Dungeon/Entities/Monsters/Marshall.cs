@@ -1,7 +1,7 @@
 ﻿
-namespace Merthsoft.Moose.Dungeon.Entities.Monster;
+namespace Merthsoft.Moose.Dungeon.Entities.Monsters;
 
-public class Marshall : DungeonMonster
+public class Marshall : Monster
 {
     public Marshall(MonsterDef def, Vector2? position) : base(def, position)
     {

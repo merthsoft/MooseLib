@@ -299,4 +299,9 @@ public class DungeonPlayer : DungeonCreature
 
         return MiniMap[i, j];
     }
+    public void GiveGold(int value)
+    {
+        Gold += value;
+        game.SpawnFallingText(value.ToString(), Position, Color.Gold);
+    }
 }

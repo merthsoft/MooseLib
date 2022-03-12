@@ -21,7 +21,6 @@ public class PlayerPanel : Panel
         statsPanel.AddActionLabel(0, 0, player.Name, (_, __) => { }, 2);
         
         statsPanel.AddRectangle(0, 0, 5, 5, Color.Black);
-        statsPanel.AddLabel(0, 0, $"HP:{player.Health}", 2);
         statsPanel.AddLabel(0, 0, $"MP:{player.Mana}", 2);
         statsPanel.AddLabel(0, 0, $"GP:{player.Gold}", 2);
 

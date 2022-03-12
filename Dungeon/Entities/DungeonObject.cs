@@ -81,7 +81,7 @@ public abstract class DungeonObject : TextureGameObject
     public virtual void TakeDamage(DungeonGame game, int value)
     {
         HitPoints -= value;
-        game.SpawnFallingText(new(value.ToString(), Position, Color.Red));
+        game.SpawnFallingText(value.ToString(), Position, Color.Red);
         Color = Color.Red;
         ColorS = 1f;
         this.AddTween(p => p.ColorS, 0, .15f,
@@ -97,6 +97,6 @@ public abstract class DungeonObject : TextureGameObject
             total -= DungeonObjectDef.HitPoints - HitPoints;
             HitPoints = DungeonObjectDef.HitPoints;
         }
-        game.SpawnFallingText(new(total.ToString(), Position, Color.Green));
+        game.SpawnFallingText(total.ToString(), Position, Color.Green);
     }
 }

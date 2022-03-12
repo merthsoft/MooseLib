@@ -1,5 +1,5 @@
-﻿namespace Merthsoft.Moose.Dungeon.Entities.Monster;
-public abstract class DungeonMonster : DungeonCreature
+﻿namespace Merthsoft.Moose.Dungeon.Entities.Monsters;
+public abstract class Monster : DungeonCreature
 {
     public MonsterDef MonsterDef { get; }
     
@@ -7,7 +7,7 @@ public abstract class DungeonMonster : DungeonCreature
 
     public bool SeenYet;
 
-    public DungeonMonster(MonsterDef def, Vector2? position) : base(def, position, "Up", 0, new(16, 16), "monsters")
+    public Monster(MonsterDef def, Vector2? position) : base(def, position, "Up", 0, new(16, 16), "monsters")
     {
         MonsterDef = def;
     }

@@ -19,6 +19,7 @@ public class DungeonMap : BaseMap
 
     public List<Rectangle> Rooms = new();
 
+    public WeightedSet<ItemTile> Treasures = new();
 
     public DungeonMap(int width, int height)
     {
@@ -62,6 +63,16 @@ public class DungeonMap : BaseMap
 
     public void GenerateDungeon(int? seed = null)
     {
+        Treasures.Clear();
+
+        foreach (var t in Enum.GetValues<ItemTile>())
+        {
+            var val = t.TreasureValue();
+            if (val == -1)
+                continue;
+            Treasures.Add(t, (20 - val)*5);
+        }
+
         var dungeonGame = DungeonGame.Instance;
         ClearDungeon();
         var generator = new DungeonGenerator<DungeonCell>();
@@ -81,10 +92,19 @@ public class DungeonMap : BaseMap
         dungeonGame.Player.ResetVision();
         GeneratedMap = map;
 
+        var treasureEnumerator = Treasures.GetEnumerator();
         foreach (var room in map.Rooms)
         {
             Rooms.Add(new (room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1));
             OverlayWalls(DungeonTile.BrickWall, room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1);
+
+            while (!treasureEnumerator.MoveNext())
+                treasureEnumerator = Treasures.GetEnumerator();
+
+            var randomTreasure = treasureEnumerator.Current;
+            var middleX = room.Top + room.Size.Height / 2 + 1;
+            var middleY = room.Left + room.Size.Width / 2;
+            dungeonGame.SpawnItem(randomTreasure, middleX, middleY);
         }
 
         for (var i = 1; i < Width - 1; i++)

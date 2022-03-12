@@ -1,4 +1,5 @@
 ﻿using Roy_T.AStar.Grids;
+using System.Text;
 
 namespace Merthsoft.Moose.MooseEngine.Extension;
 
@@ -21,5 +22,17 @@ public static class Extensions
                     grid.DisconnectNode(new(x, y));
 
         return grid;
+    }
+
+    public static string InsertSpacesBeforeCapitalLetters(this string s, char replacementChar = ' ')
+    {
+        var sb = new StringBuilder(s[0].ToString());
+        foreach (var c in s.Skip(1))
+        {
+            if (char.IsUpper(c))
+                sb.Append(replacementChar);
+            sb.Append(c);
+        }
+        return sb.ToString();
     }
 }

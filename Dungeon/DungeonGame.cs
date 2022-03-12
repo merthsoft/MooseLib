@@ -1,5 +1,6 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
-using Merthsoft.Moose.Dungeon.Entities.Monster;
+using Merthsoft.Moose.Dungeon.Entities.Items;
+using Merthsoft.Moose.Dungeon.Entities.Monsters;
 using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Map;
 using Merthsoft.Moose.Dungeon.Renderers;
@@ -15,7 +16,8 @@ public class DungeonGame : MooseGame
     public static new DungeonGame Instance = null!;
 
     public SpellBook SpellBook = new();
-    public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, DungeonMonster>)> MonsterFactory = new();
+    public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, Monster>)> MonsterFactory = new();
+    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, Item>)> ItemFactory = new();
 
     public Texture2D DungeonTiles = null!;
     public Texture2D MiniMapTiles = null!;
@@ -137,6 +139,9 @@ public class DungeonGame : MooseGame
             HitPoints = 5,
         }, (def, x, y) => new Marshall(def, new Vector2(x * 16, y * 16)));
 
+        for (var item = ItemTile.TREASURE_START; item < ItemTile.TREASURE_END; item++)
+            AddItemDef(new TreasureDef(item, item.ToString().InsertSpacesBeforeCapitalLetters()), (itemDef, x, y) => new Treasure((TreasureDef)itemDef, new Vector2(x * 16, y * 16)));
+
         var fonts = new[] {
             ContentManager.BakeFont("BrightLinger", 70),
             ContentManager.BakeFont("Wizard's Manse", 42),
@@ -154,22 +159,25 @@ public class DungeonGame : MooseGame
             }, 0, 0, 320, 960) 
         { BackgroundDrawingMode = BackgroundDrawingMode.None };
 
-
         var panel = UxWindow.AddPanel(0, 0, UxWindow.Width, UxWindow.Height);
         var spellBook = panel.AddControlPassThrough(new SpellBookPanel(UxWindow, 0, 0));
         MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, spellBook.Height));
-        panel.AddControl(new PlayerPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));
-
+        panel.AddControl(new PlayerPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));   
     }
 
     protected override void PostLoad()
     {
         AddObject(Player);
-        
         DungeonMap.GenerateDungeon();
     }
 
-    private void AddMonsterDef(MonsterDef monsterDef, Func<MonsterDef, int, int, DungeonMonster> generator)
+    private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, Item> generator)
+    {
+        AddDef(itemDef);
+        ItemFactory[itemDef.Item] = (itemDef, generator);
+    }
+
+    private void AddMonsterDef(MonsterDef monsterDef, Func<MonsterDef, int, int, Monster> generator)
     {
         AddDef(monsterDef);
         MonsterFactory[monsterDef.Monster] = (monsterDef, generator);
@@ -200,14 +208,20 @@ public class DungeonGame : MooseGame
         => DungeonMap.DungeonLayer.GetTileValue(x, y);
 
     public MonsterTile GetMonsterTile(int x, int y)
-        => (DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonMonster)?.MonsterDef?.Monster ?? MonsterTile.None;
+        => (DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Monster)?.MonsterDef?.Monster ?? MonsterTile.None;
 
     public DungeonCreature? GetMonster(int x, int y)
-        => DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonMonster;
+        => DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Monster;
 
-    public DungeonMonster SpawnMonster(MonsterTile monsterTile, int x, int y)
+    public Monster SpawnMonster(MonsterTile monsterTile, int x, int y)
     {
         var (def, generator) = MonsterFactory[monsterTile];
+        return AddObject(generator(def, x, y));
+    }
+
+    public Item SpawnItem(ItemTile itemTile, int x, int y)
+    {
+        var (def, generator) = ItemFactory[itemTile];
         return AddObject(generator(def, x, y));
     }
 
@@ -217,7 +231,7 @@ public class DungeonGame : MooseGame
         if (spellDef.ManaCost > Player.Mana)
         {
             owner.RemoveSpell(spell);
-            SpawnFallingText(new("Low mana", owner.Position, Color.Black));
+            SpawnFallingText("Low mana", owner.Position, Color.Black);
             return;
         }
 
@@ -235,17 +249,21 @@ public class DungeonGame : MooseGame
             AddObject(spell);
         }
         manaDiff = Player.Mana - manaDiff;
-        SpawnFallingText(new(manaDiff.ToString(), owner.Position, Color.Blue));
+        SpawnFallingText(manaDiff.ToString(), owner.Position, Color.Blue);
     }
 
-    public void SpawnFallingText(FallingText text)
+    public FallingText SpawnFallingText(string text, Vector2 position, Color? color = null)
     {
+        var fallingText = new FallingText(text, position, color);
+
         var x = Random.Next(-1, 2);
         var y = Random.Next(-1, 2);
-        Tween(text, t => t.Position, new Vector2(1500 * x, 1500 * y), Random.NextSingle() + 1f,
-            onEnd: _ => text.Done = true,
+        Tween(fallingText, t => t.Position, new Vector2(1500 * x, 1500 * y), Random.NextSingle() + 1f,
+            onEnd: _ => fallingText.Done = true,
             easingFunction: EasingFunctions.ExponentialIn);
-        FallingTexts.Add(text);
+        FallingTexts.Add(fallingText);
+
+        return fallingText;
     }
 
     protected override void PreUpdate(GameTime gameTime)
