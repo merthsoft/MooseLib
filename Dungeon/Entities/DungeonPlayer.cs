@@ -42,8 +42,12 @@ public class DungeonPlayer : DungeonCreature
     public int MagicArmor = 0;
     public int Mana = 10;
     public int Gold = 0;
-    public bool StatsUpdated;
     public int DungeonLevel = 1;
+
+    public bool StatsUpdated;
+    public bool ItemsUpdated;
+
+    public List<Item> Items = new();
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {
@@ -335,5 +339,11 @@ public class DungeonPlayer : DungeonCreature
         StatsUpdated = true;
         
         return true;
+    }
+    
+    public void GiveItem(Item item)
+    {
+        ItemsUpdated = true;
+        Items.Add(item);
     }
 }

@@ -29,9 +29,13 @@ public class DungeonGame : MooseGame
     public Texture2D MapTexture = null!;
     public Texture2D MapCornerTexture = null!;
 
+    public Texture2D NextButtonTexture = null!;
+    public Texture2D PreviousButtonTexture = null!;
+
+    public Texture2D ItemTiles = null!;
+
     SpriteFont DebugFont = null!;
     SpriteFont FallingTextFont = null!;
-
 
     public int BaseTileWidth = 16;
     public int BaseTileHeight = 16;
@@ -101,6 +105,11 @@ public class DungeonGame : MooseGame
 
         CrosshairOrigin = new(CrosshairTexture.Width/2, CrosshairTexture.Height/2);
 
+        NextButtonTexture = ContentManager.LoadImage("NextButton");
+        PreviousButtonTexture = ContentManager.LoadImage("PreviousButton");
+
+        ItemTiles = ContentManager.LoadImage("Items");
+
         DungeonTiles = ContentManager.LoadImage("Dungeon");
         var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, DungeonTiles); 
         
@@ -165,13 +174,17 @@ public class DungeonGame : MooseGame
         var panel = UxWindow.AddPanel(0, 0, UxWindow.Width, UxWindow.Height);
         var spellBook = panel.AddControlPassThrough(new SpellBookPanel(UxWindow, 0, 0));
         MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, spellBook.Height));
-        panel.AddControl(new StatsPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));   
+        var statsPanel = panel.AddControlPassThrough(new StatsPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));
+        panel.AddControl(new ItemsPanel(UxWindow, 0, statsPanel.Y + statsPanel.Height + 10));
     }
 
     protected override void PostLoad()
     {
         AddObject(Player);
         DungeonMap.GenerateDungeon();
+
+        for (var item = ItemTile.TREASURE_START; item < ItemTile.TREASURE_END; item++)
+            Player.GiveItem(SpawnItem(item, -500, -500));
     }
 
     private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, Item> generator)

@@ -18,6 +18,7 @@ public abstract class Control : ITweenOwner
     public bool Remove { get; set; } = false;
     public bool Toggleable { get; set; }
     public bool Toggled { get; set; }
+    public bool HighlightTextureOnHover { get; set; } = true;
 
     public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
 
@@ -46,8 +47,9 @@ public abstract class Control : ITweenOwner
 
     protected virtual Color ResolvedBackgroundColor => BackgroundColor ?? Theme.ResolveBackgroundColor(UpdateParameters, Enabled);
     protected virtual Color ResolvedBorderColor => BorderColor ?? Theme.ControlBorderColor;
-    protected virtual Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, Toggled);
+    protected virtual Color ResolvedTextColor => TextColor ?? Theme.ResolveTextColor(UpdateParameters, Enabled, Toggled, HighlightTextureOnHover);
     protected virtual Color ResolvedPointerColor => Theme.ControlPointerColor;
+    protected virtual Color ResolvedMainColorShift => Theme.ResolveMainColorShift(UpdateParameters, Enabled, Toggled, HighlightTextureOnHover);
 
     public RectangleF Rectangle
     {

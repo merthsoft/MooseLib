@@ -5,6 +5,7 @@ public class Button : Control
     public string Text { get; set; }
     
     public Texture2D? Texture { get; set; }
+    
     public Rectangle? SourceRectangle { get; set; }
     public Vector2 TextureScale { get; set; } = Vector2.One;
 
@@ -20,7 +21,7 @@ public class Button : Control
 
     public override Vector2 CalculateSize()
     {
-        FontSize = MeasureString(Text.Length == 0 ? "X" : Text);
+        FontSize = MeasureString(Text.Length == 0 ? "" : Text);
         var (w, h) = BackgroundDrawingMode switch
         {
             BackgroundDrawingMode.Basic => new(WidthOverride ?? FontSize.X + 5, HeightOverride ?? FontSize.Y + 2),
@@ -57,8 +58,8 @@ public class Button : Control
     protected virtual void PreLabelDraw(SpriteBatch spriteBatch, Vector2 drawOffset)
     {
         if (Texture != null)
-            spriteBatch.Draw(Texture, Position + drawOffset + new Vector2(2f, 2f), SourceRectangle, 
-                Color.White, 0, Vector2.Zero, TextureScale, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Texture, Position + drawOffset + new Vector2(2f, 2f), SourceRectangle,
+                ResolvedMainColorShift, 0, Vector2.Zero, TextureScale, SpriteEffects.None, 1f);
     }
 
     protected virtual void DrawEmptyButton(SpriteBatch spriteBatch, Vector2 drawOffset)

@@ -5,14 +5,14 @@ public class StatsPanel : Panel
 {
     DungeonPlayer? player;
 
-    public StatsPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 320)
+    public StatsPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 155)
     {
         BackgroundDrawingMode = BackgroundDrawingMode.None;
     }
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (player == null || player.StatsUpdated || true)
+        if (player == null || player.StatsUpdated)
         {
             player = DungeonPlayer.Instance;
             player.StatsUpdated = false;

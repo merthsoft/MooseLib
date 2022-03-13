@@ -97,6 +97,16 @@ public class Theme
             (true, false, false) => TextColor
         };
 
+    public Color ResolveMainColorShift(UpdateParameters updateParameters, bool enabled, bool selected, bool highlightOnHover = true)
+        => (enabled, selected, updateParameters.MouseOver && highlightOnHover) switch
+        {
+            (false, _, _) => ControlDisabledBackgroundColor,
+            (true, true, true) => SelectedMouseOverColor,
+            (true, true, false) => SelectedColor,
+            (true, false, true) => TextMouseOverColor,
+            (true, false, false) => Color.White
+        };
+
     public Color ResolveBackgroundColor(UpdateParameters updateParameters, bool enabled, bool highlightOnHover = true)
         => (enabled, updateParameters.MouseOver && highlightOnHover) switch
         {

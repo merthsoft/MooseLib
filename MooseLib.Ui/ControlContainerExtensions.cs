@@ -88,6 +88,7 @@ public static class ControlContainerExtensions
             FontIndex = fontIndex,
             Texture = texture,
             SourceRectangle = sourceRect,
+            BackgroundDrawingMode = BackgroundDrawingMode.None
         });
 
     public static Button AddToggleButton(this IControlContainer container, float x, float y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0)
