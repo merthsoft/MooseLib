@@ -1,6 +1,7 @@
 ﻿using Karcero.Engine;
 using Karcero.Engine.Models;
 using Merthsoft.Moose.Dungeon.Entities;
+using Merthsoft.Moose.Dungeon.Entities.Items;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 
@@ -116,18 +117,22 @@ public class DungeonMap : BaseMap
         GeneratedMap = map;
 
         var treasureEnumerator = Treasures.GetEnumerator();
-        foreach (var room in map.Rooms)
+        for (var i = 0; i < map.Rooms.Count; i++)
         {
+            var room = map.Rooms[i];
             Rooms.Add(new(room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1));
             OverlayWalls(DungeonTile.BrickWall, room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1);
 
-            while (!treasureEnumerator.MoveNext())
-                treasureEnumerator = Treasures.GetEnumerator();
+            if (i != 0)
+            {
+                while (!treasureEnumerator.MoveNext())
+                    treasureEnumerator = Treasures.GetEnumerator();
 
-            var randomTreasure = treasureEnumerator.Current;
-            var middleX = room.Top + room.Size.Height / 2 + 1;
-            var middleY = room.Left + room.Size.Width / 2;
-            dungeonGame.SpawnItem(randomTreasure, middleX, middleY);
+                var randomTreasure = treasureEnumerator.Current;
+                var middleX = room.Top + room.Size.Height / 2 + 1;
+                var middleY = room.Left + room.Size.Width / 2;
+                dungeonGame.SpawnItem(randomTreasure, middleX, middleY);
+            }
         }
 
         for (var i = 1; i < Width - 1; i++)
@@ -152,8 +157,13 @@ public class DungeonMap : BaseMap
 
         var x = firstRoom.X + 1;
         var y = firstRoom.Y + 1;
+        var width = firstRoom.Width - 2;
+        var height = firstRoom.Height - 2;
         dungeonGame.Player.Position = new Vector2(x * 16, y * 16);
         SetDungeonTile(x + 1, y + 1, DungeonTile.StairsUp);
+
+        var chest = (dungeonGame.SpawnItem(ItemTile.ClosedChest, x + width / 2, y + height / 2) as Chest)!;
+        chest.Contents.AddRange(Treasures.Take(dungeonGame.Random.Next(3, 7)));
 
         var ranomRoom = Rooms.TakeLast(4).ToList().RandomElement();
         x = ranomRoom.X + 1;

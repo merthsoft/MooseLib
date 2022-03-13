@@ -17,7 +17,7 @@ public class DungeonGame : MooseGame
 
     public SpellBook SpellBook = new();
     public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, Monster>)> MonsterFactory = new();
-    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, PickableItem>)> ItemFactory = new();
+    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, Item>)> ItemFactory = new();
 
     public Texture2D DungeonTiles = null!;
     public Texture2D MiniMapTiles = null!;
@@ -143,6 +143,8 @@ public class DungeonGame : MooseGame
         for (var item = ItemTile.TREASURE_START; item < ItemTile.TREASURE_END; item++)
             AddItemDef(new TreasureDef(item, item.ToString().InsertSpacesBeforeCapitalLetters()), (itemDef, x, y) => new Treasure((TreasureDef)itemDef, new Vector2(x * 16, y * 16)));
 
+        AddItemDef(new ChestDef(), (itemDef, x, y) => new Chest((ChestDef)itemDef, new Vector2(x * 16, y * 16)));
+
         var fonts = new[] {
             ContentManager.BakeFont("BrightLinger", 70),
             ContentManager.BakeFont("Wizard's Manse", 42),
@@ -172,7 +174,7 @@ public class DungeonGame : MooseGame
         DungeonMap.GenerateDungeon();
     }
 
-    private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, PickableItem> generator)
+    private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, Item> generator)
     {
         AddDef(itemDef);
         ItemFactory[itemDef.Item] = (itemDef, generator);
@@ -214,15 +216,23 @@ public class DungeonGame : MooseGame
     public DungeonCreature? GetMonster(int x, int y)
         => DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Monster;
 
-    public Item GetItem(int x, int y) 
+    public Item? GetItem(int x, int y)
         => DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Item;
+
+    public ItemTile GetItemTile(int x, int y)
+        => (DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Item)?.ItemDef.Item ?? ItemTile.None;
+
+    public bool IsCellOccupied(int x, int y)
+        => GetDungeonTile(x, y).IsFloor()
+        && !ReadObjects.Any(o => o.InCell(x, y));
+    
     public Monster SpawnMonster(MonsterTile monsterTile, int x, int y)
     {
         var (def, generator) = MonsterFactory[monsterTile];
         return AddObject(generator(def, x, y));
     }
 
-    public PickableItem SpawnItem(ItemTile itemTile, int x, int y)
+    public Item SpawnItem(ItemTile itemTile, int x, int y)
     {
         var (def, generator) = ItemFactory[itemTile];
         return AddObject(generator(def, x, y));

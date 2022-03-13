@@ -35,4 +35,39 @@ public static class Extensions
         }
         return sb.ToString();
     }
+
+    public static IEnumerable<Point> SpiralAround(int x, int y)
+        => SpiralAround(new Point(x, y));
+
+    public static IEnumerable<Point> SpiralAround(this Point x)
+    {
+        int stepNum = 0;
+        while (true)
+            yield return x.FindSpiralStep(stepNum++);
+    }
+
+    public static Point FindSpiralStep(this Point p, int n)
+    {
+        var k = (int)MathF.Ceiling((MathF.Sqrt(n + 1) - 1) / 2);
+        var t = 2 * k + 1;
+        var m = t * t;
+        t = t - 1;
+
+        var (x, y) = p;
+
+        if (n >= m - t)
+            return new(k - (m - n) + x, -k + y);
+        else
+            m = m - t;
+
+        if (n >= m - t)
+            return new(-k + x, -k + (m - n) + y);
+        else
+            m = m - t;
+
+        if (n >= m - t)
+            return new(-k + (m - n) + x, k + y);
+
+        return new(k + x, k - (m - n - t) + y);
+    }
 }

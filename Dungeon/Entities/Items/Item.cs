@@ -12,6 +12,7 @@ public record ItemDef : DungeonObjectDef
     {
         Name = name;
         Item = item;
+        BlocksPlayer = blocksPlayer;
     }
 }
 

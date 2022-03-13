@@ -4,7 +4,7 @@ namespace Merthsoft.Moose.MooseEngine.GameObjects;
 
 public class TextureGameObject : GameObjectBase
 {
-    public TextureGameObjectDef TextureGameObjectDef => (base.Def as TextureGameObjectDef)!;
+    public TextureGameObjectDef TextureGameObjectDef;
 
     public SpriteEffects SpriteEffects { get; set; }
     
@@ -64,6 +64,7 @@ public class TextureGameObject : GameObjectBase
 
     public TextureGameObject(TextureGameObjectDef def, Vector2? position = null, string? direction = null, float? rotation = null, Vector2? size = null, string? layer = null) : base(def, position, direction, rotation, size, layer)
     {
+        TextureGameObjectDef = def;
     }
 
     public override void Update(MooseGame game, GameTime gameTime) { }

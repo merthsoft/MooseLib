@@ -8,19 +8,41 @@ public record ChestDef : ItemDef
     {
 
     }
+
+    public override void LoadContent(MooseContentManager contentManager) => base.LoadContent(contentManager);
 }
 
 public class Chest : InteractiveItem
 {
-    public override int DrawIndex => IsOpen ? base.DrawIndex + 1 : base.DrawIndex;
+    public override int DrawIndex => IsOpen ? (int)ItemTile.OpenChest : (int)ItemTile.ClosedChest;
 
     public bool IsOpen = false;
-    public List<DungeonObjectDef> Contents = new();
+    public List<ItemTile> Contents = new();
 
-    public Chest(Vector2 position) : base((ItemDef)MooseEngine.Defs.Def.Empty, position)
+    public Chest(ChestDef def, Vector2 position) : base(def, position)
     {
         Def = DungeonGame.GetDef<ChestDef>("Chest");
     }
 
-    
+    public override bool AfterGrow()
+    {
+        IsOpen = true;
+        SpawnItems();
+        return true;
+    }
+
+    public void SpawnItems()
+    {
+        var spiralEnumerator = GetCell().SpiralAround().GetEnumerator();
+        foreach (var item in Contents)
+        {
+            Point cell;
+            do
+            {
+                spiralEnumerator.MoveNext();
+                cell = spiralEnumerator.Current;
+            } while (!DungeonGame.Instance.IsCellOccupied(cell.X, cell.Y));
+            DungeonGame.Instance.SpawnItem(item, cell.X, cell.Y);
+        }
+    }
 }

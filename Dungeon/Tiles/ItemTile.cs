@@ -50,7 +50,7 @@ public enum ItemTile
     TREASURE_END,
     
     KEY_START = 50,
-    SilverKey,
+    SilverKey = 50,
     GoldenKey,
     ClosedLock,
     OpenLock,
