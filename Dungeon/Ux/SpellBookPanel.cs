@@ -7,6 +7,8 @@ public class SpellBookPanel : Panel
     private readonly List<SpellDef> spellList = new();
     private readonly Panel spellPanel;
     private readonly DungeonPlayer player;
+    
+    private int selectedSpell;
 
     public SpellBookPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 320)
     {
@@ -23,6 +25,7 @@ public class SpellBookPanel : Panel
         spellPanel.ClearControls();
         spellList.Clear();
         spellList.AddRange(player.KnownSpells);
+        selectedSpell = player.SelectedSpell;
         var spellIndex = 0;
         
         for (var j = 0; j < 2; j++)
@@ -54,7 +57,7 @@ public class SpellBookPanel : Panel
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (!spellList.SequenceEqual(player.KnownSpells) || true)
+        if (!spellList.SequenceEqual(player.KnownSpells) || selectedSpell != player.SelectedSpell)
             RebuildSpells();
         base.Update(updateParameters);
     }

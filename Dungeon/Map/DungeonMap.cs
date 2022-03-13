@@ -1,5 +1,6 @@
 ﻿using Karcero.Engine;
 using Karcero.Engine.Models;
+using Merthsoft.Moose.Dungeon.Entities;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 
@@ -7,7 +8,8 @@ namespace Merthsoft.Moose.Dungeon.Map;
 public class DungeonMap : BaseMap
 {
     public readonly DungeonLayer DungeonLayer;
-    public readonly MonsterLayer MonsterLayer;
+    public readonly ObjectLayer MonsterLayer;
+    public readonly ObjectLayer ItemLayer;
 
     public override int Height => DungeonLayer.Height;
     public override int Width => DungeonLayer.Width;
@@ -25,8 +27,8 @@ public class DungeonMap : BaseMap
     {
         AddLayer(DungeonLayer = new DungeonLayer(width, height));
         AddLayer(new ObjectLayer("player"));
-        AddLayer(MonsterLayer = new MonsterLayer());
-        AddLayer(new ObjectLayer("items"));
+        AddLayer(MonsterLayer = new ObjectLayer("monsters"));
+        AddLayer(ItemLayer = new ObjectLayer("items"));
         AddLayer(new ObjectLayer("spells"));
     }
 
@@ -35,13 +37,16 @@ public class DungeonMap : BaseMap
         Rooms.Clear();
         foreach (var obj in Layers.Skip(2).OfType<ObjectLayer>().SelectMany(o => o.Objects))
             obj.Remove = true;
-        
+
         DrawRoom(DungeonTile.StoneWall, DungeonTile.None, 0, 0, Width - 1, Height - 1);
         SeedUsed = -1;
     }
 
     DungeonTile RandomFloor()
         => (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.FLOOR_START, (int)DungeonTile.FLOOR_END);
+
+    DungeonTile RandomDoor()
+        => (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.DOOR_START, (int)DungeonTile.DOOR_END);
 
     DungeonTile NeighborFloor(Map<DungeonCell> map, int x, int y)
     {
@@ -61,6 +66,24 @@ public class DungeonMap : BaseMap
         return RandomFloor();
     }
 
+    bool NeighborEmpty(int x, int y)
+    {
+        var spot = DungeonLayer.GetTileValue(x - 1, y);
+        if (spot == DungeonTile.None)
+            return true;
+        spot = DungeonLayer.GetTileValue(x + 1, y);
+        if (spot == DungeonTile.None)
+            return true;
+        spot = DungeonLayer.GetTileValue(x, y - 1);
+        if (spot == DungeonTile.None)
+            return true;
+        spot = DungeonLayer.GetTileValue(x, y + 1);
+        if (spot == DungeonTile.None)
+            return true;
+
+        return false;
+    }
+
     public void GenerateDungeon(int? seed = null)
     {
         Treasures.Clear();
@@ -70,7 +93,7 @@ public class DungeonMap : BaseMap
             var val = t.TreasureValue();
             if (val == -1)
                 continue;
-            Treasures.Add(t, (20 - val)*5);
+            Treasures.Add(t, (20 - val) * 5);
         }
 
         var dungeonGame = DungeonGame.Instance;
@@ -79,7 +102,7 @@ public class DungeonMap : BaseMap
         if (seed != null)
             SeedUsed = seed.Value;
         else
-            SeedUsed = (int)DateTime.UtcNow.Ticks;
+            SeedUsed = Math.Abs((int)DateTime.UtcNow.Ticks);
         var map = generator.GenerateA()
                  .DungeonOfSize(dungeonGame.DungeonSize - 2, dungeonGame.DungeonSize - 2)
                  .ABitRandom()
@@ -95,7 +118,7 @@ public class DungeonMap : BaseMap
         var treasureEnumerator = Treasures.GetEnumerator();
         foreach (var room in map.Rooms)
         {
-            Rooms.Add(new (room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1));
+            Rooms.Add(new(room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1));
             OverlayWalls(DungeonTile.BrickWall, room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1);
 
             while (!treasureEnumerator.MoveNext())
@@ -144,32 +167,67 @@ public class DungeonMap : BaseMap
         if (seed != null)
             SeedUsed = seed.Value;
         else
-            SeedUsed = (int)DateTime.UtcNow.Ticks;
+            SeedUsed = Math.Abs((int)DateTime.UtcNow.Ticks);
 
-        DungeonGame.Instance.SetSeed(SeedUsed);
+        var gamme = DungeonGame.Instance;
+        gamme.SetSeed(SeedUsed);
 
-        DungeonGame.Instance.Player.ResetVision();
+        gamme.Player.ResetVision();
         GeneratedMap = null;
         ClearDungeon();
-        Rooms.AddRange(GenerateRooms(numRooms, roomSizes));
+        var allRooms = GenerateRooms(numRooms + 1, roomSizes);
+        var stairRoom = allRooms.RemoveRandomElement();
+        PlaceStairs(stairRoom);
+        Rooms.AddRange(allRooms);
         GenerateCorridors(Rooms);
-        GenerateDoors(Rooms);
         HollowOutRooms(Rooms);
+        GenerateDoors(Rooms);
+    }
+
+    private void PlaceStairs(Rectangle rect)
+    {
+        var (x, y, width, height) = rect;
+        DrawRoom(RandomFloor(), RandomFloor(), x, y, width, height);
+
+        var tileX = x + width / 2;
+        var tileY = y + height / 2;
+        DungeonLayer.SetTileValue(tileX, tileY, DungeonTile.StairsDown);
+        DungeonPlayer.Instance.Position = new Vector2((tileX + 1)*16, tileY*16);
     }
 
     private void HollowOutRooms(List<Rectangle> rooms)
     {
         foreach (var (x, y, width, height) in rooms)
-        {
-            var randomFloor = (DungeonTile)MooseGame.Instance.Random.Next((int)DungeonTile.FLOOR_START, (int)DungeonTile.FLOOR_END);
-            DrawRoom(GetDungeonTile(x, y), randomFloor, x, y, width, height);
-        }
+            DrawRoom(GetDungeonTile(x, y), RandomFloor(), x, y, width, height);
     }
 
     private List<Point> GenerateDoors(List<Rectangle> rooms)
     {
         var doors = new List<Point>();
-        
+        foreach (var (x, y, w, h) in rooms)
+        {
+            var spots = new List<Point>();
+            int sX, sY;
+
+            for (var mult = 2; mult <= 2; mult += 1)
+                spots.AddRange(new[] 
+                {
+                    new Point(x + w/mult, y),
+                    new Point(x, y + h/mult),
+                    new Point(x + w/mult, y + h),
+                    new Point(x + w, y + h/mult),
+                });
+
+            do
+            {
+                (sX, sY) = spots.RemoveRandomElement();
+            } while (!NeighborEmpty(sX, sY) && spots.Any());
+
+            if (!spots.Any())
+                continue;
+
+            DungeonLayer.SetTileValue(sX, sY, RandomDoor());
+        }
         return doors;
     }
 

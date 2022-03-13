@@ -31,16 +31,7 @@ public enum DungeonTile
     GreenDoorVertical,
     RedDoorHorizontal,
     RedDoorVertical,
-    DOOR_END = RedDoorVertical + 1,
-
-    GraySpikes = 30,
-    RedSpikes = 31,
-    Drawers = 32,
-    Shelf1,
-    Shelf2,
-    Shelf3,
-    ClosedChest,
-    OpenChest,
+    DOOR_END,
 
     StairsDown = 40,
     StairsUp,

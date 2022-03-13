@@ -17,8 +17,8 @@ public class Fireball : Spell
     public Fireball(SpellDef def, DungeonObject owner, Vector2 end) 
         : base(def, owner, owner.Position)
     {
-        Position = new Vector2((int)owner.Position.X / 16 * 16 + 8, (int)owner.Position.Y / 16 * 16 + 8);
-        end = new((int)end.X / 16 * 16 + 8, (int)end.Y / 16 * 16 + 8);
+        Position = new Vector2((int)owner.Position.X / 16 * 16, (int)owner.Position.Y / 16 * 16);
+        end = new((int)end.X / 16 * 16, (int)end.Y / 16 * 16);
 
         var (x1, y1) = Position;
         var (x2, y2) = end;

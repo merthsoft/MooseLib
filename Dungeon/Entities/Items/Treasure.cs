@@ -5,13 +5,13 @@ namespace Merthsoft.Moose.Dungeon.Entities.Items;
 public record TreasureDef : ItemDef
 {
     public int Value;
-    public TreasureDef(ItemTile item, string name) : base(item, name)
+    public TreasureDef(ItemTile item, string name) : base(item, name, false)
     {
         Value = item.TreasureValue();
     }
 }
 
-public class Treasure : Item
+public class Treasure : PickableItem
 {
     public TreasureDef TreasureDef;
 

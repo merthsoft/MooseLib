@@ -14,10 +14,10 @@ public record MeteorDef : SpellDef
 
 public class Meteor : Spell
 {
-    public Meteor(SpellDef def, DungeonObject owner, Vector2 end) 
+    public Meteor(SpellDef def, DungeonObject owner, Vector2 position) 
         : base(def, owner, owner.Position)
     {
-        Position = end;
+        Position = new Vector2((int)position.X / 16 * 16, (int)position.Y / 16 * 16);
         State = Active;
         StateCompleteAction = () => State = Hit;
     }

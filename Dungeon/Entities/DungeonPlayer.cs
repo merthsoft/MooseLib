@@ -38,8 +38,12 @@ public class DungeonPlayer : DungeonCreature
 
     public string Name = "Wizz";
     public int Health = 1;
+    public int Armor = 0;
+    public int MagicArmor = 0;
     public int Mana = 10;
     public int Gold = 0;
+    public bool StatsUpdated;
+    public int DungeonLevel = 1;
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {
@@ -55,6 +59,14 @@ public class DungeonPlayer : DungeonCreature
         MiniMap[x, y] = dungeonGame.GetMiniMapTile(x, y);
     }
 
+    public void NewFloor()
+    {
+        Health = 1;
+        Mana = 10;
+        DungeonLevel++;
+        StatsUpdated = true;
+    }
+
     public override void ResetVision()
     {
         base.ResetVision();
@@ -63,17 +75,6 @@ public class DungeonPlayer : DungeonCreature
         for (var i = 0; i < game.DungeonSize; i++)
             for (var j = 0; j < game.DungeonSize; j++)
                 MiniMap[i, j] = MiniMapTile.None;
-
-        if (VisibleMonsters.Count > 0)
-        {
-            moveBuffer.Clear();
-            mouseBuffer = false;
-        }
-
-        Health = 1;
-        Mana = 10;
-        Gold = 0;
-
     }
 
     public void DrawCursor(MooseGame mooseGame, Vector2 position, SpriteBatch spriteBatch)
@@ -185,7 +186,13 @@ public class DungeonPlayer : DungeonCreature
 
         RebuildSightMap(game);
 
-        if (CanMove && (game.WasLeftMouseJustPressed() || game.WasRightMouseJustPressed()))
+        if (VisibleMonsters.Count > 0)
+        {
+            moveBuffer.Clear();
+            mouseBuffer = false;
+        }
+
+        if (game.MouseInGame && CanMove && (game.WasLeftMouseJustPressed() || game.WasRightMouseJustPressed()))
         {
             var mouse = new Vector2((int)mooseGame.WorldMouse.X / 16 * 16, (int)mooseGame.WorldMouse.Y / 16 * 16);
             var (x, y) = ((int)mouse.X / 16, (int)mouse.Y / 16);
@@ -251,16 +258,20 @@ public class DungeonPlayer : DungeonCreature
 
         Direction = newDirection;
 
-        this.AddTween(p => p.AnimationRotation, Direction == Left ? -1 : 1, .075f,
-            onEnd: _ => this.AddTween(p => p.AnimationRotation, 0, .075f));
+        this.AddTween(p => p.AnimationRotation, Direction == Left ? 1 : -1, .06f,
+            onEnd: _ => this.AddTween(p => p.AnimationRotation, 0, .07f));
 
         if (CanMove && moveDelta != Vector2.Zero)
         {
             CanMove = false;
 
             var newTilePosition = Position / 16 + moveDelta;
-            var tile = game.GetDungeonTile((int)newTilePosition.X, (int)newTilePosition.Y);
-            if (tile.IsBlocking())
+            var newX = (int)newTilePosition.X;
+            int newY = (int)newTilePosition.Y;
+            var tile = game.GetDungeonTile(newX, newY);
+            var monster = game.GetMonster(newX, newY);
+            var item = game.GetItem(newX, newY);
+            if (tile.IsBlocking() || monster != null || (item != null && item.ItemDef.BlocksPlayer))
             {
                 moveDelta = Vector2.Zero;
                 if (moveBuffer.Any())
@@ -283,6 +294,9 @@ public class DungeonPlayer : DungeonCreature
                         AnimationPosition = Vector2.Zero;
                     });
             }
+
+            if (item != null && item is InteractiveItem interactiveItem && !interactiveItem.InteractedWith)
+                interactiveItem.Interact();
         }
     }
 
@@ -299,9 +313,27 @@ public class DungeonPlayer : DungeonCreature
 
         return MiniMap[i, j];
     }
+
     public void GiveGold(int value)
     {
         Gold += value;
         game.SpawnFallingText(value.ToString(), Position, Color.Gold);
+        StatsUpdated = true;
+    }
+
+    public override void TakeDamage(DungeonGame game, int value)
+    {
+        base.TakeDamage(game, value);
+        StatsUpdated = true;
+    }
+
+    public bool TrySpendMana(int mana)
+    {
+        if (mana > Mana)
+            return false;
+        Mana -= mana;
+        StatsUpdated = true;
+        
+        return true;
     }
 }

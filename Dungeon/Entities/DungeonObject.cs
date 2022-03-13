@@ -61,7 +61,7 @@ public abstract class DungeonObject : TextureGameObject
     }
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
-        => DrawSprite(spriteBatch, Def.Texture, DrawIndex);
+        => DrawSprite(spriteBatch, TextureGameObjectDef.Texture, DrawIndex);
 
     public void DrawSprite(SpriteBatch spriteBatch, Texture2D texture, int index)
     {
@@ -81,7 +81,7 @@ public abstract class DungeonObject : TextureGameObject
     public virtual void TakeDamage(DungeonGame game, int value)
     {
         HitPoints -= value;
-        game.SpawnFallingText(value.ToString(), Position, Color.Red);
+        game.SpawnFallingText($"-{value}", Position, Color.IndianRed);
         Color = Color.Red;
         ColorS = 1f;
         this.AddTween(p => p.ColorS, 0, .15f,

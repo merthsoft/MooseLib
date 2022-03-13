@@ -54,6 +54,8 @@ public enum ItemTile
     GoldenKey,
     ClosedLock,
     OpenLock,
+    ClosedChest,
+    OpenChest,
     KEY_END,
 
     LIGHT_START = 60,
@@ -74,5 +76,13 @@ public enum ItemTile
     Bread = FOOD_START,
     Meat,
     Cheese,
-    FOOD_END = Cheese
+    FOOD_END,
+
+
+    GraySpikes = 90,
+    RedSpikes,
+    Drawers,
+    Shelf1,
+    Shelf2,
+    Shelf3,
 }

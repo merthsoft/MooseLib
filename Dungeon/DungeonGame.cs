@@ -17,7 +17,7 @@ public class DungeonGame : MooseGame
 
     public SpellBook SpellBook = new();
     public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, Monster>)> MonsterFactory = new();
-    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, Item>)> ItemFactory = new();
+    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, PickableItem>)> ItemFactory = new();
 
     public Texture2D DungeonTiles = null!;
     public Texture2D MiniMapTiles = null!;
@@ -46,17 +46,17 @@ public class DungeonGame : MooseGame
 
     private readonly (int w, int h)[] roomSizes = new[]
         {
-            (3 + 2, 3 + 2),
-            (4 + 2, 4 + 2),
-            (4 + 2, 3 + 2),
-            (3 + 2, 4 + 2),
-            (5 + 2, 5 + 2),
-            (6 + 2, 6 + 2),
-            (4 + 2, 6 + 2),
-            (3 + 2, 7 + 2),
-            (7 + 2, 6 + 2),
-            (7 + 2, 4 + 2),
-            (4 + 2, 7 + 2),
+            (3, 3),
+            (4, 4),
+            (4, 3),
+            (3, 4),
+            (5, 5),
+            (6, 6),
+            (4, 6),
+            (3, 7),
+            (7, 6),
+            (7, 4),
+            (4, 7),
         };
 
     public DungeonMap DungeonMap = null!;
@@ -67,6 +67,7 @@ public class DungeonGame : MooseGame
     List<FallingText> FallingTexts = new List<FallingText>();
 
     public bool CanPlay = true;
+    public bool MouseInGame => CurrentMouseState.X > 320;
 
     public DungeonGame()
     {
@@ -76,7 +77,7 @@ public class DungeonGame : MooseGame
 
         DefaultRenderHooks = new()
         {
-            { "monsters", new(PostHook: _ => DrawCursor()) },
+            { "items", new(PostHook: _ => DrawCursor()) },
             { "spells", new(PostHook: _ => DrawFallingTexts()) },
         };
     }
@@ -129,7 +130,7 @@ public class DungeonGame : MooseGame
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, -16)))
             ));
         //Player.LearnSpell(AddSpellDef(new SpinesDef(), (spellDef, owner, position) => new Spines(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new SpellDef("Lightning", 1), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
+        Player.LearnSpell(AddSpellDef(new LightningDef(), (spellDef, owner, position) => new Lightning(spellDef, owner, position)));
         Player.LearnSpell(AddSpellDef(new SpellDef("Dark Shield", 1, "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
         Player.LearnSpell(AddSpellDef(new SpellDef("AnimateDead", 1, "Raise"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
         Player.LearnSpell(AddSpellDef(new SpellDef("Slow", 1, "Tangle"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
@@ -162,7 +163,7 @@ public class DungeonGame : MooseGame
         var panel = UxWindow.AddPanel(0, 0, UxWindow.Width, UxWindow.Height);
         var spellBook = panel.AddControlPassThrough(new SpellBookPanel(UxWindow, 0, 0));
         MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, spellBook.Height));
-        panel.AddControl(new PlayerPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));   
+        panel.AddControl(new StatsPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));   
     }
 
     protected override void PostLoad()
@@ -171,7 +172,7 @@ public class DungeonGame : MooseGame
         DungeonMap.GenerateDungeon();
     }
 
-    private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, Item> generator)
+    private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, PickableItem> generator)
     {
         AddDef(itemDef);
         ItemFactory[itemDef.Item] = (itemDef, generator);
@@ -213,13 +214,15 @@ public class DungeonGame : MooseGame
     public DungeonCreature? GetMonster(int x, int y)
         => DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Monster;
 
+    public Item GetItem(int x, int y) 
+        => DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Item;
     public Monster SpawnMonster(MonsterTile monsterTile, int x, int y)
     {
         var (def, generator) = MonsterFactory[monsterTile];
         return AddObject(generator(def, x, y));
     }
 
-    public Item SpawnItem(ItemTile itemTile, int x, int y)
+    public PickableItem SpawnItem(ItemTile itemTile, int x, int y)
     {
         var (def, generator) = ItemFactory[itemTile];
         return AddObject(generator(def, x, y));
@@ -228,28 +231,25 @@ public class DungeonGame : MooseGame
     public void Cast(SpellDef spellDef, DungeonObject owner, Vector2 position)
     {
         var spell = SpellBook.Cast(spellDef, owner, position);
-        if (spellDef.ManaCost > Player.Mana)
+        
+        var container = spell as SpellContainer;
+        
+        var spellsToAdd = container != null ? container!.Spells.ToArray() : new[] { spell };
+        var manaCost = spell.ManaCost;
+        
+        if (!Player.TrySpendMana(manaCost))
         {
-            owner.RemoveSpell(spell);
-            SpawnFallingText("Low mana", owner.Position, Color.Black);
+            SpawnFallingText("Low mana", owner.Position, Color.DarkGray);
             return;
         }
 
-        var manaDiff = Player.Mana;
-        if (spell is SpellContainer container)
+        foreach (var childSpell in spellsToAdd)
         {
-            Player.Mana -= container.ManaCost;
-            owner.RemoveSpell(spell);
-            foreach (var childSpell in container)
-                AddObject(childSpell);
+            AddObject(childSpell);
+            Player.AddSpell(childSpell);
         }
-        else
-        {
-            Player.Mana -= spellDef.ManaCost;
-            AddObject(spell);
-        }
-        manaDiff = Player.Mana - manaDiff;
-        SpawnFallingText(manaDiff.ToString(), owner.Position, Color.Blue);
+
+        SpawnFallingText($"-{manaCost}", owner.Position, Color.CornflowerBlue);
     }
 
     public FallingText SpawnFallingText(string text, Vector2 position, Color? color = null)
@@ -267,8 +267,8 @@ public class DungeonGame : MooseGame
     }
 
     protected override void PreUpdate(GameTime gameTime)
-    {
-        MainCamera.Position = Player.Position - ScreenSize / MainCamera.Zoom / 2f;
+    { 
+        MainCamera.Position = (Player.Position + Player.AnimationPosition) - ScreenSize / MainCamera.Zoom / 2f;
         MainCamera.Position = MainCamera.Position with
         {
             X = MainCamera.Position.X - 320f / 4f
@@ -276,14 +276,11 @@ public class DungeonGame : MooseGame
 
         if (WasKeyJustPressed(Keys.D))
         {
-            DungeonMap.GenerateDungeon();
-            Player.UseVisionCircle = true;
+            GenerateNextDungeon();
         }
         else if (WasKeyJustPressed(Keys.T))
         {
-            DungeonMap.GenerateTown(5, roomSizes);
-            Player.Position = new(16, 16);
-            Player.UseVisionCircle = false;
+            GenerateTown();
         }
         else if (WasKeyJustPressed(Keys.Escape))
             ShouldQuit = true;
@@ -329,6 +326,22 @@ public class DungeonGame : MooseGame
         UxWindow.Update(gameTime);
     }
 
+    private void GenerateTown()
+    {
+        DungeonMap.GenerateTown(Random.Next(4, 8), roomSizes);
+        Player.NewFloor();
+        var stairRoom = DungeonMap.Rooms.Last();
+        Player.UseVisionCircle = false;
+        Player.DungeonLevel = 0;
+    }
+
+    private void GenerateNextDungeon()
+    {
+        DungeonMap.GenerateDungeon();
+        Player.NewFloor();
+        Player.UseVisionCircle = true;
+    }
+
     protected override void PostDraw(GameTime gameTime)
     {
         SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
@@ -356,7 +369,7 @@ public class DungeonGame : MooseGame
 
     void DrawCursor()
     {
-        if (CanPlay && Player.CanMove)
+        if (CanPlay && Player.CanMove && MouseInGame)
         {
             var mouse = new Vector2((int)WorldMouse.X / 16 * 16, (int)WorldMouse.Y / 16 * 16);
             Player.DrawCursor(this, mouse, SpriteBatch);

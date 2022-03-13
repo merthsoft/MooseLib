@@ -4,7 +4,7 @@ namespace Merthsoft.Moose.MooseEngine.GameObjects;
 
 public class TextureGameObject : GameObjectBase
 {
-    public new TextureGameObjectDef Def => (base.Def as TextureGameObjectDef)!;
+    public TextureGameObjectDef TextureGameObjectDef => (base.Def as TextureGameObjectDef)!;
 
     public SpriteEffects SpriteEffects { get; set; }
     
@@ -69,7 +69,7 @@ public class TextureGameObject : GameObjectBase
     public override void Update(MooseGame game, GameTime gameTime) { }
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
-        => spriteBatch.Draw(Def.Texture,
-                (Rectangle)WorldRectangle, Def.SourceRectangle,
-                Color, Rotation, Def.Origin, SpriteEffects, 0);
+        => spriteBatch.Draw(TextureGameObjectDef.Texture,
+                (Rectangle)WorldRectangle, TextureGameObjectDef.SourceRectangle,
+                Color, Rotation, TextureGameObjectDef.Origin, SpriteEffects, 0);
 }
