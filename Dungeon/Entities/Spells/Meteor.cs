@@ -26,7 +26,7 @@ public class Meteor : Spell
     {
         var (x, y) = GetCell();
         var target = game.GetMonster(x, y);
-        target?.TakeDamage(game, 2);
+        target?.TakeDamage(2);
     }
 
     public override void Update(MooseGame _, GameTime gameTime)

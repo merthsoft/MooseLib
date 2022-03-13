@@ -5,6 +5,9 @@ public static class RectangleExtensions
     public static RectangleF Move(this RectangleF rect, Vector2 delta)
         => new(rect.X + delta.X, rect.Y + delta.Y, rect.Width, rect.Height);
 
+    public static RectangleF Move(this RectangleF rect, float deltaX, float deltaY)
+        => new(rect.X + deltaX, rect.Y + deltaY, rect.Width, rect.Height);
+
     public static bool Intersects(this RectangleF rect, float x, float y)
         => x >= rect.X
             && x <= rect.X + rect.Width

@@ -282,7 +282,7 @@ public class DungeonGame : MooseGame
         {
             GenerateTown();
         }
-        else if (WasKeyJustPressed(Keys.Escape))
+        else if (WasKeyJustPressed(Keys.Escape, Keys.Q))
             ShouldQuit = true;
         else if (WasKeyJustPressed(Keys.M))
         {

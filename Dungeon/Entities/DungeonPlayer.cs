@@ -139,7 +139,7 @@ public class DungeonPlayer : DungeonCreature
             HasActiveSpells = false;
         }
 
-        bool keyPress(Keys key) => game.WasKeyJustPressed(key) || (CanMove && game.IsKeyHeldLong(key));
+        bool keyPress(Keys key) => game.WasKeyJustPressed(key) || (CanMove && game.IsKeyHeld(key));
 
         var keyPressed = false;
         if (keyPress(Keys.Left))
@@ -314,16 +314,16 @@ public class DungeonPlayer : DungeonCreature
         return MiniMap[i, j];
     }
 
-    public void GiveGold(int value)
+    public void GiveGold(Vector2 position, int value)
     {
         Gold += value;
-        game.SpawnFallingText(value.ToString(), Position, Color.Gold);
+        game.SpawnFallingText(value.ToString(), position, Color.Gold);
         StatsUpdated = true;
     }
 
-    public override void TakeDamage(DungeonGame game, int value)
+    public override void TakeDamage(int value)
     {
-        base.TakeDamage(game, value);
+        base.TakeDamage(value);
         StatsUpdated = true;
     }
 

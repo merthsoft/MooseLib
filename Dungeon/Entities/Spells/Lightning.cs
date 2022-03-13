@@ -29,6 +29,6 @@ public class Lightning : Spell
     {
         var (x, y) = GetCell();
         var target = game.GetMonster(x, y);
-        target?.TakeDamage(game, Damage);
+        target?.TakeDamage(Damage);
     }
 }

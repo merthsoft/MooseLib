@@ -342,23 +342,38 @@ public abstract class MooseGame : Game
     public bool WasKeyJustPressed(Keys key)
         => CurrentKeyState.IsKeyDown(key) && PreviousKeyState.IsKeyUp(key);
 
+    public bool WasKeyJustPressed(params Keys[] keys)
+        => keys.Any(WasKeyJustPressed);
+
     public bool WasKeyJustReleased(Keys key)
         => CurrentKeyState.IsKeyUp(key) && PreviousKeyState.IsKeyDown(key);
 
-    public bool WasKeyTapped(Keys key)
-        => WasKeyJustReleased(key) && PreviousKeyStates[^2].IsKeyUp(key);
-    
+    public bool WasKeyJustReleased(params Keys[] keys)
+        => keys.Any(WasKeyJustReleased);
+
     public bool IsKeyDown(Keys key)
         => CurrentKeyState.IsKeyDown(key);
+
+    public bool IsKeyDown(params Keys[] keys)
+        => keys.Any(IsKeyDown);
 
     public bool WasKeyDown(Keys key)
         => PreviousKeyState.IsKeyDown(key);
 
+    public bool WasKeyDown(params Keys[] keys)
+        => keys.Any(WasKeyDown);
+
     public bool IsKeyHeld(Keys key)
         => CurrentKeyState.IsKeyDown(key) && PreviousKeyState.IsKeyDown(key);
 
+    public bool IsKeyHeld(params Keys[] keys)
+        => keys.Any(IsKeyHeld);
+
     public bool IsKeyHeldLong(Keys key)
         => IsKeyHeld(key) && PreviousKeyStates[^2].IsKeyDown(key) && PreviousKeyStates[^3].IsKeyDown(key) && PreviousKeyStates[^4].IsKeyDown(key) && PreviousKeyStates[^5].IsKeyDown(key);
+
+    public bool IsKeyHeldLong(params Keys[] keys)
+        => keys.Any(IsKeyHeldLong);
 
     public void ZoomIn(float deltaZoom)
         => MainCamera.ZoomIn(deltaZoom);

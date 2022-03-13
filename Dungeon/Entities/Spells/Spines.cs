@@ -42,7 +42,7 @@ public class Spines : Spell
         if (target != null && !HitObjects.Contains(target))
         {
             HitObjects.Add(target);
-            target.TakeDamage(game, 1);
+            target.TakeDamage(1);
         }
     }
 

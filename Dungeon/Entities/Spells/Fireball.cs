@@ -36,7 +36,7 @@ public class Fireball : Spell
     {
         var (x, y) = GetCell();
         var target = game.GetMonster(x, y);
-        target?.TakeDamage(game, 3);
+        target?.TakeDamage(3);
     }
 
     public override void Update(MooseGame _, GameTime gameTime)

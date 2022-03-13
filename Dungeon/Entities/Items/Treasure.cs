@@ -21,5 +21,5 @@ public class Treasure : PickableItem
     }
 
     public override void PickUp()
-        => game.Player.GiveGold(TreasureDef.Value);
+        => game.Player.GiveGold(Position, TreasureDef.Value);
 }

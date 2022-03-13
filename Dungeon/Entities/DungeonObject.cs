@@ -78,7 +78,7 @@ public abstract class DungeonObject : TextureGameObject
     public virtual void RemoveSpell(Spell spell)
         => activeSpells.Remove(spell);
 
-    public virtual void TakeDamage(DungeonGame game, int value)
+    public virtual void TakeDamage(int value)
     {
         HitPoints -= value;
         game.SpawnFallingText($"-{value}", Position, Color.IndianRed);
@@ -88,7 +88,7 @@ public abstract class DungeonObject : TextureGameObject
             onEnd: _ => this.AddTween(p => p.ColorS, 1, .15f, onEnd: _ => Color = Color.White));
     }
 
-    public virtual void Heal(DungeonGame game, int value, bool overHeal = false)
+    public virtual void Heal(int value, bool overHeal = false)
     {
         HitPoints += value;
         var total = value;
