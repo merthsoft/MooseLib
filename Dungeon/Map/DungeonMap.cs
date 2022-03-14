@@ -2,6 +2,7 @@
 using Karcero.Engine.Models;
 using Merthsoft.Moose.Dungeon.Entities;
 using Merthsoft.Moose.Dungeon.Entities.Items;
+using Merthsoft.Moose.Dungeon.Entities.Monsters;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 
@@ -10,7 +11,10 @@ public class DungeonMap : BaseMap
 {
     public readonly DungeonLayer DungeonLayer;
     public readonly ObjectLayer MonsterLayer;
+    public IEnumerable<DungeonMonster> Monsters => MonsterLayer.Objects.Cast<DungeonMonster>();
+    
     public readonly ObjectLayer ItemLayer;
+    public IEnumerable<DungeonItem> Items => ItemLayer.Objects.Cast<DungeonItem>();
 
     public override int Height => DungeonLayer.Height;
     public override int Width => DungeonLayer.Width;
@@ -28,8 +32,8 @@ public class DungeonMap : BaseMap
     {
         AddLayer(DungeonLayer = new DungeonLayer(width, height));
         AddLayer(new ObjectLayer("player"));
-        AddLayer(MonsterLayer = new ObjectLayer("monsters"));
         AddLayer(ItemLayer = new ObjectLayer("items"));
+        AddLayer(MonsterLayer = new ObjectLayer("monsters"));
         AddLayer(new ObjectLayer("spells"));
     }
 
@@ -97,6 +101,24 @@ public class DungeonMap : BaseMap
             Treasures.Add(t, (20 - val) * 5);
         }
 
+        var roomTypes = new DungeonRoomDef[]
+        {
+            new(.5f) { NumTreasure = 1 },
+            //new(.5f) { NumMonsters = 1, MonsterLevelDelta = 0 },
+            //new(.4f) { NumMonsters = 2, MonsterLevelDelta = 0 },
+            //new(.1f) { NumMonsters = 1, MonsterLevelDelta = 1 },
+            new(.15f) { NumChests = 1 },
+            //new(.15f) { NumPotions = 1 },
+            //new(.15f) { NumScrolls = 1 },
+        };
+        var weightedRooms = new WeightedSet<DungeonRoomDef>();
+        for (var roomNumber = 0; roomNumber < roomTypes.Length; roomNumber++)
+        {
+            var room = roomTypes[roomNumber];
+            room.RoomNumber = roomNumber;
+            weightedRooms.Add(room, (int)(100 * room.Weight));
+        }
+
         var dungeonGame = DungeonGame.Instance;
         ClearDungeon();
         var generator = new DungeonGenerator<DungeonCell>();
@@ -109,29 +131,50 @@ public class DungeonMap : BaseMap
                  .ABitRandom()
                  .ABitSparse()
                  .WithBigChanceToRemoveDeadEnds()
-                 .WithRoomCountByPercentage(.9f)
-                 .WithLargeSizeRooms()
+                 .WithLargeNumberOfRooms()
+                 .WithMediumSizeRooms()
                  .WithSeed(SeedUsed)
                  .Now();
         dungeonGame.Player.ResetVision();
         GeneratedMap = map;
 
         var treasureEnumerator = Treasures.GetEnumerator();
+        var roomTypeEnumerator = weightedRooms.GetEnumerator();
+
         for (var i = 0; i < map.Rooms.Count; i++)
         {
             var room = map.Rooms[i];
             Rooms.Add(new(room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1));
             OverlayWalls(DungeonTile.BrickWall, room.Top, room.Left, room.Size.Height + 1, room.Size.Width + 1);
 
-            if (i != 0)
+            if (i != 0 && i != map.Rooms.Count)
             {
-                while (!treasureEnumerator.MoveNext())
-                    treasureEnumerator = Treasures.GetEnumerator();
+                var middle = new Point(room.Top + room.Size.Height / 2, room.Left + room.Size.Width / 2);
+                var spiral = middle.SpiralAround().GetEnumerator();
 
-                var randomTreasure = treasureEnumerator.Current;
-                var middleX = room.Top + room.Size.Height / 2 + 1;
-                var middleY = room.Left + room.Size.Width / 2;
-                dungeonGame.SpawnItem(randomTreasure, middleX, middleY);
+                while (!roomTypeEnumerator.MoveNext())
+                    roomTypeEnumerator = weightedRooms.GetEnumerator();
+
+                var roomType = roomTypeEnumerator.Current;
+
+                for (var treasureCount = 0; treasureCount < roomType.NumTreasure; treasureCount++)
+                {
+                    while (!treasureEnumerator.MoveNext())
+                        treasureEnumerator = Treasures.GetEnumerator();
+
+                    spiral.MoveNext();
+                    var (spotX, spotY) = spiral.Current;
+                    var randomTreasure = treasureEnumerator.Current;
+                    dungeonGame.SpawnItem(randomTreasure, spotX, spotY);
+                }
+
+                for (var chestCount = 0; chestCount < roomType.NumChests; chestCount++)
+                {
+                    spiral.MoveNext();
+                    var (spotX, spotY) = spiral.Current;
+                    var roomChest = (Chest)dungeonGame.SpawnItem(ItemTile.ClosedChest, spotX, spotY);
+                    roomChest.Contents.AddRange(Treasures.Take(dungeonGame.Random.Next(3, 7)));
+                }
             }
         }
 
@@ -165,11 +208,16 @@ public class DungeonMap : BaseMap
         var chest = (dungeonGame.SpawnItem(ItemTile.ClosedChest, x + width / 2, y + height / 2) as Chest)!;
         chest.Contents.AddRange(Treasures.Take(dungeonGame.Random.Next(3, 7)));
 
-        var ranomRoom = Rooms.TakeLast(4).ToList().RandomElement();
-        x = ranomRoom.X + 1;
-        y = ranomRoom.Y + 1;
+        var lastRoom = Rooms.Last();
+        x = lastRoom.X + 1;
+        y = lastRoom.Y + 1;
+        width = lastRoom.Width - 2;
+        height = lastRoom.Height - 2;
         SetDungeonTile(x + 1, y + 1, DungeonTile.StairsDown);
         dungeonGame.SpawnMonster(MonsterTile.Marshall, x, y);
+
+        chest = (dungeonGame.SpawnItem(ItemTile.ClosedChest, x + width / 2, y + height / 2) as Chest)!;
+        chest.Contents.AddRange(Treasures.Take(dungeonGame.Random.Next(10, 20)));
     }
 
     public void GenerateTown(int numRooms, (int, int)[] roomSizes, int? seed = null)

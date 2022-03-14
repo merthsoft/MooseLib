@@ -81,14 +81,17 @@ public static class ControlContainerExtensions
             FontIndex = fontIndex,
         });
 
-    public static Button AddTextureButton(this IControlContainer container, float x, float y, Texture2D texture, Action<Control, UpdateParameters> action, int fontIndex = 0, Rectangle? sourceRect = null)
+    public static Button AddTextureButton(this IControlContainer container, float x, float y, Texture2D texture,
+        Action<Control, UpdateParameters> action, int fontIndex = 0, Rectangle? sourceRect = null, Vector2? scale = null, string label = "")
         => container.AddControlPassThrough(new Button("", container, x, y)
         {
             Action = action,
             FontIndex = fontIndex,
             Texture = texture,
             SourceRectangle = sourceRect,
-            BackgroundDrawingMode = BackgroundDrawingMode.None
+            BackgroundDrawingMode = BackgroundDrawingMode.None,
+            TextureScale = scale ?? Vector2.One,
+            Text = label,
         });
 
     public static Button AddToggleButton(this IControlContainer container, float x, float y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0)

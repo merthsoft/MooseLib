@@ -16,8 +16,8 @@ public class DungeonGame : MooseGame
     public static new DungeonGame Instance = null!;
 
     public SpellBook SpellBook = new();
-    public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, Monster>)> MonsterFactory = new();
-    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, Item>)> ItemFactory = new();
+    public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, DungeonMonster>)> MonsterFactory = new();
+    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, DungeonItem>)> ItemFactory = new();
 
     public Texture2D DungeonTiles = null!;
     public Texture2D MiniMapTiles = null!;
@@ -47,6 +47,8 @@ public class DungeonGame : MooseGame
     public MapPanel MapPanel = null!;
 
     public int ViewingMap = 0;
+
+    public bool GeneratingDungeon = false;
 
     private readonly (int w, int h)[] roomSizes = new[]
         {
@@ -151,8 +153,8 @@ public class DungeonGame : MooseGame
         AddItemDef(new ChestDef(), (itemDef, x, y) => new Chest((ChestDef)itemDef, new Vector2(x * 16, y * 16)));
 
         var fonts = new[] {
-            ContentManager.BakeFont("BrightLinger", 70),
-            ContentManager.BakeFont("Wizard's Manse", 42),
+            ContentManager.BakeFont("BrightLinger", 62),
+            ContentManager.BakeFont("BrightLinger", 15),
             ContentManager.BakeFont("BrightLinger_monospace", 25)
         };
 
@@ -164,32 +166,29 @@ public class DungeonGame : MooseGame
                 TextMouseOverColor = Color.DeepPink,
                 SelectedColor = Color.Gold,
                 SelectedMouseOverColor = Color.HotPink,
-            }, 0, 0, 320, 960) 
+            }, 0, 0, ScreenWidth, ScreenHeight) 
         { BackgroundDrawingMode = BackgroundDrawingMode.None };
 
-        var panel = UxWindow.AddPanel(0, 0, UxWindow.Width, UxWindow.Height);
+        var panel = UxWindow.AddPanel(0, 0, 320, 960);
         var spellBook = panel.AddControlPassThrough(new SpellBookPanel(UxWindow, 0, 0));
         MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, spellBook.Height));
         var statsPanel = panel.AddControlPassThrough(new StatsPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));
-        panel.AddControl(new ItemsPanel(UxWindow, 0, statsPanel.Y + statsPanel.Height + 10));
+        panel.AddControl(new ItemsPanel(UxWindow, 0, statsPanel.Y + statsPanel.Height));
     }
 
     protected override void PostLoad()
     {
         AddObject(Player);
-        DungeonMap.GenerateDungeon();
-
-        for (var item = ItemTile.TREASURE_START; item < ItemTile.TREASURE_END; item++)
-            Player.GiveItem(SpawnItem(item, -500, -500));
+        GenerateTown();
     }
 
-    private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, Item> generator)
+    private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, DungeonItem> generator)
     {
         AddDef(itemDef);
         ItemFactory[itemDef.Item] = (itemDef, generator);
     }
 
-    private void AddMonsterDef(MonsterDef monsterDef, Func<MonsterDef, int, int, Monster> generator)
+    private void AddMonsterDef(MonsterDef monsterDef, Func<MonsterDef, int, int, DungeonMonster> generator)
     {
         AddDef(monsterDef);
         MonsterFactory[monsterDef.Monster] = (monsterDef, generator);
@@ -206,13 +205,11 @@ public class DungeonGame : MooseGame
     {
         var mapCell = new Point(x, y);
         var (playerX, playerY) = Player.GetCell();
-        
-        if (x == playerX && y == playerY)
-            return MiniMapTile.Player;
-        
-        if (DungeonMap.MonsterLayer.Objects.Any(m => m.GetCell() == mapCell))
-            return MiniMapTile.Monster;
-        
+
+        var obj = ReadObjects.OfType<DungeonObject>().FirstOrDefault(o => o.GetCell() == mapCell);
+        if (obj != null)
+            return obj.MiniMapTile;
+
         return (MiniMapTile)DungeonMap.DungeonLayer.GetTileValue(x, y);
     }
 
@@ -220,28 +217,28 @@ public class DungeonGame : MooseGame
         => DungeonMap.DungeonLayer.GetTileValue(x, y);
 
     public MonsterTile GetMonsterTile(int x, int y)
-        => (DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Monster)?.MonsterDef?.Monster ?? MonsterTile.None;
+        => (DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonMonster)?.MonsterDef?.Monster ?? MonsterTile.None;
 
     public DungeonCreature? GetMonster(int x, int y)
-        => DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Monster;
+        => DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonMonster;
 
-    public Item? GetItem(int x, int y)
-        => DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Item;
+    public DungeonItem? GetItem(int x, int y)
+        => DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonItem;
 
     public ItemTile GetItemTile(int x, int y)
-        => (DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as Item)?.ItemDef.Item ?? ItemTile.None;
+        => (DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonItem)?.ItemDef.Item ?? ItemTile.None;
 
     public bool IsCellOccupied(int x, int y)
         => GetDungeonTile(x, y).IsFloor()
         && !ReadObjects.Any(o => o.InCell(x, y));
     
-    public Monster SpawnMonster(MonsterTile monsterTile, int x, int y)
+    public DungeonMonster SpawnMonster(MonsterTile monsterTile, int x, int y)
     {
         var (def, generator) = MonsterFactory[monsterTile];
         return AddObject(generator(def, x, y));
     }
 
-    public Item SpawnItem(ItemTile itemTile, int x, int y)
+    public DungeonItem SpawnItem(ItemTile itemTile, int x, int y)
     {
         var (def, generator) = ItemFactory[itemTile];
         return AddObject(generator(def, x, y));
@@ -337,9 +334,24 @@ public class DungeonGame : MooseGame
                 Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .5f);
         }
 
-        CanPlay = ViewingMap == 0 && !ReadObjects.OfType<DungeonObject>().Any(o => o.CurrentlyBlockingInput);
-
         FallingTexts.RemoveAll(text => text.Done || text.Age++ > 1500);
+
+        var (playerX, playerY) = Player.GetCell();
+        if (!GeneratingDungeon && GetDungeonTile(playerX, playerY) == DungeonTile.StairsDown)
+        {
+            GeneratingDungeon = true;
+            UxWindow.OverlayColor = Color.Black;
+            UxWindow.OverlayAlpha = 0;
+
+            UxWindow.TweenToOverlayAlpha(1f, .5f, onEnd: _ =>
+            {
+                GenerateNextDungeon();
+                UxWindow.TweenToOverlayAlpha(0, .5f,
+                    onEnd: _ => GeneratingDungeon = false);
+            });
+        }
+
+        CanPlay = !GeneratingDungeon && ViewingMap == 0 && !ReadObjects.OfType<DungeonObject>().Any(o => o.CurrentlyBlockingInput);
         UxWindow.Update(gameTime);
     }
 
@@ -357,6 +369,13 @@ public class DungeonGame : MooseGame
         DungeonMap.GenerateDungeon();
         Player.NewFloor();
         Player.UseVisionCircle = true;
+
+        RemoveDefs<PotionDef>();
+
+        var potionTiles = Enumerable.Range((int)ItemTile.POTION_START, (int)ItemTile.POTION_END).Shuffle();
+        var potion = (ItemTile)potionTiles.First();
+        AddItemDef(new PotionDef(potion, "Restore Magic"), (def, x, y) => new RestoreMagicPotion(potion, (UsableItemDef)def, new(x * 16, y * 16)));
+        Player.GiveItem(SpawnItem(potion, -1000, -1000));
     }
 
     protected override void PostDraw(GameTime gameTime)

@@ -1,4 +1,5 @@
-﻿using Merthsoft.Moose.Dungeon.Entities.Spells;
+﻿using Merthsoft.Moose.Dungeon.Entities.Items;
+using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Tiles;
 
 namespace Merthsoft.Moose.Dungeon.Entities;
@@ -9,14 +10,13 @@ public record DungeonPlayerDef : DungeonCreatureDef
     {
         DefaultLayer = "player";
         HitPoints = 1;
+        MiniMapTile = MiniMapTile.Player;
     }
 }
 
 public class DungeonPlayer : DungeonCreature
 {
     public static DungeonPlayer Instance { get; private set; } = null!;
-
-    public override int DrawIndex => 22;
 
     public bool CanMove = true;
     public bool HasInputThisFrame;
@@ -41,13 +41,14 @@ public class DungeonPlayer : DungeonCreature
     public int Armor = 0;
     public int MagicArmor = 0;
     public int Mana = 10;
+    public int MaxMana = 10;
     public int Gold = 0;
     public int DungeonLevel = 1;
 
     public bool StatsUpdated;
     public bool ItemsUpdated;
 
-    public List<Item> Items = new();
+    public List<DungeonItem> Items = new();
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {
@@ -55,6 +56,7 @@ public class DungeonPlayer : DungeonCreature
 
         StartCursorTween();
         UseVisionCircle = true;
+        DrawIndex = 22;
     }
 
     protected override void SetTileVisible(DungeonGame dungeonGame, int x, int y)
@@ -69,6 +71,7 @@ public class DungeonPlayer : DungeonCreature
         Mana = 10;
         DungeonLevel++;
         StatsUpdated = true;
+        Items.Clear(); // TODO: Don't keep this
     }
 
     public override void ResetVision()
@@ -143,26 +146,30 @@ public class DungeonPlayer : DungeonCreature
             HasActiveSpells = false;
         }
 
-        bool keyPress(Keys key) => game.WasKeyJustPressed(key) || (CanMove && game.IsKeyHeld(key));
+        bool keyPress(Keys key) => CanMove && game.IsKeyDown(key);
 
         var keyPressed = false;
         if (keyPress(Keys.Left))
         {
+            moveBuffer.Clear();
             moveBuffer.Enqueue(Left);
             keyPressed = true;
         }
         else if (keyPress(Keys.Right))
         {
+            moveBuffer.Clear();
             moveBuffer.Enqueue(Right);
             keyPressed = true;
         }
         else if (keyPress(Keys.Down))
         {
+            moveBuffer.Clear();
             moveBuffer.Enqueue(Down);
             keyPressed = true;
         }
         else if (keyPress(Keys.Up))
         {
+            moveBuffer.Clear();
             moveBuffer.Enqueue(Up);
             keyPressed = true;
         } else if (keyPress(Keys.Space) && CanMove)
@@ -262,7 +269,7 @@ public class DungeonPlayer : DungeonCreature
 
         Direction = newDirection;
 
-        this.AddTween(p => p.AnimationRotation, Direction == Left ? 1 : -1, .06f,
+        this.AddTween(p => p.AnimationRotation, Direction == Left ? 1 : -1, .05f,
             onEnd: _ => this.AddTween(p => p.AnimationRotation, 0, .07f));
 
         if (CanMove && moveDelta != Vector2.Zero)
@@ -340,10 +347,28 @@ public class DungeonPlayer : DungeonCreature
         
         return true;
     }
-    
-    public void GiveItem(Item item)
+
+    public void GiveItem(DungeonItem item)
     {
         ItemsUpdated = true;
         Items.Add(item);
+    }
+
+    public void TakeItem(DungeonItem item)
+    {
+        ItemsUpdated = true;
+        Items.Remove(item);
+    }
+
+    public virtual void HealMp(int value, bool overHeal = false)
+    {
+        Mana += value;
+        var total = value;
+        if (!overHeal && Mana > MaxMana)
+        {
+            total -= Mana - MaxMana;
+            Mana = MaxMana;
+        }
+        game.SpawnFallingText($"+{total}", Position, Color.Blue);
     }
 }

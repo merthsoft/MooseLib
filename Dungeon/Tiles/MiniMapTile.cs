@@ -25,14 +25,14 @@ public enum MiniMapTile
     RedPlusFloor,
     RedStoneFloor,
     RedDotsFloor,
-    FLOOR_END = RedDotsFloor + 1,
+    FLOOR_END,
 
     DOOR_START = 20,
     GreenDoorHorizontal = 20,
     GreenDoorVertical,
     RedDoorHorizontal,
     RedDoorVertical,
-    DOOR_END = RedDoorVertical + 1,
+    DOOR_END,
 
     GraySpikes = 30,
     RedSpikes = 31,
@@ -57,8 +57,13 @@ public enum MiniMapTile
     WALL_START = 80,
     StoneWall = 80,
     BrickWall,
-    WALL_END = BrickWall + 1,
+    WALL_END,
 
     Monster = 90,
-    Player
+    Player,
+    Chest,
+    Key,
+    Necklace,
+    Scroll,
+    Potion
 }

@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.Dungeon.Tiles;
 
-namespace Merthsoft.Moose.Dungeon.Entities;
+namespace Merthsoft.Moose.Dungeon.Entities.Items;
 
 public record ItemDef : DungeonObjectDef
 {
@@ -13,18 +13,19 @@ public record ItemDef : DungeonObjectDef
         Name = name;
         Item = item;
         BlocksPlayer = blocksPlayer;
+        DrawIndex = (int)item;
     }
 }
 
-public abstract class Item : DungeonObject
+public abstract class DungeonItem : DungeonObject
 {
     public ItemDef ItemDef;
-    public override int DrawIndex => (int)ItemDef.Item;
 
-    public Item(ItemDef def, Vector2 position) : base(def, position, "", 0, new Vector2(16, 16), "items")
+    public DungeonItem(ItemDef def, Vector2 position) : base(def, position, "", 0, new Vector2(16, 16), "items")
     {
         ItemDef = def;
         State = "inanimate";
+        DrawIndex = (int)ItemDef.Item;
     }
 
     public override void Update(MooseGame game, GameTime gameTime)

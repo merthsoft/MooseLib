@@ -1,4 +1,4 @@
-﻿namespace Merthsoft.Moose.Dungeon.Entities;
+﻿namespace Merthsoft.Moose.Dungeon.Entities.Items;
 
 public abstract class PickableItem : InteractiveItem
 {

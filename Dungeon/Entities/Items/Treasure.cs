@@ -8,6 +8,7 @@ public record TreasureDef : ItemDef
     public TreasureDef(ItemTile item, string name) : base(item, name, false)
     {
         Value = item.TreasureValue();
+        MiniMapTile = MiniMapTile.Necklace;
     }
 }
 

@@ -3,7 +3,7 @@ public enum ItemTile
 {
     None = -1,
     POTION_START = 0,
-    PurplePotion = POTION_START,
+    PurplePotion = 0,
     OrangePotion,
     BluePotion,
     GreenPotion,
@@ -24,7 +24,7 @@ public enum ItemTile
     WEAPON_END,
 
     ARMOR_START = 20,
-    SilverArmor = ARMOR_START,
+    SilverArmor = 20,
     GoldenArmor,
     GreenArmor,
     GreenCloak,
@@ -33,7 +33,7 @@ public enum ItemTile
     ARMOR_END,
 
     TREASURE_START = 30,
-    GoldenRing = TREASURE_START,
+    GoldenRing = 30,
     BronzeRing,
     SilverRing,
     LargeSilverPile,
@@ -59,12 +59,12 @@ public enum ItemTile
     KEY_END,
 
     LIGHT_START = 60,
-    Torch = LIGHT_START,
+    Torch = 60,
     Candle,
     LIGHT_END,
 
     SCROLL_START = 70,
-    Scroll1 = SCROLL_START,
+    Scroll1 = 70,
     Scroll2,
     Scroll3,
     Scroll4,
@@ -72,8 +72,14 @@ public enum ItemTile
     Scroll6,
     SROLL_END,
 
+    MAP_START = 76,
+    Map1 = 76,
+    Map2, 
+    Map3,
+    Map4,
+
     FOOD_START = 80,
-    Bread = FOOD_START,
+    Bread = 80,
     Meat,
     Cheese,
     FOOD_END,

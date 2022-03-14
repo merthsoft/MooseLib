@@ -24,7 +24,7 @@ public enum DungeonTile
     RedPlusFloor,
     RedStoneFloor,
     RedDotsFloor,
-    FLOOR_END = RedDotsFloor + 1,
+    FLOOR_END,
 
     DOOR_START = 20,
     GreenDoorHorizontal = 20,
@@ -36,16 +36,20 @@ public enum DungeonTile
     StairsDown = 40,
     StairsUp,
     
-    TableLeft = 60,
-    TableMiddle,
-    TableRight,
+    HorizontalTableLeft = 60,
+    HorizontalTableMiddle,
+    HorizontalTableRight,
     ChairRight,
     ChairLeft,
     ChairDown,
     ChairUp,
-    
+    VerticalTableLeft = 70,
+    VerticalTableMiddle,
+    VerticalTableRight,
+
+
     WALL_START = 80,
     StoneWall = 80,
     BrickWall,
-    WALL_END = BrickWall + 1,
+    WALL_END,
 }

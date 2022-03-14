@@ -1,9 +1,7 @@
-﻿namespace Merthsoft.Moose.Dungeon.Entities;
+﻿namespace Merthsoft.Moose.Dungeon.Entities.Items;
 
-public abstract class InteractiveItem : Item
+public abstract class InteractiveItem : DungeonItem
 {
-    public override int DrawIndex => (int)ItemDef.Item;
-
     public bool InteractedWith;
 
     public InteractiveItem(ItemDef def, Vector2 position) : base(def, position)
@@ -13,7 +11,7 @@ public abstract class InteractiveItem : Item
     public virtual void Interact()
     {
         InteractedWith = true;
-        
+
         if (BeforeGrow())
             TweenToScale(new(2, 2), .25f,
                 onEnd: _ =>

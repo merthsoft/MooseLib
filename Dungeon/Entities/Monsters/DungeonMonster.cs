@@ -11,17 +11,17 @@ public record MonsterDef : DungeonCreatureDef
     }
 }
 
-public abstract class Monster : DungeonCreature
+public abstract class DungeonMonster : DungeonCreature
 {
     public MonsterDef MonsterDef { get; }
     
-    public override int DrawIndex => (int)MonsterDef.Monster;
-
     public bool SeenYet;
 
-    public Monster(MonsterDef def, Vector2? position) : base(def, position, "Up", 0, new(16, 16), "monsters")
+    public DungeonMonster(MonsterDef def, Vector2? position) : base(def, position, "Up", 0, new(16, 16), "monsters")
     {
         MonsterDef = def;
+        MiniMapTile = MiniMapTile.Monster;
+        DrawIndex = (int)def.Monster;
     }
 
     public override void Update(MooseGame game, GameTime gameTime)

@@ -6,7 +6,7 @@ public record ChestDef : ItemDef
 {
     public ChestDef() : base(ItemTile.ClosedChest, "Chest", true)
     {
-
+        MiniMapTile = MiniMapTile.Chest;
     }
 
     public override void LoadContent(MooseContentManager contentManager) => base.LoadContent(contentManager);
@@ -14,19 +14,19 @@ public record ChestDef : ItemDef
 
 public class Chest : InteractiveItem
 {
-    public override int DrawIndex => IsOpen ? (int)ItemTile.OpenChest : (int)ItemTile.ClosedChest;
-
     public bool IsOpen = false;
     public List<ItemTile> Contents = new();
 
     public Chest(ChestDef def, Vector2 position) : base(def, position)
     {
-        Def = DungeonGame.GetDef<ChestDef>("Chest");
+        Def = def;
+        DrawIndex = (int)ItemTile.ClosedChest;
     }
 
     public override bool AfterGrow()
     {
         IsOpen = true;
+        DrawIndex = (int)ItemTile.OpenChest;
         SpawnItems();
         return true;
     }

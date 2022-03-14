@@ -10,14 +10,14 @@ public class SpellBookPanel : Panel
     
     private int selectedSpell;
 
-    public SpellBookPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 320)
+    public SpellBookPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 285)
     {
         player = DungeonPlayer.Instance;
         BackgroundDrawingMode = BackgroundDrawingMode.None;
 
         var spellsLabel = this.AddLabel(0, 0, "Spells");
         spellsLabel.HighlightOnHover = false;
-        spellPanel = this.AddPanel(0, 75, 320, Height, BackgroundDrawingMode.None);
+        spellPanel = this.AddPanel(0, 60, 320, Height, BackgroundDrawingMode.None);
     }
 
     private void RebuildSpells()
@@ -32,7 +32,7 @@ public class SpellBookPanel : Panel
             for (var i = 0; i < 3; i++)
             {
                 var index = spellIndex;
-                var button = spellPanel.AddButton(i * 97, j * 125, "", (c, u) => {
+                var button = spellPanel.AddButton(i * 97, j * 110, "", (c, u) => {
                     c.Toggled = false;
                     player.SelectedSpell = index < spellList.Count ? index : player.SelectedSpell;
                 }, 1);
@@ -40,14 +40,14 @@ public class SpellBookPanel : Panel
                 button.Toggled = spellIndex == player.SelectedSpell;
 
                 button.WidthOverride = 75;
-                button.HeightOverride = 114;
+                button.HeightOverride = 75;
                 button.BackgroundDrawingMode = BackgroundDrawingMode.Texture;
                 
                 if (spellIndex < spellList.Count)
                 {
                     var spell = spellList[spellIndex];
                     button.Text = spell.Name;
-                    button.LabelOffset = new(-9, -7);
+                    button.LabelOffset = new(2, 0);
                     button.Texture = spell.Icon;
                     button.TextureScale = new(4, 4);
                 }

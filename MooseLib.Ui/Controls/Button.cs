@@ -5,6 +5,7 @@ public class Button : Control
     public string Text { get; set; }
     
     public Texture2D? Texture { get; set; }
+    public Color TextureHighlightColor { get; set; } = Color.White;
     
     public Rectangle? SourceRectangle { get; set; }
     public Vector2 TextureScale { get; set; } = Vector2.One;
@@ -59,7 +60,7 @@ public class Button : Control
     {
         if (Texture != null)
             spriteBatch.Draw(Texture, Position + drawOffset + new Vector2(2f, 2f), SourceRectangle,
-                ResolvedMainColorShift, 0, Vector2.Zero, TextureScale, SpriteEffects.None, 1f);
+                TextureHighlightColor, 0, Vector2.Zero, TextureScale, SpriteEffects.None, 1f);
     }
 
     protected virtual void DrawEmptyButton(SpriteBatch spriteBatch, Vector2 drawOffset)
@@ -71,12 +72,12 @@ public class Button : Control
     protected virtual void DrawTextureButton(SpriteBatch spriteBatch, Vector2 drawOffset)
     {
         var size = CalculateSize();
-        var windowSize = new Vector2(size.X, size.Y - FontSize.Y);
+        var windowSize = new Vector2(size.X, size.X);
         var themeOffset = Theme.DrawWindow(spriteBatch, Position + drawOffset, windowSize, BackgroundDrawingMode.Texture, ResolvedTextColor);
-        PreLabelDraw(spriteBatch, drawOffset + themeOffset);
-        var position = Position + drawOffset + themeOffset + LabelOffset;
+        var position = Position + drawOffset + LabelOffset;
         if (Texture != null)
-            position = new(position.X, Position.Y + drawOffset.Y + Theme.CalculateNewSize(size).Y - FontSize.Y + LabelOffset.Y);
+            position = new(position.X, position.Y + windowSize.Y);
+        PreLabelDraw(spriteBatch, drawOffset + themeOffset);
         
         spriteBatch.DrawString(Font, Text, position, ResolvedTextColor);
     }

@@ -1,19 +1,19 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
 
 namespace Merthsoft.Moose.Dungeon.Ux;
-internal class ItemsPanel : Panel
+internal class ItemsPanel : GrowPanel
 {
     DungeonPlayer? player;
     int itemOffset = 0;
 
-    public ItemsPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 288)
+    public ItemsPanel(IControlContainer container, float x, float y) : base(container, x, y)
     {
         BackgroundDrawingMode = BackgroundDrawingMode.None;
     }
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (player == null || player.ItemsUpdated || true)
+        if (player == null || player.ItemsUpdated)
         {
             player = DungeonPlayer.Instance;
             player.ItemsUpdated = false;
@@ -22,31 +22,35 @@ internal class ItemsPanel : Panel
             var label = this.AddLabel(0, 0, "Items");
             label.HighlightOnHover = false;
 
-            var panel = this.AddPanel(0, 70, 320, 288, BackgroundDrawingMode.None);
-            panel.AddTextureButton(0, 0, DungeonGame.Instance.PreviousButtonTexture, (_, __) => itemOffset--);
-            var j = 0;
-
-            if (itemOffset < 0)
-                itemOffset = 0;
-
-            if (itemOffset >= player.Items.Count)
-                itemOffset = player.Items.Count - 1;
-
-            var items = player.Items.Skip(itemOffset).Take(4).GetEnumerator();
-            for (j = 0; j < 4; j++)
+            var itemPanel = this.AddPanel(0, 70, 320, 320, BackgroundDrawingMode.None);
+            var itemIndex = 0;
+            var itemList = player.Items;
+            for (var i = 0; i < 3; i++)
             {
-                panel.AddRectangle(j * 65 + 14, 0, 64, 64, DungeonGame.Instance.DefaultBackgroundColor, DungeonGame.Instance.DefaultBackgroundColor);
-                if (items.MoveNext())
+                var index = itemIndex;
+                var button = itemPanel.AddButton(i * 97, 0, "", (c, u) => {
+                    c.Toggled = false;
+                    player.SelectedSpell = index < itemList.Count ? index : player.SelectedSpell;
+                }, 1);
+                button.Toggleable = true;
+
+                button.WidthOverride = 75;
+                button.HeightOverride = 114;
+                button.BackgroundDrawingMode = BackgroundDrawingMode.Texture;
+
+                if (itemIndex < itemList.Count)
                 {
-                    var item = items.Current.DrawIndex;
-                    panel.AddPicture(j * 65+ 14, 0, DungeonGame.Instance.ItemTiles,
-                         DungeonGame.Instance.ItemTiles.GetSourceRectangle(item, 16, 16), new(4, 4));
+                    var item = itemList[itemIndex];
+                    button.Text = item.ItemDef.Name.Replace(' ', '\n');
+                    button.LabelOffset = new(2, 0);
+                    button.Texture = DungeonGame.Instance.ItemTiles;
+                    button.SourceRectangle = button.Texture.GetSourceRectangle(item.DrawIndex, 16, 16);
+                    button.TextureScale = new(4, 4);
                 }
-
+                itemIndex++;
             }
-            panel.AddTextureButton(j*65+14, 0, DungeonGame.Instance.NextButtonTexture, (_, __) => itemOffset++);
 
-            base.Update(updateParameters);
         }
+        base.Update(updateParameters);
     }
 }

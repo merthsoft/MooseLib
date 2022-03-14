@@ -180,6 +180,15 @@ public abstract class MooseGame : Game
         return gameObject;
     }
 
+    public void RemoveDef<TDef>(TDef def) where TDef : Def
+        => Defs.Remove(def.DefName);
+
+    public void RemoveDefs<TDef>() where TDef : Def
+    {
+        foreach (var d in Defs.Where(pair => pair.Value is TDef).ToList())
+            Defs.Remove(d.Key);
+    }
+
     public TDef AddDef<TDef>(TDef def) where TDef : Def
     {
         Defs[def.DefName] = def;

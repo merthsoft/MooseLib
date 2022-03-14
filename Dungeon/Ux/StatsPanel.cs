@@ -5,7 +5,7 @@ public class StatsPanel : Panel
 {
     DungeonPlayer? player;
 
-    public StatsPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 155)
+    public StatsPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 130)
     {
         BackgroundDrawingMode = BackgroundDrawingMode.None;
     }
@@ -21,7 +21,7 @@ public class StatsPanel : Panel
 
             var label = this.AddLabel(0, 0, player.Name);
             label.HighlightOnHover = false;
-            var statsPanel = this.AddGrowPanel(0, 75, BackgroundDrawingMode.None);
+            var statsPanel = this.AddGrowPanel(0, 60, BackgroundDrawingMode.None);
             var hpPanel = statsPanel.AddStackPanel(0, 0, 320, height, BackgroundDrawingMode.None);
             hpPanel.AddLabel(0, 0, "HP:1", 2, Color.IndianRed);
             hpPanel.AddLabel(0, 0, $"+{player.Armor}", 2, Color.White);

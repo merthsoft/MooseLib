@@ -1,4 +1,16 @@
-﻿namespace Merthsoft.Moose.Dungeon.Entities;
+﻿using Merthsoft.Moose.Dungeon.Tiles;
+
+namespace Merthsoft.Moose.Dungeon.Entities;
+public abstract record DungeonCreatureDef : DungeonObjectDef
+{
+    public DungeonCreatureDef(string defName, string layer, string? imageName = null)
+        : base(defName, imageName ?? defName)
+    {
+        DefaultLayer = layer;
+        DefaultSize = new(16, 16);
+    }
+}
+
 public abstract class DungeonCreature : DungeonObject
 {
     public const string Left = "Left";
