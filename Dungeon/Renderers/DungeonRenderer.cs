@@ -18,7 +18,7 @@ public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer<DungeonTile>
         if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
             return 0;
 
-        if (layer.GetTileValue(x, y) < DungeonTile.WALL_START)
+        if (layer.GetTileValue(x, y) < DungeonTile.WALL_START || player.CanSee(x, y) == FogOfWar.Full)
             return 0;
 
         return neighborValue;

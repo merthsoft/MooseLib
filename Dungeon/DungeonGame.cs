@@ -50,17 +50,13 @@ public class DungeonGame : MooseGame
 
     private readonly (int w, int h)[] roomSizes = new[]
         {
-            (3, 3),
-            (4, 4),
-            (4, 3),
-            (3, 4),
             (5, 5),
             (6, 6),
-            (4, 6),
-            (3, 7),
             (7, 6),
             (7, 4),
             (4, 7),
+            (6, 5),
+            (5, 6),
         };
 
     public DungeonMap DungeonMap = null!;
@@ -157,7 +153,7 @@ public class DungeonGame : MooseGame
         var fonts = new[] {
             ContentManager.BakeFont("BrightLinger", 70),
             ContentManager.BakeFont("Wizard's Manse", 42),
-            ContentManager.BakeFont("BrightLinger_monospace", 30)
+            ContentManager.BakeFont("BrightLinger_monospace", 25)
         };
 
         UxWindow = new(
@@ -290,12 +286,10 @@ public class DungeonGame : MooseGame
     }
 
     protected override void PreUpdate(GameTime gameTime)
-    { 
-        MainCamera.Position = (Player.Position + Player.AnimationPosition) - ScreenSize / MainCamera.Zoom / 2f;
-        MainCamera.Position = MainCamera.Position with
-        {
-            X = MainCamera.Position.X - 320f / 4f
-        };
+    {
+        var x = (Player.Position.X + Player.AnimationPosition.X - 800 / MainCamera.Zoom).Round(2);
+        var y = (Player.Position.Y + Player.AnimationPosition.Y - 480 / MainCamera.Zoom).Round(2);
+        MainCamera.Position = new(x, y);
 
         if (WasKeyJustPressed(Keys.D))
         {
@@ -338,9 +332,9 @@ public class DungeonGame : MooseGame
         else if (WasKeyJustPressed(Keys.Z))
         {
             if (MainCamera.Zoom == 3)
-                Tweener.TweenTo(MainCamera, m => m.Zoom, 2, .35f);
+                Tweener.TweenTo(MainCamera, m => m.Zoom, 2, .5f);
             else if (MainCamera.Zoom == 2)
-                Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .35f);
+                Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .5f);
         }
 
         CanPlay = ViewingMap == 0 && !ReadObjects.OfType<DungeonObject>().Any(o => o.CurrentlyBlockingInput);
