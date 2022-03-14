@@ -95,7 +95,8 @@ public abstract class DungeonCreature : DungeonObject
                 {
                     var distance = DistanceSquaredTo(monster);
                     visibleMonsters.Add((distance, monster));
-                    monster.SeenCount++;
+                    if (this == DungeonPlayer.Instance)
+                        monster.SeenCount++;
                 }
                 else if (dungeonGame.GetDungeonTile(posX, posY).BlocksSight())
                     break;

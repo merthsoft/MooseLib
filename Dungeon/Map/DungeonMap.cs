@@ -104,8 +104,9 @@ public class DungeonMap : BaseMap
         var roomTypes = new DungeonRoomDef[]
         {
             new(.5f) { NumTreasure = 1 },
-            //new(.5f) { NumMonsters = 1, MonsterLevelDelta = 0 },
-            //new(.4f) { NumMonsters = 2, MonsterLevelDelta = 0 },
+            new(.5f) { NumMonsters = 1, MonsterLevelDelta = 0 },
+            new(.4f) { NumMonsters = 2, MonsterLevelDelta = 0 },
+            new(.05f) { NumMonsters = 3, NumChests = 1 },
             //new(.1f) { NumMonsters = 1, MonsterLevelDelta = 1 },
             new(.15f) { NumChests = 1 },
             //new(.15f) { NumPotions = 1 },
@@ -175,6 +176,13 @@ public class DungeonMap : BaseMap
                     var roomChest = (Chest)dungeonGame.SpawnItem(ItemTile.ClosedChest, spotX, spotY);
                     roomChest.Contents.AddRange(Treasures.Take(dungeonGame.Random.Next(3, 7)));
                 }
+
+                for (var monsterCount = 0; monsterCount < roomType.NumMonsters; monsterCount++)
+                {
+                    spiral.MoveNext();
+                    var (spotX, spotY) = spiral.Current;
+                    dungeonGame.SpawnMonster(MonsterTile.BlueSlime, spotX, spotY);
+                }
             }
         }
 
@@ -222,6 +230,7 @@ public class DungeonMap : BaseMap
 
     public void GenerateTown(int numRooms, (int, int)[] roomSizes, int? seed = null)
     {
+        ClearDungeon();
         if (seed != null)
             SeedUsed = seed.Value;
         else
@@ -232,7 +241,6 @@ public class DungeonMap : BaseMap
 
         gamme.Player.ResetVision();
         GeneratedMap = null;
-        ClearDungeon();
         var allRooms = GenerateRooms(numRooms + 1, roomSizes);
         var stairRoom = allRooms.RemoveRandomElement();
         PlaceStairs(stairRoom);

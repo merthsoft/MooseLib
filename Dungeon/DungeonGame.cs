@@ -34,6 +34,8 @@ public class DungeonGame : MooseGame
 
     public Texture2D ItemTiles = null!;
 
+    public Texture2D ArrowTexture = null!;
+
     SpriteFont DebugFont = null!;
     SpriteFont FallingTextFont = null!;
 
@@ -108,6 +110,8 @@ public class DungeonGame : MooseGame
 
         ItemTiles = ContentManager.LoadImage("Items");
 
+        ArrowTexture = ContentManager.LoadImage("Arrow");
+
         DungeonTiles = ContentManager.LoadImage("Dungeon");
         var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, DungeonTiles); 
         
@@ -142,10 +146,11 @@ public class DungeonGame : MooseGame
         Player.LearnSpell(AddSpellDef(new SpellDef("AnimateDead", 1, "Raise"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
         Player.LearnSpell(AddSpellDef(new SpellDef("Slow", 1, "Tangle"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
 
-        AddMonsterDef(new MonsterDef("Marshall", MonsterTile.Marshall)
-        {
-            HitPoints = 5,
-        }, (def, x, y) => new Marshall(def, new Vector2(x * 16, y * 16)));
+        AddMonsterDef(new MonsterDef("Marshall", MonsterTile.Marshall) { HitPoints = 5 }, 
+            (def, x, y) => new Marshall(def, new Vector2(x * 16, y * 16)));
+
+        AddMonsterDef(new MonsterDef("Slime", MonsterTile.BlueSlime) { HitPoints = 2}, 
+            (def, x, y) => new Slime(def, new Vector2(x * 16, y * 16)));
 
         for (var item = ItemTile.TREASURE_START; item < ItemTile.TREASURE_END; item++)
             AddItemDef(new TreasureDef(item, item.ToString().InsertSpacesBeforeCapitalLetters()), (itemDef, x, y) => new Treasure((TreasureDef)itemDef, new Vector2(x * 16, y * 16)));
