@@ -22,6 +22,7 @@ public abstract class DungeonCreature : DungeonObject
     protected FogOfWar[,] SightMap = new FogOfWar[0, 0];
     public int ViewRadius = 8;
     public bool UseVisionCircle = true;
+    public bool BuildSightMap = false;
 
     public readonly List<DungeonCreature> VisibleMonsters = new();
 
@@ -38,14 +39,14 @@ public abstract class DungeonCreature : DungeonObject
 
     public override void Update(MooseGame game, GameTime gameTime)
     {
-        RebuildSightMap((game as DungeonGame)!);
+        if (BuildSightMap)
+            RebuildSightMap((game as DungeonGame)!);
         base.Update(game, gameTime);
     }
 
     public override void PostUpdate(MooseGame game, GameTime gameTime)
     {
         FrozenTurnCount--;
-        RebuildSightMap((game as DungeonGame)!);
         base.PostUpdate(game, gameTime);
     }
 
@@ -79,7 +80,7 @@ public abstract class DungeonCreature : DungeonObject
         var (creatureX, creatureY) = cell;
         SetTileVisible(dungeonGame, creatureX, creatureY);
 
-        for (var d = 0f; d < MathF.PI * 2; d += .1f)
+        for (var d = 0f; d < MathF.PI * 2; d += .05f)
             for (var delta = 1f; delta < ViewRadius; delta += 1)
             {
                 var posX = (creatureX + delta * MathF.Cos(d)).Round();
