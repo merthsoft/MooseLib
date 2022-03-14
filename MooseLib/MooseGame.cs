@@ -38,7 +38,7 @@ public abstract class MooseGame : Game
     public Vector2 WorldMouse { get; private set; }
 
     private readonly SortedSet<GameObjectBase> Objects = new();
-    public IReadOnlyList<GameObjectBase> ReadObjects => Objects.ToList().AsReadOnly();
+    public IEnumerable<GameObjectBase> ReadObjects => Objects;
     private readonly Queue<GameObjectBase> ObjectsToAdd = new();
 
     private readonly Dictionary<Type, string> DefaultRenderers = new();

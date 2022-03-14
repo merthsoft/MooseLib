@@ -338,6 +338,11 @@ public class DungeonGame : MooseGame
             else if (MainCamera.Zoom == 2)
                 Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .5f);
         }
+    }
+
+    protected override void PostUpdate(GameTime gameTime)
+    {
+        base.PostUpdate(gameTime);
 
         FallingTexts.RemoveAll(text => text.Done || text.Age++ > 1500);
 

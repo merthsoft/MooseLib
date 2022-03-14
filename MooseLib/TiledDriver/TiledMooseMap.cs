@@ -87,7 +87,7 @@ public class TiledMooseMap : BaseMap
     protected override int IsBlockedAt(string layer, int x, int y)
         => layerMap[layer] switch
         {
-            TiledMooseObjectLayer objectLayer => objectLayer.Objects.Any(o => o.InCell(layer, x, y, this)) ? 1 : 0,
+            TiledMooseObjectLayer objectLayer => objectLayer.Objects.Any(o => o.InCell(layer, x, y)) ? 1 : 0,
             TiledMooseTileLayer tileLayer => tileLayer.IsBlockedAt(x, y, this) ? 1 : 0,
             _ => 0,
         };
