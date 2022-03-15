@@ -1,6 +1,4 @@
-﻿using Merthsoft.Moose.Dungeon.Tiles;
-
-namespace Merthsoft.Moose.Dungeon.Entities;
+﻿namespace Merthsoft.Moose.Dungeon.Entities;
 public abstract record DungeonCreatureDef : DungeonObjectDef
 {
     public DungeonCreatureDef(string defName, string layer, string? imageName = null)
@@ -59,7 +57,13 @@ public abstract class DungeonCreature : DungeonObject
     }
 
     protected virtual void SetTileVisible(DungeonGame dungeonGame, int x, int y)
-        => SightMap[x, y] = FogOfWar.None;
+    {
+        if (SightMap[x, y] == FogOfWar.Full)
+            CellDiscovered(x, y);
+        SightMap[x, y] = FogOfWar.None;
+    }
+
+    protected virtual void CellDiscovered(int x, int y) { }
 
     public virtual void RebuildSightMap(DungeonGame dungeonGame)
     {
