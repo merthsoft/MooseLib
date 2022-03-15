@@ -8,7 +8,7 @@ public class ObjectLayer : IObjectLayer
     public string? RendererKey { get; set; }
 
     readonly SortedSet<GameObjectBase> objects = new();
-    public IReadOnlyList<GameObjectBase> Objects => objects.ToList().AsReadOnly();
+    public IEnumerable<GameObjectBase> Objects => objects;
 
     public string Name { get; }
     public bool IsHidden { get; set; } = false;

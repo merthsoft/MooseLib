@@ -1,6 +1,4 @@
-﻿using Merthsoft.Moose.Dungeon.Tiles;
-
-namespace Merthsoft.Moose.Dungeon.Entities;
+﻿namespace Merthsoft.Moose.Dungeon.Entities;
 public abstract record DungeonCreatureDef : DungeonObjectDef
 {
     public DungeonCreatureDef(string defName, string layer, string? imageName = null)
@@ -22,6 +20,7 @@ public abstract class DungeonCreature : DungeonObject
     protected FogOfWar[,] SightMap = new FogOfWar[0, 0];
     public int ViewRadius = 8;
     public bool UseVisionCircle = true;
+    public bool BuildSightMap = false;
 
     public readonly List<DungeonCreature> VisibleMonsters = new();
 
@@ -38,14 +37,14 @@ public abstract class DungeonCreature : DungeonObject
 
     public override void Update(MooseGame game, GameTime gameTime)
     {
-        RebuildSightMap((game as DungeonGame)!);
+        if (BuildSightMap)
+            RebuildSightMap((game as DungeonGame)!);
         base.Update(game, gameTime);
     }
 
     public override void PostUpdate(MooseGame game, GameTime gameTime)
     {
         FrozenTurnCount--;
-        RebuildSightMap((game as DungeonGame)!);
         base.PostUpdate(game, gameTime);
     }
 
@@ -58,7 +57,13 @@ public abstract class DungeonCreature : DungeonObject
     }
 
     protected virtual void SetTileVisible(DungeonGame dungeonGame, int x, int y)
-        => SightMap[x, y] = FogOfWar.None;
+    {
+        if (SightMap[x, y] == FogOfWar.Full)
+            CellDiscovered(x, y);
+        SightMap[x, y] = FogOfWar.None;
+    }
+
+    protected virtual void CellDiscovered(int x, int y) { }
 
     public virtual void RebuildSightMap(DungeonGame dungeonGame)
     {
@@ -79,7 +84,7 @@ public abstract class DungeonCreature : DungeonObject
         var (creatureX, creatureY) = cell;
         SetTileVisible(dungeonGame, creatureX, creatureY);
 
-        for (var d = 0f; d < MathF.PI * 2; d += .1f)
+        for (var d = 0f; d < MathF.PI * 2; d += .05f)
             for (var delta = 1f; delta < ViewRadius; delta += 1)
             {
                 var posX = (creatureX + delta * MathF.Cos(d)).Round();

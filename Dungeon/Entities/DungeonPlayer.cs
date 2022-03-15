@@ -57,6 +57,7 @@ public class DungeonPlayer : DungeonCreature
         StartCursorTween();
         UseVisionCircle = true;
         DrawIndex = 22;
+        BuildSightMap = true;
     }
 
     protected override void SetTileVisible(DungeonGame dungeonGame, int x, int y)

@@ -12,6 +12,9 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public string Layer { get; set; }
 
+    int tileWidth;
+    int tileHeight;
+
     public Vector2 Position { get; set; }
     public Vector2 WorldSize { get; set; }
     public float Rotation { get; set; }
@@ -61,7 +64,10 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public abstract void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch);
 
-    public virtual void OnAdd() { }
+    public virtual void OnAdd() {
+        tileWidth = ParentMap.TileWidth;
+        tileHeight = ParentMap.TileHeight;
+    }
 
     public virtual void OnRemove() { }
 
@@ -92,18 +98,17 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public virtual bool AtWorldPosition(Vector2 worldPosition)
         => WorldRectangle.Contains(worldPosition);
 
-    public Point GetCell(IMap? parentMap = null)
+    public Point GetCell()
         => new(
-            (int)Position.X / (parentMap ?? ParentMap)!.TileWidth,
-            (int)Position.Y / (parentMap ?? ParentMap)!.TileHeight
-        );
+            (int)Position.X / tileWidth,
+            (int)Position.Y / tileHeight);
 
-    public bool InCell(int x, int y, IMap? parentMap = null)
-        => Position.X / (parentMap ?? ParentMap)!.TileWidth == x
-        && Position.Y / (parentMap ?? ParentMap)!.TileHeight == y;
+    public bool InCell(int x, int y)
+        => Position.X / tileWidth == x
+        && Position.Y / tileHeight == y;
 
-    public bool InCell(string layer, int x, int y, IMap parentMap)
-        => layer == Layer && InCell(x, y, parentMap);
+    public bool InCell(string layer, int x, int y)
+        => layer == Layer && InCell(x, y);
 
     public int CompareTo(GameObjectBase? other)
         => Id.CompareTo(other?.Id);
