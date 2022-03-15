@@ -12,9 +12,12 @@ public class DungeonMap : BaseMap
     public readonly DungeonLayer DungeonLayer;
     public readonly ObjectLayer MonsterLayer;
     public IEnumerable<DungeonMonster> Monsters => MonsterLayer.Objects.Cast<DungeonMonster>();
-    
+
     public readonly ObjectLayer ItemLayer;
     public IEnumerable<DungeonItem> Items => ItemLayer.Objects.Cast<DungeonItem>();
+
+    public readonly ObjectLayer SpellLayer;
+    public IEnumerable<DungeonItem> Spells => ItemLayer.Objects.Cast<DungeonItem>();
 
     public override int Height => DungeonLayer.Height;
     public override int Width => DungeonLayer.Width;
@@ -34,7 +37,7 @@ public class DungeonMap : BaseMap
         AddLayer(new ObjectLayer("player"));
         AddLayer(ItemLayer = new ObjectLayer("items"));
         AddLayer(MonsterLayer = new ObjectLayer("monsters"));
-        AddLayer(new ObjectLayer("spells"));
+        AddLayer(SpellLayer = new ObjectLayer("spells"));
     }
 
     public void ClearDungeon()
@@ -431,11 +434,14 @@ public class DungeonMap : BaseMap
 
     protected override int IsBlockedAt(string layer, int x, int y)
     {
-        if (layer != "dungeon")
-            return 0;
-
-        var tile = DungeonLayer.GetTileValue(x, y);
-        return tile.IsBlocking() ? (int)tile : 0;
+        return layer switch
+        {
+            "dungeon" => DungeonLayer.GetTileValue(x, y).IsBlocking() ? (int)DungeonLayer.GetTileValue(x, y): 0,
+            "monsters" => Monsters.FirstOrDefault(m => m.InCell(x, y))?.DrawIndex ?? 0,
+            "items" => Items.FirstOrDefault(m => m.InCell(x, y))?.DrawIndex ?? 0,
+            "spells" => Spells.FirstOrDefault(m => m.InCell(x, y))?.DrawIndex ?? 0,
+            _ => 0,
+        };
     }
 
     public void SetDungeonTile(int x, int y, DungeonTile t)

@@ -2,15 +2,15 @@
 public record FlameDef : SpellDef { public FlameDef() : base("Flame", 5) { } }
 public class Flame : Spell
 {
-
     public Flame(SpellDef def, DungeonObject owner, Vector2 position) : base(def, owner, position)
     {
         Position = new Vector2((int)position.X / 16 * 16, (int)position.Y / 16 * 16);
         State = Cast;
         StateCompleteAction = () =>
         {
-            State = Hit;
-            StateCompleteAction = () => State = Dead;
+            State = Active;
+            StateCompleteAction = null;
+            CurrentlyBlockingInput = false;
         };
     }
 

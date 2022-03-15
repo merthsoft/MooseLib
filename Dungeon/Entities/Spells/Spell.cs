@@ -34,7 +34,6 @@ public abstract class Spell : AnimatedGameObject
     protected DungeonGame game;
 
     public new SpellDef Def => (SpellDef)base.Def;
-    public bool CurrentlyBlockingInput = false;
 
     public const string Cast = "cast";
     public const string Active = "active";
@@ -43,6 +42,7 @@ public abstract class Spell : AnimatedGameObject
 
     public readonly DungeonObject Owner;
 
+    public bool CurrentlyBlockingInput = true;
     private bool hasHit = false;
 
     public virtual int ManaCost => Def.ManaCost;

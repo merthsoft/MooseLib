@@ -20,7 +20,6 @@ public class DungeonPlayer : DungeonCreature
 
     public bool CanMove = true;
     public bool HasInputThisFrame;
-    public bool HasActiveSpells;
     
     private readonly Queue<string> moveBuffer = new();
     private bool mouseBuffer = false;
@@ -124,13 +123,6 @@ public class DungeonPlayer : DungeonCreature
         this.AddTween(p => p.CrosshairHue, 1, 5, repeatCount: -1);
     }
 
-    public override void AddSpell(Spell spell)
-    {
-        base.AddSpell(spell);
-        CanMove = false;
-        HasActiveSpells = true;
-    }
-
     public override void Update(MooseGame mooseGame, GameTime gameTime)
     {
         base.Update(mooseGame, gameTime);
@@ -139,13 +131,6 @@ public class DungeonPlayer : DungeonCreature
             return;
 
         HasInputThisFrame = false;
-
-        if (HasActiveSpells && !ActiveSpells.Any())
-        {
-            HasInputThisFrame = true;
-            CanMove = true;
-            HasActiveSpells = false;
-        }
 
         bool keyPress(Keys key) => CanMove && game.IsKeyDown(key);
 
@@ -239,7 +224,6 @@ public class DungeonPlayer : DungeonCreature
 
     private void ProcessMove(string move)
     {
-        HasInputThisFrame = true;
         var moveDelta = Vector2.Zero;
         var newDirection = "";
         switch (move)
@@ -273,8 +257,9 @@ public class DungeonPlayer : DungeonCreature
         this.AddTween(p => p.AnimationRotation, Direction == Left ? 1 : -1, .05f,
             onEnd: _ => this.AddTween(p => p.AnimationRotation, 0, .07f));
 
-        if (CanMove && moveDelta != Vector2.Zero)
+        if (CanMove && moveDelta != Vector2.Zero && !game.IsKeyDown(Keys.LeftShift, Keys.RightShift))
         {
+            HasInputThisFrame = true;
             CanMove = false;
 
             var newTilePosition = Position / 16 + moveDelta;

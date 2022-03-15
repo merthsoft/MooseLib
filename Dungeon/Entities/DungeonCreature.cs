@@ -130,11 +130,11 @@ public abstract class DungeonCreature : DungeonObject
         _ => null,
     };
 
-    protected void CalculateDirection() => (Rotation, Effects) = Direction switch
+    protected void CalculateDirection() => Rotation = Direction switch
     {
-        Up => (-MathF.PI / 2, SpriteEffects.None),
-        Down => (MathF.PI / 2, SpriteEffects.None),
-        Left => (0, SpriteEffects.FlipHorizontally),
-        _ => (0, SpriteEffects.None),
+        Up => -MathF.PI / 2,
+        Down => MathF.PI / 2,
+        Left => MathF.PI,
+        _ => 0,
     };
 }

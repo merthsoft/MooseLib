@@ -224,13 +224,13 @@ public class DungeonGame : MooseGame
         => DungeonMap.DungeonLayer.GetTileValue(x, y);
 
     public MonsterTile GetMonsterTile(int x, int y)
-        => DungeonMap.Monsters.MonsterDef?.Monster ?? MonsterTile.None;
+        => GetMonster(x, y)?.MonsterDef?.Monster ?? MonsterTile.None;
 
-    public DungeonCreature? GetMonster(int x, int y)
-        => DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonMonster;
+    public DungeonMonster? GetMonster(int x, int y)
+        => DungeonMap.Monsters.FirstOrDefault(o => o.InCell(x, y));
 
     public DungeonItem? GetItem(int x, int y)
-        => DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonItem;
+        => DungeonMap.Items.FirstOrDefault(o => o.InCell(x, y));
 
     public ItemTile GetItemTile(int x, int y)
         => (DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonItem)?.ItemDef.Item ?? ItemTile.None;
@@ -336,6 +336,17 @@ public class DungeonGame : MooseGame
             else if (MainCamera.Zoom == 2)
                 Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .5f);
         }
+
+        CanPlay = !GeneratingDungeon && ViewingMap == 0
+            && !ReadObjects.Any(o =>
+            {
+                return o switch
+                {
+                    DungeonObject d => d.CurrentlyBlockingInput,
+                    Spell s => s.CurrentlyBlockingInput,
+                    _ => false,
+                };
+            });
     }
 
     protected override void PostUpdate(GameTime gameTime)
@@ -359,7 +370,6 @@ public class DungeonGame : MooseGame
             });
         }
 
-        CanPlay = !GeneratingDungeon && ViewingMap == 0 && !ReadObjects.OfType<DungeonObject>().Any(o => o.CurrentlyBlockingInput);
         UxWindow.Update(gameTime);
     }
 
