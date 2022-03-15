@@ -34,13 +34,14 @@ public abstract class Spell : AnimatedGameObject
     protected DungeonGame game;
 
     public new SpellDef Def => (SpellDef)base.Def;
+    public bool CurrentlyBlockingInput = false;
 
     public const string Cast = "cast";
     public const string Active = "active";
     public const string Hit = "hit";
     public const string Dead = "dead";
 
-    public DungeonObject Owner { get; }
+    public readonly DungeonObject Owner;
 
     private bool hasHit = false;
 

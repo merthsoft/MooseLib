@@ -130,8 +130,8 @@ public class DungeonGame : MooseGame
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
         FallingTextFont = ContentManager.BakeFont("Border_Basic_Monospaced", 24);
 
-        Player.LearnSpell(AddSpellDef(new FireballDef(), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new MeteorDef(), (spellDef, owner, position)
+        AddSpellDef(new FireballDef(), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+        AddSpellDef(new MeteorDef(), (spellDef, owner, position)
             => 
             new SpellContainer(owner)
                 .Add(new Meteor(spellDef, owner, position))
@@ -139,12 +139,14 @@ public class DungeonGame : MooseGame
                 .Add(new Meteor(spellDef, owner, position - new Vector2(-16, 0)))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, 16)))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, -16)))
-            ));
-        //Player.LearnSpell(AddSpellDef(new SpinesDef(), (spellDef, owner, position) => new Spines(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new LightningDef(), (spellDef, owner, position) => new Lightning(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new SpellDef("Dark Shield", 1, "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new SpellDef("AnimateDead", 1, "Raise"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
-        Player.LearnSpell(AddSpellDef(new SpellDef("Slow", 1, "Tangle"), (spellDef, owner, position) => new Fireball(spellDef, owner, position)));
+            );
+        AddSpellDef(new SpinesDef(), (spellDef, owner, position) => new Spines(spellDef, owner, position));
+        AddSpellDef(new LightningDef(), (spellDef, owner, position) => new Lightning(spellDef, owner, position));
+        AddSpellDef(new SpellDef("Dark Shield", 1, "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+        AddSpellDef(new SpellDef("AnimateDead", 1, "Raise"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+        AddSpellDef(new SpellDef("Slow", 1, "Tangle"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+
+        Player.LearnSpell(AddSpellDef(new FlameDef(), (spellDef, owner, position) => new Flame(spellDef, owner, position)));
 
         AddMonsterDef(new MonsterDef("Marshall", MonsterTile.Marshall) { HitPoints = 5 }, 
             (def, x, y) => new Marshall(def, new Vector2(x * 16, y * 16)));
@@ -222,7 +224,7 @@ public class DungeonGame : MooseGame
         => DungeonMap.DungeonLayer.GetTileValue(x, y);
 
     public MonsterTile GetMonsterTile(int x, int y)
-        => (DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonMonster)?.MonsterDef?.Monster ?? MonsterTile.None;
+        => DungeonMap.Monsters.MonsterDef?.Monster ?? MonsterTile.None;
 
     public DungeonCreature? GetMonster(int x, int y)
         => DungeonMap.MonsterLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonMonster;

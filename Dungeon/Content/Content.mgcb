@@ -566,6 +566,33 @@
 /processorParam:TextureFormat=Color
 /build:Spells/Fireball/Image.png
 
+#begin Spells/Flame/Animation.sf
+/copy:Spells/Flame/Animation.sf
+
+#begin Spells/Flame/Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/Flame/Icon.png
+
+#begin Spells/Flame/Image.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/Flame/Image.png
+
 #begin Spells/Lightning/Animation.sf
 /copy:Spells/Lightning/Animation.sf
 
