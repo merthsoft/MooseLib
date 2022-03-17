@@ -5,8 +5,17 @@ public class Slime : DungeonMonster
     {
     }
 
-    protected override void MonsterUpdate(GameTime gameTime) {
-        if (SeenCount == 0)
-            return;
+    protected override string MonsterUpdate(GameTime gameTime) 
+    {
+        if (NextMove != "")
+            ProcessMove(NextMove);
+
+        return game.Random.Next(4) switch
+        {
+            0 => Left,
+            1 => Right,
+            2 => Up,
+            _ => Down,
+        };
     }
 }

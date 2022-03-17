@@ -37,7 +37,7 @@ public abstract class MooseGame : Game
 
     public Vector2 WorldMouse { get; private set; }
 
-    private readonly SortedSet<GameObjectBase> Objects = new();
+    private readonly List<GameObjectBase> Objects = new();
     public IEnumerable<GameObjectBase> ReadObjects => Objects;
     private readonly Queue<GameObjectBase> ObjectsToAdd = new();
 
@@ -232,6 +232,7 @@ public abstract class MooseGame : Game
         if (PreObjectsUpdate(gameTime))
             foreach (var obj in Objects)
             {
+                obj.PreUpdate(this, gameTime);
                 obj.Update(this, gameTime);
                 obj.PostUpdate(this, gameTime);
             }
@@ -242,12 +243,11 @@ public abstract class MooseGame : Game
             {
                 layer.RemoveObject(obj);
                 obj.OnRemove();
-                obj.ParentMap = null!;
                 continue;
             }
         }
 
-        Objects.RemoveWhere(obj => obj.Remove);
+        Objects.RemoveAll(obj => obj.Remove);
 
         foreach (var obj in ObjectsToAdd)
         {

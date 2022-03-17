@@ -25,7 +25,7 @@ public class SpellBookPanel : Panel
         spellPanel.ClearControls();
         spellList.Clear();
         spellList.AddRange(player.KnownSpells);
-        selectedSpell = player.SelectedSpell;
+        selectedSpell = player.SelectedSpellIndex;
         var spellIndex = 0;
         
         for (var j = 0; j < 2; j++)
@@ -34,10 +34,10 @@ public class SpellBookPanel : Panel
                 var index = spellIndex;
                 var button = spellPanel.AddButton(i * 97, j * 110, "", (c, u) => {
                     c.Toggled = false;
-                    player.SelectedSpell = index < spellList.Count ? index : player.SelectedSpell;
+                    player.SelectedSpellIndex = index < spellList.Count ? index : player.SelectedSpellIndex;
                 }, 1);
                 button.Toggleable = true;
-                button.Toggled = spellIndex == player.SelectedSpell;
+                button.Toggled = spellIndex == player.SelectedSpellIndex;
 
                 button.WidthOverride = 75;
                 button.HeightOverride = 75;
@@ -57,7 +57,7 @@ public class SpellBookPanel : Panel
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (!spellList.SequenceEqual(player.KnownSpells) || selectedSpell != player.SelectedSpell)
+        if (!spellList.SequenceEqual(player.KnownSpells) || selectedSpell != player.SelectedSpellIndex)
             RebuildSpells();
         base.Update(updateParameters);
     }

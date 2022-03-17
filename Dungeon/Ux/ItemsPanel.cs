@@ -30,7 +30,7 @@ internal class ItemsPanel : GrowPanel
                 var index = itemIndex;
                 var button = itemPanel.AddButton(i * 97, 0, "", (c, u) => {
                     c.Toggled = false;
-                    player.SelectedSpell = index < itemList.Count ? index : player.SelectedSpell;
+                    player.SelectedSpellIndex = index < itemList.Count ? index : player.SelectedSpellIndex;
                 }, 1);
                 button.Toggleable = true;
 

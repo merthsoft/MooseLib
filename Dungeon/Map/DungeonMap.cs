@@ -3,6 +3,7 @@ using Karcero.Engine.Models;
 using Merthsoft.Moose.Dungeon.Entities;
 using Merthsoft.Moose.Dungeon.Entities.Items;
 using Merthsoft.Moose.Dungeon.Entities.Monsters;
+using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 
@@ -17,7 +18,7 @@ public class DungeonMap : BaseMap
     public IEnumerable<DungeonItem> Items => ItemLayer.Objects.Cast<DungeonItem>();
 
     public readonly ObjectLayer SpellLayer;
-    public IEnumerable<DungeonItem> Spells => ItemLayer.Objects.Cast<DungeonItem>();
+    public IEnumerable<Spell> Spells => SpellLayer.Objects.Cast<Spell>();
 
     public override int Height => DungeonLayer.Height;
     public override int Width => DungeonLayer.Width;
@@ -434,15 +435,30 @@ public class DungeonMap : BaseMap
 
     protected override int IsBlockedAt(string layer, int x, int y)
     {
-        return layer switch
+        switch (layer)
         {
-            "dungeon" => DungeonLayer.GetTileValue(x, y).IsBlocking() ? (int)DungeonLayer.GetTileValue(x, y): 0,
-            "monsters" => Monsters.FirstOrDefault(m => m.InCell(x, y))?.DrawIndex ?? 0,
-            "items" => Items.FirstOrDefault(m => m.InCell(x, y))?.DrawIndex ?? 0,
-            "spells" => Spells.FirstOrDefault(m => m.InCell(x, y))?.DrawIndex ?? 0,
-            _ => 0,
-        };
+            case "dungeon":
+                var tile = DungeonLayer.GetTileValue(x, y);
+                return tile.IsBlocking() ? (int)tile : 0;
+            case "monsters":
+                return Monsters.FirstOrDefault(m => m.InCell(x, y))?.DrawIndex ?? 0;
+            case "items":
+                var item = Items.FirstOrDefault(m => m.InCell(x, y));
+                if (item?.ItemDef?.BlocksPlayer ?? false)
+                    return item.DrawIndex;
+                return 0;
+            case "spells":
+                var spell = Spells.FirstOrDefault(m => m.InCell(x, y));
+                if (spell?.BlocksPlayer ?? false)
+                    return 1;
+                return 0;
+        }
+
+        return 0;
     }
+
+    public bool IsBlockedAt(int x, int y)
+        => GetBlockingVector(x, y).Any(i => i > 0);
 
     public void SetDungeonTile(int x, int y, DungeonTile t)
         => DungeonLayer.SetTileValue(x, y, t);

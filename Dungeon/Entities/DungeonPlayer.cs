@@ -31,15 +31,17 @@ public class DungeonPlayer : DungeonCreature
     public float CrosshairHue;
 
     public List<SpellDef> KnownSpells = new();
-    public int SelectedSpell;
+    public int SelectedSpellIndex;
+
+    public SpellDef SelectedSpell => KnownSpells[SelectedSpellIndex];
 
     public MiniMapTile[,] MiniMap = new MiniMapTile[0, 0];
 
     public string Name = "Wizz";
-    public int Health = 1;
-    public int Armor = 0;
-    public int MagicArmor = 0;
-    public int Mana = 10;
+
+    public int ManaHealRate = 20;
+    public int ManaHealCount = 0;
+    public int Mana = 0;
     public int MaxMana = 10;
     public int Gold = 0;
     public int DungeonLevel = 1;
@@ -48,6 +50,11 @@ public class DungeonPlayer : DungeonCreature
     public bool ItemsUpdated;
 
     public List<DungeonItem> Items = new();
+
+    public bool Targeting = false;
+    public int TargetIndex = -1;
+    public Vector2 TargetPosition;
+    //public Vector2 TargetAnimationPosition;
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {
@@ -65,13 +72,45 @@ public class DungeonPlayer : DungeonCreature
         MiniMap[x, y] = dungeonGame.GetMiniMapTile(x, y);
     }
 
+    protected override void CellDiscovered(int x, int y)
+    {
+        base.CellDiscovered(x, y);
+        if (DungeonLevel > 0 && Mana < MaxMana)
+        {
+            ManaHealCount++;
+            if (ManaHealCount == ManaHealRate)
+            {
+                ManaHealCount = 0;
+                HealMp(1);
+            }
+        }
+    }
+
     public void NewFloor()
     {
-        Health = 1;
-        Mana = 10;
+        this.ClearTweens();
+        State = Alive;
+        HitPoints = 1;
+        Mana = 10000;
         DungeonLevel++;
         StatsUpdated = true;
+        TargetIndex = -1;
+        Targeting = false;
+        CanMove = true;
+        Armor = 10;
+        MagicArmor = 10;
         Items.Clear(); // TODO: Don't keep this
+
+        AnimationPosition = Vector2.Zero;
+        AnimationRotation = 0;
+        Rotation = 0;
+        Scale = Vector2.One;
+        Color = Color.White;
+        Direction = Right;
+        CurrentlyBlockingInput = false;
+
+        StatsUpdated = true;
+        ItemsUpdated = true;
     }
 
     public override void ResetVision()
@@ -85,31 +124,33 @@ public class DungeonPlayer : DungeonCreature
     }
 
     public void DrawCursor(MooseGame mooseGame, Vector2 position, SpriteBatch spriteBatch)
-    {        
-        var (x, y) = ((int)position.X / 16, (int)position.Y / 16);
-        if (game.GetMonsterTile(x, y) > MonsterTile.None && CanMove && CanSee(x, y) == FogOfWar.None)
-        { 
-            position += new Vector2(8, 8);
-            spriteBatch.Draw(game.CrosshairTexture, position, null,
-                CrosshairColor, CrosshairRotation,
-                game.CrosshairOrigin, CrosshairScale,
-                SpriteEffects.None, 1f);
-        } else if (!game.GetDungeonTile(x, y).IsBlocking() && CanMove && CanSee(x, y) != FogOfWar.Full)
+    {
+        if (Targeting)
         {
-            spriteBatch.FillRect(position, 16, 16, Color.Cyan with { A = 100 });
-            var path = ParentMap.FindCellPath(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
-            foreach (var p in path)               
-                spriteBatch.FillRectangle(p.X * 16, p.Y * 16, 16, 16, Color.Orange.HalveAlphaChannel());
-        }
+            for (var i = 0; i < VisibleMonsters.Count; i++)
+            {
+                var pos = VisibleMonsters[i].Position + new Vector2(8, 8);
+                spriteBatch.Draw(game.CrosshairTexture, pos, null,
+                    i == TargetIndex ? CrosshairColor : Color.White, i == TargetIndex ? CrosshairRotation : 0,
+                    game.CrosshairOrigin, i == TargetIndex ? CrosshairScale : 0,
+                    SpriteEffects.None, 1f);
+            }
 
-        if (VisibleMonsters.Any())
+            if (TargetIndex == -1)
+                spriteBatch.Draw(game.CrosshairTexture, TargetPosition + new Vector2(8, 8), null,
+                    CrosshairColor,CrosshairRotation,
+                    game.CrosshairOrigin, CrosshairScale,
+                    SpriteEffects.None, 1f);
+        } else
         {
-            var monster = VisibleMonsters.First();
-            var monsterPosition = monster.Position + new Vector2(8, 8) + monster.AnimationPosition;
-            spriteBatch.Draw(game.CrosshairTexture, monsterPosition, null,
-                CrosshairColor, CrosshairRotation,
-                game.CrosshairOrigin, CrosshairScale,
-                SpriteEffects.None, 1f);
+            var (x, y) = ((int)position.X / 16, (int)position.Y / 16);
+            if (CanMove && CanSee(x, y) != FogOfWar.Full)
+            {
+                spriteBatch.FillRect(position, 16, 16, Color.Cyan with { A = 100 });
+                var path = ParentMap.FindCellPath(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
+                foreach (var p in path)
+                    spriteBatch.FillRectangle(p.X * 16, p.Y * 16, 16, 16, Color.Orange.HalveAlphaChannel());
+            }
         }
     }
 
@@ -123,16 +164,95 @@ public class DungeonPlayer : DungeonCreature
         this.AddTween(p => p.CrosshairHue, 1, 5, repeatCount: -1);
     }
 
+    private void TargetStateUpdate(GameTime gameTime)
+    {
+        if (TargetIndex != -1)
+            TargetPosition = VisibleMonsters[TargetIndex].Position;
+
+        if (game.WasKeyJustPressed(Keys.Space) && CanMove)
+        {
+            game.Cast(SelectedSpell, this, TargetPosition);
+            Targeting = false;
+            HasInputThisFrame = true;
+            return;
+        }
+
+        var direction = "";
+        if (keyPress(Keys.Left))
+            direction = Left;
+        else if (keyPress(Keys.Right))
+            direction = Right;
+        else if (keyPress(Keys.Down))
+            direction = Down;
+        else if (keyPress(Keys.Up))
+            direction = Up;
+        else if (keyPress(Keys.Escape, Keys.Q))
+            Targeting = false;
+
+        if (direction != "")
+        {
+            if (TargetIndex != -1)
+                TargetIndex = -1;
+            CanMove = false;
+
+            if (SelectedSpell.TargetMode == TargetMode.Free)
+            {
+                var newPosition = TargetPosition + direction.GetDelta() * 16;
+                this.AddTween(t => t.TargetPosition, newPosition, .15f,
+                    onEnd: _ => CanMove = true);
+            }
+            else if (SelectedSpell.TargetMode == TargetMode.FourWay)
+            {
+                var newPosition = Position + direction.GetDelta() * 16;
+                this.AddTween(t => t.TargetPosition, newPosition, .15f,
+                    onEnd: _ => CanMove = true);
+            }
+        }
+
+        if (game.MouseInGame && CanMove && (game.WasLeftMouseJustPressed() || game.WasRightMouseJustPressed()))
+        {
+            var mouse = new Vector2((int)game.WorldMouse.X / 16 * 16, (int)game.WorldMouse.Y / 16 * 16);
+            var (x, y) = ((int)mouse.X / 16, (int)mouse.Y / 16);
+            var fow = CanSee(x, y);
+            if (game.WasLeftMouseJustPressed() && fow == FogOfWar.None)
+            {
+                var monster = game.GetMonster(x, y);
+                if (monster != null)
+                {
+                    if (monster.Position != TargetPosition)
+                        Target(monster);
+                    else
+                    {
+                        game.Cast(SelectedSpell, this, TargetPosition);
+                        Targeting = false;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    bool keyPress(params Keys[] key) => CanMove && game.IsKeyDown(key);
+
     public override void Update(MooseGame mooseGame, GameTime gameTime)
     {
         base.Update(mooseGame, gameTime);
 
+        if (Remove)
+        {
+            Remove = false;
+            return;
+        }
+        HasInputThisFrame = false;
+
         if (!game.CanPlay)
             return;
 
-        HasInputThisFrame = false;
-
-        bool keyPress(Keys key) => CanMove && game.IsKeyDown(key);
+        if (Targeting)
+        {
+            TargetStateUpdate(gameTime);
+            return;
+        }
 
         var keyPressed = false;
         if (keyPress(Keys.Left))
@@ -158,12 +278,9 @@ public class DungeonPlayer : DungeonCreature
             moveBuffer.Clear();
             moveBuffer.Enqueue(Up);
             keyPressed = true;
-        } else if (keyPress(Keys.Space) && CanMove)
-        {
-            if (VisibleMonsters.Any())
-                game.Cast(KnownSpells[SelectedSpell], this, VisibleMonsters[0].Position + new Vector2(8, 8));
-            keyPressed = true;
         }
+        else if (game.WasKeyJustPressed(Keys.Space) && CanMove && !Targeting)
+            Target(VisibleMonsters.OrderBy(m => m.DistanceSquaredTo(Position)).FirstOrDefault());
 
         if (keyPressed && mouseBuffer && moveBuffer.Any())
         {
@@ -179,7 +296,7 @@ public class DungeonPlayer : DungeonCreature
             ProcessMove(move);
         }
 
-        CalculateDirection();
+        Rotation = CalculateRotation(Direction);
 
         RebuildSightMap(game);
 
@@ -193,58 +310,68 @@ public class DungeonPlayer : DungeonCreature
         {
             var mouse = new Vector2((int)mooseGame.WorldMouse.X / 16 * 16, (int)mooseGame.WorldMouse.Y / 16 * 16);
             var (x, y) = ((int)mouse.X / 16, (int)mouse.Y / 16);
-            if (game.WasRightMouseJustPressed() || game.GetMonsterTile(x, y) > MonsterTile.None)
+            if (game.WasLeftMouseJustPressed() && !game.GetDungeonTile(x, y).IsBlocking() && CanSee(x, y) != FogOfWar.Full)
             {
-                game.Cast(KnownSpells[SelectedSpell], this, game.WorldMouse);
-            }
-            else if (game.WasLeftMouseJustPressed() && !game.GetDungeonTile(x, y).IsBlocking() && CanSee(x, y) != FogOfWar.Full)
-            {
-                var path = ParentMap.FindCellPath(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
-                if (path.Any())
+                var monster = game.GetMonster(x, y);
+                if (monster != null)
+                    Target(monster);
+                else
                 {
-                    var lastCell = GetCell();
-                    Direction = null;
-                    foreach (var p in path)
+                    var path = ParentMap.FindCellPath(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
+                    if (path.Any())
                     {
-                        if (CanSee(p.X, p.Y) == FogOfWar.Full)
-                            break;
+                        var lastCell = GetCell();
+                        Direction = null!;
+                        foreach (var p in path)
+                        {
+                            if (CanSee(p.X, p.Y) == FogOfWar.Full)
+                                break;
 
-                        var diff = lastCell - p;
-                        lastCell = p;
-                        var dir = DirectionFrom(diff);
-                        Direction ??= dir;
-                        if (dir != null)
-                            moveBuffer.Enqueue(dir);
+                            var diff = lastCell - p;
+                            lastCell = p;
+                            var dir = DirectionFrom(diff);
+                            Direction ??= dir;
+                            if (dir != null)
+                                moveBuffer.Enqueue(dir);
+                        }
+                        mouseBuffer = true;
                     }
-                    mouseBuffer = true;
                 }
             }
         }
     }
 
-    private void ProcessMove(string move)
+    private void Target(DungeonCreature? monster)
     {
-        var moveDelta = Vector2.Zero;
-        var newDirection = "";
-        switch (move)
+        StartCursorTween();
+        Targeting = true;
+        var spellMode = SelectedSpell.TargetMode;
+        switch (spellMode)
         {
-            case Left:
-                moveDelta = new(-1, 0);
-                newDirection = Left;
+            case TargetMode.Free:
+                if (monster == null)
+                    goto default;
+                var index = VisibleMonsters.IndexOf(monster);
+                if (index == -1)
+                    goto default;
+                TargetIndex = index;
                 break;
-            case Right:
-                moveDelta = new(1, 0);
-                newDirection = Right;
+            case TargetMode.FourWay:
+                TargetIndex = -1;
+                TargetPosition = Position + Direction.GetDelta() * 16;
                 break;
-            case Down:
-                moveDelta = new(0, 1);
-                newDirection = Down;
+            default:
+                TargetIndex = -1;
+                TargetPosition = Position;
                 break;
-            case Up:
-                moveDelta = new(0, -1);
-                newDirection = Up;
-                break;
-        }
+
+        };
+    }
+
+    protected override void ProcessMove(string move)
+    {
+        var moveDelta = move.GetDelta();
+        var newDirection = move;
 
         if (newDirection != Direction && !mouseBuffer)
         {
@@ -271,9 +398,9 @@ public class DungeonPlayer : DungeonCreature
             if (tile.IsBlocking() || monster != null || (item != null && item.ItemDef.BlocksPlayer))
             {
                 moveDelta = Vector2.Zero;
+                HasInputThisFrame = false;
                 if (moveBuffer.Any())
                 {
-                    HasInputThisFrame = false;
                     moveBuffer.Clear();
                 }
                 CanMove = true;
@@ -281,13 +408,13 @@ public class DungeonPlayer : DungeonCreature
             }
             else
             {
-                AnimationPosition = Vector2.Zero;
                 moveDelta *= 16;
-                this.AddTween(p => p.AnimationPosition, moveDelta, .2f,
+                Position += moveDelta;
+                AnimationPosition = -moveDelta;
+                this.AddTween(p => p.AnimationPosition, Vector2.Zero, .2f,
                     onEnd: _ =>
                     {
                         CanMove = true;
-                        Position += moveDelta;
                         AnimationPosition = Vector2.Zero;
                     });
             }
@@ -348,6 +475,7 @@ public class DungeonPlayer : DungeonCreature
 
     public virtual void HealMp(int value, bool overHeal = false)
     {
+        StatsUpdated = true;
         Mana += value;
         var total = value;
         if (!overHeal && Mana > MaxMana)

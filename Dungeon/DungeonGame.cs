@@ -130,23 +130,23 @@ public class DungeonGame : MooseGame
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
         FallingTextFont = ContentManager.BakeFont("Border_Basic_Monospaced", 24);
 
+        Player.LearnSpell(AddSpellDef(new FlameDef(), (spellDef, owner, position) => new Flame(spellDef, owner, position)));
+
         AddSpellDef(new FireballDef(), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
-        AddSpellDef(new MeteorDef(), (spellDef, owner, position)
-            => 
+        Player.LearnSpell(AddSpellDef(new MeteorDef(), (spellDef, owner, position)
+            =>
             new SpellContainer(owner)
                 .Add(new Meteor(spellDef, owner, position))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(16, 0)))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(-16, 0)))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, 16)))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, -16)))
-            );
+            ));
         AddSpellDef(new SpinesDef(), (spellDef, owner, position) => new Spines(spellDef, owner, position));
         AddSpellDef(new LightningDef(), (spellDef, owner, position) => new Lightning(spellDef, owner, position));
         AddSpellDef(new SpellDef("Dark Shield", 1, "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
         AddSpellDef(new SpellDef("AnimateDead", 1, "Raise"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
         AddSpellDef(new SpellDef("Slow", 1, "Tangle"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
-
-        Player.LearnSpell(AddSpellDef(new FlameDef(), (spellDef, owner, position) => new Flame(spellDef, owner, position)));
 
         AddMonsterDef(new MonsterDef("Marshall", MonsterTile.Marshall) { HitPoints = 5 }, 
             (def, x, y) => new Marshall(def, new Vector2(x * 16, y * 16)));
@@ -232,13 +232,19 @@ public class DungeonGame : MooseGame
     public DungeonItem? GetItem(int x, int y)
         => DungeonMap.Items.FirstOrDefault(o => o.InCell(x, y));
 
+    public Spell? GetSpell(int x, int y)
+        => DungeonMap.Spells.FirstOrDefault(o => o.InCell(x, y));
+
     public ItemTile GetItemTile(int x, int y)
         => (DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonItem)?.ItemDef.Item ?? ItemTile.None;
 
     public bool IsCellOccupied(int x, int y)
-        => GetDungeonTile(x, y).IsFloor()
-        && !ReadObjects.Any(o => o.InCell(x, y));
-    
+        => !GetDungeonTile(x, y).IsFloor()
+        || ReadObjects.Any(o => o.InCell(x, y));
+
+    public bool IsCellBlocked(int x, int y)
+        => DungeonMap.IsBlockedAt(x, y);
+
     public DungeonMonster SpawnMonster(MonsterTile monsterTile, int x, int y)
     {
         var (def, generator) = MonsterFactory[monsterTile];
@@ -299,8 +305,6 @@ public class DungeonGame : MooseGame
             GenerateNextDungeon();
         else if (WasKeyJustPressed(Keys.T))
             GenerateTown();
-        else if (WasKeyJustPressed(Keys.Escape, Keys.Q))
-            ShouldQuit = true;
         else if (WasKeyJustPressed(Keys.M))
         {
             if (ViewingMap == 0)
@@ -318,17 +322,17 @@ public class DungeonGame : MooseGame
 
         }
         else if (WasKeyJustPressed(Keys.D1) && Player.KnownSpells.Count > 0)
-            Player.SelectedSpell = 0;
+            Player.SelectedSpellIndex = 0;
         else if (WasKeyJustPressed(Keys.D2) && Player.KnownSpells.Count > 1)
-            Player.SelectedSpell = 1;
+            Player.SelectedSpellIndex = 1;
         else if (WasKeyJustPressed(Keys.D3) && Player.KnownSpells.Count > 2)
-            Player.SelectedSpell = 2;
+            Player.SelectedSpellIndex = 2;
         else if (WasKeyJustPressed(Keys.D4) && Player.KnownSpells.Count > 3)
-            Player.SelectedSpell = 3;
+            Player.SelectedSpellIndex = 3;
         else if (WasKeyJustPressed(Keys.D5) && Player.KnownSpells.Count > 4)
-            Player.SelectedSpell = 4;
+            Player.SelectedSpellIndex = 4;
         else if (WasKeyJustPressed(Keys.D6) && Player.KnownSpells.Count > 5)
-            Player.SelectedSpell = 5;
+            Player.SelectedSpellIndex = 5;
         else if (WasKeyJustPressed(Keys.Z))
         {
             if (MainCamera.Zoom == 3)
@@ -337,7 +341,10 @@ public class DungeonGame : MooseGame
                 Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .5f);
         }
 
-        CanPlay = !GeneratingDungeon && ViewingMap == 0
+        CanPlay = 
+            !GeneratingDungeon
+            && Player.State == DungeonObject.Alive
+            && ViewingMap == 0
             && !ReadObjects.Any(o =>
             {
                 return o switch
@@ -371,13 +378,23 @@ public class DungeonGame : MooseGame
         }
 
         UxWindow.Update(gameTime);
+
+        if (Player.State == DungeonObject.Dying && Player.PreviousState == DungeonObject.Alive)
+        {
+            GeneratingDungeon = true;
+            UxWindow.TweenToOverlayAlpha(1f, .5f, onEnd: _ =>
+            {
+                GenerateTown();
+                UxWindow.TweenToOverlayAlpha(0, .5f,
+                    onEnd: _ => GeneratingDungeon = false);
+            });
+        }
     }
 
     private void GenerateTown()
     {
         DungeonMap.GenerateTown(Random.Next(4, 8), roomSizes);
         Player.NewFloor();
-        var stairRoom = DungeonMap.Rooms.Last();
         Player.UseVisionCircle = false;
         Player.DungeonLevel = 0;
     }
@@ -423,7 +440,7 @@ public class DungeonGame : MooseGame
 
     void DrawCursor()
     {
-        if (CanPlay && Player.CanMove && MouseInGame)
+        if (CanPlay)
         {
             var mouse = new Vector2((int)WorldMouse.X / 16 * 16, (int)WorldMouse.Y / 16 * 16);
             Player.DrawCursor(this, mouse, SpriteBatch);

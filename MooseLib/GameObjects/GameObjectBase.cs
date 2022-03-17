@@ -29,8 +29,9 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public bool Remove { get; set; }
 
     public string State { get; set; } = "";
+    public string PreviousState { get; set; } = "";
 
-    public string? Direction { get; set; }
+    public string Direction { get; set; } = "";
 
     public Action? StateCompleteAction { get; set; }
 
@@ -38,7 +39,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public List<Tween> ActiveTweens { get; } = new();
 
-    public GameObjectBase(GameObjectDef def, Vector2? position = null, string? direction = null, float? rotation = null, Vector2? size = null, string? layer = null)
+    public GameObjectBase(GameObjectDef def, Vector2? position = null, string direction = "", float? rotation = null, Vector2? size = null, string? layer = null)
     {
         Def = def;
         Layer = layer ?? Def.DefaultLayer;
@@ -48,8 +49,13 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
         
         Scale = Def.DefaultScale;
         Origin = Def.DefaultOrigin;
-        
+
         Direction = direction;
+    }
+
+    public virtual void PreUpdate(MooseGame mooseGame, GameTime gameTime)
+    {
+        PreviousState = State;
     }
 
     public abstract void Update(MooseGame game, GameTime gameTime);
@@ -135,6 +141,16 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public float DistanceSquaredTo(GameObjectBase obj)
     {
         var (x1, y1) = obj.Position;
+        var (x2, y2) = Position;
+        var xDiff = x2 - x1;
+        var yDiff = y2 - y1;
+
+        return xDiff * xDiff + yDiff * yDiff;
+    }
+
+    public float DistanceSquaredTo(Vector2 position)
+    {
+        var (x1, y1) = position;
         var (x2, y2) = Position;
         var xDiff = x2 - x1;
         var yDiff = y2 - y1;

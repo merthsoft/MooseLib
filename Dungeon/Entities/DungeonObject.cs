@@ -29,7 +29,9 @@ public abstract class DungeonObject : TextureGameObject
 
     public DungeonObjectDef DungeonObjectDef;
 
-    public int HitPoints;
+    public int HitPoints; 
+    public int Armor = 0;
+    public int MagicArmor = 0;
 
     public float AnimationRotation;
     public Vector2 AnimationPosition;
@@ -87,7 +89,7 @@ public abstract class DungeonObject : TextureGameObject
         if (index < 0)
             return;
         spriteBatch.Draw(texture,
-            WorldRectangle.Move(AnimationPosition).Move(new(8, 8)).ToRectangle(), 
+            WorldRectangle.Move(new(AnimationPosition.X + 8, AnimationPosition.Y + 8)).ToRectangle(), 
             texture.GetSourceRectangle(index, 16, 16),
             Color, Rotation - AnimationRotation, new(8, 8), Effects, layerDepth);
     }
@@ -100,8 +102,32 @@ public abstract class DungeonObject : TextureGameObject
 
     public virtual void TakeDamage(int value)
     {
-        HitPoints -= value;
-        game.SpawnFallingText($"-{value}", Position, Color.IndianRed);
+        var totalLoss = 0;
+        while (MagicArmor > 0 && value > 0)
+        {
+            MagicArmor--;
+            value--;
+            totalLoss++;
+        }
+
+        while (Armor > 0 && value > 0)
+        {
+            Armor--;
+            value--;
+            totalLoss++;
+        }
+
+        while (HitPoints > 0 && value > 0)
+        {
+            HitPoints--;
+            value--;
+            totalLoss++;
+        }
+
+        if (value > 0)
+            game.SpawnFallingText($"OVERKILL", Position, Color.DarkRed);
+
+        game.SpawnFallingText($"-{totalLoss}", Position, Color.IndianRed);
         Color = Color.Red;
         ColorS = 1f;
         this.AddTween(p => p.ColorS, 0, .15f,

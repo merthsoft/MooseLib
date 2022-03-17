@@ -2,7 +2,6 @@
 using Merthsoft.Moose.MooseEngine.GameObjects;
 
 namespace Merthsoft.Moose.Dungeon.Entities.Spells;
-
 public record SpellDef : AnimatedGameObjectDef
 {
     public Texture2D Icon { get; private set; } = null!;
@@ -11,13 +10,16 @@ public record SpellDef : AnimatedGameObjectDef
 
     public int ManaCost;
 
-    public SpellDef(string spellDefName, int manaCost, string? name = null) : base(spellDefName, spellDefName)
+    public TargetMode TargetMode;
+
+    public SpellDef(string spellDefName, int manaCost, string? displayName = null, TargetMode targetMode = TargetMode.Free) : base(spellDefName, spellDefName)
     {
         DefaultLayer = "spells";
         DefaultOrigin = new(8, 8);
         DefaultScale = new(2f / 3f, 2f / 3f);
-        Name = name ?? spellDefName;
+        Name = displayName ?? spellDefName;
         ManaCost = manaCost;
+        TargetMode = targetMode;
     }
 
     public override void LoadContent(MooseContentManager contentManager)
@@ -42,8 +44,9 @@ public abstract class Spell : AnimatedGameObject
 
     public readonly DungeonObject Owner;
 
+    public bool BlocksPlayer = true;
     public bool CurrentlyBlockingInput = true;
-    private bool hasHit = false;
+    protected bool hasHit = false;
 
     public virtual int ManaCost => Def.ManaCost;
 

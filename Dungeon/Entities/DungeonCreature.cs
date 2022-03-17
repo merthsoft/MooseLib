@@ -130,11 +130,65 @@ public abstract class DungeonCreature : DungeonObject
         _ => null,
     };
 
-    protected void CalculateDirection() => Rotation = Direction switch
+    protected float CalculateRotation(string direction) => direction switch
     {
         Up => -MathF.PI / 2,
         Down => MathF.PI / 2,
         Left => MathF.PI,
         _ => 0,
     };
+
+    protected virtual void ProcessMove(string move)
+    {
+        var moveDelta = Vector2.Zero;
+        var newDirection = "";
+        switch (move)
+        {
+            case Left:
+                moveDelta = new(-1, 0);
+                newDirection = Left;
+                break;
+            case Right:
+                moveDelta = new(1, 0);
+                newDirection = Right;
+                break;
+            case Down:
+                moveDelta = new(0, 1);
+                newDirection = Down;
+                break;
+            case Up:
+                moveDelta = new(0, -1);
+                newDirection = Up;
+                break;
+        }
+
+        Direction = newDirection;
+        Rotation = CalculateRotation(Direction);
+
+        this.AddTween(p => p.AnimationRotation, Direction == Left ? -1 : 1, .075f,
+            onEnd: _ => this.AddTween(p => p.AnimationRotation, 0, .075f));
+
+        if (moveDelta != Vector2.Zero)
+        {
+            var newcell = Position / 16 + moveDelta;
+            var blocked = game.IsCellBlocked((int)newcell.X, (int)newcell.Y);
+            if (!blocked)
+            {
+                AnimationPosition = Vector2.Zero;
+                moveDelta *= 16;
+                this.AddTween(p => p.AnimationPosition, moveDelta, .2f,
+                    onEnd: _ =>
+                    {
+                        Position += moveDelta;
+                        AnimationPosition = Vector2.Zero;
+                    });
+            }
+            else
+            {
+                var playerCell = game.Player.GetCell();
+                if (playerCell == newcell.ToPoint())
+                    player.TakeDamage(1);
+            }
+        }
+    }
 }

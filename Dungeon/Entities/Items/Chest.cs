@@ -41,7 +41,7 @@ public class Chest : InteractiveItem
             {
                 spiralEnumerator.MoveNext();
                 cell = spiralEnumerator.Current;
-            } while (!DungeonGame.Instance.IsCellOccupied(cell.X, cell.Y));
+            } while (DungeonGame.Instance.IsCellOccupied(cell.X, cell.Y));
             DungeonGame.Instance.SpawnItem(item, cell.X, cell.Y);
         }
     }

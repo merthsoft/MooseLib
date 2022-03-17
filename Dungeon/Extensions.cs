@@ -39,4 +39,13 @@ public static class Extensions
             ItemTile.JadeNecklace => 14,
             _ => -1
         };
+
+    public static Vector2 GetDelta(this string move)
+        => move switch
+        {
+            "Left" => new(-1, 0),
+            "Right" => new(1, 0),
+            "Down" => new(0, 1),
+            _ => new(0, -1),
+        };
 }
