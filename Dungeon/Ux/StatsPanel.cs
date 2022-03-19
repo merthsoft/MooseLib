@@ -19,19 +19,19 @@ public class StatsPanel : Panel
             ClearControls();
             var height = Theme.MeasureString("X", 2).Y;
 
-            var label = this.AddLabel(0, 0, player.Name);
+            var label = this.AddLabel(player.Name, 0, 0);
             label.HighlightOnHover = false;
             var statsPanel = this.AddGrowPanel(0, 60, BackgroundDrawingMode.None);
             var hpPanel = statsPanel.AddStackPanel(0, 0, 320, height, BackgroundDrawingMode.None);
-            hpPanel.AddLabel(0, 0, "HP:1", 2, Color.IndianRed);
-            hpPanel.AddLabel(0, 0, $"+{player.Armor}", 2, Color.White);
-            hpPanel.AddLabel(0, 0, $"+{player.MagicArmor}", 2, Color.MediumPurple);
-            hpPanel.AddLabel(0, 0, $"={1 + player.Armor + player.MagicArmor}", 2);
+            hpPanel.AddLabel("HP:1", 0, 0, 2, Color.IndianRed);
+            hpPanel.AddLabel($"+{player.Armor}", 0, 0, 2, Color.White);
+            hpPanel.AddLabel($"+{player.MagicArmor}", 0, 0, 2, Color.MediumPurple);
+            hpPanel.AddLabel($"={1 + player.Armor + player.MagicArmor}", 0, 0, 2);
             var mpPanel = statsPanel.AddStackPanel(0, 0, 320, height, BackgroundDrawingMode.None);
-            mpPanel.AddLabel(0, 0, $"MP:{player.Mana} ", 2, Color.CornflowerBlue);
-            mpPanel.AddLabel(0, 0, $"GP:{player.Gold}", 2, Color.Gold);
+            mpPanel.AddLabel($"MP:{player.Mana} ", 0, 0, 2, Color.CornflowerBlue);
+            mpPanel.AddLabel($"GP:{player.Gold}", 0, 0, 2, Color.Gold);
 
-            statsPanel.AddLabel(0, 0, $"Floor: {(player.DungeonLevel == 0 ? "Town" : player.DungeonLevel.ToString())}", 2);
+            statsPanel.AddLabel($"Floor: {(player.DungeonLevel == 0 ? "Town" : player.DungeonLevel.ToString())}", 0, 0, 2);
 
             base.Update(updateParameters);
         }

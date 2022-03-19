@@ -15,7 +15,7 @@ public class SpellBookPanel : Panel
         player = DungeonPlayer.Instance;
         BackgroundDrawingMode = BackgroundDrawingMode.None;
 
-        var spellsLabel = this.AddLabel(0, 0, "Spells");
+        var spellsLabel = this.AddLabel("Spells", 0, 0);
         spellsLabel.HighlightOnHover = false;
         spellPanel = this.AddPanel(0, 60, 320, Height, BackgroundDrawingMode.None);
     }

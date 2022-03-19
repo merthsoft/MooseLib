@@ -26,7 +26,7 @@ internal class Unit : AnimatedGameObject
 
     public float DisplayAccuracy => MathF.Round(10 - 5 * UnitDef.AccuracySigma, 1);
 
-    public Queue<Vector2> MoveQueue { get; } = new Queue<Vector2>();
+    public Queue<Point> MoveQueue { get; } = new Queue<Point>();
     private Vector2 MoveDirection = Vector2.Zero;
     private Vector2 NextLocation = Vector2.Zero;
 
@@ -41,7 +41,7 @@ internal class Unit : AnimatedGameObject
         AimDistribution = new Normal(0, unitDef.AccuracySigma);
     }
 
-    public override void Update(GameTime gameTime)
+    public override void Update(MooseGame mooseGame, GameTime gameTime)
     {
         if (State == States.Walk)
             if (MoveDirection != Vector2.Zero)
@@ -58,10 +58,10 @@ internal class Unit : AnimatedGameObject
                 var nextCell = MoveQueue.Dequeue();
                 var cell = GetCell();
                 MoveDirection = new(nextCell.X - cell.X, nextCell.Y - cell.Y);
-                NextLocation = nextCell * ParentMap!.TileSize;
+                NextLocation = nextCell.ToVector2() * ParentMap!.TileSize;
             }
 
-        base.Update(gameTime: gameTime);
+        base.Update(mooseGame, gameTime);
 
         void takeStep()
         {
@@ -85,8 +85,7 @@ internal class Unit : AnimatedGameObject
             var startWorldPosition = Position + ParentMap!.HalfTileSize;
             var wiggle = AimDistribution.Sample();
             var endWorldPosition = (targettedUnit.Position + ParentMap!.HalfTileSize).RotateAround(startWorldPosition, (float)wiggle);
-            var flightPath = ParentMap!.FindWorldRay(startWorldPosition, endWorldPosition);
-            SnowballFightGame.SpawnSnowball(flightPath.Select(p => p.WorldPosition));
+            SnowballFightGame.SpawnSnowball(startWorldPosition.CastRay(endWorldPosition, true, true));
         }
 
         State = States.Idle;

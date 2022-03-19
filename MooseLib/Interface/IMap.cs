@@ -17,7 +17,7 @@ public interface IMap
 
     void Update(MooseGame game, GameTime gameTime);
     IList<int> GetBlockingVector(int cellX, int cellY);
-    IList<int> GetBlockingVector(Point worldPosition)
+    IList<int> GetBlockingVector(Vector2 worldPosition)
         => GetBlockingVector((int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight));
 
     Grid BuildCollisionGrid(params Point[] walkableOverrides);

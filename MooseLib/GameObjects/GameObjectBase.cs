@@ -33,8 +33,6 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public string Direction { get; set; } = "";
 
-    public Action? StateCompleteAction { get; set; }
-
     public IMap ParentMap { get; set; } = null!;
 
     public List<Tween> ActiveTweens { get; } = new();

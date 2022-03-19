@@ -32,6 +32,9 @@ public static class ControlContainerExtensions
          });
 
     public static Label AddLabel(this IControlContainer container, float x, float y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false)
+        =>  container.AddLabel(text, x, y, fontIndex, color, strokeSize, strokeColor, hightlightOnHover);
+
+    public static Label AddLabel(this IControlContainer container, string text, float x = 0, float y = 0, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false)
         => container.AddControlPassThrough(new Label(container, x, y)
         {
             Text = text,

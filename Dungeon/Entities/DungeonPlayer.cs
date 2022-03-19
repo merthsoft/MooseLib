@@ -45,6 +45,9 @@ public class DungeonPlayer : DungeonCreature
     public int MaxMana = 10;
     public int Gold = 0;
     public int DungeonLevel = 1;
+    public int NumSteps = 0;
+    public int NumMoves = 0;
+    public int NumKills = 0;
 
     public bool StatsUpdated;
     public bool ItemsUpdated;
@@ -281,6 +284,8 @@ public class DungeonPlayer : DungeonCreature
         }
         else if (game.WasKeyJustPressed(Keys.Space) && CanMove && !Targeting)
             Target(VisibleMonsters.OrderBy(m => m.DistanceSquaredTo(Position)).FirstOrDefault());
+        else if (keyPress(Keys.End))
+            HasInputThisFrame = true;
 
         if (keyPressed && mouseBuffer && moveBuffer.Any())
         {
@@ -339,6 +344,9 @@ public class DungeonPlayer : DungeonCreature
                 }
             }
         }
+
+        if (HasInputThisFrame)
+            NumMoves++;
     }
 
     private void Target(DungeonCreature? monster)
@@ -417,6 +425,7 @@ public class DungeonPlayer : DungeonCreature
                         CanMove = true;
                         AnimationPosition = Vector2.Zero;
                     });
+                NumSteps++;
             }
 
             if (item != null && item is InteractiveItem interactiveItem && !interactiveItem.InteractedWith)

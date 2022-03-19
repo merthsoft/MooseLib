@@ -9,7 +9,7 @@ public class TextPrompt : Panel
         : base(container, x, y, 224, 86)
     {
         this.okClicked = okClicked;
-        this.AddLabel(0, 0, label, 1);
+        this.AddLabel(label, 0, 0, 1);
         textBox = this.AddTextBox(0, 25, 214, defaultText, 1);
         this.AddButton(187, 50, "Ok", HandleOkButton, 1);
         this.AddStackPanel(0, 50, 186, 50, BackgroundDrawingMode.None, StackDirection.Horizontal, 3)

@@ -18,10 +18,8 @@ public class SnowballFightGame : MooseGame
 
     public new static SnowballFightGame Instance { get; private set; } = null!;
 
-    // TODO: Move layer values into something else
-    public static int UnitLayer { get; private set; } = 2;
-    public static int SnowballLayer { get; private set; } = 4;
-    public static int WeatherLayer { get; private set; } = 5;
+    public static string UnitLayer { get; private set; } = "Units";
+    public static string SnowballLayer { get; private set; } = "Snowballs";
 
     private Window UxWindow = null!;
     private Panel StatsWindow = null!;
@@ -44,8 +42,8 @@ public class SnowballFightGame : MooseGame
 
     public static AnimatedGameObjectDef SnowballDef => GetDef<AnimatedGameObjectDef>("snowball")!;
 
-    private readonly Dictionary<int, RenderHook> GameRenderHooks;
-    public override Dictionary<int, RenderHook>? DefaultRenderHooks => Mode == GameMode.Playing ? GameRenderHooks : null;
+    private readonly Dictionary<string, RenderHook> GameRenderHooks;
+    public override Dictionary<string, RenderHook>? DefaultRenderHooks => Mode == GameMode.Playing ? GameRenderHooks : null;
 
     public readonly string VersionString;
 
@@ -55,8 +53,8 @@ public class SnowballFightGame : MooseGame
 
         GameRenderHooks = new()
         {
-            { 1, new(PostHook: _ => DrawSelectedUnitDetails()) },
-            { 4, new(PostHook: _ => DrawTargetLine()) },
+            { "Lower Decoration", new(PostHook: _ => DrawSelectedUnitDetails()) },
+            { "Snowballs", new(PostHook: _ => DrawTargetLine()) },
         };
 
         var assembly = Assembly.GetExecutingAssembly();
@@ -83,32 +81,6 @@ public class SnowballFightGame : MooseGame
         AddDefaultRenderer<TiledMooseObjectLayer>("object", new SpriteBatchObjectRenderer(SpriteBatch));
 
         LoadMap("title_screen");
-
-        var objectLayerCount = 0;
-        for (var layerIndex = 0; layerIndex < MainMap.Layers.Count; layerIndex++)
-        {
-            var layer = MainMap.Layers[layerIndex];
-            if (layer is not TiledMooseObjectLayer objectLayer)
-                continue;
-
-            objectLayerCount++;
-
-            switch (objectLayerCount)
-            {
-                case 0:
-                    UnitLayer = layerIndex;
-                    break;
-                case 1:
-                    SnowballLayer = layerIndex;
-                    break;
-                case 2:
-                    WeatherLayer = layerIndex;
-                    break;
-            }
-
-            if (objectLayerCount == 3)
-                break;
-        }
 
         UnitsTexture = Content.Load<Texture2D>("Images/units");
         var unitsTextureData = new Color[UnitsTexture.Width * UnitsTexture.Height];
@@ -333,7 +305,7 @@ public class SnowballFightGame : MooseGame
             if (state == Unit.States.Walk)
             {
                 var startCell = SelectedUnit.GetCell();
-                var endCell = new Vector2(startCell.X + Random.Next(-3, 4), startCell.Y + Random.Next(-3, 4));
+                var endCell = new Point(startCell.X + Random.Next(-3, 4), startCell.Y + Random.Next(-3, 4));
                 var path = MainMap.FindCellPath(startCell, endCell);
                 if (path.Any())
                     path.ForEach(SelectedUnit.MoveQueue.Enqueue);
@@ -355,7 +327,7 @@ public class SnowballFightGame : MooseGame
     protected override void PostDraw(GameTime gameTime)
     {
         SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
-        UxWindow.Draw(SpriteBatch);
+        UxWindow.Draw(SpriteBatch, gameTime);
 
         if (Mode == GameMode.Demo)
         {
@@ -418,7 +390,7 @@ public class SnowballFightGame : MooseGame
                             CurrentMouseState.Position.Y / TileHeight * TileHeight);
                 mouseCell /= TileSize;
 
-                var path = MainMap.FindCellPath(unitCell, mouseCell);
+                var path = MainMap.FindCellPath(unitCell, mouseCell.ToPoint());
                 if (path.Any() && path.Count() <= SelectedUnit.DisplaySpeed)
                 {
                     path.ForEach(SelectedUnit.MoveQueue.Enqueue);
@@ -464,7 +436,7 @@ public class SnowballFightGame : MooseGame
                 if (MainMap.GetBlockingVector(x, y).Any(b => b > 0))
                     continue;
 
-                var path = MainMap.FindCellPath(unitCell, deltaCell, cachedGrid);
+                var path = MainMap.FindCellPath(unitCell, deltaCell.ToPoint(), cachedGrid);
 
                 if (!path.Any())
                     continue;
@@ -479,7 +451,7 @@ public class SnowballFightGame : MooseGame
                             : Color.DarkOrange.HalveAlphaChannel()
                         : Color.Transparent;
 
-                    SelectedUnitHintCells[p * TileSize] = color;
+                    SelectedUnitHintCells[p.ToVector2() * TileSize] = color;
                 }
             }
     }
@@ -508,11 +480,11 @@ public class SnowballFightGame : MooseGame
 
         void drawLineTo(Vector2 start, Vector2 end, Color color, bool extend, int thickness)
         {
-            foreach (var (worldPosition, blockedVector) in MainMap.FindWorldRay(start, end, extend: extend))
+            foreach (var worldPosition in start.CastRay(end, true, true, extend: extend))
             {
                 SpriteBatch.DrawPoint(worldPosition, color, thickness);
-                var cell = (worldPosition / TileSize).GetFloor();
-
+                var cell = (worldPosition / TileSize).GetFloor().ToPoint();
+                var blockedVector = MainMap.GetBlockingVector(worldPosition);
                 if (blockedVector.Skip(2).Any(b => b > 0) && cell != selectedUnitCell && cell != targettedUnitCell)
                     break;
             }
@@ -545,11 +517,11 @@ public class SnowballFightGame : MooseGame
         mouseCell /= TileSize;
 
         var unitCell = SelectedUnit.GetCell();
-        var mousePath = MainMap.FindCellPath(unitCell, mouseCell);
+        var mousePath = MainMap.FindCellPath(unitCell, mouseCell.ToPoint());
         var mousePathCount = mousePath.Count();
         if (mousePathCount > 0 && mousePathCount <= SelectedUnit.DisplaySpeed)
         {
-            var lastCell = unitCell * TileSize + HalfTileSize;
+            var lastCell = unitCell.ToVector2() * TileSize + HalfTileSize;
             var index = 0;
             foreach (var p in mousePath)
             {

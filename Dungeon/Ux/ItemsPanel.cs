@@ -19,7 +19,7 @@ internal class ItemsPanel : GrowPanel
             player.ItemsUpdated = false;
             ClearControls();
 
-            var label = this.AddLabel(0, 0, "Items");
+            var label = this.AddLabel("Items", 0, 0);
             label.HighlightOnHover = false;
 
             var itemPanel = this.AddPanel(0, 70, 320, 320, BackgroundDrawingMode.None);

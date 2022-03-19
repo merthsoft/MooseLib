@@ -44,8 +44,10 @@ public abstract class DungeonMonster : DungeonCreature
             this.TweenToScale(new(3, 3), .5f,
                 onEnd: _ => this.TweenToScale(Vector2.One, .7f, .1f,
                     onEnd: _ => CurrentlyBlockingInput = false));
-            return;
         }
+
+        if (State == Dead)
+            player.NumKills++;
     }
 
     protected abstract string MonsterUpdate(GameTime gameTime);

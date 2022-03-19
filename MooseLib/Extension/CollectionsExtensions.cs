@@ -65,7 +65,7 @@ public static class CollectionsExtensions
     }
 
     public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) 
-        => source.Shuffle(new Random());
+        => source.Shuffle(MooseGame.Instance.Random);
 
     public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random rng) 
         => source.ShuffleIterator(rng);

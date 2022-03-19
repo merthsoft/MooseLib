@@ -14,28 +14,34 @@ public class Snowball : AnimatedGameObject
 
     public const string AnimationKey = "snowball";
 
-    private Queue<Vector2> FlightPath { get; }
+    private IEnumerator<Vector2> FlightPath { get; }
     private Point StartCell { get; set; }
 
     public Snowball(IEnumerable<Vector2> flightPath)
         : base(SnowballFightGame.SnowballDef, flightPath.First(), SnowballFightGame.SnowballLayer, state: States.Fly)
     {
-        FlightPath = new(flightPath.Where((v, i) => i % 3 == 0));
+        FlightPath = flightPath.GetEnumerator();
 
-        if (FlightPath.Count == 0)
+        if (!FlightPath.MoveNext())
             State = States.Dead;
 
         DrawOffset = new(-8, -8);
     }
 
     public override void OnAdd()
-        => StartCell = GetCell();
+    {
+        base.OnAdd();
+        StartCell = GetCell();
+    }
 
     public override void Update(MooseGame _game, GameTime gameTime)
     {
         if (State == States.Fly)
         {
-            Position = FlightPath.Dequeue();
+            Position = FlightPath.Current;
+            FlightPath.MoveNext();
+            FlightPath.MoveNext();
+            FlightPath.MoveNext();
             if (IsBlocked())
             {
                 State = States.Hit;
@@ -50,7 +56,6 @@ public class Snowball : AnimatedGameObject
     }
 
     private bool IsBlocked()
-        => FlightPath.Count == 0 || !ParentMap!.CellIsInBounds(GetCell())
-        || (GetCell(ParentMap!) != StartCell
-            && ParentMap!.GetBlockingVector(Position).Skip(2).Take(3).Any(b => b != 0));
+        => !ParentMap.CellIsInBounds(GetCell())
+        || (GetCell() != StartCell && ParentMap.GetBlockingVector(Position).Skip(2).Take(3).Any(b => b != 0));
 }
