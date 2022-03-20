@@ -4,16 +4,8 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
 public class SpriteBatchWangTileTextureRenderer<TTile> : SpriteBatchTextureRenderer<TTile> where TTile : struct
 {
-    public Dictionary<TTile, Texture2D> AutoTileTextureMap = new();
-
-    public Texture2D this[TTile index]
-    {
-        get => AutoTileTextureMap[index];
-        set => AutoTileTextureMap[index] = value;
-    }
-
-    public Dictionary<TTile, string> WangTiles = new();
-
+    public Dictionary<TTile, int> WangDefinitions = new();
+    public List<WangTile> WangTiles = new();
 
     public SpriteBatchWangTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) 
         : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
@@ -21,35 +13,45 @@ public class SpriteBatchWangTileTextureRenderer<TTile> : SpriteBatchTextureRende
         
     }
 
-    protected virtual int GetTileIndex(TTile tile, int neighborCount)
-        => neighborCount;
+    protected virtual WangTile GetWangId(int x, int y, ITileLayer<TTile> layer)
+    {
+        var baseTile = layer.GetTileValue(x, y);
+        var wangTile = new WangTile(-1);
+        wangTile.North.Add(GetNeighborValue(x, y - 1, baseTile, layer));
+        wangTile.NorthEast.Add(GetNeighborValue(x + 1, y - 1, baseTile, layer));
+        wangTile.East.Add(GetNeighborValue(x + 1, y, baseTile, layer));
+        wangTile.SouthEast.Add(GetNeighborValue(x + 1, y + 1, baseTile, layer));
+        wangTile.South.Add(GetNeighborValue(x, y + 1, baseTile, layer));
+        wangTile.SouthWest.Add(GetNeighborValue(x - 1, y + 1, baseTile, layer));
+        wangTile.West.Add(GetNeighborValue(x - 1, y, baseTile, layer));
+        wangTile.NorthWest.Add(GetNeighborValue(x - 1, y - 1, baseTile, layer));
+        return wangTile;
+    }
 
-    protected virtual int CountNeighbors(TTile tile, int x, int y, ITileLayer<TTile> layer)
-        => GetNeighborValue(tile, x +  0, y + -1, layer, 1) 
-         + GetNeighborValue(tile, x + -1, y +  0, layer, 2) 
-         + GetNeighborValue(tile, x +  1, y +  0, layer, 4) 
-         + GetNeighborValue(tile, x +  0, y +  1, layer, 8);
-
-    protected virtual int GetNeighborValue(TTile tile, int x, int y, ITileLayer<TTile> layer, int neighborValue)
+    protected virtual int GetNeighborValue(int x, int y, TTile baseTile, ITileLayer<TTile> layer)
     {
         if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
             return 0;
 
-        if (EqualityComparer<TTile>.Default.Equals(tile, layer.GetTileValue(x, y)))
+        var neighborTile = layer.GetTileValue(x, y);
+        if (EqualityComparer<TTile>.Default.Equals(neighborTile, baseTile))
+            return WangDefinitions.GetValueOrDefault(baseTile);
+        else
             return 0;
-
-        return neighborValue;
     }
 
     public override void DrawSprite(int spriteIndex, TTile tile, int i, int j, ITileLayer<TTile> layer, Vector2 drawOffset, float layerDepth = 1)
     {
-        var texture = AutoTileTextureMap.GetValueOrDefault(tile);
-
         var destRect = GetDestinationRectangle(i, j, layer.DrawOffset + drawOffset);
         if (destRect == null)
             return;
 
-        if (texture == null)
+        var wangDef = WangDefinitions.GetValueOrDefault(tile, -1);
+
+        var wangId = GetWangId(i, j, layer);
+        var tileIndex = WangTiles.OrderByDescending(t => t.Compare(wangId)).FirstOrDefault();
+
+        if (wangDef == -1 || tileIndex == null || tileIndex.Compare(wangId) == int.MinValue)
         {
                 SpriteBatch.Draw(SpriteSheet,
                     position: destRect.Value.Position,
@@ -59,12 +61,9 @@ public class SpriteBatchWangTileTextureRenderer<TTile> : SpriteBatchTextureRende
             return;
         }
 
-        var neighborCount = CountNeighbors(tile, i, j, layer);
-
-        var tileIndex = GetTileIndex(tile, neighborCount);
-        SpriteBatch.Draw(texture,
+        SpriteBatch.Draw(SpriteSheet,
                 position: destRect.Value.Position, scale: DrawScale,
-                sourceRectangle: GetSourceRectangle(tileIndex, texture),
+                sourceRectangle: GetSourceRectangle(tileIndex.TileId, SpriteSheet),
                 color: Color, rotation: Rotation, effects: SpriteEffects,
                 origin: Vector2.Zero, layerDepth: layerDepth);
     }

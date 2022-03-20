@@ -4,7 +4,12 @@ using System.Text;
 namespace Merthsoft.Moose.MooseEngine.Extension;
 
 public static class Extensions
-{
+{ 
+    public static string JoinString<T>(this IEnumerable<T> set, string? separator, Func<T, string>? selector = null)
+        => selector == null
+            ? string.Join(separator, set)
+            : string.Join(separator, set.Select(selector));
+
     public static bool IsPrintableAscii(this char c)
         => char.IsLetterOrDigit(c)
         || char.IsPunctuation(c)

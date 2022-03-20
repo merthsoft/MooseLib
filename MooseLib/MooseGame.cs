@@ -136,7 +136,7 @@ public abstract class MooseGame : Game
         Graphics.ApplyChanges();
     }
 
-    protected virtual void Load() { }
+    protected abstract void Load();
     protected virtual void PostLoad() { }
 
     protected override void LoadContent()

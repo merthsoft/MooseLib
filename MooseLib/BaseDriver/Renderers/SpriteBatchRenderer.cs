@@ -9,11 +9,10 @@ public abstract class SpriteBatchRenderer : ILayerRenderer
 
     public string? RenderKey { get; set; }
     public SpriteBatch SpriteBatch { get; set; }
+    public Effect? Effect { get; set; }
 
     protected SpriteBatchRenderer(SpriteBatch spriteBatch)
         => SpriteBatch = spriteBatch;
-
-    public Effect? Effect { get; set; }
 
     public virtual void Begin(Matrix viewMatrix)
         => SpriteBatch.Begin(

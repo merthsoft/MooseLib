@@ -113,10 +113,10 @@ public class DungeonGame : MooseGame
         ArrowTexture = ContentManager.LoadImage("Arrow");
 
         DungeonTiles = ContentManager.LoadImage("Dungeon");
-        var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, DungeonTiles); 
-        
+        var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, DungeonTiles);
         dungeonRenderer[DungeonTile.StoneWall] = ContentManager.LoadImage("StoneWall");
         dungeonRenderer[DungeonTile.BrickWall] = ContentManager.LoadImage("BrickWall");
+
         AddDefaultRenderer<DungeonLayer>("dungeon", dungeonRenderer);
         AddDefaultRenderer<ObjectLayer>("objects", new DungeonObjectRenderer(SpriteBatch));
 
@@ -340,6 +340,8 @@ public class DungeonGame : MooseGame
             else if (MainCamera.Zoom == 2)
                 Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .5f);
         }
+        else if (WasKeyJustPressed(Keys.C))
+            DungeonMap.ClearDungeon();
 
         CanPlay = 
             !GeneratingDungeon

@@ -54,6 +54,7 @@ public static class CollectionsExtensions
         {
             if (func(item))
                 return index;
+            index++;
         }
         return -1;
     }

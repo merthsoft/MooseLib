@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/Dungeon/Content/Images/untitled.tmx
+/Dungeon/Content/Images/Dungeon.tsx
