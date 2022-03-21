@@ -66,7 +66,7 @@ public record WangTile(int TileId)
         bool matchValue(List<int> direction, int parsedIndex)
         {
             var index = direction.Reverse<int>().IndexOf(i => i == parsedIndex);
-            match += index;
+            match += index + 500;
             return index > -1;
         }
     }
