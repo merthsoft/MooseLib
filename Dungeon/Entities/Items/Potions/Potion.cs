@@ -6,7 +6,7 @@ public record PotionDef(ItemTile item, string name) : UsableItemDef(item, name);
 
 public abstract class Potion : UsableItem
 {
-    public Potion(ItemTile itemTile, UsableItemDef def, Vector2 position) : base(def, position)
+    public Potion(ItemTile itemTile, PotionDef def, Vector2 position) : base(def, position)
     {
         MiniMapTile = Tiles.MiniMapTile.Potion;
         DrawIndex = (int)itemTile;

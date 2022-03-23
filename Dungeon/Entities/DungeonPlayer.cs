@@ -19,6 +19,7 @@ public class DungeonPlayer : DungeonCreature
     public static DungeonPlayer Instance { get; private set; } = null!;
 
     public bool CanMove = true;
+
     public bool HasInputThisFrame;
     
     private readonly Queue<string> moveBuffer = new();
@@ -52,12 +53,15 @@ public class DungeonPlayer : DungeonCreature
     public bool StatsUpdated;
     public bool ItemsUpdated;
 
-    public List<DungeonItem> Items = new();
+    public List<UsableItem> Items = new();
 
     public bool Targeting = false;
     public int TargetIndex = -1;
     public Vector2 TargetPosition;
     //public Vector2 TargetAnimationPosition;
+
+    public bool Blinking = false;
+    public List<Vector2> BlinkableCells = new();
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {
@@ -67,6 +71,13 @@ public class DungeonPlayer : DungeonCreature
         UseVisionCircle = true;
         DrawIndex = 22;
         BuildSightMap = true;
+    }
+
+    public void StartBlink(IEnumerable<Vector2> blinkableCells)
+    {
+        Blinking = true;
+        BlinkableCells.Clear();
+        BlinkableCells.AddRange(blinkableCells);
     }
 
     protected override void SetTileVisible(DungeonGame dungeonGame, int x, int y)
@@ -94,16 +105,15 @@ public class DungeonPlayer : DungeonCreature
         this.ClearTweens();
         State = Alive;
         HitPoints = 1;
-        Mana = 10000;
+        Mana = 0;
         DungeonLevel++;
         StatsUpdated = true;
         TargetIndex = -1;
         Targeting = false;
         CanMove = true;
-        Armor = 10;
-        MagicArmor = 10;
-        Items.Clear(); // TODO: Don't keep this
-
+        Armor = 0;
+        MagicArmor = 0;
+        
         AnimationPosition = Vector2.Zero;
         AnimationRotation = 0;
         Rotation = 0;
@@ -141,11 +151,15 @@ public class DungeonPlayer : DungeonCreature
 
             if (TargetIndex == -1)
                 spriteBatch.Draw(game.CrosshairTexture, TargetPosition + new Vector2(8, 8), null,
-                    CrosshairColor,CrosshairRotation,
+                    CrosshairColor, CrosshairRotation,
                     game.CrosshairOrigin, CrosshairScale,
                     SpriteEffects.None, 1f);
-        } else
+        }
+        else if (Blinking)
         {
+            foreach (var blinkCell in BlinkableCells)
+                spriteBatch.FillRect(blinkCell, 16, 16, Color.Yellow with { A = 100 });
+        } else {
             var (x, y) = ((int)position.X / 16, (int)position.Y / 16);
             if (CanMove && CanSee(x, y) != FogOfWar.Full)
             {
@@ -470,13 +484,13 @@ public class DungeonPlayer : DungeonCreature
         return true;
     }
 
-    public void GiveItem(DungeonItem item)
+    public void GiveItem(UsableItem item)
     {
         ItemsUpdated = true;
         Items.Add(item);
     }
 
-    public void TakeItem(DungeonItem item)
+    public void TakeItem(UsableItem item)
     {
         ItemsUpdated = true;
         Items.Remove(item);

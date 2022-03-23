@@ -1,19 +1,19 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
 
 namespace Merthsoft.Moose.Dungeon.Ux;
-internal class ItemsPanel : GrowPanel
+internal class ItemsPanel : StackPanel
 {
     DungeonPlayer? player;
     int itemOffset = 0;
 
-    public ItemsPanel(IControlContainer container, float x, float y) : base(container, x, y)
+    public ItemsPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 180)
     {
         BackgroundDrawingMode = BackgroundDrawingMode.None;
     }
 
     public override void Update(UpdateParameters updateParameters)
     {
-        if (player == null || player.ItemsUpdated)
+        if (player == null || player.ItemsUpdated || true)
         {
             player = DungeonPlayer.Instance;
             player.ItemsUpdated = false;
@@ -22,20 +22,16 @@ internal class ItemsPanel : GrowPanel
             var label = this.AddLabel("Items", 0, 0);
             label.HighlightOnHover = false;
 
-            var itemPanel = this.AddPanel(0, 70, 320, 320, BackgroundDrawingMode.None);
+            var itemPanel = this.AddPanel(0, 70, 320, 100, BackgroundDrawingMode.None);
             var itemIndex = 0;
             var itemList = player.Items;
             for (var i = 0; i < 3; i++)
             {
                 var index = itemIndex;
-                var button = itemPanel.AddButton(i * 97, 0, "", (c, u) => {
-                    c.Toggled = false;
-                    player.SelectedSpellIndex = index < itemList.Count ? index : player.SelectedSpellIndex;
-                }, 1);
-                button.Toggleable = true;
+                var button = itemPanel.AddButton(i * 97, 0,"", fontIndex: 1);
 
                 button.WidthOverride = 75;
-                button.HeightOverride = 114;
+                button.HeightOverride = 75;
                 button.BackgroundDrawingMode = BackgroundDrawingMode.Texture;
 
                 if (itemIndex < itemList.Count)
@@ -46,6 +42,7 @@ internal class ItemsPanel : GrowPanel
                     button.Texture = DungeonGame.Instance.ItemTiles;
                     button.SourceRectangle = button.Texture.GetSourceRectangle(item.DrawIndex, 16, 16);
                     button.TextureScale = new(4, 4);
+                    button.Action = (c, u) => item.Use();
                 }
                 itemIndex++;
             }

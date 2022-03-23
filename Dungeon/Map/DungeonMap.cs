@@ -34,11 +34,11 @@ public class DungeonMap : BaseMap
 
     public DungeonMap(int width, int height)
     {
-        AddLayer(DungeonLayer = new DungeonLayer(width, height));
+        DungeonLayer = AddLayer(new DungeonLayer(width, height));
         AddLayer(new ObjectLayer("player"));
-        AddLayer(ItemLayer = new ObjectLayer("items"));
-        AddLayer(MonsterLayer = new ObjectLayer("monsters"));
-        AddLayer(SpellLayer = new ObjectLayer("spells"));
+        ItemLayer = AddLayer(new ObjectLayer("items"));
+        MonsterLayer = AddLayer(new ObjectLayer("monsters"));
+        SpellLayer = AddLayer(new ObjectLayer("spells"));
     }
 
     public void ClearDungeon()
@@ -137,7 +137,7 @@ public class DungeonMap : BaseMap
                  .ABitSparse()
                  .WithBigChanceToRemoveDeadEnds()
                  .WithLargeNumberOfRooms()
-                 .WithMediumSizeRooms()
+                 .WithRoomSize(4, 8, 4, 8)
                  .WithSeed(SeedUsed)
                  .Now();
         dungeonGame.Player.ResetVision();
@@ -157,6 +157,18 @@ public class DungeonMap : BaseMap
                 var middle = new Point(room.Top + room.Size.Height / 2, room.Left + room.Size.Width / 2);
                 var spiral = middle.SpiralAround().GetEnumerator();
 
+                (int x, int y) moveSpiral()
+                {
+                    int spotX;
+                    int spotY;
+                    //do
+                    //{
+                        spiral.MoveNext();
+                        (spotX, spotY) = spiral.Current;
+                    //} while (DungeonGame.Instance.IsCellOccupied(spotX, spotY));
+                    return (spotX, spotY);
+                }
+
                 while (!roomTypeEnumerator.MoveNext())
                     roomTypeEnumerator = weightedRooms.GetEnumerator();
 
@@ -166,26 +178,31 @@ public class DungeonMap : BaseMap
                 {
                     while (!treasureEnumerator.MoveNext())
                         treasureEnumerator = Treasures.GetEnumerator();
-
-                    spiral.MoveNext();
-                    var (spotX, spotY) = spiral.Current;
+                    var (spotX, spotY) = moveSpiral();
                     var randomTreasure = treasureEnumerator.Current;
                     dungeonGame.SpawnItem(randomTreasure, spotX, spotY);
                 }
 
                 for (var chestCount = 0; chestCount < roomType.NumChests; chestCount++)
                 {
-                    spiral.MoveNext();
-                    var (spotX, spotY) = spiral.Current;
+                    var (spotX, spotY) = moveSpiral();
                     var roomChest = (Chest)dungeonGame.SpawnItem(ItemTile.ClosedChest, spotX, spotY);
                     roomChest.Contents.AddRange(Treasures.Take(dungeonGame.Random.Next(3, 7)));
                 }
 
                 for (var monsterCount = 0; monsterCount < roomType.NumMonsters; monsterCount++)
                 {
-                    spiral.MoveNext();
-                    var (spotX, spotY) = spiral.Current;
-                    dungeonGame.SpawnMonster(MonsterTile.BlueSlime, spotX, spotY);
+                    var (spotX, spotY) = moveSpiral();
+                    if (dungeonGame.Random.NextSingle() < .5f)
+                        if (dungeonGame.Random.NextSingle() < .5f)
+                            dungeonGame.SpawnMonster(MonsterTile.BlueSlime, spotX, spotY);
+                        else
+                            dungeonGame.SpawnMonster(MonsterTile.GreenSlime, spotX, spotY);
+                    else
+                        if (dungeonGame.Random.NextSingle() < .5f)
+                            dungeonGame.SpawnMonster(MonsterTile.PinkSnake, spotX, spotY);
+                        else
+                            dungeonGame.SpawnMonster(MonsterTile.GreenSnake, spotX, spotY);
                 }
             }
         }

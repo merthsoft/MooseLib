@@ -76,7 +76,7 @@ public class Panel : Control, IControlContainer
                updateParameters.GameTime, position, updateParameters.LocalMousePosition - c.Position,
                updateParameters.RawMouseState, updateParameters.RawKeyState,
                FocusedControl);
-            if (c.Rectangle.Contains(updateParameters.LocalMousePosition - updateParameters.ParentOffset)
+            if (c.Rectangle.Contains(updateParameters.LocalMousePosition)
                 && !Hidden && !c.Hidden
                 && updateParameters.MouseOver
                 && (FocusedControl == null || FocusedControl == c))

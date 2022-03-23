@@ -10,8 +10,11 @@ public record WangTile(int TileId)
     public List<int> SouthWest = new();
     public List<int> West = new();
     public List<int> NorthWest = new();
+
+    public int? AppliesTo = null;
         
-    public string WangId => $"{North.JoinString("|")},{NorthEast.JoinString("|")},{East.JoinString("|")},{SouthEast.JoinString("|")},{South.JoinString("|")},{SouthWest.JoinString("|")},{West.JoinString("|")},{NorthWest.JoinString("|")}";
+    public string WangId 
+        => $"{North.JoinString("|")},{NorthEast.JoinString("|")},{East.JoinString("|")},{SouthEast.JoinString("|")},{South.JoinString("|")},{SouthWest.JoinString("|")},{West.JoinString("|")},{NorthWest.JoinString("|")}";
     
     public WangTile(int tileId, string wangId) : this(tileId)
     {
@@ -36,37 +39,43 @@ public record WangTile(int TileId)
     {
         var match = 0;
 
-        if (North[0] != 0 && !matchValue(North, other.North[0]))
+        if (!matchValue(North, other.North[0]))
             return int.MinValue;
 
-        if (NorthEast[0] != 0 && !matchValue(NorthEast, other.NorthEast[0]))
+        if (!matchValue(NorthEast, other.NorthEast[0]))
             return int.MinValue;
 
-        if (East[0] != 0 && !matchValue(East, other.East[0]))
+        if (!matchValue(East, other.East[0]))
             return int.MinValue;
 
-        if (SouthEast[0] != 0 && !matchValue(SouthEast, other.SouthEast[0]))
+        if (!matchValue(SouthEast, other.SouthEast[0]))
             return int.MinValue;
 
-        if (South[0] != 0 && !matchValue(South, other.South[0]))
+        if (!matchValue(South, other.South[0]))
             return int.MinValue;
 
-        if (SouthWest[0] != 0 && !matchValue(SouthWest, other.SouthWest[0]))
+        if (!matchValue(SouthWest, other.SouthWest[0]))
             return int.MinValue;
 
-        if (West[0] != 0 && !matchValue(West, other.West[0]))
+        if (!matchValue(West, other.West[0]))
             return int.MinValue;
 
-        if (NorthWest[0] != 0 && !matchValue(NorthWest, other.NorthWest[0]))
+        if (!matchValue(NorthWest, other.NorthWest[0]))
             return int.MinValue;
 
-        
         return match;
         
         bool matchValue(List<int> direction, int parsedIndex)
         {
-            var index = direction.Reverse<int>().IndexOf(i => i == parsedIndex);
-            match += index + 500;
+            var index = -1;
+            for (var i = direction.Count - 1; i >= 0; i--)
+                if (direction[i] == 0 || direction[i] == parsedIndex)
+                {
+                    index = i;
+                    break;
+                }
+            
+            match += index + int.MaxValue / 10;
             return index > -1;
         }
     }

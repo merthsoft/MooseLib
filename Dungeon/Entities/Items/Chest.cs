@@ -16,11 +16,30 @@ public class Chest : InteractiveItem
 {
     public bool IsOpen = false;
     public List<ItemTile> Contents = new();
+    public bool IsLocked = true;
 
     public Chest(ChestDef def, Vector2 position) : base(def, position)
     {
         Def = def;
         DrawIndex = (int)ItemTile.ClosedChest;
+    }
+
+    public override void Interact()
+    {
+        if (IsLocked)
+        {
+            game.SpawnFallingText("Locked", Position, Color.DarkGray);
+            CurrentlyBlockingInput = true;
+            this.AddTween(p => p.AnimationRotation, -1, .075f,
+                onEnd: _ => this.AddTween(p => p.AnimationRotation, 1, .075f,
+                    onEnd: _ =>
+                    {
+                        AnimationRotation = 0;
+                        CurrentlyBlockingInput = false;
+                    }));
+            return;
+        }
+        base.Interact();
     }
 
     public override bool AfterGrow()

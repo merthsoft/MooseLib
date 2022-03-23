@@ -174,21 +174,22 @@ public abstract class DungeonCreature : DungeonObject
             var blocked = game.IsCellBlocked((int)newcell.X, (int)newcell.Y);
             if (!blocked)
             {
-                AnimationPosition = Vector2.Zero;
+                CurrentlyBlockingInput = true;
                 moveDelta *= 16;
-                this.AddTween(p => p.AnimationPosition, moveDelta, .2f,
+                Position += moveDelta;
+                AnimationPosition = -moveDelta;
+                this.AddTween(p => p.AnimationPosition, Vector2.Zero, .2f,
                     onEnd: _ =>
                     {
-                        Position += moveDelta;
+                        CurrentlyBlockingInput = false;
                         AnimationPosition = Vector2.Zero;
                     });
             }
-            else
-            {
-                var playerCell = game.Player.GetCell();
-                if (playerCell == newcell.ToPoint())
-                    player.TakeDamage(1);
-            }
+            
+            var playerCell = game.Player.GetCell();
+            if (playerCell == newcell.ToPoint())
+                player.TakeDamage(1);
+
         }
     }
 }

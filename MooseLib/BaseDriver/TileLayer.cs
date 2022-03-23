@@ -47,4 +47,16 @@ public class TileLayer<TTile> : ITileLayer<TTile>
             return;
         Tiles[x, y] = value;
     }
+
+    public void SetTileValue(int x, int y, TTile value, int thickness)
+    {
+        if (thickness == 0)
+        {
+            SetTileValue(x, y, value);
+            return;
+        }
+        for (var deltaX = -thickness; deltaX <= thickness; deltaX++)
+            for (var deltaY = -thickness; deltaY <= thickness; deltaY++)
+                SetTileValue(x + deltaX, y + deltaY, value);
+    }
 }

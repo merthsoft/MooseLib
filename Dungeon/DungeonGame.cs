@@ -151,8 +151,17 @@ public class DungeonGame : MooseGame
         AddMonsterDef(new MonsterDef("Marshall", MonsterTile.Marshall) { HitPoints = 5 }, 
             (def, x, y) => new Marshall(def, new Vector2(x * 16, y * 16)));
 
-        AddMonsterDef(new MonsterDef("Slime", MonsterTile.BlueSlime) { HitPoints = 2}, 
+        AddMonsterDef(new MonsterDef("Slime1", MonsterTile.BlueSlime) { HitPoints = 3 },
             (def, x, y) => new Slime(def, new Vector2(x * 16, y * 16)));
+
+        AddMonsterDef(new MonsterDef("Slime2", MonsterTile.GreenSlime) { HitPoints = 5 },
+            (def, x, y) => new Slime(def, new Vector2(x * 16, y * 16)));
+
+        AddMonsterDef(new MonsterDef("Snake1", MonsterTile.PinkSnake) { HitPoints = 1 },
+            (def, x, y) => new Snake(def, new Vector2(x * 16, y * 16)));
+
+        AddMonsterDef(new MonsterDef("Snake2", MonsterTile.GreenSnake) { HitPoints = 2 },
+            (def, x, y) => new Snake(def, new Vector2(x * 16, y * 16)));
 
         for (var item = ItemTile.TREASURE_START; item < ItemTile.TREASURE_END; item++)
             AddItemDef(new TreasureDef(item, item.ToString().InsertSpacesBeforeCapitalLetters()), (itemDef, x, y) => new Treasure((TreasureDef)itemDef, new Vector2(x * 16, y * 16)));
@@ -412,7 +421,7 @@ public class DungeonGame : MooseGame
         var potionTiles = Enumerable.Range((int)ItemTile.POTION_START, (int)ItemTile.POTION_END).Shuffle();
         var potion = (ItemTile)potionTiles.First();
         AddItemDef(new PotionDef(potion, "Restore Magic"), (def, x, y) => new RestoreMagicPotion(potion, (UsableItemDef)def, new(x * 16, y * 16)));
-        Player.GiveItem(SpawnItem(potion, -1000, -1000));
+        Player.GiveItem((Potion)SpawnItem(potion, -1000, -1000));
     }
 
     protected override void PostDraw(GameTime gameTime)

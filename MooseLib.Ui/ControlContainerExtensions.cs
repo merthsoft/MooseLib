@@ -77,8 +77,15 @@ public static class ControlContainerExtensions
     public static Picture AddPicture(this IControlContainer container, float x, float y, Texture2D texture, float scale)
         => container.AddControlPassThrough(new Picture(container, x, y, texture) { Scale = new(scale, scale) });
 
-    public static Button AddButton(this IControlContainer container, float x, float y, string text, Action<Control, UpdateParameters> action, int fontIndex = 0)
+    public static Button AddButton(this IControlContainer container, float x, float y, string text, Action<Control, UpdateParameters>? action = null, int fontIndex = 0)
         => container.AddControlPassThrough(new Button(text, container, x, y)
+        {
+            Action = action,
+            FontIndex = fontIndex,
+        });
+
+    public static Button AddButton(this IControlContainer container, string text, Action<Control, UpdateParameters>? action = null, int fontIndex = 0)
+        => container.AddControlPassThrough(new Button(text, container, 0, 0)
         {
             Action = action,
             FontIndex = fontIndex,
