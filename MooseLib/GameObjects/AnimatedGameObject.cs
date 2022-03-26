@@ -5,11 +5,7 @@ namespace Merthsoft.Moose.MooseEngine.GameObjects;
 
 public class AnimatedGameObject : GameObjectBase
 {
-    public new AnimatedGameObjectDef Def
-    {
-        get => (base.Def as AnimatedGameObjectDef)!;
-        set => base.Def = value;
-    }
+    public AnimatedGameObjectDef AnimatedGameObjectDef { get; }
 
     public AnimatedSprite Sprite { get; set; }
     public SpriteEffects SpriteEffects { get; set; }
@@ -25,6 +21,7 @@ public class AnimatedGameObject : GameObjectBase
     public AnimatedGameObject(AnimatedGameObjectDef def, Vector2? position = null, string? layer = null, Vector2? transformLocation = null, float rotation = 0, Vector2? scale = null, string state = "", string direction = "")
         : base(def, position, direction: direction, layer: layer)
     {
+        AnimatedGameObjectDef = def;
         Sprite = def.SpriteSheet == null ? null! : new AnimatedSprite(def.SpriteSheet) { Origin = Origin };
         DrawOffset = transformLocation ?? Vector2.Zero;
         Rotation = rotation;
@@ -44,6 +41,7 @@ public class AnimatedGameObject : GameObjectBase
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
         => spriteBatch.Draw(Sprite.TextureRegion.Texture,
-                WorldRectangle.Move(4, 4).ToRectangle(), Sprite.TextureRegion.Bounds,
+                WorldRectangle.Move(Origin).ToRectangle(), 
+                Sprite.TextureRegion.Bounds,
                 Color.White, Rotation, Origin, SpriteEffects, 0);
 }

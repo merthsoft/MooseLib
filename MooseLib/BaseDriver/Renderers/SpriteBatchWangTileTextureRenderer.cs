@@ -66,7 +66,7 @@ public class SpriteBatchWangTileTextureRenderer<TTile> : SpriteBatchTextureRende
                 SpriteBatch.Draw(SpriteSheet,
                     position: destRect.Value.Position,
                     sourceRectangle: GetSourceRectangle(spriteIndex),
-                    color: Color, rotation: Rotation, effects: SpriteEffects,
+                    color: layer.DrawColor, rotation: Rotation, effects: SpriteEffects,
                     origin: Vector2.Zero, scale: DrawScale, layerDepth: layerDepth);
                 return;
             }
@@ -80,7 +80,7 @@ public class SpriteBatchWangTileTextureRenderer<TTile> : SpriteBatchTextureRende
         SpriteBatch.Draw(SpriteSheet,
                 position: destRect.Value.Position, scale: DrawScale,
                 sourceRectangle: GetSourceRectangle(validItems[rand].TileId, SpriteSheet),
-                color: Color, rotation: Rotation, effects: SpriteEffects,
+                color: layer.DrawColor, rotation: Rotation, effects: SpriteEffects,
                 origin: Vector2.Zero, layerDepth: layerDepth);
     }
 }

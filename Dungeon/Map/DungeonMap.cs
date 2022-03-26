@@ -466,7 +466,7 @@ public class DungeonMap : BaseMap
                 return 0;
             case "spells":
                 var spell = Spells.FirstOrDefault(m => m.InCell(x, y));
-                if (spell?.BlocksPlayer ?? false)
+                if (spell?.SpellDef.BlocksPlayer ?? false)
                     return 1;
                 return 0;
         }

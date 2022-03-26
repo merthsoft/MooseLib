@@ -1,13 +1,15 @@
 ﻿namespace Merthsoft.Moose.Dungeon.Entities.Spells;
-public record FlameDef : SpellDef { public FlameDef() : base("Flame", 1, targetMode: TargetMode.FourWay) { } }
-public class Flame : Spell
-{
-    int TurnsAlive = 2
-        ;
-
-    public Flame(SpellDef def, DungeonObject owner, Vector2 position) : base(def, owner, position)
+public record FlameDef : SpellDef { 
+    public FlameDef() : base("Flame", 1, targetMode: TargetMode.FourWay) 
     {
         BlocksPlayer = false;
+        TurnBased = true;
+    } 
+}
+public class Flame : Spell
+{
+    public Flame(SpellDef def, DungeonObject owner, Vector2 position) : base(def, owner, position)
+    {
         Position = new Vector2((int)position.X / 16 * 16, (int)position.Y / 16 * 16);
         State = Cast;
         StateCompleteAction = () =>
@@ -20,15 +22,9 @@ public class Flame : Spell
 
     public override void Update(MooseGame mooseGame, GameTime gameTime)
     {
-        if (TurnsAlive < 0 && !hasHit)
-        {
-            State = Hit;
-            hasHit = true;
-            StateCompleteAction = () => State = Dead;
-            return;
-        }
-
-        if (!hasHit)
+        if (TurnsAlive < 0)
+            State = Dead; 
+        else if (!hasHit)
         {
             var (x, y) = GetCell();
             var monster = game.GetMonster(x, y);
@@ -36,24 +32,13 @@ public class Flame : Spell
                 State = Hit;
         }
         base.Update(mooseGame, gameTime);
-        if (State == Hit && !hasHit)
-        {
-            hasHit = true;
-            StateCompleteAction = () => State = Active;
-            Effect();
-        }
-        else if (State == Dead)
-        {
-            Owner.RemoveSpell(this);
-            Remove = true;
-        }
-
-
+        
         if (game.Player.HasInputThisFrame)
         {
             TurnsAlive--;
             hasHit = false;
         }
+
     }
 
     public override void Effect()

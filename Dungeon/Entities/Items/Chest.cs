@@ -16,7 +16,7 @@ public class Chest : InteractiveItem
 {
     public bool IsOpen = false;
     public List<ItemTile> Contents = new();
-    public bool IsLocked = true;
+    public bool IsLocked = false;
 
     public Chest(ChestDef def, Vector2 position) : base(def, position)
     {

@@ -19,8 +19,9 @@ public class StatsPanel : Panel
             ClearControls();
             var height = Theme.MeasureString("X", 2).Y;
 
-            var label = this.AddLabel(player.Name, 0, 0);
-            label.HighlightOnHover = false;
+            this.AddLabel(player.Name, 5, 5, color: Color.DarkMagenta);
+            this.AddLabel(player.Name, 0, 0);
+
             var statsPanel = this.AddGrowPanel(0, 60, BackgroundDrawingMode.None);
             var hpPanel = statsPanel.AddStackPanel(0, 0, 320, height, BackgroundDrawingMode.None);
             hpPanel.AddLabel("HP:1", 0, 0, 2, Color.IndianRed);

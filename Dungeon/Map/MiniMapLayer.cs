@@ -11,6 +11,7 @@ public class MiniMapLayer : ITileLayer<MiniMapTile>
     public bool IsHidden { get; set; }
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawSize { get; set; }
+    public Color DrawColor { get; set; } = Color.White;
 
     public string? RendererKey { get; set; }
 

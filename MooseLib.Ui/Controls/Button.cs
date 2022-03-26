@@ -72,7 +72,7 @@ public class Button : Control
     protected virtual void DrawTextureButton(SpriteBatch spriteBatch, Vector2 drawOffset)
     {
         var size = CalculateSize();
-        var windowSize = new Vector2(size.X, size.X);
+        var windowSize = new Vector2(size.X, size.Y);
         var themeOffset = Theme.DrawWindow(spriteBatch, Position + drawOffset, windowSize, BackgroundDrawingMode.Texture, ResolvedTextColor);
         var position = Position + drawOffset + LabelOffset;
         if (Texture != null)

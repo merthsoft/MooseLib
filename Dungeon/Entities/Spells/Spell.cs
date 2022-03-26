@@ -9,8 +9,9 @@ public record SpellDef : AnimatedGameObjectDef
     public string Description = "A spell";
 
     public int ManaCost;
-
     public TargetMode TargetMode;
+    public bool BlocksPlayer = true;
+    public bool TurnBased = false;
 
     public SpellDef(string spellDefName, int manaCost, string? displayName = null, TargetMode targetMode = TargetMode.Free) : base(spellDefName, spellDefName)
     {
@@ -34,8 +35,9 @@ public record SpellDef : AnimatedGameObjectDef
 public abstract class Spell : AnimatedGameObject
 {
     protected DungeonGame game;
+    protected DungeonPlayer player;
 
-    public new SpellDef Def => (SpellDef)base.Def;
+    public SpellDef SpellDef;
 
     public const string Cast = "cast";
     public const string Active = "active";
@@ -44,22 +46,29 @@ public abstract class Spell : AnimatedGameObject
 
     public readonly DungeonObject Owner;
 
-    public bool BlocksPlayer = true;
     public bool CurrentlyBlockingInput = true;
     protected bool hasHit = false;
 
-    public virtual int ManaCost => Def.ManaCost;
+    public virtual int ManaCost => SpellDef.ManaCost;
+    
+    protected int TurnsAlive = 2;
 
     public Spell(SpellDef def, DungeonObject owner, Vector2 position) : base(def, position, "spells", state: Cast)
     {
+        SpellDef = def;
         Position = new((int)Position.X / 16 * 16, (int)Position.Y / 16 * 16);
         game = DungeonGame.Instance;
+        player = DungeonPlayer.Instance;
         Owner = owner;
     }
 
     public override void Update(MooseGame game, GameTime gameTime)
     {
         base.Update(game, gameTime);
+
+        if (SpellDef.TurnBased && !player.HasInputThisFrame)
+            return;
+
         if (State == Hit && !hasHit)
         {
             hasHit = true;

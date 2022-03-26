@@ -24,6 +24,7 @@ public record TiledMooseTileLayer(TiledMapTileLayer Layer) : ITileLayer<TiledMap
 
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawSize { get; set; }
+    public Color DrawColor { get; set; } = Color.White;
 
     public TiledMapTile GetTileValue(int x, int y)
         => Layer.GetTile((ushort)x, (ushort)y);

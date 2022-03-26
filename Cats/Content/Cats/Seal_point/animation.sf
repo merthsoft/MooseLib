@@ -1,0 +1,64 @@
+{
+  "textureAtlas": {
+    "texture": "image.png",
+    "regionWidth": 32,
+    "regionHeight": 32
+  },
+  "cycles": {
+    "lay": {
+      "frames": [0,1,2,3,4,5,6,7,8],
+      "isLooping": false,
+      "frameDuration": 0.2
+    },
+    "idle": {
+      "frames": [12,13,14,15],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "sit": {
+      "frames": [16,17,18,19,20,21],
+      "isLooping": false,
+      "frameDuration": 0.2
+    },
+    "walk_south_west": {
+      "frames": [ 24, 25, 26, 27 ],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "walk_south": {
+      "frames": [ 28, 29, 30, 31 ],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "walk_south_east": {
+      "frames": [ 32, 33, 34, 35 ],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "walk_east": {
+      "frames": [ 36, 37, 38, 39 ],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "walk_north_east": {
+      "frames": [ 40, 41, 42, 43 ],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "walk_north": {
+      "frames": [ 44, 45, 46, 47 ],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "walk_north_west": {
+      "frames": [ 48, 49, 50, 51 ],
+      "isLooping": true,
+      "frameDuration": 0.2
+    },
+    "walk_west": {
+      "frames": [ 52, 53, 54, 55 ],
+      "isLooping": true,
+      "frameDuration": 0.2
+    }
+  }
+}

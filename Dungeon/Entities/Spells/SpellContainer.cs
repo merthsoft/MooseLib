@@ -15,8 +15,8 @@ public class SpellContainer : Spell, IEnumerable<Spell>
     public SpellContainer Add(Spell spell)
     {
         Spells.Add(spell);
-        if (ManaCost < spell.Def.ManaCost)
-            manaCost = spell.Def.ManaCost;
+        if (ManaCost < spell.SpellDef.ManaCost)
+            manaCost = spell.SpellDef.ManaCost;
         return this;
     }
 

@@ -6,7 +6,6 @@ public class SpriteBatchTextureRenderer<TTile> : SpriteBatchRenderer where TTile
 {
     protected Texture2D SpriteSheet { get; }
 
-    public Color Color { get; set; } = Color.White;
     public float Rotation { get; set; }
     public SpriteEffects SpriteEffects { get; set; } = SpriteEffects.None;
 
@@ -46,7 +45,7 @@ public class SpriteBatchTextureRenderer<TTile> : SpriteBatchRenderer where TTile
         if (destRect != null)
             SpriteBatch.Draw(SpriteSheet, position: destRect.Value.Position,
                 sourceRectangle: GetSourceRectangle(spriteIndex),
-                color: Color, rotation: Rotation, effects: SpriteEffects,
+                color: layer.DrawColor, rotation: Rotation, effects: SpriteEffects,
                 origin: Vector2.Zero, scale: DrawScale, layerDepth: layerDepth);
     }
 

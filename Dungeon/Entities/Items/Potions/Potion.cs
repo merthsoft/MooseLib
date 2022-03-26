@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.Dungeon.Tiles;
 
-namespace Merthsoft.Moose.Dungeon.Entities.Items;
+namespace Merthsoft.Moose.Dungeon.Entities.Items.Potions;
 
 public record PotionDef(ItemTile item, string name) : UsableItemDef(item, name);
 
@@ -8,7 +8,7 @@ public abstract class Potion : UsableItem
 {
     public Potion(ItemTile itemTile, PotionDef def, Vector2 position) : base(def, position)
     {
-        MiniMapTile = Tiles.MiniMapTile.Potion;
+        MiniMapTile = MiniMapTile.Potion;
         DrawIndex = (int)itemTile;
     }
 

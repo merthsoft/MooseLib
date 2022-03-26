@@ -19,6 +19,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     public TTile[,] Tiles { get; }
 
     public TTile EdgeTile { get; set; }
+    public Color DrawColor { get; set; } = Color.White;
 
     public TileLayer(string name, int width, int height, TTile edgeTile)
     {

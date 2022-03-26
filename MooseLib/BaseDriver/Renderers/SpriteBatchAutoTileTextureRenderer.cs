@@ -51,7 +51,7 @@ public class SpriteBatchAutoTileTextureRenderer<TTile> : SpriteBatchTextureRende
                 SpriteBatch.Draw(SpriteSheet,
                     position: destRect.Value.Position,
                     sourceRectangle: GetSourceRectangle(spriteIndex),
-                    color: Color, rotation: Rotation, effects: SpriteEffects,
+                    color: layer.DrawColor, rotation: Rotation, effects: SpriteEffects,
                     origin: Vector2.Zero, scale: DrawScale, layerDepth: layerDepth);
             return;
         }
@@ -62,7 +62,7 @@ public class SpriteBatchAutoTileTextureRenderer<TTile> : SpriteBatchTextureRende
         SpriteBatch.Draw(texture,
                 position: destRect.Value.Position, scale: DrawScale,
                 sourceRectangle: GetSourceRectangle(tileIndex, texture),
-                color: Color, rotation: Rotation, effects: SpriteEffects,
+                color: layer.DrawColor, rotation: Rotation, effects: SpriteEffects,
                 origin: Vector2.Zero, layerDepth: layerDepth);
     }
 }

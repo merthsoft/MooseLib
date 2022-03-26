@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
 
 namespace Merthsoft.Moose.Dungeon.Ux;
-internal class ItemsPanel : StackPanel
+internal class ItemsPanel : Panel
 {
     DungeonPlayer? player;
     int itemOffset = 0;
@@ -19,8 +19,8 @@ internal class ItemsPanel : StackPanel
             player.ItemsUpdated = false;
             ClearControls();
 
-            var label = this.AddLabel("Items", 0, 0);
-            label.HighlightOnHover = false;
+            this.AddLabel("Items", 5, 5, color: Color.DarkMagenta);
+            this.AddLabel("Items", 0, 0);
 
             var itemPanel = this.AddPanel(0, 70, 320, 100, BackgroundDrawingMode.None);
             var itemIndex = 0;

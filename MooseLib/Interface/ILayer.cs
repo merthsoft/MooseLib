@@ -6,6 +6,7 @@ public interface ILayer
     bool IsHidden { get; set; }
     Vector2 DrawOffset { get; set; }
     Vector2 DrawSize { get; set; }
+    Color DrawColor { get; set; }
 
     string? RendererKey { get; }
 }

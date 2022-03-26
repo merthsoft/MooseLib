@@ -5,7 +5,7 @@ public static class GraphicsExtensions
 {
     public static Rectangle GetSourceRectangle(this Texture2D texture, int spriteIndex, int tileWidth, int tileHeight, int tilePadding = 0, int textureMargin = 0)
     {
-        var columns = texture.Width / tileWidth;
+        var columns = (texture.Width - textureMargin)/ (tileWidth + tilePadding);
 
         var sourceX = (spriteIndex % columns) * (tileWidth + tilePadding) + textureMargin;
         var sourceY = (spriteIndex / columns) * (tileHeight + tilePadding) + textureMargin;

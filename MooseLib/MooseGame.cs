@@ -198,6 +198,9 @@ public abstract class MooseGame : Game
     public static TDef GetDef<TDef>(string defName) where TDef : Def
         => ((Instance.Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
 
+    public static IEnumerable<TDef> GetDefs<TDef>() where TDef : Def
+        => Instance.Defs.Values.OfType<TDef>();
+
     protected virtual void PreUpdate(GameTime gameTime) { return; }
     protected virtual bool PreRenderUpdate(GameTime gameTime) => true;
     protected virtual bool PreObjectsUpdate(GameTime gameTime) => true;

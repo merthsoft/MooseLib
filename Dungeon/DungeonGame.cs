@@ -1,5 +1,6 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
 using Merthsoft.Moose.Dungeon.Entities.Items;
+using Merthsoft.Moose.Dungeon.Entities.Items.Potions;
 using Merthsoft.Moose.Dungeon.Entities.Monsters;
 using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Map;
@@ -420,7 +421,7 @@ public class DungeonGame : MooseGame
 
         var potionTiles = Enumerable.Range((int)ItemTile.POTION_START, (int)ItemTile.POTION_END).Shuffle();
         var potion = (ItemTile)potionTiles.First();
-        AddItemDef(new PotionDef(potion, "Restore Magic"), (def, x, y) => new RestoreMagicPotion(potion, (UsableItemDef)def, new(x * 16, y * 16)));
+        AddItemDef(new PotionDef(potion, "Restore Magic"), (def, x, y) => new RestoreMagicPotion(potion, (PotionDef)def, new(x * 16, y * 16)));
         Player.GiveItem((Potion)SpawnItem(potion, -1000, -1000));
     }
 

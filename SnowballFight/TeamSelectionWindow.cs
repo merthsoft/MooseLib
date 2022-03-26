@@ -32,6 +32,7 @@ class TeamSelectionWindow : StackPanel
 
         var button = this.AddButton(0, 0, "Back", (_, __) => Action.Invoke(null), 1);
         button.BackgroundDrawingMode = BackgroundDrawingMode.Texture;
+        button.LabelOffset = new(7, 4);
     }
 
     public override void Update(UpdateParameters updateParameters)

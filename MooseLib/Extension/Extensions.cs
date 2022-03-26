@@ -46,7 +46,7 @@ public static class Extensions
 
     public static IEnumerable<Point> SpiralAround(this Point x)
     {
-        int stepNum = 1;
+        int stepNum = 0;
         while (true)
             yield return x.FindSpiralStep(stepNum++);
     }

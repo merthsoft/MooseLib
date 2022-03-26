@@ -1,10 +1,10 @@
 ﻿using Merthsoft.Moose.Dungeon.Tiles;
 
-namespace Merthsoft.Moose.Dungeon.Entities.Items;
+namespace Merthsoft.Moose.Dungeon.Entities.Items.Potions;
 
 public class RestoreMagicPotion : Potion
 {
-    public RestoreMagicPotion(ItemTile potionTile, UsableItemDef def, Vector2 position) : base(potionTile, def, position)
+    public RestoreMagicPotion(ItemTile potionTile, PotionDef def, Vector2 position) : base(potionTile, def, position)
     {
     }
 

@@ -2,7 +2,7 @@
 
 public record GameObjectDef : Def
 {
-    public string DefaultLayer { get; set; }
+    public string DefaultLayer { get; set; } = "";
     public Vector2 DefaultSize { get; set; } = Vector2.One;
     public Vector2 DefaultPosition { get; set; }
     public Vector2 DefaultScale { get; set; } = Vector2.One;
