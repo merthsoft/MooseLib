@@ -4,7 +4,7 @@ namespace Merthsoft.Moose.Dungeon.Entities.Items.Potions;
 
 public class RestoreMagicPotion : Potion
 {
-    public RestoreMagicPotion(ItemTile potionTile, PotionDef def, Vector2 position) : base(potionTile, def, position)
+    public RestoreMagicPotion(PotionDef def, Vector2 position) : base(def, position)
     {
     }
 

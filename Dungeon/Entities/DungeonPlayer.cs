@@ -19,7 +19,7 @@ public class DungeonPlayer : DungeonCreature
     public static DungeonPlayer Instance { get; private set; } = null!;
 
     public bool CanMove = true;
-
+    public bool CanTakeDamage = true;
     public bool HasInputThisFrame;
     
     private readonly Queue<string> moveBuffer = new();
@@ -61,7 +61,9 @@ public class DungeonPlayer : DungeonCreature
     //public Vector2 TargetAnimationPosition;
 
     public bool Blinking = false;
-    public List<Vector2> BlinkableCells = new();
+    public int BlinkIndex = -1;
+    public Vector2 BlinkPosition;
+    public List<Point> BlinkCells = new();
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {
@@ -73,17 +75,43 @@ public class DungeonPlayer : DungeonCreature
         BuildSightMap = true;
     }
 
-    public void StartBlink(IEnumerable<Vector2> blinkableCells)
+    public void StartBlink(IEnumerable<Point> blinkCells)
     {
+        StartCursorTween();
         Blinking = true;
-        BlinkableCells.Clear();
-        BlinkableCells.AddRange(blinkableCells);
+        BlinkCells.Clear();
+        var myCell = GetCell();
+        foreach (var cell in blinkCells.ToHashSet())
+        {
+            var (x, y) = cell;
+
+            if (cell == myCell)
+                continue;
+            
+            var dungeonTile = game.GetDungeonTile(x, y);
+            if (dungeonTile.BlocksSight())
+                continue;
+            
+            var item = game.GetItem(x, y);
+            if (item != null && item.ItemDef.BlocksPlayer)
+                continue;
+            
+            var spell = game.GetSpell(x, y);
+            if (spell != null && spell.SpellDef.BlocksPlayer)
+                continue;
+
+            if (CanSee(x, y) != FogOfWar.None)
+                continue;
+
+            BlinkCells.Add(cell);
+        }
+        BlinkIndex = 0;
     }
 
-    protected override void SetTileVisible(DungeonGame dungeonGame, int x, int y)
+    protected override void SetTileVisible(int x, int y)
     {
-        base.SetTileVisible(dungeonGame, x, y);
-        MiniMap[x, y] = dungeonGame.GetMiniMapTile(x, y);
+        base.SetTileVisible(x, y);
+        MiniMap[x, y] = game.GetMiniMapTile(x, y);
     }
 
     protected override void CellDiscovered(int x, int y)
@@ -136,7 +164,7 @@ public class DungeonPlayer : DungeonCreature
                 MiniMap[i, j] = MiniMapTile.None;
     }
 
-    public void DrawCursor(MooseGame mooseGame, Vector2 position, SpriteBatch spriteBatch)
+    public void DrawCursor(Vector2 mouse, SpriteBatch spriteBatch)
     {
         if (Targeting)
         {
@@ -157,13 +185,25 @@ public class DungeonPlayer : DungeonCreature
         }
         else if (Blinking)
         {
-            foreach (var blinkCell in BlinkableCells)
+            for (var i = 0; i < BlinkCells.Count; i++)
+            {
+                var blinkCell = BlinkCells[i].ToVector2() * 16;
                 spriteBatch.FillRect(blinkCell, 16, 16, Color.Yellow with { A = 100 });
+
+                if (i == BlinkIndex)
+                    BlinkPosition = blinkCell;
+            }
+            
+            spriteBatch.Draw(game.CrosshairTexture, BlinkPosition + new Vector2(8, 8), null,
+                CrosshairColor, CrosshairRotation,
+                game.CrosshairOrigin, CrosshairScale,
+                SpriteEffects.None, 1f);
+
         } else {
-            var (x, y) = ((int)position.X / 16, (int)position.Y / 16);
+            var (x, y) = ((int)mouse.X / 16, (int)mouse.Y / 16);
             if (CanMove && CanSee(x, y) != FogOfWar.Full)
             {
-                spriteBatch.FillRect(position, 16, 16, Color.Cyan with { A = 100 });
+                spriteBatch.FillRect(mouse, 16, 16, Color.Cyan with { A = 100 });
                 var path = ParentMap.FindCellPath(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
                 foreach (var p in path)
                     spriteBatch.FillRectangle(p.X * 16, p.Y * 16, 16, 16, Color.Orange.HalveAlphaChannel());
@@ -186,7 +226,7 @@ public class DungeonPlayer : DungeonCreature
         if (TargetIndex != -1)
             TargetPosition = VisibleMonsters[TargetIndex].Position;
 
-        if (game.WasKeyJustPressed(Keys.Space) && CanMove)
+        if (game.WasKeyJustPressed(Keys.Space, Keys.Enter) && CanMove)
         {
             game.Cast(SelectedSpell, this, TargetPosition);
             Targeting = false;
@@ -203,7 +243,7 @@ public class DungeonPlayer : DungeonCreature
             direction = Down;
         else if (keyPress(Keys.Up))
             direction = Up;
-        else if (keyPress(Keys.Escape, Keys.Q))
+        else if (keyPress(Keys.Escape))
             Targeting = false;
 
         if (direction != "")
@@ -271,6 +311,12 @@ public class DungeonPlayer : DungeonCreature
             return;
         }
 
+        if (Blinking)
+        {
+            BlinkStateUpdate(gameTime);
+            return;
+        }
+
         var keyPressed = false;
         if (keyPress(Keys.Left))
         {
@@ -317,7 +363,7 @@ public class DungeonPlayer : DungeonCreature
 
         Rotation = CalculateRotation(Direction);
 
-        RebuildSightMap(game);
+        RebuildSightMap();
 
         if (VisibleMonsters.Count > 0)
         {
@@ -349,7 +395,7 @@ public class DungeonPlayer : DungeonCreature
                             var diff = lastCell - p;
                             lastCell = p;
                             var dir = DirectionFrom(diff);
-                            Direction ??= dir;
+                            Direction ??= dir!;
                             if (dir != null)
                                 moveBuffer.Enqueue(dir);
                         }
@@ -363,6 +409,96 @@ public class DungeonPlayer : DungeonCreature
             NumMoves++;
     }
 
+    private void BlinkStateUpdate(GameTime gameTime)
+    {
+        if (keyPress(Keys.Escape))
+        {
+            Blinking = false;
+            return;
+        }
+
+        if (game.WasKeyJustPressed(Keys.Space, Keys.Enter) && BlinkCells.Any(c => c.ToVector2() * 16 == BlinkPosition))
+        {
+            Blink();
+            return;
+        }
+
+        if (game.WasKeyJustPressed(Keys.Tab))
+        {
+            if (game.IsKeyDown(Keys.LeftShift, Keys.RightShift))
+                BlinkIndex--;
+            else
+                BlinkIndex++;
+
+            if (BlinkIndex < 0)
+                BlinkIndex = BlinkCells.Count - 1;
+            else if (BlinkIndex >= BlinkCells.Count)
+                BlinkIndex = 0;
+
+            return;
+        }
+
+        if (game.MouseInGame && game.WasLeftMouseJustPressed())
+        {
+            var clickIndex = BlinkCells.IndexOf(p => new Rectangle(p.X * 16, p.Y * 16, 16, 16).Intersects(game.WorldMouse.ToPoint()));
+            
+            if (clickIndex == BlinkIndex)
+                Blink();
+            else if (clickIndex != -1)
+                BlinkIndex = clickIndex;
+
+            return;
+        }
+
+        var direction = "";
+        if (game.WasKeyJustPressed(Keys.Left))
+            direction = Left;
+        else if (game.WasKeyJustPressed(Keys.Right))
+            direction = Right;
+        else if (game.WasKeyJustPressed(Keys.Down))
+            direction = Down;
+        else if (game.WasKeyJustPressed(Keys.Up))
+            direction = Up;
+
+        if (direction != "")
+        {
+            if (BlinkIndex != -1)
+                BlinkIndex = -1;
+            
+            BlinkPosition += direction.GetDelta() * 16;
+        }
+    }
+
+    private void Blink()
+    {
+        HasInputThisFrame = true;
+        CanMove = false;
+        Blinking = false;
+        CanTakeDamage = false;
+        var (blinkX, blinkY) = BlinkCells.First(c => c.ToVector2() * 16 == BlinkPosition);
+        var blinkPosition = new Vector2(blinkX * 16, blinkY * 16);
+        Color = Color.White;
+        ColorA = 1;
+        TweenToAlpha(.05f, .25f,
+            onEnd: _ =>
+                TweenToPosition(blinkPosition, .5f,
+                    onEnd: __ =>
+                    {
+                        TweenToAlpha(1, .25f,
+                            onEnd: ___ =>
+                            {
+                                CanMove = true;
+                                CanTakeDamage = true;
+                                var item = game.GetItem(blinkX, blinkY);
+                                if (item != null && item is InteractiveItem interactiveItem && !interactiveItem.InteractedWith)
+                                    interactiveItem.Interact();
+                                var monster = game.GetMonster(blinkX, blinkY);
+                                if (monster != null)
+                                    monster.TakeDamage(100);
+                            });
+                    }));
+    }
+    
     private void Target(DungeonCreature? monster)
     {
         StartCursorTween();
@@ -470,6 +606,8 @@ public class DungeonPlayer : DungeonCreature
 
     public override void TakeDamage(int value)
     {
+        if (!CanTakeDamage)
+            return;
         base.TakeDamage(value);
         StatsUpdated = true;
     }
@@ -506,6 +644,6 @@ public class DungeonPlayer : DungeonCreature
             total -= Mana - MaxMana;
             Mana = MaxMana;
         }
-        game.SpawnFallingText($"+{total}", Position, Color.Blue);
+        game.SpawnFallingText($"+{total}", Position, Color.CornflowerBlue);
     }
 }

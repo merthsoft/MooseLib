@@ -33,7 +33,7 @@ public class SpellBookPanel : Panel
             {
                 var index = spellIndex;
                 var button = spellPanel.AddButton(i * 97, j * 110, "", (c, u) => {
-                    c.Toggled = false;
+                    c.Toggled = true;
                     player.SelectedSpellIndex = index < spellList.Count ? index : player.SelectedSpellIndex;
                 }, 1);
                 button.Toggleable = true;

@@ -3,6 +3,12 @@
 namespace Merthsoft.Moose.MooseEngine.Extension;
 public static class CollectionsExtensions
 {
+    public static T MoveNextGetCurrent<T>(this IEnumerator<T> set)
+    {
+        set.MoveNext();
+        return set.Current;
+    }
+
     public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) where TKey : notnull
         => new ReadOnlyDictionary<TKey, TValue>(dictionary);
 

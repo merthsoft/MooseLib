@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
+ <tileset firstgid="1" source="../Tilesets/Tiles.tsx"/>
+ <tileset firstgid="421" source="../Tilesets/Tower.tsx"/>
+ <layer id="1" name="base terrain" width="25" height="25">
+  <data encoding="base64" compression="zlib">
+   eJyTY2BgkBtGuAaIaynEdQTsmEEFd84atWPUjgG0QwCIBdGwEJXt0AFiXTSsN2rHgNnhAcSeaNiLynbQMu1uAeKtFOJtBOy4AMQXKcSXCNjxBojfUojfUSG8R/HwwADVlIU/
+  </data>
+ </layer>
+ <layer id="5" name="lower features" width="25" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzt0kkKgEAMRNH0MRyu4cLDO7fzcCb/VlBXoRFJwdumSIiI5Q8pnEiJCjUatE63o2OeR48BIybljpl5C1Zs2HEod3w5EbvGSG6kSnfIAtzzrSMPsId1hO94+lvN37VYLNec9xsSGg==
+  </data>
+ </layer>
+ <objectgroup id="2" name="objects"/>
+ <objectgroup id="4" name="spells"/>
+ <layer id="3" name="upper features" width="25" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztzccNwDAQA8FT/3U4ZzmH4rwN+CPcz1xgvqRZWlkwy1GgRIU6JI591LDXokOPAaPzx8RexIwFKzbnj529Aycu3HicP5RSSin1r15CIBCl
+  </data>
+ </layer>
+</map>

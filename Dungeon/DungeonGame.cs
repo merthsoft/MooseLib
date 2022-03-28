@@ -1,6 +1,7 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
 using Merthsoft.Moose.Dungeon.Entities.Items;
 using Merthsoft.Moose.Dungeon.Entities.Items.Potions;
+using Merthsoft.Moose.Dungeon.Entities.Items.Scrolls;
 using Merthsoft.Moose.Dungeon.Entities.Monsters;
 using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Map;
@@ -48,6 +49,7 @@ public class DungeonGame : MooseGame
     public Window UxWindow = null!;
 
     public MapPanel MapPanel = null!;
+    public ItemsPanel ItemsPanel = null!;
 
     public int ViewingMap = 0;
 
@@ -82,7 +84,7 @@ public class DungeonGame : MooseGame
 
         DefaultRenderHooks = new()
         {
-            { "items", new(PostHook: _ => DrawCursor()) },
+            { "monsters", new(PostHook: _ => DrawCursor()) },
             { "spells", new(PostHook: _ => DrawFallingTexts()) },
         };
     }
@@ -129,7 +131,7 @@ public class DungeonGame : MooseGame
         MainCamera.Zoom = 3f;
         AddDef(PlayerDef);
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
-        FallingTextFont = ContentManager.BakeFont("Border_Basic_Monospaced", 24);
+        FallingTextFont = ContentManager.BakeFont("Outward_Bound", 24);
 
         Player.LearnSpell(AddSpellDef(new FlameDef(), (spellDef, owner, position) => new Flame(spellDef, owner, position)));
 
@@ -190,7 +192,17 @@ public class DungeonGame : MooseGame
         var spellBook = panel.AddControlPassThrough(new SpellBookPanel(UxWindow, 0, 0));
         MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, spellBook.Height));
         var statsPanel = panel.AddControlPassThrough(new StatsPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));
-        panel.AddControl(new ItemsPanel(UxWindow, 0, statsPanel.Y + statsPanel.Height));
+        ItemsPanel = panel.AddControlPassThrough(new ItemsPanel(UxWindow, 0, statsPanel.Y + statsPanel.Height));
+
+        var potionTiles = Enumerable.Range((int)ItemTile.POTION_START, (int)ItemTile.POTION_END);
+        var potion = (ItemTile)potionTiles.First();
+        AddItemDef(new PotionDef(potion, "Restore Magic"), (def, x, y) => new RestoreMagicPotion((PotionDef)def, new(x * 16, y * 16)));
+
+        var scrollTiles = Enumerable.Range((int)ItemTile.SCROLL_START, (int)ItemTile.SROLL_END).Cast<ItemTile>().GetEnumerator();
+        
+        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Current Room"), (def, x, y) => new SpiralScroll((ScrollDef)def, new(x * 16, y * 16)));
+        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Bishop"), (def, x, y) => new BishopScroll((ScrollDef)def, new(x * 16, y * 16)));
+        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Rook"), (def, x, y) => new RookScroll((ScrollDef)def, new(x * 16, y * 16)));
     }
 
     protected override void PostLoad()
@@ -343,16 +355,20 @@ public class DungeonGame : MooseGame
             Player.SelectedSpellIndex = 4;
         else if (WasKeyJustPressed(Keys.D6) && Player.KnownSpells.Count > 5)
             Player.SelectedSpellIndex = 5;
-        else if (WasKeyJustPressed(Keys.Z))
+        else if (WasKeyJustPressed(Keys.Q))
         {
             if (MainCamera.Zoom == 3)
                 Tweener.TweenTo(MainCamera, m => m.Zoom, 2, .5f);
             else if (MainCamera.Zoom == 2)
                 Tweener.TweenTo(MainCamera, m => m.Zoom, 3, .5f);
         }
+        else if (WasKeyJustPressed(Keys.Z))
+            ItemsPanel.UseItem(0);
+        else if (WasKeyJustPressed(Keys.X))
+            ItemsPanel.UseItem(1);
         else if (WasKeyJustPressed(Keys.C))
-            DungeonMap.ClearDungeon();
-
+            ItemsPanel.UseItem(2);
+        
         CanPlay = 
             !GeneratingDungeon
             && Player.State == DungeonObject.Alive
@@ -375,7 +391,7 @@ public class DungeonGame : MooseGame
         FallingTexts.RemoveAll(text => text.Done || text.Age++ > 1500);
 
         var (playerX, playerY) = Player.GetCell();
-        if (!GeneratingDungeon && GetDungeonTile(playerX, playerY) == DungeonTile.StairsDown)
+        if (Player.CanTakeDamage && !GeneratingDungeon && GetDungeonTile(playerX, playerY) == DungeonTile.StairsDown)
         {
             GeneratingDungeon = true;
             UxWindow.OverlayColor = Color.Black;
@@ -416,13 +432,6 @@ public class DungeonGame : MooseGame
         DungeonMap.GenerateDungeon();
         Player.NewFloor();
         Player.UseVisionCircle = true;
-
-        RemoveDefs<PotionDef>();
-
-        var potionTiles = Enumerable.Range((int)ItemTile.POTION_START, (int)ItemTile.POTION_END).Shuffle();
-        var potion = (ItemTile)potionTiles.First();
-        AddItemDef(new PotionDef(potion, "Restore Magic"), (def, x, y) => new RestoreMagicPotion(potion, (PotionDef)def, new(x * 16, y * 16)));
-        Player.GiveItem((Potion)SpawnItem(potion, -1000, -1000));
     }
 
     protected override void PostDraw(GameTime gameTime)
@@ -455,7 +464,7 @@ public class DungeonGame : MooseGame
         if (CanPlay)
         {
             var mouse = new Vector2((int)WorldMouse.X / 16 * 16, (int)WorldMouse.Y / 16 * 16);
-            Player.DrawCursor(this, mouse, SpriteBatch);
+            Player.DrawCursor(mouse, SpriteBatch);
         }
     }
 }

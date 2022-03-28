@@ -58,8 +58,7 @@ public class Chest : InteractiveItem
             Point cell;
             do
             {
-                spiralEnumerator.MoveNext();
-                cell = spiralEnumerator.Current;
+                cell = spiralEnumerator.MoveNextGetCurrent();
             } while (DungeonGame.Instance.IsCellOccupied(cell.X, cell.Y));
             DungeonGame.Instance.SpawnItem(item, cell.X, cell.Y);
         }

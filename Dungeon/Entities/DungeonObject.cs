@@ -102,30 +102,27 @@ public abstract class DungeonObject : TextureGameObject
 
     public virtual void TakeDamage(int value)
     {
-        var totalLoss = 0;
+        var totalLoss = value;
         while (MagicArmor > 0 && value > 0)
         {
             MagicArmor--;
             value--;
-            totalLoss++;
         }
 
         while (Armor > 0 && value > 0)
         {
             Armor--;
             value--;
-            totalLoss++;
         }
 
         while (HitPoints > 0 && value > 0)
         {
             HitPoints--;
             value--;
-            totalLoss++;
         }
 
         if (value > 0)
-            game.SpawnFallingText($"OVERKILL", Position, Color.DarkRed);
+            game.SpawnFallingText($"OVERKILL", Position, Color.LightPink);
 
         game.SpawnFallingText($"-{totalLoss}", Position, Color.IndianRed);
         Color = Color.Red;

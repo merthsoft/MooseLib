@@ -6,10 +6,10 @@ public record PotionDef(ItemTile item, string name) : UsableItemDef(item, name);
 
 public abstract class Potion : UsableItem
 {
-    public Potion(ItemTile itemTile, PotionDef def, Vector2 position) : base(def, position)
+    public Potion(PotionDef def, Vector2 position) : base(def, position)
     {
         MiniMapTile = MiniMapTile.Potion;
-        DrawIndex = (int)itemTile;
+        DrawIndex = (int)def.item;
     }
 
     public override void Use()

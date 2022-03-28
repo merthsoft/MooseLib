@@ -6,13 +6,13 @@ public record ScrollDef(ItemTile item, string name) : UsableItemDef(item, name);
 
 public abstract class Scroll : UsableItem
 {
-    public Scroll(ItemTile itemTile, ScrollDef def, Vector2 position) : base(def, position)
+    public Scroll(ScrollDef def, Vector2 position) : base(def, position)
     {
         MiniMapTile = MiniMapTile.Potion;
-        DrawIndex = (int)itemTile;
+        DrawIndex = (int)def.item;
     }
 
-    protected abstract IEnumerable<Vector2> AllowedCells();
+    protected abstract IEnumerable<Point> AllowedCells();
 
     public override void Use()
     {

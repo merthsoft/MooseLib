@@ -22,6 +22,60 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public Vector2 DrawOffset { get; set; }
     public Vector2 Scale { get; set; }
     public Vector2 Origin { get; set; }
+    private Color color = Color.White;
+    public Color Color
+    {
+        get => color;
+        set
+        {
+            color = value;
+            colorHsl = color.ToHsl();
+        }
+    }
+
+    private HslColor colorHsl;
+
+    public float ColorA
+    {
+        get => color.A;
+        set => color.A = (byte)(value * 255);
+    }
+
+    public float ColorH
+    {
+        get => colorHsl.H;
+        set
+        {
+            var a = Color.A;
+            colorHsl = new HslColor(value, colorHsl.S, colorHsl.L);
+            color = colorHsl.ToRgb();
+            color.A = a;
+        }
+    }
+
+    public float ColorS
+    {
+        get => colorHsl.S;
+        set
+        {
+            var a = Color.A;
+            colorHsl = new HslColor(colorHsl.H, value, colorHsl.L);
+            color = colorHsl.ToRgb();
+            color.A = a;
+        }
+    }
+
+    public float ColorL
+    {
+        get => colorHsl.L;
+        set
+        {
+            var a = Color.A;
+            colorHsl = new HslColor(colorHsl.H, colorHsl.S, value);
+            color = colorHsl.ToRgb();
+            color.A = a;
+        }
+    }
 
     public virtual RectangleF WorldRectangle => new(Position.X, Position.Y, 
         WorldSize.X * Scale.X, WorldSize.Y * Scale.Y);
@@ -98,7 +152,15 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
         bool autoReverse = false, Func<float, float>? easingFunction = null)
         => this.AddTween(o => o.Rotation, toValue, duration, delay, onEnd, onBegin, 
             repeatCount, repeatDelay, autoReverse, easingFunction);
-    
+
+    public Tween TweenToAlpha(float toValue,
+        float duration, float delay = 0f,
+        Action<Tween>? onEnd = null, Action<Tween>? onBegin = null,
+        int repeatCount = 0, float repeatDelay = 0f,
+        bool autoReverse = false, Func<float, float>? easingFunction = null)
+        => this.AddTween(o => o.ColorA, toValue, duration, delay, onEnd, onBegin,
+            repeatCount, repeatDelay, autoReverse, easingFunction);
+
     public virtual bool AtWorldPosition(Vector2 worldPosition)
         => WorldRectangle.Contains(worldPosition);
 

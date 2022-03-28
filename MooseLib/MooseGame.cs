@@ -195,6 +195,9 @@ public abstract class MooseGame : Game
         return def;
     }
 
+    public static TDef? GetDef<TDef>() where TDef : Def
+        => GetDefs<TDef>().FirstOrDefault();
+
     public static TDef GetDef<TDef>(string defName) where TDef : Def
         => ((Instance.Defs.GetValueOrDefault(defName) ?? Def.Empty) as TDef)!;
 
@@ -218,11 +221,10 @@ public abstract class MooseGame : Game
         PreviousKeyStates.Add(CurrentKeyState);
         CurrentKeyState = Keyboard.GetState();
 
-        PreUpdate(gameTime);
-        
         WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
-
         Tweener?.Update(gameTime.GetElapsedSeconds());
+        
+        PreUpdate(gameTime);
 
         if (PreRenderUpdate(gameTime))
             foreach (var renderer in RendererDictionary.Values)

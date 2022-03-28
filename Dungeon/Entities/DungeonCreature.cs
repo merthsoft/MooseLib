@@ -38,7 +38,7 @@ public abstract class DungeonCreature : DungeonObject
     public override void Update(MooseGame game, GameTime gameTime)
     {
         if (BuildSightMap)
-            RebuildSightMap((game as DungeonGame)!);
+            RebuildSightMap();
         base.Update(game, gameTime);
     }
 
@@ -50,13 +50,12 @@ public abstract class DungeonCreature : DungeonObject
 
     public virtual void ResetVision()
     {
-        var dungeonGame = DungeonGame.Instance;
         VisibleMonsters.Clear();
-        SightMap = new FogOfWar[dungeonGame.DungeonSize, dungeonGame.DungeonSize];
+        SightMap = new FogOfWar[game.DungeonSize, game.DungeonSize];
         UseVisionCircle = true;
     }
 
-    protected virtual void SetTileVisible(DungeonGame dungeonGame, int x, int y)
+    protected virtual void SetTileVisible(int x, int y)
     {
         if (SightMap[x, y] == FogOfWar.Full)
             CellDiscovered(x, y);
@@ -65,9 +64,9 @@ public abstract class DungeonCreature : DungeonObject
 
     protected virtual void CellDiscovered(int x, int y) { }
 
-    public virtual void RebuildSightMap(DungeonGame dungeonGame)
+    public virtual void RebuildSightMap()
     {
-        var (dungeonWidth, dungeonHeight) = (dungeonGame.DungeonSize, dungeonGame.DungeonSize);
+        var (dungeonWidth, dungeonHeight) = (game.DungeonSize, game.DungeonSize);
 
         if (SightMap.Length == 0)
             ResetVision();
@@ -82,7 +81,7 @@ public abstract class DungeonCreature : DungeonObject
         var visibleMonsters = new List<(float distance, DungeonCreature creature)>();
         var cell = GetCell();
         var (creatureX, creatureY) = cell;
-        SetTileVisible(dungeonGame, creatureX, creatureY);
+        SetTileVisible(creatureX, creatureY);
 
         for (var d = 0f; d < MathF.PI * 2; d += .05f)
             for (var delta = 1f; delta < ViewRadius; delta += 1)
@@ -93,9 +92,9 @@ public abstract class DungeonCreature : DungeonObject
                 if (posX < 0 || posY < 0 || posX >= dungeonWidth || posY >= dungeonHeight)
                     continue;
 
-                SetTileVisible(dungeonGame, posX, posY);
+                SetTileVisible(posX, posY);
 
-                var monster = dungeonGame.GetMonster(posX, posY);
+                var monster = game.GetMonster(posX, posY);
                 if (monster != null && monster != this && !visibleMonsters.Any(t => t.creature == monster))
                 {
                     var distance = DistanceSquaredTo(monster);
@@ -103,7 +102,7 @@ public abstract class DungeonCreature : DungeonObject
                     if (this == DungeonPlayer.Instance)
                         monster.SeenCount++;
                 }
-                else if (dungeonGame.GetDungeonTile(posX, posY).BlocksSight())
+                else if (game.GetDungeonTile(posX, posY).BlocksSight())
                     break;
             }
 

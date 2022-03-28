@@ -1,0 +1,29 @@
+{
+  "textureAtlas": {
+    "texture": "..\\Images\\Mage-Sheet.png",
+    "regionWidth": 32,
+    "regionHeight": 32
+  },
+  "cycles": {
+    "walk_south": {
+      "frames": [0,1,2,3],
+      "isLooping": true,
+      "frameDuration": 0.09999997
+    },
+    "walk_east": {
+      "frames": [4,5,6,7],
+      "isLooping": true,
+      "frameDuration": 0.1
+    },
+    "walk_north": {
+      "frames": [8,9,10,11],
+      "isLooping": true,
+      "frameDuration": 0.1
+    },
+    "walk_west": {
+      "frames": [12,13,14,15],
+      "isLooping": true,
+      "frameDuration": 0.1
+    }
+  }
+}

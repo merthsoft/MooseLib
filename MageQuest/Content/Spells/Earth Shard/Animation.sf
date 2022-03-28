@@ -1,0 +1,29 @@
+{
+  "textureAtlas": {
+    "texture": "Image.png",
+    "regionWidth": 24,
+    "regionHeight": 24
+  },
+  "cycles": {
+    "cast": {
+      "frames": [0,1,2],
+      "isLooping": false,
+      "frameDuration": 0.09999997
+    },
+    "active": {
+      "frames": [0,1,2,1],
+      "isLooping": true,
+      "frameDuration": 0.09999997
+    },
+    "hit": {
+      "frames": [0,1,2,3,2,1,0],
+      "isLooping": false,
+      "frameDuration": 0.09999997
+    },
+    "dead": {
+      "frames": [],
+      "isLooping": false,
+      "frameDuration": 0.2
+    }
+  }
+}

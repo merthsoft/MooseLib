@@ -235,7 +235,9 @@ public class DungeonMap : BaseMap
         SetDungeonTile(x + 1, y + 1, DungeonTile.StairsUp);
 
         var chest = (dungeonGame.SpawnItem(ItemTile.ClosedChest, x + width / 2, y + height / 2) as Chest)!;
-        chest.Contents.AddRange(Treasures.Take(dungeonGame.Random.Next(3, 7)));
+        chest.Contents.Add(ItemTile.SCROLL_START);
+        chest.Contents.Add(ItemTile.POTION_START);
+        chest.Contents.AddRange(Treasures.Take(dungeonGame.Random.Next(3, 5)));
 
         var lastRoom = Rooms.Last();
         x = lastRoom.X + 1;

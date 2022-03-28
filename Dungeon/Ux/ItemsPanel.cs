@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
 
 namespace Merthsoft.Moose.Dungeon.Ux;
-internal class ItemsPanel : Panel
+public class ItemsPanel : Panel
 {
     DungeonPlayer? player;
     int itemOffset = 0;
@@ -42,7 +42,11 @@ internal class ItemsPanel : Panel
                     button.Texture = DungeonGame.Instance.ItemTiles;
                     button.SourceRectangle = button.Texture.GetSourceRectangle(item.DrawIndex, 16, 16);
                     button.TextureScale = new(4, 4);
-                    button.Action = (c, u) => item.Use();
+                    button.Action = (c, u) =>
+                    {
+                        if (player.CanMove && !player.Blinking && !player.Targeting)
+                            item.Use();
+                    };
                 }
                 itemIndex++;
             }
@@ -50,4 +54,7 @@ internal class ItemsPanel : Panel
         }
         base.Update(updateParameters);
     }
+    
+    public void UseItem(int value)
+        => ((Controls[2] as Panel)?.Controls[value] as Button)?.Action?.Invoke(this, null!);
 }
