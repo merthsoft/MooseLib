@@ -6,7 +6,7 @@ public record ScrollDef(ItemTile item, string name) : UsableItemDef(item, name);
 
 public abstract class Scroll : UsableItem
 {
-    public Scroll(ScrollDef def, Vector2 position) : base(def, position)
+    public Scroll(ScrollDef def, int x, int y) : base(def, x, y)
     {
         MiniMapTile = MiniMapTile.Potion;
         DrawIndex = (int)def.item;

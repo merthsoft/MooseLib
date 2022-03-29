@@ -1,7 +1,7 @@
 ﻿namespace Merthsoft.Moose.Dungeon.Entities.Items.Scrolls;
 public class SpiralScroll : Scroll
 {
-    public SpiralScroll(ScrollDef def, Vector2 position) : base(def, position)
+    public SpiralScroll(ScrollDef def, int x, int y) : base(def, x, y)
     {
 
     }

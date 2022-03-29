@@ -21,7 +21,7 @@ public abstract class DungeonItem : DungeonObject
 {
     public ItemDef ItemDef;
 
-    public DungeonItem(ItemDef def, Vector2 position) : base(def, position, "", 0, new Vector2(16, 16), "items")
+    public DungeonItem(ItemDef def, int x, int y) : base(def, new(x * 16, y * 16), "", 0, new Vector2(16, 16), "items")
     {
         ItemDef = def;
         State = "inanimate";

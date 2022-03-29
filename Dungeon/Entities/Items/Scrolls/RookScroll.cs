@@ -1,9 +1,7 @@
-﻿using Merthsoft.Moose.Dungeon.Tiles;
-
-namespace Merthsoft.Moose.Dungeon.Entities.Items.Scrolls;
+﻿namespace Merthsoft.Moose.Dungeon.Entities.Items.Scrolls;
 public class RookScroll : Scroll
 {
-    public RookScroll(ScrollDef def, Vector2 position) : base(def, position)
+    public RookScroll(ScrollDef def, int x, int y) : base(def, x, y)
     {
 
     }

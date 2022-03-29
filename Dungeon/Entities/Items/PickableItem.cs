@@ -2,7 +2,7 @@
 
 public abstract class PickableItem : InteractiveItem
 {
-    public PickableItem(ItemDef def, Vector2 position) : base(def, position)
+    public PickableItem(ItemDef def, int x, int y) : base(def, x, y)
     {
         State = "inanimate";
     }

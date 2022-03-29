@@ -16,7 +16,7 @@ public class Treasure : PickableItem
 {
     public TreasureDef TreasureDef;
 
-    public Treasure(TreasureDef def, Vector2 position) : base(def, position)
+    public Treasure(TreasureDef def, int x, int y) : base(def, x, y)
     {
         TreasureDef = def;
     }

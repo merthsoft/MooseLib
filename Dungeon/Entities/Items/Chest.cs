@@ -18,7 +18,7 @@ public class Chest : InteractiveItem
     public List<ItemTile> Contents = new();
     public bool IsLocked = false;
 
-    public Chest(ChestDef def, Vector2 position) : base(def, position)
+    public Chest(ChestDef def, int x, int y) : base(def, x, y)
     {
         Def = def;
         DrawIndex = (int)ItemTile.ClosedChest;

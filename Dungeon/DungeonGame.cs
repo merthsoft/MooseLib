@@ -68,10 +68,10 @@ public class DungeonGame : MooseGame
 
     public DungeonMap DungeonMap = null!;
 
-    DungeonPlayerDef PlayerDef = new();
+    readonly DungeonPlayerDef PlayerDef = new();
     public DungeonPlayer Player = null!;
 
-    List<FallingText> FallingTexts = new List<FallingText>();
+    readonly List<FallingText> FallingTexts = new();
 
     public bool CanPlay = true;
     public bool MouseInGame => CurrentMouseState.X > 320;
@@ -167,9 +167,10 @@ public class DungeonGame : MooseGame
             (def, x, y) => new Snake(def, new Vector2(x * 16, y * 16)));
 
         for (var item = ItemTile.TREASURE_START; item < ItemTile.TREASURE_END; item++)
-            AddItemDef(new TreasureDef(item, item.ToString().InsertSpacesBeforeCapitalLetters()), (itemDef, x, y) => new Treasure((TreasureDef)itemDef, new Vector2(x * 16, y * 16)));
+            AddItemDef(new TreasureDef(item, item.ToString().InsertSpacesBeforeCapitalLetters()),
+                (itemDef, x, y) => new Treasure((TreasureDef)itemDef, x, y));
 
-        AddItemDef(new ChestDef(), (itemDef, x, y) => new Chest((ChestDef)itemDef, new Vector2(x * 16, y * 16)));
+        AddItemDef(new ChestDef(), (itemDef, x, y) => new Chest((ChestDef)itemDef, x, y));
 
         var fonts = new[] {
             ContentManager.BakeFont("BrightLinger", 62),
@@ -196,13 +197,13 @@ public class DungeonGame : MooseGame
 
         var potionTiles = Enumerable.Range((int)ItemTile.POTION_START, (int)ItemTile.POTION_END);
         var potion = (ItemTile)potionTiles.First();
-        AddItemDef(new PotionDef(potion, "Restore Magic"), (def, x, y) => new RestoreMagicPotion((PotionDef)def, new(x * 16, y * 16)));
+        AddItemDef(new PotionDef(potion, "Restore Magic"), (def, x, y) => new RestoreMagicPotion((PotionDef)def, x, y));
 
         var scrollTiles = Enumerable.Range((int)ItemTile.SCROLL_START, (int)ItemTile.SROLL_END).Cast<ItemTile>().GetEnumerator();
         
-        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Current Room"), (def, x, y) => new SpiralScroll((ScrollDef)def, new(x * 16, y * 16)));
-        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Bishop"), (def, x, y) => new BishopScroll((ScrollDef)def, new(x * 16, y * 16)));
-        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Rook"), (def, x, y) => new RookScroll((ScrollDef)def, new(x * 16, y * 16)));
+        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Current Room"), (def, x, y) => new SpiralScroll((ScrollDef)def, x, y));
+        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Bishop"), (def, x, y) => new BishopScroll((ScrollDef)def, x, y));
+        AddItemDef(new ScrollDef(scrollTiles.MoveNextGetCurrent(), "Rook"), (def, x, y) => new RookScroll((ScrollDef)def, x, y));
     }
 
     protected override void PostLoad()

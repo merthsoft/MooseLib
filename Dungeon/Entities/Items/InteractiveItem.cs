@@ -4,7 +4,7 @@ public abstract class InteractiveItem : DungeonItem
 {
     public bool InteractedWith;
 
-    public InteractiveItem(ItemDef def, Vector2 position) : base(def, position)
+    public InteractiveItem(ItemDef def, int x, int y) : base(def, x, y)
     {
     }
 

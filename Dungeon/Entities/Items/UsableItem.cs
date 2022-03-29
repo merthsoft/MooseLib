@@ -13,7 +13,7 @@ public class UsableItem : PickableItem
 
     public string DisplayName => Identified ? UsableItemDef.Name : "Unknown";
 
-    public UsableItem(UsableItemDef def, Vector2 position) : base(def, position)
+    public UsableItem(UsableItemDef def, int x, int y) : base(def, x, y)
     {
         UsableItemDef = def;
     }

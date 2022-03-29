@@ -3,7 +3,7 @@
 namespace Merthsoft.Moose.Dungeon.Entities.Items.Scrolls;
 public class BishopScroll : Scroll
 {
-    public BishopScroll(ScrollDef def, Vector2 position) : base(def, position)
+    public BishopScroll(ScrollDef def, int x, int y) : base(def, x, y)
     {
 
     }
