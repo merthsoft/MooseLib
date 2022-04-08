@@ -1,6 +1,6 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.Interface;
 
-public interface ILayerRenderer : IDisposable
+public interface ILayerRenderer
 {
     Vector2 DrawOffset { get; set; }
     Vector2 DrawScale { get; set; }

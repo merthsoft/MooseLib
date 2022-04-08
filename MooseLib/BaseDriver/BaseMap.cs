@@ -48,7 +48,7 @@ public abstract class BaseMap : IMap
         => cellX >= 0 && cellX < Width
         && cellY >= 0 && cellY < Height;
 
-    public virtual void Update(MooseGame _game, GameTime _gameTime)
+    public virtual void Update(MooseGame game, GameTime gameTime)
         => BuildFullBlockingMap();
 
     protected virtual void BuildFullBlockingMap()

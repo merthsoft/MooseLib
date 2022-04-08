@@ -17,7 +17,7 @@ public abstract class MooseGame : Game
     public OrthographicCamera MainCamera { get; protected set; } = null!; // Set in load content
 
     protected bool ShouldQuit { get; set; } = false;
-    private GraphicsDeviceManager Graphics { get; set; } = null!;
+    protected GraphicsDeviceManager Graphics { get; set; } = null!;
 
     public SpriteBatch SpriteBatch = null!; // Set in load 
 
@@ -313,7 +313,7 @@ public abstract class MooseGame : Game
             ILayerRenderer? renderer = null;
             
             var rendererKey = layer.RendererKey ?? LayerRenderers.GetValueOrDefault(layerName);
-            if (renderer == null)
+            if (rendererKey == null)
                 rendererKey = DefaultRenderers.GetValueOrDefault(layerType) ?? (DefaultRenderers.FirstOrDefault(r => layerType.IsAssignableTo(r.Key)).Value);
             if (rendererKey != null)
                 renderer = RendererDictionary[rendererKey];

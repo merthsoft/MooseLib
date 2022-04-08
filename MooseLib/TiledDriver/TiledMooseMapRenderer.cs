@@ -3,7 +3,7 @@ using MonoGame.Extended.Tiled.Renderers;
 
 namespace Merthsoft.Moose.MooseEngine.TiledDriver;
 
-public record TiledMooseMapRenderer : ILayerRenderer
+public record TiledMooseMapRenderer : ILayerRenderer, IDisposable
 {
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawScale { get; set; }

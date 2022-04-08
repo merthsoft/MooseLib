@@ -258,9 +258,6 @@ public class DungeonGame : MooseGame
     public Spell? GetSpell(int x, int y)
         => DungeonMap.Spells.FirstOrDefault(o => o.InCell(x, y));
 
-    public ItemTile GetItemTile(int x, int y)
-        => (DungeonMap.ItemLayer.Objects.FirstOrDefault(o => o.InCell(x, y)) as DungeonItem)?.ItemDef.Item ?? ItemTile.None;
-
     public bool IsCellOccupied(int x, int y)
         => !GetDungeonTile(x, y).IsFloor()
         || ReadObjects.Any(o => o.InCell(x, y));

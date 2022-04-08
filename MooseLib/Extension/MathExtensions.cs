@@ -1,11 +1,43 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.Extension;
 public static class MathExtensions
 {
+    public static int CardinalDirection2IndexDegrees(this float angle)
+            => angle switch
+            {
+                0 => 1,
+                <= 45 => 0,
+                90 => 0,
+                < 135 => 1,
+                180 => 1,
+                <= 225 => 0,
+                270 => 0,
+                < 315 => 1,
+                _ => 0
+            };
+
+    public static int CardinalDirection4IndexDegrees(this float angle)
+        => (int)(((angle + 30) % 360) / 60);
+
+    public static int CardinalDirection8IndexDegrees(this float angle)
+        => (int)(((angle + 22.5) % 360) / 45);
+
+    public static float ToDegrees(this float radians)
+            => ((180 / MathF.PI) * radians + 360) % 360;
+
     public static bool InBounds(this Vector2 pos, int width, int height)
         => pos.X >= 0 && pos.Y >= 0 && pos.X < width && pos.Y < height;
 
     public static Point Abs(this Point p)
         => new(Math.Abs(p.X), Math.Abs(p.Y));
+
+    public static float Abs(this float f)
+        => MathF.Abs(f);
+
+    public static float Cos(this float f)
+        => MathF.Cos(f);
+
+    public static float Sin(this float f)
+        => MathF.Sin(f);
 
     public static Vector2 Round(this Vector2 vector, int digits)
         => new(vector.X.Round(digits), vector.Y.Round(digits));
