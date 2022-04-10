@@ -1,23 +1,23 @@
-﻿using Merthsoft.Moose.Dungeon.Entities.Items;
-using Merthsoft.Moose.Dungeon.Entities.Spells;
+﻿using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.GameObjects;
 
 namespace Merthsoft.Moose.Dungeon.Entities;
-public abstract record DungeonObjectDef : TextureGameObjectDef
+public abstract record DungeonObjectDef : ManualAnimatedGameObjectDef
 {
     public int HitPoints = 0;
     public int DrawIndex;
     public MiniMapTile MiniMapTile;
 
-    public DungeonObjectDef(string DefName, string TextureName, Rectangle? SourceRectangle = null) : base(DefName, TextureName, SourceRectangle)
+    public DungeonObjectDef(string DefName, string AnimationKey) : base(DefName, AnimationKey)
     {
         DefaultLayer = "dungeon";
         DefaultSize = new(16, 16);
     }
 }
-public abstract class DungeonObject : TextureGameObject
+
+public abstract class DungeonObject : AnimatedGameObject
 {
     public const string Alive = "alive";
     public const string Dead = "dead";
@@ -44,8 +44,10 @@ public abstract class DungeonObject : TextureGameObject
 
     public bool CurrentlyBlockingInput = false;
 
-    public DungeonObject(DungeonObjectDef def, Vector2? position, string direction, float? rotation, Vector2? size, string layer)
-        : base(def, position, direction, rotation, size, layer)
+    public override string PlayKey => "idle";
+
+    public DungeonObject(DungeonObjectDef def, Vector2? position, string direction, float? rotation, string layer)
+        : base(def, position, layer, Vector2.Zero, rotation ?? 0, Vector2.One, "idle", direction)
     {
         game = DungeonGame.Instance;
         player = game.Player;
@@ -55,6 +57,7 @@ public abstract class DungeonObject : TextureGameObject
         State = HitPoints < 0 ? Inanimate : Alive;
         MiniMapTile = DungeonObjectDef.MiniMapTile;
         DrawIndex = def.DrawIndex;
+        Origin = new(8, 8);
     }
 
     public override void Update(MooseGame game, GameTime gameTime)
@@ -73,25 +76,18 @@ public abstract class DungeonObject : TextureGameObject
         }
     }
 
+    public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
+        => spriteBatch.Draw(Sprite.TextureRegion.Texture,
+                WorldRectangle.Move(AnimationPosition).Move(Origin).ToRectangle(), 
+                Sprite.TextureRegion.Bounds,
+                Color, Rotation - AnimationRotation, Origin, SpriteEffects, LayerDepth);
+
     public virtual void Die(DungeonGame game)
     {
         this.AddTween(p => p.AnimationRotation, MathF.PI * 2, .25f, repeatCount: -1);
         this.AddTween(p => p.Scale, new Vector2(2, 2), .5f, 
             onEnd: _ => this.AddTween(p => p.Scale, new Vector2(0, 0), .25f,
                 onEnd: _ => State = Dead));
-    }
-
-    public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
-        => DrawSprite(spriteBatch, TextureGameObjectDef.Texture, DrawIndex, this is Chest ? 1 : .5f);
-
-    public void DrawSprite(SpriteBatch spriteBatch, Texture2D texture, int index, float layerDepth)
-    {
-        if (index < 0)
-            return;
-        spriteBatch.Draw(texture,
-            WorldRectangle.Move(new(AnimationPosition.X + 8, AnimationPosition.Y + 8)).ToRectangle(), 
-            texture.GetSourceRectangle(index, 16, 16),
-            Color, Rotation - AnimationRotation, new(8, 8), Effects, layerDepth);
     }
 
     public virtual void AddSpell(Spell spell)

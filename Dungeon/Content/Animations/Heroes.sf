@@ -1,0 +1,14 @@
+{
+  "textureAtlas": {
+    "texture": "..\\Images\\Heroes.png",
+    "regionWidth": 16,
+    "regionHeight": 16
+  },
+  "cycles": {
+    "idle": {
+      "frames": [85,86,87],
+      "isLooping": true,
+      "frameDuration": 0.2
+    }
+  }
+}

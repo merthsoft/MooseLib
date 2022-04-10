@@ -22,32 +22,33 @@ public class RayGame : MooseGame
 
     protected override void Load()
     {
-        CamTarget = new Vector3(0f, 0f, 0f);
-        CamPosition = new Vector3(0f, 0f, -100f);
+        DefaultBackgroundColor = Color.Black;
+        CamTarget = new Vector3(23.375f, -101.75f, -1);
+        CamPosition = new Vector3(82, -40, -70);
 
         var map = @"
-00000000000000000000
-0       1 1        0
-0         7        0
-0       1 1        0
-011111111 1111111110
-0       4          0
-0       4          0
-0       4 5        0
-0       4 5        0
-0       4 5        0
-0         5        0
-0         5        0
-044444444 555 5555 0
-0                  0
-0                  0
-0                  0
-011111111122222222 0
-0         2        0
-0         2        0
-0                  0
-0         2        0
-00000000000000000000";
+11111111111111111111
+1       1 1        1
+1         7        1
+1       1 1        1
+111111111 1111111111
+1       4          1
+1       4          1
+1       4 5        1
+1       4 5        1
+1       4 5        1
+1         5        1
+1         5        1
+144444444 555 5555 1
+1                  1
+1                  1
+1                  1
+111111111122222222 1
+1         2        1
+1         2        1
+1                  1
+1         2        1
+11111111111111111111";
         var splitMap = map.Split("\r\n", StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim().ToArray()).ToArray();
         var wallMap = new List<List<int>>();
         for (var lineNumber = 0; lineNumber < splitMap.Length; lineNumber++)
@@ -65,26 +66,11 @@ public class RayGame : MooseGame
         RayMap = new(wallMap);
         ActiveMaps.Add(RayMap);
 
-        var wallImage = ContentManager.LoadImage("Walls");
-        for (var i = 0; i < wallImage.Width; i += 32)
-        {
-            var wallData = new uint[1024];
-            wallImage.GetData(0, new(i, 0, 32, 32), wallData, 0, 1024);
-            
-            var rayTexture = new RayTexture(32, 32);
-            for (int x = 0; x < 32; x++)
-                for (int y = 0; y < 32; y++)
-                    rayTexture.Add(wallData[x * 32 + y]);
-
-            Walls.Add(rayTexture);
-            DarkWalls.Add(rayTexture.GenerateNorthWall());
-        }
-
         var effect = new BasicEffect(GraphicsDevice);
         effect.Alpha = 1;
         effect.TextureEnabled = true;
         effect.Texture = ContentManager.LoadImage("Walls");
-
+        
         AddRenderer("walls", new Ray3DRenderer(GraphicsDevice, effect));
         
         AddObject(new RayPlayer(new MooseEngine.Defs.GameObjectDef("player"), new(32, 96), Directions.East));
@@ -94,25 +80,21 @@ public class RayGame : MooseGame
     {
         base.PreUpdate(gameTime);
 
-        if (IsKeyDown(Keys.Right))
+        if (IsKeyDown(Keys.Right, Keys.D))
         {
             CamPosition.X -= 1f;
-            CamTarget.X -= 1f;
         }
-        if (IsKeyDown(Keys.Left))
+        if (IsKeyDown(Keys.Left, Keys.A))
         {
             CamPosition.X += 1f;
-            CamTarget.X += 1f;
         }
-        if (IsKeyDown(Keys.Down))
+        if (IsKeyDown(Keys.Down, Keys.S))
         {
             CamPosition.Y -= 1f;
-            CamTarget.Y -= 1f;
         }
-        if (IsKeyDown(Keys.Up))
+        if (IsKeyDown(Keys.Up, Keys.W))
         {
             CamPosition.Y += 1f;
-            CamTarget.Y += 1f;
         }
         if (IsKeyDown(Keys.OemPlus))
         {
@@ -121,18 +103,6 @@ public class RayGame : MooseGame
         if (IsKeyDown(Keys.OemMinus))
         {
             CamPosition.Z -= 1f;
-        }
-
-        if (IsKeyDown(Keys.Z))
-        {
-            var rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(1f));
-            CamPosition = Vector3.Transform(CamPosition, rotationMatrix);
-            CamTarget = Vector3.Transform(CamTarget, rotationMatrix);
-        }
-        if (IsKeyDown(Keys.X))
-        {
-            var rotationMatrix = Matrix.CreateRotationY(-MathHelper.ToRadians(1f));
-            CamPosition = Vector3.Transform(CamPosition, rotationMatrix);
         }
     }
 }

@@ -43,10 +43,12 @@ public enum ItemTile
     MediumGoldPile,
     SmallGoldPile,
     JadeNecklace,
-    EmeraldNecklace,
     FoxNecklace,
     TopazNecklace,
+    EmeraldNecklace,
     DiamondNecklace,
+    SilverCrossNecklace,
+    GoldCrossNecklace,
     TREASURE_END,
     
     KEY_START = 50,
@@ -57,11 +59,6 @@ public enum ItemTile
     ClosedChest,
     OpenChest,
     KEY_END,
-
-    LIGHT_START = 60,
-    Torch = 60,
-    Candle,
-    LIGHT_END,
 
     SCROLL_START = 70,
     Scroll1 = 70,
@@ -82,6 +79,9 @@ public enum ItemTile
     Bread = 80,
     Meat,
     Cheese,
+    RedMushroom,
+    PurpleMushroom,
+    BrownMushroom,
     FOOD_END,
 
 

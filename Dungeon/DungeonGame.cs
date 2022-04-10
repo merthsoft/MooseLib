@@ -79,7 +79,6 @@ public class DungeonGame : MooseGame
     public DungeonGame()
     {
         Instance = this;
-        Player = new(PlayerDef) { };
         IsMouseVisible = false;
 
         DefaultRenderHooks = new()
@@ -116,7 +115,7 @@ public class DungeonGame : MooseGame
         ArrowTexture = ContentManager.LoadImage("Arrow");
 
         DungeonTiles = ContentManager.LoadImage("Dungeon");
-        var dungeonRenderer = new DungeonRenderer(Player, SpriteBatch, BaseTileWidth, BaseTileHeight, DungeonTiles);
+        var dungeonRenderer = new DungeonRenderer(SpriteBatch, BaseTileWidth, BaseTileHeight, DungeonTiles);
         dungeonRenderer[DungeonTile.StoneWall] = ContentManager.LoadImage("StoneWall");
         dungeonRenderer[DungeonTile.BrickWall] = ContentManager.LoadImage("BrickWall");
 
@@ -133,10 +132,10 @@ public class DungeonGame : MooseGame
         DebugFont = ContentManager.BakeFont("MatchupPro", 30);
         FallingTextFont = ContentManager.BakeFont("Outward_Bound", 24);
 
-        Player.LearnSpell(AddSpellDef(new FlameDef(), (spellDef, owner, position) => new Flame(spellDef, owner, position)));
+        AddSpellDef(new FlameDef(), (spellDef, owner, position) => new Flame(spellDef, owner, position));
 
         AddSpellDef(new FireballDef(), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
-        Player.LearnSpell(AddSpellDef(new MeteorDef(), (spellDef, owner, position)
+        AddSpellDef(new MeteorDef(), (spellDef, owner, position)
             =>
             new SpellContainer(owner)
                 .Add(new Meteor(spellDef, owner, position))
@@ -144,7 +143,7 @@ public class DungeonGame : MooseGame
                 .Add(new Meteor(spellDef, owner, position - new Vector2(-16, 0)))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, 16)))
                 .Add(new Meteor(spellDef, owner, position - new Vector2(0, -16)))
-            ));
+            );
         AddSpellDef(new SpinesDef(), (spellDef, owner, position) => new Spines(spellDef, owner, position));
         AddSpellDef(new LightningDef(), (spellDef, owner, position) => new Lightning(spellDef, owner, position));
         AddSpellDef(new SpellDef("Dark Shield", 1, "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
@@ -208,6 +207,7 @@ public class DungeonGame : MooseGame
 
     protected override void PostLoad()
     {
+        Player = new(PlayerDef) { };
         AddObject(Player);
         GenerateTown();
     }

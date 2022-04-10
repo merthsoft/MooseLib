@@ -28,8 +28,8 @@ public abstract class DungeonCreature : DungeonObject
 
     public int SeenCount = 0;
 
-    public DungeonCreature(DungeonCreatureDef def, Vector2? position, string direction, float? rotation = null, Vector2? size = null, string layer = "")
-        : base(def, position, direction, rotation, size, layer)
+    public DungeonCreature(DungeonCreatureDef def, Vector2? position, string direction, float? rotation = null, string layer = "")
+        : base(def, position, direction, rotation, layer)
     {
         Layer = layer ?? def.DefaultLayer;
         DungeonCreatureDef = def;

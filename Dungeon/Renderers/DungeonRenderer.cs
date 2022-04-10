@@ -6,11 +6,10 @@ using Merthsoft.Moose.MooseEngine.Interface;
 namespace Merthsoft.Moose.Dungeon.Renderers;
 public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer<DungeonTile>
 {
-    private readonly DungeonPlayer player;
+    static Color FogOfWarColor = Color.Black.HalveAlphaChannel();
 
-    public DungeonRenderer(DungeonPlayer player, SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
+    public DungeonRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
     {
-        this.player = player;
     }
 
     protected override int GetNeighborValue(DungeonTile _tile, int x, int y, ITileLayer<DungeonTile> layer, int neighborValue)
@@ -18,7 +17,7 @@ public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer<DungeonTile>
         if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
             return 0;
 
-        if (layer.GetTileValue(x, y) < DungeonTile.WALL_START || player.CanSee(x, y) == FogOfWar.Full)
+        if (layer.GetTileValue(x, y) < DungeonTile.WALL_START || DungeonPlayer.Instance.CanSee(x, y) == FogOfWar.Full)
             return 0;
 
         return neighborValue;
@@ -30,9 +29,9 @@ public class DungeonRenderer : SpriteBatchAutoTileTextureRenderer<DungeonTile>
         if (rect == null)
             return;
 
-        if (player.CanSee(i, j) != FogOfWar.Full)
-            base.DrawSprite(spriteIndex, tile, i, j, layer, drawOffset, layerDepth);
-        if (player.CanSee(i, j) == FogOfWar.Half)
-            SpriteBatch.FillRectangle(rect.Value, Color.Black.HalveAlphaChannel(), 1f);
+        if (DungeonPlayer.Instance.CanSee(i, j) != FogOfWar.Full)
+            base.DrawSprite(spriteIndex, tile, i, j, layer, drawOffset, 0.5f);
+        if (DungeonPlayer.Instance.CanSee(i, j) == FogOfWar.Half)
+            SpriteBatch.FillRectangle(rect.Value, FogOfWarColor, 1);
     }
 }

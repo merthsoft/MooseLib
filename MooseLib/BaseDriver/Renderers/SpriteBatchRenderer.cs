@@ -16,7 +16,7 @@ public abstract class SpriteBatchRenderer : ILayerRenderer
 
     public virtual void Begin(Matrix viewMatrix)
         => SpriteBatch.Begin(
-            SpriteSortMode.Deferred,
+            SpriteSortMode.FrontToBack,
             BlendState.NonPremultiplied,
             SamplerState.PointClamp,
             effect: Effect,

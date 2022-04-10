@@ -19,5 +19,5 @@ public class TextureGameObject : GameObjectBase
         => spriteBatch.Draw(TextureGameObjectDef.Texture,
                 WorldRectangle.Move(Origin).ToRectangle(), 
                 TextureGameObjectDef.SourceRectangle,
-                Color, Rotation, Origin, SpriteEffects, .5f);
+                Color, Rotation, Origin, SpriteEffects, LayerDepth);
 }

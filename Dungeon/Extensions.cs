@@ -32,11 +32,13 @@ public static class Extensions
             ItemTile.SilverRing => 7,
             ItemTile.BronzeRing => 8,
             ItemTile.GoldenRing => 9,
-            ItemTile.EmeraldNecklace => 10,
-            ItemTile.FoxNecklace => 11,
-            ItemTile.TopazNecklace => 12,
-            ItemTile.DiamondNecklace => 13,
-            ItemTile.JadeNecklace => 14,
+            ItemTile.SilverCrossNecklace => 10,
+            ItemTile.GoldCrossNecklace => 11,
+            ItemTile.EmeraldNecklace => 12,
+            ItemTile.FoxNecklace => 13,
+            ItemTile.TopazNecklace => 14,
+            ItemTile.DiamondNecklace => 15,
+            ItemTile.JadeNecklace => 16,
             _ => -1
         };
 

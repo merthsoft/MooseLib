@@ -1,4 +1,5 @@
 ﻿using Merthsoft.Moose.Dungeon.Tiles;
+using MonoGame.Extended.TextureAtlases;
 
 namespace Merthsoft.Moose.Dungeon.Entities.Items;
 
@@ -9,7 +10,25 @@ public record ChestDef : ItemDef
         MiniMapTile = MiniMapTile.Chest;
     }
 
-    public override void LoadContent(MooseContentManager contentManager) => base.LoadContent(contentManager);
+    public override void LoadContent(MooseContentManager contentManager)
+    {
+        SpriteSheet = new();
+        SpriteSheet.TextureAtlas = TextureAtlas.Create(AnimationKey, contentManager.LoadImage(AnimationKey), 16, 16);
+
+
+        SpriteSheet.Cycles["closed"] = new()
+        {
+            FrameDuration = .1f,
+            IsLooping = true,
+            Frames = new() { new((int)ItemTile.ClosedChest), }
+        }; 
+        SpriteSheet.Cycles["open"] = new()
+        {
+            FrameDuration = .1f,
+            IsLooping = true,
+            Frames = new() { new((int)ItemTile.OpenChest), }
+        };
+    }
 }
 
 public class Chest : InteractiveItem
@@ -18,10 +37,14 @@ public class Chest : InteractiveItem
     public List<ItemTile> Contents = new();
     public bool IsLocked = false;
 
+    public override string PlayKey => IsOpen ? "open" : "closed";
+
     public Chest(ChestDef def, int x, int y) : base(def, x, y)
     {
         Def = def;
         DrawIndex = (int)ItemTile.ClosedChest;
+        State = "closed";
+        LayerDepth = .9f;
     }
 
     public override void Interact()
@@ -45,7 +68,7 @@ public class Chest : InteractiveItem
     public override bool AfterGrow()
     {
         IsOpen = true;
-        DrawIndex = (int)ItemTile.OpenChest;
+        State = "open";
         SpawnItems();
         return true;
     }

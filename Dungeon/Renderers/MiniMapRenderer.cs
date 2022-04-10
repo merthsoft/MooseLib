@@ -6,6 +6,8 @@ using Merthsoft.Moose.MooseEngine.Interface;
 namespace Merthsoft.Moose.Dungeon.Renderers;
 public class MiniMapRenderer : SpriteBatchAutoTileTextureRenderer<MiniMapTile>
 {
+    static Color FogOfWarColor = Color.Black.HalveAlphaChannel();
+
     public MiniMapRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, 
         int textureMargin = 0, int tilePadding = 0) 
         : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
@@ -33,6 +35,6 @@ public class MiniMapRenderer : SpriteBatchAutoTileTextureRenderer<MiniMapTile>
         if (DungeonPlayer.Instance.GetMiniMapTile(i, j) != MiniMapTile.None)
             base.DrawSprite(spriteIndex, tile, i, j, layer, drawOffset, layerDepth);
         if (DungeonPlayer.Instance.CanSee(i, j) == FogOfWar.Half)
-            SpriteBatch.FillRectangle(rect.Value, Color.Black.HalveAlphaChannel(), 1f);
+            SpriteBatch.FillRectangle(rect.Value, FogOfWarColor, 1f);
     }
 }

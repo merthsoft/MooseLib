@@ -22,6 +22,8 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public Vector2 DrawOffset { get; set; }
     public Vector2 Scale { get; set; }
     public Vector2 Origin { get; set; }
+    public float LayerDepth { get; set; } = .5f;
+
     private Color color = Color.White;
     public Color Color
     {

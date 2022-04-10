@@ -6,7 +6,7 @@ public class SpellBookPanel : Panel
 {
     private readonly List<SpellDef> spellList = new();
     private readonly Panel spellPanel;
-    private readonly DungeonPlayer player;
+    private DungeonPlayer player;
     
     private int selectedSpell;
 
@@ -57,6 +57,8 @@ public class SpellBookPanel : Panel
 
     public override void Update(UpdateParameters updateParameters)
     {
+        if (player == null)
+            player = DungeonPlayer.Instance;
         if (!spellList.SequenceEqual(player.KnownSpells) || selectedSpell != player.SelectedSpellIndex)
             RebuildSpells();
         base.Update(updateParameters);

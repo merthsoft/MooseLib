@@ -41,7 +41,7 @@ public class AnimatedGameObject : GameObjectBase
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
         => spriteBatch.Draw(Sprite.TextureRegion.Texture,
-                WorldRectangle.ToRectangle(), 
+                WorldRectangle.Move(Origin).ToRectangle(), 
                 Sprite.TextureRegion.Bounds,
-                Color, Rotation, Origin, SpriteEffects, 0);
+                Color, Rotation, Origin, SpriteEffects, LayerDepth);
 }

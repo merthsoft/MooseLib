@@ -12,6 +12,7 @@ public abstract class PickableItem : InteractiveItem
         if (InteractedWith)
             return;
 
+        LayerDepth = 1;
         PickUp();
         base.Interact();
     }
@@ -19,5 +20,9 @@ public abstract class PickableItem : InteractiveItem
     public abstract void PickUp();
 
     public override bool AfterGrow()
-        => !(Remove = true);
+    {
+        LayerDepth = .5f;
+        Remove = true;
+        return false;
+    }
 }

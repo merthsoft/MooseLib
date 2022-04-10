@@ -12,6 +12,9 @@ public record DungeonPlayerDef : DungeonCreatureDef
         HitPoints = 1;
         MiniMapTile = MiniMapTile.Player;
     }
+
+    public override void LoadContent(MooseContentManager contentManager)
+        => SpriteSheet = contentManager.LoadAnimatedSpriteSheet(AnimationKey);
 }
 
 public class DungeonPlayer : DungeonCreature
@@ -73,6 +76,7 @@ public class DungeonPlayer : DungeonCreature
         UseVisionCircle = true;
         DrawIndex = 22;
         BuildSightMap = true;
+        Origin = new(8, 8);
     }
 
     public void StartBlink(IEnumerable<Point> blinkCells)
