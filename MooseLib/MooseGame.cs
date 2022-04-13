@@ -98,6 +98,8 @@ public abstract class MooseGame : Game
         ContentManager = new MooseContentManager(this, Content, GraphicsDevice);
 
         var initialization = Startup();
+        IsMouseVisible = initialization.IsMouseVisible;
+
         GraphicsDevice.BlendState = initialization.BlendState ?? BlendState.AlphaBlend;
         GraphicsDevice.SamplerStates[0] = initialization.SamplerState ?? SamplerState.PointClamp;
 

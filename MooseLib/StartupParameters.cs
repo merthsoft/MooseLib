@@ -11,4 +11,5 @@ public record StartupParameters
     public int StateStackSize { get; set; }
     public Rectangle? CameraRectangle { get; set; }
     public Color DefaultBackgroundColor { get; set; }
+    public bool IsMouseVisible { get; set; }
 }

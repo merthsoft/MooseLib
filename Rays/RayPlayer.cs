@@ -1,89 +1,63 @@
-﻿using Merthsoft.Moose.MooseEngine.Defs;
-using Merthsoft.Moose.MooseEngine.GameObjects;
-using Merthsoft.Moose.Rays.Intersections;
-
-namespace Merthsoft.Moose.Rays;
-public class RayPlayer : GameObjectBase
+﻿namespace Merthsoft.Moose.Rays;
+public record RayPlayerDef() : RayGameObjectDef("player", 0, ObjectRenderMode.Directional) { }
+public class RayPlayer : RayGameObject
 {
-    public static Vector2 StandardPlaneEffect(Vector2 pv)
-            => new(-pv.Y, pv.X);
+    public static RayPlayer Instance = null!;
 
-    public Vector2 Location { get; set; } = Vector2.Zero;
+    public RayPlayerDef RayPlayerDef;
 
-    private Vector2 direction = Vector2.Zero;
-    public Vector2 DirectionVector
+    public Weapon CurrentWeapon = Weapon.ChainGun;
+    public bool[] HasWeapon = new[] {true, true, false, false};
+
+    public int AttackFrame = 0;
+
+    public RayPlayer(RayPlayerDef def, int x, int y) : base(def, x, y)
     {
-        get => direction;
-        set
-        {
-            direction = value;
-            PlaneCache = null;
-        }
-    }
-
-    private float fieldOfView = 0.66f;
-    public float FieldOfView
-    {
-        get => fieldOfView;
-        set
-        {
-            fieldOfView = value;
-            PlaneCache = null;
-        }
-    }
-
-    private Func<Vector2, Vector2> planeEffect = StandardPlaneEffect;
-    public Func<Vector2, Vector2> PlaneEffect
-    {
-        get => planeEffect;
-        set
-        {
-            planeEffect = value;
-            PlaneCache = null;
-        }
-    }
-
-    public Vector2? PlaneCache;
-
-    public Vector2 Plane => PlaneCache ??= PlaneEffect(DirectionVector) * FieldOfView;
-
-    public static List<Intersection> Intersections { get; } = new List<Intersection>();
-
-    public RayPlayer(GameObjectDef def, Vector2 position, Vector2 directionVector) : base(def, position, layer:"objects")
-    {
-        DirectionVector = directionVector;
+        Instance = this;
+        RayPlayerDef = def;
     }
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch) { }
-    public override void Update(MooseGame game, GameTime gameTime)
+    public override void Update(MooseGame game, GameTime gameTime) 
     {
-        KeyboardUpdate();
-        RayUpdate();
-    }
+        var rayGame = (game as RayGame)!;
 
-    private void KeyboardUpdate()
-    {
-    }
+        var moveVector = Vector3.Zero;
 
-    private void RayUpdate()
-    {
-        Intersections.Clear();
-        var rayMap = (RayMap)ParentMap;
-        var viewWidth = RayGame.Instance.ViewWidth;
-        var fov = MathF.PI * FieldOfView;
-        for (var x = 0f; x < viewWidth; x++)
+        if (rayGame.WasKeyJustPressed(Keys.Up, Keys.W))
+            moveVector = FacingDirection;
+
+        if (rayGame.WasKeyJustPressed(Keys.Down, Keys.S))
+            moveVector = -FacingDirection;
+
+        if (rayGame.WasKeyJustPressed(Keys.Left, Keys.A))
         {
-            var angle = fov * x / viewWidth;
-            foreach (var pos in Position.CastRay(angle, false, true))
-            {
-                var cell = pos / 32;
-                var wallNumber = rayMap.WallLayer.GetTileValue((int)cell.X, (int)cell.Y);
-                if (wallNumber > -1)
-                {
-                    Intersections.Add(new(pos, wallNumber, false));
-                    break;
-                }
-            }
+            var rot = Matrix.CreateRotationZ(-MathF.PI / 4);
+            FacingDirection = Vector3.Transform(FacingDirection, rot);
         }
+
+        if (rayGame.WasKeyJustPressed(Keys.Right, Keys.D))
+        {
+            var rot = Matrix.CreateRotationZ(MathF.PI / 4);
+            FacingDirection = Vector3.Transform(FacingDirection, rot);
+        }
+
+        var moveX = 16*moveVector.X.Round();
+        var moveY = 16*moveVector.Y.Round();
+
+        //if (rayGame.MainMap.GetBlockingVector(new(Position.X + 4*moveX, Position.Y + 4*moveY))[1] == 0)
+            Position = new(Position.X + moveX, Position.Y + moveY);
+
+        Position.Round();
+
+        //var diff = rayGame.ScreenWidth / 2 - rayGame.CurrentMouseState.X;
+        //if (rayGame.CurrentMouseState != rayGame.PreviousMouseState)
+        //{
+        //    var rot = Matrix.CreateRotationZ(diff * MathF.PI / 360f);
+        //    FacingDirection = Vector3.Transform(FacingDirection, rot);
+        //}
+
+        //if (rayGame.IsActive)
+        //    Mouse.SetPosition(rayGame.ScreenWidth / 2, rayGame.ScreenHeight / 2);
     }
 }

@@ -24,6 +24,9 @@ public static class MathExtensions
     public static float ToDegrees(this float radians)
             => ((180 / MathF.PI) * radians + 360) % 360;
 
+    public static float ToRadians(this float degrees)
+            => MathHelper.ToRadians(degrees);
+
     public static bool InBounds(this Vector2 pos, int width, int height)
         => pos.X >= 0 && pos.Y >= 0 && pos.X < width && pos.Y < height;
 

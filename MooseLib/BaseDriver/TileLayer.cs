@@ -40,7 +40,9 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     }
 
     public TTile GetTileValue(int x, int y)
-        => x < 0 || x >= Width || y < 0 || y >= Height ? EdgeTile : Tiles[x, y];
+        => x < 0 || x >= Width || y < 0 || y >= Height
+        ? EdgeTile 
+        : Tiles[x, y];
 
     public void SetTileValue(int x, int y, TTile value)
     {
