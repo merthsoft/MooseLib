@@ -8,15 +8,19 @@ public class RayGameObject : GameObjectBase
 {
     public RayGameObjectDef RayGameObjectDef;
     public int TextureIndex;
+    public int TextureIndexOffset;
 
     public Vector3 PositionIn3dSpace => new(Position, 7);
     public Vector3 FacingDirection;
+
+    public ObjectRenderMode ObjectRenderMode;
 
     public RayGameObject(RayGameObjectDef def, int x, int y) : base(def, new Vector2(x*16+8, y*16+8), layer: "objects")
     {
         RayGameObjectDef = def;
         TextureIndex = RayGameObjectDef.DefaultTextureIndex;
-        FacingDirection = Vector3.Right;
+        FacingDirection = Vector3.Left;
+        ObjectRenderMode = def.RenderMode;
     }
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch) { }

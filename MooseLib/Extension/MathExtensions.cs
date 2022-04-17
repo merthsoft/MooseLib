@@ -87,4 +87,9 @@ public static class MathExtensions
         return new(newX + center.X, newY + center.Y);
     }
 
+    public static float Atan2(this Vector3 vector)
+        => MathF.Atan2(vector.Y, vector.X);
+
+    public static float Atan2(this Vector2 vector)
+        => MathF.Atan2(vector.Y, vector.X);
 }

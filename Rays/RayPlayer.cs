@@ -1,4 +1,5 @@
 ﻿namespace Merthsoft.Moose.Rays;
+
 public record RayPlayerDef() : RayGameObjectDef("player", 0, ObjectRenderMode.Directional) { }
 public class RayPlayer : RayGameObject
 {
@@ -6,10 +7,14 @@ public class RayPlayer : RayGameObject
 
     public RayPlayerDef RayPlayerDef;
 
-    public Weapon CurrentWeapon = Weapon.ChainGun;
-    public bool[] HasWeapon = new[] {true, true, false, false};
+    public List<WeaponDef> Weapons = new();
+    public WeaponDef? CurrentWeapon;
 
     public int AttackFrame = 0;
+    public double AttackTime = 0;
+    public bool AttackedThisFrame;
+
+    public bool Busy;
 
     public RayPlayer(RayPlayerDef def, int x, int y) : base(def, x, y)
     {
@@ -18,9 +23,15 @@ public class RayPlayer : RayGameObject
     }
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch) { }
-    public override void Update(MooseGame game, GameTime gameTime) 
+    public override void Update(MooseGame game, GameTime gameTime)
     {
         var rayGame = (game as RayGame)!;
+        var actors = VisibleActors().ToList();
+
+        UpdateAttack(gameTime, rayGame, actors);
+
+        if (Busy)
+            return;
 
         var moveVector = Vector3.Zero;
 
@@ -32,21 +43,33 @@ public class RayPlayer : RayGameObject
 
         if (rayGame.WasKeyJustPressed(Keys.Left, Keys.A))
         {
-            var rot = Matrix.CreateRotationZ(-MathF.PI / 4);
-            FacingDirection = Vector3.Transform(FacingDirection, rot);
+            if (rayGame.IsKeyDown(Keys.LeftAlt, Keys.RightAlt))
+                moveVector = Vector3.Transform(FacingDirection, Matrix.CreateRotationZ(-MathF.PI / 2));
+            else
+                FacingDirection = Vector3.Transform(FacingDirection, Matrix.CreateRotationZ(-MathF.PI / 4));
         }
 
         if (rayGame.WasKeyJustPressed(Keys.Right, Keys.D))
         {
-            var rot = Matrix.CreateRotationZ(MathF.PI / 4);
-            FacingDirection = Vector3.Transform(FacingDirection, rot);
+            if (rayGame.IsKeyDown(Keys.LeftAlt, Keys.RightAlt))
+                moveVector = Vector3.Transform(FacingDirection, Matrix.CreateRotationZ(MathF.PI / 2));
+            else
+                FacingDirection = Vector3.Transform(FacingDirection, Matrix.CreateRotationZ(MathF.PI / 4));
         }
 
-        var moveX = 16*moveVector.X.Round();
-        var moveY = 16*moveVector.Y.Round();
+        if (AttackFrame == 0)
+            foreach (var weapon in Weapons)
+                if (rayGame.IsKeyDown(weapon.Key))
+                {
+                    CurrentWeapon = weapon;
+                    break;
+                }
+
+        var moveX = 16 * moveVector.X.Round();
+        var moveY = 16 * moveVector.Y.Round();
 
         //if (rayGame.MainMap.GetBlockingVector(new(Position.X + 4*moveX, Position.Y + 4*moveY))[1] == 0)
-            Position = new(Position.X + moveX, Position.Y + moveY);
+        Position = new(Position.X + moveX, Position.Y + moveY);
 
         Position.Round();
 
@@ -59,5 +82,72 @@ public class RayPlayer : RayGameObject
 
         //if (rayGame.IsActive)
         //    Mouse.SetPosition(rayGame.ScreenWidth / 2, rayGame.ScreenHeight / 2);
+    }
+
+    private void UpdateAttack(GameTime gameTime, RayGame rayGame, List<Actor> actors)
+    {
+        if (CurrentWeapon != null && AttackFrame > 0)
+        {
+            AttackTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (AttackTime > 100)
+            {
+                AttackFrame++;
+                AttackTime = 0;
+                AttackedThisFrame = false;
+            }
+            if (AttackFrame >= CurrentWeapon.NumFrames)
+            {
+                AttackFrame = 0;
+                Busy = false;
+            }
+            if (CurrentWeapon.AttackFrames.Contains(AttackFrame) && !AttackedThisFrame)
+            {
+                var enemy = actors.FirstOrDefault(a => a.Shootable);
+                enemy?.TakeDamage(1);
+                AttackedThisFrame = true;
+            }
+        }
+        else if (CurrentWeapon != null && rayGame.WasKeyJustPressed(Keys.LeftControl, Keys.RightControl))
+        {
+            AttackFrame = 1;
+            AttackTime = 0;
+            Busy = true;
+        }
+    }
+
+    public IEnumerable<Actor> VisibleActors()
+    {
+        var parentMap = (ParentMap as RayMap)!;
+
+        var playerRotation = -MathF.Atan2(FacingDirection.Y, FacingDirection.X);
+        var matrix = Matrix.CreateRotationZ(playerRotation);
+        var fov = MathHelper.ToRadians(50);
+
+        foreach (var obj in RayGame.Instance.ReadObjects.OfType<Actor>().OrderBy(o => o.DistanceSquaredTo(this)))
+        {
+            if (obj is Door)
+                continue;
+
+            var obscured = false;
+
+            var relative = Vector2.Transform(obj.Position - Position, matrix);
+            var rads = MathF.Atan2(relative.Y, relative.X);
+            if (rads > fov || rads < -fov)
+                obscured = true;
+            else
+            {
+                var ray = Position.CastRay(obj.Position, false, true);
+                foreach (var cell in ray)
+                {
+                    if (parentMap.WallLayer.GetTileValue((int)(cell.X / 16), (int)(cell.Y / 16)) >= 0)
+                    {
+                        obscured = true;
+                        break;
+                    }
+                }
+            }
+            if (!obscured)
+                yield return obj;
+        }
     }
 }

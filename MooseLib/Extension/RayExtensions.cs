@@ -93,39 +93,4 @@ public static class RayExtensions
             }
         }
     }
-
-    public static IEnumerable<Point> CastRay(this Point start, Point end, bool includeStart, bool includeEnd)
-    {
-        var xIncrement = (end.X > start.X) ? 1 : -1;
-        var yIncrement = (end.Y > start.Y) ? 1 : -1;
-
-        var delta = (start - end).Abs();
-        var error = delta.X - delta.Y;
-        var errorCorrect = (X: delta.X * 2, Y: delta.Y * 2);
-
-        var current = start;
-        while (true)
-        {
-            if ((current == start && includeStart) ||
-                (current == end && includeEnd) ||
-                (current != start && current != end))
-                yield return current;
-
-            if (current == end)
-                yield break;
-
-            if (error > 0)
-            {
-                current = new(current.X + xIncrement, current.Y);
-                error -= errorCorrect.Y;
-            }
-            else if (error < 0)
-            {
-                current = new(current.X, current.Y + yIncrement);
-                error += errorCorrect.X;
-            }
-            else
-                current = new(current.X + xIncrement, current.Y + yIncrement);
-        }
-    }
 }

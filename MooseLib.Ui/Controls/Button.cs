@@ -60,7 +60,7 @@ public class Button : Control
     {
         if (Texture != null)
             spriteBatch.Draw(Texture, Position + drawOffset + new Vector2(2f, 2f), SourceRectangle,
-                TextureHighlightColor, 0, Vector2.Zero, TextureScale, SpriteEffects.None, 1f);
+                ResolvedTextColor, 0, Vector2.Zero, TextureScale, SpriteEffects.None, 1f);
     }
 
     protected virtual void DrawEmptyButton(SpriteBatch spriteBatch, Vector2 drawOffset)

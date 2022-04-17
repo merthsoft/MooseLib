@@ -23,6 +23,9 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Actor1.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
   </ItemGroup>
@@ -59,5 +62,14 @@
 
 	<ItemGroup>
 	  <Folder Include="Content\Images\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Content\Fonts\Outward_Bound.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\Tomorrow_Night.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 </Project>

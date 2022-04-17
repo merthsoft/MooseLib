@@ -41,7 +41,15 @@ public class GrowPanel : StackPanel
             }
         }
 
+        if (Direction == StackDirection.Vertical)
+            height += Padding;
+        else
+            width += Padding;
+
         var offset = Theme.GetDrawOffset(BackgroundDrawingMode);
-        Size = Theme.CalculateNewSize(new(width + offset.X, height + offset.Y));
+        var newSize = new Vector2(width + offset.X, height + offset.Y);
+        Size = BackgroundDrawingMode == BackgroundDrawingMode.Texture
+                ? Theme.CalculateNewSize(newSize)
+                : newSize;
     }
 }

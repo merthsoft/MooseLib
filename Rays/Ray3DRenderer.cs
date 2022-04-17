@@ -46,36 +46,75 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
                 {
                     var floor = floorLayer.GetTileValue(x, y);
                     var ceiling = ceilingLayer.GetTileValue(x, y);
-                    CreateWall(x, y, ceiling, 4);
-                    CreateWall(x, y, ceiling, 5);
+                    CreateWall(x * 16, y * 16, ceiling, 4);
+                    CreateWall(x * 16, y * 16, ceiling, 5);
                     continue;
                 }
-                CreateWall(x, y, wall, 0);
-                CreateWall(x, y, wall, 1);
-                CreateWall(x, y, wall, 2);
-                CreateWall(x, y, wall, 3);
-                CreateWall(x, y, 0, 4);
-                CreateWall(x, y, 0, 5);
+                CreateWall(x * 16, y * 16, wall);
             }
 
-        foreach (var obj in objectLayer.Objects.Cast<RayGameObject>())
+        foreach (var obj in objectLayer.Objects.Cast<RayGameObject>().OrderByDescending(o => o.DistanceSquaredTo(Player)))
         {
             if (obj is RayPlayer)
                 continue;
 
             var (x, y) = obj.Position;
-            switch (obj.RayGameObjectDef.RenderMode)
+            switch (obj.ObjectRenderMode)
             {
                 case ObjectRenderMode.Sprite:
+                case ObjectRenderMode.Directional:
                     CreateSprite(x, y, obj);
                     break;
-            }
+                case ObjectRenderMode.Wall:
+                    CreateWall(x, y, obj.TextureIndex + obj.TextureIndexOffset);
+                    break;
+                case ObjectRenderMode.Door:
+                    CreateDoor(x, y, (obj as Door)!);
+                    break;
+            }            
         }
+    }
+
+    private void CreateDoor(float x, float y, Door door)
+    {
+        if (!door.Horizontal)
+        {
+            x -= 8;
+            y -= 8;
+            CreateWall(x + 8, y - 16 * door.OpenPercent, door.TextureIndex, 3);
+            CreateWall(x, y, 49, 0);
+            CreateWall(x, y, 49, 2);
+        } else
+        {
+            x -= 8;
+            y -= 8;
+            CreateWall(x - 16 * door.OpenPercent, y + 8, door.TextureIndex, 0);
+            CreateWall(x, y, 49, 1);
+            CreateWall(x, y, 49, 3);
+        }
+    }
+
+    private void CreateWall(float x, float y, int wall)
+    {
+        CreateWall(x, y, wall, 0);
+        CreateWall(x, y, wall, 1);
+        CreateWall(x, y, wall, 2);
+        CreateWall(x, y, wall, 3);
+        CreateWall(x, y, 0, 4);
+        CreateWall(x, y, 0, 5);
     }
 
     private void CreateSprite(float x, float y, RayGameObject obj)
     {
-        var textureIndex = obj.TextureIndex;
+        var textureIndex = obj.TextureIndex + obj.TextureIndexOffset;
+
+        if (obj.ObjectRenderMode == ObjectRenderMode.Directional)
+        {
+            var objectRotation = (obj.FacingDirection.Atan2() - (Player.Position - obj.Position).Atan2())
+                .ToDegrees().CardinalDirection8IndexDegrees();
+
+            textureIndex += objectRotation;
+        }
 
         var vectors = new Vector3[4];
         vectors[0] = new Vector3(-4, 0, obj.RayGameObjectDef.RenderBottom);
@@ -86,8 +125,8 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         var currIndex = VertexBuffer.Count;
         var xStart = (textureIndex * 16) / TextureWidth;
         var xEnd = ((textureIndex + 1) * 16) / TextureWidth;
-        var yStart = .5f;
-        var yEnd = .75f;
+        var yStart = 0;
+        var yEnd = 1;
 
         var radians = MathF.Atan2(obj.Position.Y - Player.Position.Y, obj.Position.X - Player.Position.X);
         var rot = Matrix.CreateRotationZ(MathF.PI / 2 + radians);
@@ -110,11 +149,8 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         PrimitiveCount++;
     }
 
-    private void CreateWall(int x, int y, int wall, int direction)
+    private void CreateWall(float x, float y, int wall, int direction, Color? color = null)
     {
-        x *= 16;
-        y *= 16;
-
         var vectors = new Vector3[4];
 
         switch (direction)
@@ -155,19 +191,26 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
                 vectors[2] = new Vector3(x + 16, y + 16, 16);
                 vectors[3] = new Vector3(x, y + 16, 16);
                 break;
+            case 6:
+                vectors[0] = new Vector3(x, y, 16);
+                vectors[1] = new Vector3(x + 16, y, 16);
+                vectors[2] = new Vector3(x + 16, y + 16, 16);
+                vectors[3] = new Vector3(x, y + 16, 16);
+                break;
         }
 
         var currIndex = VertexBuffer.Count;
         var xStart = (wall * 16) / TextureWidth;
         var xEnd = ((wall + 1) * 16) / TextureWidth;
         var yStart = 0;
-        var yEnd = .25f;
+        var yEnd = 1;
 
-        var color = direction is 1 or 3 or 5 ? new Color(170, 170, 170) : Color.White;
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[0], color, new(xStart, yStart)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[1], color, new(xStart, yEnd)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[2], color, new(xEnd, yEnd)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[3], color, new(xEnd, yStart)));
+        var c = color ?? (direction is 1 or 3 or 5 ? new Color(170, 170, 170) : Color.White);
+        VertexBuffer.Add(new VertexPositionColorTexture(vectors[0], c, new(xStart, yStart)));
+        VertexBuffer.Add(new VertexPositionColorTexture(vectors[1], c, new(xStart, yEnd)));
+        VertexBuffer.Add(new VertexPositionColorTexture(vectors[2], c, new(xEnd, yEnd)));
+        VertexBuffer.Add(new VertexPositionColorTexture(vectors[3], c, new(xEnd, yStart)));
+        
 
         IndexBuffer.Add(currIndex + 0);
         IndexBuffer.Add(currIndex + 1);
@@ -196,10 +239,6 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
             RayPlayer.Instance.PositionIn3dSpace, 
             RayPlayer.Instance.PositionIn3dSpace + RayPlayer.Instance.FacingDirection, Vector3.Forward);
         Effect.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
-
-        //Effect.Projection = rayGame.Camera.Projection;
-        //Effect.View = rayGame.Camera.View;
-        //Effect.World = rayGame.Camera.World;
 
         GraphicsDevice.RasterizerState = new RasterizerState { CullMode = CullMode.None };
 

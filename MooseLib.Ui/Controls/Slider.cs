@@ -42,7 +42,7 @@ public class Slider : Control
     public override void Draw(SpriteBatch spriteBatch, Vector2 parentOffset, GameTime gameTime)
     {
         var width = WidthOverride ?? (Max - Min + 2);
-        var height = Rectangle.Height;
+        var height = Rectangle.Height - 2;
 
         var (x, y) = Position + parentOffset;
 
