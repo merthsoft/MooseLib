@@ -2,7 +2,12 @@
 using Merthsoft.Moose.MooseEngine.GameObjects;
 
 namespace Merthsoft.Moose.Rays;
-public record RayGameObjectDef(string DefName, int DefaultTextureIndex, ObjectRenderMode RenderMode, int RenderBottom = 0, int RenderTop = 16) : GameObjectDef(DefName) { }
+public record RayGameObjectDef(string DefName, int DefaultTextureIndex, ObjectRenderMode ObjectRenderMode, int RenderBottom = 0, int RenderTop = 16) : GameObjectDef(DefName)
+{
+    public int DefaultTextureIndex { get; set; } = DefaultTextureIndex;
+    public int RenderBottom { get; set; } = RenderBottom;
+    public int RenderTop { get; set; } = RenderTop;
+}
 
 public class RayGameObject : GameObjectBase
 {
@@ -20,9 +25,16 @@ public class RayGameObject : GameObjectBase
         RayGameObjectDef = def;
         TextureIndex = RayGameObjectDef.DefaultTextureIndex;
         FacingDirection = Vector3.Left;
-        ObjectRenderMode = def.RenderMode;
+        ObjectRenderMode = def.ObjectRenderMode;
     }
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch) { }
     public override void Update(MooseGame game, GameTime gameTime) { }
+
+    public override void PostUpdate(MooseGame game, GameTime gameTime)
+    {
+        FacingDirection.Normalize();
+        Position.Normalize();
+        base.PostUpdate(game, gameTime);
+    }
 }

@@ -2,8 +2,7 @@
 
 namespace Merthsoft.Moose.MooseEngine.Interface;
 
-public interface IObjectLayer : ILayer
-{
+public interface IObjectLayer : ILayer {
     IEnumerable<GameObjectBase> Objects { get; }
     void AddObject(GameObjectBase obj);
     void RemoveObject(GameObjectBase obj);

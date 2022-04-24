@@ -1,4 +1,4 @@
-﻿namespace Merthsoft.Moose.Rays;
+﻿namespace Merthsoft.Moose.Rays.Actors;
 
 internal static class ActorStates
 {

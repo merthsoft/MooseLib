@@ -1,4 +1,6 @@
-﻿namespace Merthsoft.Moose.Rays;
+﻿using Merthsoft.Moose.Rays.Actors;
+
+namespace Merthsoft.Moose.Rays;
 
 public record RayPlayerDef() : RayGameObjectDef("player", 0, ObjectRenderMode.Directional) { }
 public class RayPlayer : RayGameObject
@@ -16,6 +18,20 @@ public class RayPlayer : RayGameObject
 
     public bool Busy;
 
+    public int Health = 5;
+    public int MaxHealth = 10;
+    public float HealthPercent => (float)Health / MaxHealth;
+    public int HealthIndex => HealthPercent switch
+    {
+        > .9f => 0,
+        > .65f => 1,
+        > .35f => 2,
+        _ => 3,
+    };
+
+    public int FaceIndex = 0;
+    public int FaceTick = 0;
+
     public RayPlayer(RayPlayerDef def, int x, int y) : base(def, x, y)
     {
         Instance = this;
@@ -28,10 +44,33 @@ public class RayPlayer : RayGameObject
         var rayGame = (game as RayGame)!;
         var actors = VisibleActors().ToList();
 
+        if (FaceTick <= 0)
+        {
+            var r = game.Random.NextSingle();
+            FaceIndex = r switch
+            {
+                > .8f => 1,
+                < .2f => 2,
+                _ => 0,
+            };
+            FaceTick = game.Random.Next(25, 70);
+        }
+        else
+            FaceTick--;
+
         UpdateAttack(gameTime, rayGame, actors);
 
         if (Busy)
             return;
+
+        if (rayGame.WasKeyJustPressed(Keys.Space))
+        {
+            var checkCell3 = PositionIn3dSpace + 16 * FacingDirection;
+            var checkCell = new Point((int)(checkCell3.X / 16), (int)(checkCell3.Y / 16));
+            var actor = rayGame.ReadObjects.FirstOrDefault(a => a.GetCell() == checkCell);
+            (actor as Actor)?.Interact();
+            return;
+        }
 
         var moveVector = Vector3.Zero;
 
@@ -139,7 +178,7 @@ public class RayPlayer : RayGameObject
                 var ray = Position.CastRay(obj.Position, false, true);
                 foreach (var cell in ray)
                 {
-                    if (parentMap.WallLayer.GetTileValue((int)(cell.X / 16), (int)(cell.Y / 16)) >= 0)
+                    if (parentMap.WallLayer.GetTileValue((int)(cell.X / 16), (int)(cell.Y / 16)) > 0)
                     {
                         obscured = true;
                         break;

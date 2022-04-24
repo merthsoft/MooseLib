@@ -97,4 +97,12 @@ public static class GraphicsExtensions
             spriteBatch.Draw(texture, position + transform.WorldPosition, sourceRectangle, sprite.Color * sprite.Alpha, transform.WorldRotation, sprite.Origin, transform.WorldScale, spriteEffects, sprite.Depth);
         }
     }
+
+    public static void Draw(this Texture2D destinationTexture, Texture2D sourceTexture, Rectangle destinationRect)
+    {
+        var count = sourceTexture.Width * sourceTexture.Height;
+        Color[] data = new Color[count];
+        sourceTexture.GetData(0, sourceTexture.Bounds, data, 0, count);
+        destinationTexture.SetData(0, destinationRect, data, 0, count);
+    }
 }

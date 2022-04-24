@@ -30,6 +30,12 @@ public abstract class BaseMap : IMap
         return layer;
     }
 
+    public void ClearLayers()
+    {
+        layers.Clear();
+        layerMap.Clear();
+    }
+
     public TLayer GetLayer<TLayer>(int layerNumber) where TLayer : ILayer
         => (TLayer)Layers[layerNumber];
 

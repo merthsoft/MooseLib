@@ -6,19 +6,20 @@ using Merthsoft.Moose.Dungeon.Entities.Monsters;
 using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Map;
 public class DungeonMap : BaseMap
 {
     public readonly DungeonLayer DungeonLayer;
-    public readonly ObjectLayer MonsterLayer;
-    public IEnumerable<DungeonMonster> Monsters => MonsterLayer.Objects.Cast<DungeonMonster>();
+    public readonly ObjectLayer<DungeonMonster> MonsterLayer;
+    public IEnumerable<DungeonMonster> Monsters => MonsterLayer.Objects;
 
-    public readonly ObjectLayer ItemLayer;
-    public IEnumerable<DungeonItem> Items => ItemLayer.Objects.Cast<DungeonItem>();
+    public readonly ObjectLayer<DungeonItem> ItemLayer;
+    public IEnumerable<DungeonItem> Items => ItemLayer.Objects;
 
-    public readonly ObjectLayer SpellLayer;
-    public IEnumerable<Spell> Spells => SpellLayer.Objects.Cast<Spell>();
+    public readonly ObjectLayer<Spell> SpellLayer;
+    public IEnumerable<Spell> Spells => SpellLayer.Objects;
 
     public override int Height => DungeonLayer.Height;
     public override int Width => DungeonLayer.Width;
@@ -35,16 +36,16 @@ public class DungeonMap : BaseMap
     public DungeonMap(int width, int height)
     {
         DungeonLayer = AddLayer(new DungeonLayer(width, height));
-        AddLayer(new ObjectLayer("player"));
-        ItemLayer = AddLayer(new ObjectLayer("items"));
-        MonsterLayer = AddLayer(new ObjectLayer("monsters"));
-        SpellLayer = AddLayer(new ObjectLayer("spells"));
+        AddLayer(new ObjectLayer<DungeonPlayer>("player"));
+        ItemLayer = AddLayer(new ObjectLayer<DungeonItem>("items"));
+        MonsterLayer = AddLayer(new ObjectLayer<DungeonMonster>("monsters"));
+        SpellLayer = AddLayer(new ObjectLayer<Spell>("spells"));
     }
 
     public void ClearDungeon()
     {
         Rooms.Clear();
-        foreach (var obj in Layers.Skip(2).OfType<ObjectLayer>().SelectMany(o => o.Objects))
+        foreach (var obj in Layers.Skip(2).OfType<IObjectLayer>().SelectMany(o => o.Objects))
             obj.Remove = true;
 
         DrawRoom(DungeonTile.StoneWall, DungeonTile.None, 0, 0, Width - 1, Height - 1);
