@@ -9,6 +9,7 @@ using Merthsoft.Moose.Dungeon.Renderers;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.Dungeon.Ux;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.Interface;
 using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.Dungeon;
@@ -120,7 +121,7 @@ public class DungeonGame : MooseGame
         dungeonRenderer[DungeonTile.BrickWall] = ContentManager.LoadImage("BrickWall");
 
         AddDefaultRenderer<DungeonLayer>("dungeon", dungeonRenderer);
-        AddDefaultRenderer<ObjectLayer>("objects", new DungeonObjectRenderer(SpriteBatch));
+        AddDefaultRenderer<IObjectLayer>("objects", new DungeonObjectRenderer(SpriteBatch));
 
         var miniMapRenderer = new MiniMapRenderer(SpriteBatch, 8, 8, MiniMapTiles);
 

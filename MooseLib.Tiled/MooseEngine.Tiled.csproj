@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<AssemblyName>Merthsoft.Moose.$(MSBuildProjectName)</AssemblyName>
+		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
+		<Deterministic>False</Deterministic>
+		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
+		<VersionPrefix>0.5</VersionPrefix>
+		<DebugType>embedded</DebugType>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+		<PackageReference Include="MonoGame.StrokeEffect" Version="1.0.7" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="MonoGame.Extended">
+			<HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.dll</HintPath>
+		</Reference>
+		<Reference Include="MonoGame.Extended.Content.Pipeline">
+			<HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Content.Pipeline.dll</HintPath>
+		</Reference>
+		<Reference Include="MonoGame.Extended.Graphics">
+			<HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Graphics.dll</HintPath>
+		</Reference>
+		<Reference Include="MonoGame.Extended.Tiled">
+			<HintPath>..\..\MonoGame.Extended\src\cs\MonoGame.Extended.Content.Pipeline\bin\netcoreapp3.1\MonoGame.Extended.Tiled.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Microsoft.Xna.Framework" />
+		<Using Include="Microsoft.Xna.Framework.Graphics" />
+		<Using Include="Microsoft.Xna.Framework.Input" />
+		<Using Include="MonoGame.Extended" />
+		<Using Include="Merthsoft.Moose.MooseEngine" />
+		<Using Include="Merthsoft.Moose.MooseEngine.Extension" />
+	</ItemGroup>
+
+</Project>

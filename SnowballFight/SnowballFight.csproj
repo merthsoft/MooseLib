@@ -45,6 +45,7 @@
 		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2089-develop" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\MooseLib.Tiled\MooseEngine.Tiled.csproj" />
 		<ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
 		<ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
 	</ItemGroup>

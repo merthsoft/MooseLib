@@ -49,7 +49,6 @@
 		<PackageReference Include="MonoGame.Extended" Version="3.9.0-alpha0051" />
 		<PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.9.0-alpha0051" />
 		<PackageReference Include="MonoGame.Extended.Graphics" Version="3.9.0-alpha0051" />
-		<PackageReference Include="MonoGame.Extended.Tiled" Version="3.9.0-alpha0051" />
 		<PackageReference Include="MonoGame.Extended.Tweening" Version="3.9.0-alpha0051" />
 	</ItemGroup>
 

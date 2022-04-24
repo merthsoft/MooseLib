@@ -1,8 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
-using Merthsoft.Moose.MooseEngine.TiledDriver;
 using MonoGame.Extended.Tiled;
 
-namespace Merthsoft.Moose.MooseEngine.Extension;
+namespace Merthsoft.Moose.MooseEngine.Tiled;
 
 public static class TiledExtensions
 {

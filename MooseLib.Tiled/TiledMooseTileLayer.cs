@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 using MonoGame.Extended.Tiled;
 
-namespace Merthsoft.Moose.MooseEngine.TiledDriver;
+namespace Merthsoft.Moose.MooseEngine.Tiled;
 
 public record TiledMooseTileLayer(TiledMapTileLayer Layer) : ITileLayer<TiledMapTile>
 {
