@@ -75,11 +75,13 @@ public class RayGame : MooseGame
         AddDef(new TreasureDef(100, "chest", 68));
         AddDef(new RayGameObjectDef("static-object", 0, ObjectRenderMode.Sprite));
 
-        AddDef(new WeaponDef("knife", 0, 0, Keys.D1, 5, new() { 3 }));
-        AddDef(new WeaponDef("pistol", 0, 1, Keys.D2, 5, new() { 2 }));
-        AddDef(new WeaponDef("machine-gun", 94, 2, Keys.D3, 5, new() { 2 }));
-        AddDef(new WeaponDef("chain-gun", 95, 3, Keys.D4, 5, new() { 2, 3 }));
-        AddDef(new WeaponDef("rocket-launcher", 107, 4, Keys.D5, 5, new() { 2 }));
+        AddDef(new WeaponDef("knife", 0, 0, Keys.D1, 5, new() { 3 }, Weapon.RayAttack));
+        AddDef(new WeaponDef("pistol", 0, 1, Keys.D2, 5, new() { 2 }, Weapon.RayAttack));
+        AddDef(new WeaponDef("machine-gun", 94, 2, Keys.D3, 5, new() { 2 }, Weapon.RayAttack));
+        AddDef(new WeaponDef("chain-gun", 95, 3, Keys.D4, 5, new() { 2, 3 }, Weapon.RayAttack));
+        AddDef(new WeaponDef("rocket-launcher", 107, 4, Keys.D5, 5, new() { 2 }, Weapon.Rocket));
+
+        AddDef(new RocketDef());
 
         AddDef(new DoorDef());
         AddDef(new SecretWallDef());
@@ -127,11 +129,11 @@ public class RayGame : MooseGame
         Font30 = ContentManager.BakeFont("Tomorrow_Night", 30);
         Font50 = ContentManager.BakeFont("Tomorrow_Night", 50);
 
-        var options = new JsonSerializerOptions { DefaultBufferSize = int.MaxValue};
-        MapFile = JsonSerializer.Deserialize<MapFile>(File.ReadAllText("Content/Maps/Map2.json"))!;
+        var options = new JsonSerializerOptions { DefaultBufferSize = int.MaxValue };
+        MapFile = JsonSerializer.Deserialize<MapFile>(File.ReadAllText("Content/Maps/Map1.json"))!;
     }
 
-    public SecretWall SpawnSecretWall(int wall, int x, int y) 
+    public SecretWall SpawnSecretWall(int wall, int x, int y)
         => AddObject(new SecretWall(GetDef<SecretWallDef>()!, wall, x, y));
     public Actor SpawnActor(string actor, int x, int y, Vector3 facing)
         => AddObject(new Actor(GetDef<ActorDef>(actor), x, y) { FacingDirection = facing });
@@ -151,6 +153,9 @@ public class RayGame : MooseGame
 
     public Elevator SpawnElevator(bool up, int x, int y)
         => AddObject(new Elevator(GetDef<ElevatorDef>()!, up, x, y));
+
+    public Missile SpawnRocket(int x, int y, Vector3 facing)
+        => AddObject(new Missile(GetDef<RocketDef>()!, x, y) { MoveDirection = facing });
 
     protected override void PostLoad()
     {

@@ -37,4 +37,37 @@ public class RayGameObject : GameObjectBase
         Position.Normalize();
         base.PostUpdate(game, gameTime);
     }
+
+    public IEnumerable<RayGameObject> VisibleObjects()
+    {
+        var parentMap = (ParentMap as RayMap)!;
+
+        var playerRotation = -MathF.Atan2(FacingDirection.Y, FacingDirection.X);
+        var matrix = Matrix.CreateRotationZ(playerRotation);
+        var fov = MathHelper.ToRadians(50);
+
+        foreach (var obj in RayGame.Instance.ReadObjects.Cast<RayGameObject>().OrderBy(o => o.DistanceSquaredTo(this)))
+        {
+            var obscured = false;
+
+            var relative = Vector2.Transform(obj.Position - Position, matrix);
+            var rads = MathF.Atan2(relative.Y, relative.X);
+            if (rads > fov || rads < -fov)
+                obscured = true;
+            else
+            {
+                var ray = Position.CastRay(obj.Position, false, true);
+                foreach (var cell in ray)
+                {
+                    if (parentMap.WallLayer.GetTileValue((int)(cell.X / 16), (int)(cell.Y / 16)) > 0)
+                    {
+                        obscured = true;
+                        break;
+                    }
+                }
+            }
+            if (!obscured)
+                yield return obj;
+        }
+    }
 }

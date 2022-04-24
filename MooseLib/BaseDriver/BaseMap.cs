@@ -73,7 +73,7 @@ public abstract class BaseMap : IMap
     protected abstract int IsBlockedAt(string layer, int x, int y);
 
     public virtual IList<int> GetBlockingVector(int x, int y)
-        => blockingMap[x, y];
+        => x < 0 || x>= Width || y < 0 || y>= Height ? new() { } : blockingMap[x, y];
 
     protected virtual Grid BaseGrid
         => Grid.CreateGridWithLateralConnections(

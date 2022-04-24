@@ -124,4 +124,7 @@ public class Actor : RayGameObject
         }
         base.PreUpdate(game, gameTime);
     }
+
+    public static void RemoveActor(Actor a)
+        => a.Remove = true;
 }
