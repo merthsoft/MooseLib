@@ -38,7 +38,7 @@ public class TiledMooseMap : BaseMap
             var mooseLayer = Map.Layers[layerIndex] switch
             {
                 TiledMapTileLayer tileLayer => new TiledMooseTileLayer(tileLayer),
-                TiledMapObjectLayer objectLayer => new TiledMooseObjectLayer(objectLayer),
+                TiledMapObjectLayer objectLayer => new TiledMooseObjectLayer(objectLayer, Width, Height),
                 _ => null as ILayer
             };
             if (mooseLayer != null)

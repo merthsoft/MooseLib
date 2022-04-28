@@ -8,4 +8,8 @@ public interface IObjectLayer : ILayer {
     void RemoveObject(GameObjectBase obj);
 
     IEnumerator<GameObjectBase> GetEnumerator() => Objects.GetEnumerator();
+
+    void ObjectUpdate(GameObjectBase obj);
+
+    IEnumerable<GameObjectBase> GetObjects(int x, int y);
 }

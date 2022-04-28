@@ -16,7 +16,7 @@ public record RocketDef : MissileDef
     public RocketDef() : base("Rocket") 
     {
         States = new() {
-            { MissileStates.Flying, new() { new(RenderMode: ObjectRenderMode.Directional, EndAction: Missile.Move) } },
+            { MissileStates.Flying, new() { new(Blocking: false, RenderMode: ObjectRenderMode.Directional, EndAction: Missile.Move) } },
             { MissileStates.Exploding, new()
             {
                 new(RenderMode: ObjectRenderMode.Sprite, Length: 100, FrameOffset: 8),
@@ -39,15 +39,17 @@ public class Missile : Actor
 
     public static void Move(Actor a)
     {
-        var wall = (a as Missile)!;
-        wall.Position = new(wall.Position.X + wall.MoveDirection.X, wall.Position.Y + wall.MoveDirection.Y);
-        var cell = wall.PositionIn3dSpace + 8 * wall.MoveDirection - new Vector3(8, 8, 0);
+        var missile = (a as Missile)!;
+        missile.Position = new(missile.Position.X + 2*missile.MoveDirection.X, missile.Position.Y +2* missile.MoveDirection.Y);
+        var cell = missile.PositionIn3dSpace + 8 * missile.MoveDirection - new Vector3(8, 8, 0);
         
-            if (wall.ParentMap.GetBlockingVector(new(cell.X, cell.Y)).Any(a => a > 0))
-                wall.State = MissileStates.Exploding;
+        if (missile.ParentMap.GetBlockingVector(new(cell.X, cell.Y)).Any(a => a > 0))
+            missile.State = MissileStates.Exploding;
         
     }
 
     public static void Explode(Actor a)
-    { }
+    {
+    
+    }
 }

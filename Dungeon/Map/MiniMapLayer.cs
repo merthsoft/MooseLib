@@ -24,4 +24,6 @@ public class MiniMapLayer : ITileLayer<MiniMapTile>
 
     public MiniMapTile GetTileValue(int x, int y) 
         => DungeonPlayer.Instance.GetMiniMapTile(x, y);
+    
+    public void Update(GameTime gameTime) { }
 }

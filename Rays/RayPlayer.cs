@@ -103,14 +103,16 @@ public class RayPlayer : RayGameObject
                     break;
                 }
 
-        var moveX = 16 * moveVector.X.Round();
-        var moveY = 16 * moveVector.Y.Round();
+        if (moveVector != Vector3.Zero)
+        {
+            var moveX = 16 * moveVector.X.Round();
+            var moveY = 16 * moveVector.Y.Round();
+            
+            if (rayGame.MainMap.GetBlockingVector(new(Position.X + moveX, Position.Y + moveY)).Sum() <= 0)
+                Position = new(Position.X + moveX, Position.Y + moveY);
 
-        //if (rayGame.MainMap.GetBlockingVector(new(Position.X + 4*moveX, Position.Y + 4*moveY))[1] == 0)
-        Position = new(Position.X + moveX, Position.Y + moveY);
-
-        Position.Round();
-
+            Position.Round();
+        }
         //var diff = rayGame.ScreenWidth / 2 - rayGame.CurrentMouseState.X;
         //if (rayGame.CurrentMouseState != rayGame.PreviousMouseState)
         //{

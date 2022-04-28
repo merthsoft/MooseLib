@@ -10,9 +10,18 @@ public record WeaponDef(string DefName, int DefaultTextureIndex, int TextureRow,
 public class Weapon : RayGameObject
 {
     WeaponDef WeaponDef;
+
     public Weapon(WeaponDef def, int x, int y) : base(def, x, y)
     {
         WeaponDef = def;
+    }
+
+    public static void KnifeAttack(RayGameObject o)
+    {
+        var checkCell3 = o.PositionIn3dSpace + 16 * o.FacingDirection;
+        var checkCell = new Point((int)(checkCell3.X / 16), (int)(checkCell3.Y / 16));
+        var actor = RayGame.Instance.ReadObjects.OfType<Actor>().FirstOrDefault(a => a.Shootable && a.GetCell() == checkCell);
+        actor?.TakeDamage(1);
     }
 
     public static void RayAttack(RayGameObject a)

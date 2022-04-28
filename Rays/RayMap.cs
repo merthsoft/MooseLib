@@ -20,14 +20,6 @@ public class RayMap : BaseMap
 
     public RayMap()
     {
-        height = 64;
-        width = 64;
-
-        FloorLayer = AddLayer(new TileLayer<int>("floor", Width, Height, -1, 54));
-        WallLayer = AddLayer(new TileLayer<int>("walls", Width, Height, 1));
-        WallLayer.RendererKey = "walls";
-        ObjectLayer = AddLayer(new ObjectLayer<RayGameObject>("objects"));
-        CeilingLayer = AddLayer(new TileLayer<int>("ceiling", Width, Height, -1, 0));
     }
 
     public void InitializeWalls(List<List<int>> wallMap)
@@ -38,7 +30,12 @@ public class RayMap : BaseMap
     }
 
     protected override int IsBlockedAt(string layer, int x, int y)
-        => layer == "walls" ? WallLayer.GetTileValue(x, y) : 0;
+        => layer switch
+        {
+            "walls" => WallLayer.GetTileValue(x, y),
+            "objects" => ObjectLayer.GetObjects(x, y).Count(o => o.Blocking),
+            _ => 0
+        };
     
     internal void Load(RayGame game, MapFile mapFile)
     {
@@ -49,14 +46,8 @@ public class RayMap : BaseMap
         FloorLayer = AddLayer(new TileLayer<int>("floor", Width, Height, -1, 54));
         WallLayer = AddLayer(new TileLayer<int>("walls", Width, Height, 1));
         WallLayer.RendererKey = "walls";
-        ObjectLayer = AddLayer(new ObjectLayer<RayGameObject>("objects"));
+        ObjectLayer = AddLayer(new ObjectLayer<RayGameObject>("objects", Width, Height));
         CeilingLayer = AddLayer(new TileLayer<int>("ceiling", Width, Height, -1, 0));
-
-        var doorsOffset = game.WallCount;
-        var staticOffset = game.WallCount + game.DoorCount;
-        var actorOffset = game.WallCount + game.DoorCount + game.StaticObjectCount;
-        var specialOffset = actorOffset + 12;
-        var animatedOffset = specialOffset + 10;
 
         var index = 0;
 
@@ -88,6 +79,7 @@ public class RayMap : BaseMap
                         game.SpawnDoor(x, y, WallLayer.GetTileValue(x - 1, y) > 0, tile);
                     else if (tile < actorOffset) // Static objects
                     {
+                        tile -= staticOffset;
                         if (WallLayer.GetTileValue(x, y) > 0)
                             game.SpawnStaticOverlay(tile, x, y);
                         else

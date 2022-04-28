@@ -20,12 +20,19 @@ public class RayGameObject : GameObjectBase
 
     public ObjectRenderMode ObjectRenderMode;
 
+    public virtual bool Blocking => TextureIndexOffset is 2 or 4 or 14 or 15 or 16 or 17 or 18 or 28 or 29 or 31 or 42 or 43;
+
     public RayGameObject(RayGameObjectDef def, int x, int y) : base(def, new Vector2(x*16+8, y*16+8), layer: "objects")
     {
         RayGameObjectDef = def;
         TextureIndex = RayGameObjectDef.DefaultTextureIndex;
         FacingDirection = Vector3.Left;
         ObjectRenderMode = def.ObjectRenderMode;
+    }
+
+    public override void PreUpdate(MooseGame mooseGame, GameTime gameTime)
+    {
+        base.PreUpdate(mooseGame, gameTime);
     }
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch) { }

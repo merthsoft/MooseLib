@@ -31,4 +31,6 @@ public record TiledMooseTileLayer(TiledMapTileLayer Layer) : ITileLayer<TiledMap
 
     public bool IsBlockedAt(int x, int y, IMap map)
         => GetTileValue(x, y).IsBlocking(map);
+
+    public void Update(GameTime gameTime) { }
 }

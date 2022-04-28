@@ -13,7 +13,7 @@ public record ElevatorDef : ActorDef
         ObjectRenderMode = ObjectRenderMode.Wall;
         States = new()
         {
-            { ElevatorStates.Waiting, new() { new() } }
+            { ElevatorStates.Waiting, new() { new(Blocking: true) } }
         };
     }
 
@@ -22,9 +22,18 @@ public record ElevatorDef : ActorDef
 
 public class Elevator : Actor
 {
+    public bool Up;
+
     public Elevator(ElevatorDef def, bool up, int x, int y) : base(def, x, y)
     {
         ObjectRenderMode = ObjectRenderMode.Wall;
         TextureIndex = up ? 16 : 17;
+        Up = up;
+    }
+
+    public override void Interact()
+    {
+        Up = !Up;
+        TextureIndex = Up ? 16 : 17;
     }
 }

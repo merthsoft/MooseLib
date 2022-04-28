@@ -1,6 +1,5 @@
 ﻿using Merthsoft.Moose.Rays.Actors;
 using Merthsoft.Moose.Rays.Serialization;
-using System.Globalization;
 using System.Text.Json;
 
 namespace Merthsoft.Moose.Rays;
@@ -23,10 +22,25 @@ public class RayGame : MooseGame
 
     Texture2D WallTexture = null!;
     public int WallCount;
-    Texture2D StaticObjectsTexture = null!;
-    public int StaticObjectCount;
+
+    Texture2D FloorTexture = null!;
+    public int FloorCount;
+
     Texture2D DoorTexture = null!;
     public int DoorCount;
+
+    Texture2D StaticObjectsTexture = null!;
+    public int StaticObjectCount;
+    
+    public int StaticStart;
+
+    Texture2D BlockingTexture = null!;
+    public int BlockingCount;
+
+    Texture2D PickupsTexture = null!;
+    public int PickupsCount;
+
+    public int TotalObjectsCount;
 
     public int ActorFrameCount = 0;
 
@@ -42,8 +56,8 @@ public class RayGame : MooseGame
     protected override StartupParameters Startup() => base.Startup() with
     {
         DefaultBackgroundColor = Color.Black,
-        ScreenHeight = 480,
-        ScreenWidth = 640,
+        ScreenHeight = 480*2,
+        ScreenWidth = 640*2,
         IsMouseVisible = false
     };
 
@@ -51,20 +65,36 @@ public class RayGame : MooseGame
     {
         WallTexture = ContentManager.LoadImage("Walls");
         WallCount = WallTexture.Width / 16;
-        StaticObjectsTexture = ContentManager.LoadImage("Objects");
-        StaticObjectCount = StaticObjectsTexture.Width / 16;
+
+        FloorTexture = ContentManager.LoadImage("Floors");
+        FloorCount = DoorTexture.Width / 16;
+
         DoorTexture = ContentManager.LoadImage("Doors");
         DoorCount = DoorTexture.Width / 16;
 
+        StaticObjectsTexture = ContentManager.LoadImage("Static");
+        StaticObjectCount = StaticObjectsTexture.Width / 16;
+        StaticStart = WallCount + DoorCount + FloorCount;
+
+        BlockingTexture = ContentManager.LoadImage("Blocking");
+        BlockingCount = StaticObjectsTexture.Width / 16;
+
+        PickupsTexture = ContentManager.LoadImage("Pickups");
+        PickupsCount = StaticObjectsTexture.Width / 16;
+
+        TotalObjectsCount = StaticObjectCount + BlockingCount + PickupsCount;
+
         UxTexture = ContentManager.LoadImage("UI");
 
-        Effect = new(GraphicsDevice);
-        Effect.Alpha = 1;
-        Effect.TextureEnabled = true;
-        Effect.VertexColorEnabled = true;
-        Effect.FogEnabled = true;
-        Effect.FogStart = 32;
-        Effect.FogEnd = 400;
+        Effect = new(GraphicsDevice)
+        {
+            Alpha = 1,
+            TextureEnabled = true,
+            VertexColorEnabled = true,
+            FogEnabled = true,
+            FogStart = 32,
+            FogEnd = 400
+        };
 
         AddRenderer("walls", new Ray3DRenderer(GraphicsDevice, Effect));
 
@@ -73,9 +103,9 @@ public class RayGame : MooseGame
         WeaponTexture = ContentManager.LoadImage("Weapons");
 
         AddDef(new TreasureDef(100, "chest", 68));
-        AddDef(new RayGameObjectDef("static-object", 0, ObjectRenderMode.Sprite));
+        AddDef(new RayGameObjectDef("static-object", StaticStart, ObjectRenderMode.Sprite));
 
-        AddDef(new WeaponDef("knife", 0, 0, Keys.D1, 5, new() { 3 }, Weapon.RayAttack));
+        AddDef(new WeaponDef("knife", 0, 0, Keys.D1, 5, new() { 3 }, Weapon.KnifeAttack));
         AddDef(new WeaponDef("pistol", 0, 1, Keys.D2, 5, new() { 2 }, Weapon.RayAttack));
         AddDef(new WeaponDef("machine-gun", 94, 2, Keys.D3, 5, new() { 2 }, Weapon.RayAttack));
         AddDef(new WeaponDef("chain-gun", 95, 3, Keys.D4, 5, new() { 2, 3 }, Weapon.RayAttack));
@@ -99,7 +129,7 @@ public class RayGame : MooseGame
                 { ActorStates.DyingState,  new () { new (43, 100, RenderMode: ObjectRenderMode.Sprite),
                                             new(44, 100, RenderMode: ObjectRenderMode.Sprite),
                                             new(45, 100, RenderMode: ObjectRenderMode.Sprite) { NextState = ActorStates.DeadState } } },
-                { ActorStates.DeadState, new() { new(46, RenderMode: ObjectRenderMode.Sprite) } },
+                { ActorStates.DeadState, new() { new(46, RenderMode: ObjectRenderMode.Sprite, Blocking: false) } },
                 { ActorStates.ShootState, new() { new(0, 250, Shootable: true, RenderMode: ObjectRenderMode.Sprite),
                                             new(40, 250, Shootable: true, RenderMode: ObjectRenderMode.Sprite),
                                             new(41, 250, Shootable: true, RenderMode: ObjectRenderMode.Sprite),
@@ -141,8 +171,8 @@ public class RayGame : MooseGame
     public Door SpawnDoor(int x, int y, bool horizontal, int tile)
         => AddObject(new Door(GetDef<DoorDef>()!, x, y, horizontal, tile));
 
-    public RayGameObject SpawnStatic(int drawIndex, int x, int y)
-        => AddObject(new RayGameObject(GetDef<RayGameObjectDef>("static-object"), x, y) { TextureIndex = drawIndex });
+    public RayGameObject SpawnStatic(int staticIndex, int x, int y)
+        => AddObject(new RayGameObject(GetDef<RayGameObjectDef>("static-object"), x, y) { TextureIndexOffset = staticIndex });
 
     public RayGameObject SpawnStaticOverlay(int drawIndex, int x, int y)
         => AddObject(new RayGameObject(GetDef<RayGameObjectDef>("static-object"), x, y)
@@ -193,11 +223,8 @@ public class RayGame : MooseGame
 
         Player.Weapons.Add(GetDef<WeaponDef>("knife"));
         Player.Weapons.Add(GetDef<WeaponDef>("pistol"));
-        Player.Weapons.Add(GetDef<WeaponDef>("machine-gun"));
-        Player.Weapons.Add(GetDef<WeaponDef>("chain-gun"));
-        Player.Weapons.Add(GetDef<WeaponDef>("rocket-launcher"));
 
-        Player.CurrentWeapon = Player.Weapons[1];
+        Player.CurrentWeapon = Player.Weapons[0];
 
         RayMap.Load(this, MapFile);
     }
@@ -223,9 +250,12 @@ public class RayGame : MooseGame
 
     void DrawWeapon()
     {
+        var x = ScreenWidth / 2 - 160;
+        var y = ScreenHeight - 470;
+
         if (Player.CurrentWeapon != null)
             SpriteBatch.Draw(WeaponTexture,
-                destinationRectangle: new(240, ScreenHeight - 260, 160, 160),
+                destinationRectangle: new(x, y, 320, 320),
                 sourceRectangle: new(Player.AttackFrame * 32, Player.CurrentWeapon.TextureRow * 32, 32, 32),
                 Color.White);
     }
@@ -258,101 +288,135 @@ public class RayGame : MooseGame
     private void DrawLevel()
     {
         var x = 0;
-        var y = ScreenHeight - 100;
+        var y = ScreenHeight - 150;
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 100, 100),
+            destinationRectangle: new(x, y, 150, 150),
             sourceRectangle: new(8, 144, 24, 24),
             Color.White);
-        DrawText(Font30, "Floor", x + 9, y + 7, Color.Black, Color.DarkGray);
-        CenterText(Font50, "01", x, y + 15, 100, 100, Color.Black, Color.DarkGray);
+        DrawText(Font30, "Floor", x + 15, y + 10, Color.Black, Color.DarkGray);
+        CenterText(Font50, "01", x, y + 5, 150, 150, Color.Black, Color.DarkGray);
     }
 
     private void DrawHealth()
     {
-        var x = 100;
-        var y = ScreenHeight - 100;
+        var x = 150;
+        var y = ScreenHeight - 150;
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 100, 100),
+            destinationRectangle: new(x, y, 150, 150),
             sourceRectangle: new(8, 48, 24, 24),
             Color.White);
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 100, 33),
+            destinationRectangle: new(x, y, 150, 50),
             sourceRectangle: new(8, 40, 24, 8),
             Color.White);
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x + 33, y - 1, 32, 32),
+            destinationRectangle: new(x + 55, y, 40, 40),
             sourceRectangle: new(8, 176, 8, 8),
             Color.White);
 
-        CenterText(Font50, "100", x, y + 15, 100, 100, Color.Black, Color.DarkGray);
+        CenterText(Font50, Player.Health.ToString(), x, y + 65, 150, 25, Color.Black, Color.DarkGray);
+        CenterText(Font50, Player.MaxHealth.ToString(), x, y + 95, 150, 41, Color.Black, Color.DarkGray);
     }
 
     private void DrawKeys()
     {
-        var x = 200;
-        var y = ScreenHeight - 100;
+        var x = 300;
+        var y = ScreenHeight - 150;
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 70, 100),
+            destinationRectangle: new(x, y, 150, 150),
             sourceRectangle: new(8, 48, 24, 24),
             Color.White);
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 70, 33),
+            destinationRectangle: new(x, y, 150, 50),
             sourceRectangle: new(8, 40, 24, 8),
             Color.White);
 
-        CenterText(Font30, "Keys", x, y + 2, 70, 33, Color.Black, Color.DarkGray);
-
+        CenterText(Font30, "Keys", x, y, 150, 50, Color.Black, Color.DarkGray);
+        
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y + 60, 33, 33),
+            destinationRectangle: new(x, y + 80, 50, 50),
             sourceRectangle: new(24, 176, 8, 8),
             Color.White);
 
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x + 33, y + 60, 33, 33),
+            destinationRectangle: new(x + 45, y + 80, 50, 50),
+            sourceRectangle: new(24, 176, 8, 8),
+            Color.White);
+
+        SpriteBatch.Draw(UxTexture,
+            destinationRectangle: new(x + 90, y + 80, 50, 50),
             sourceRectangle: new(24, 176, 8, 8),
             Color.White);
     }
 
     private void DrawAmmo()
     {
-        var x = ScreenWidth / 2 + 50;
-        var y = ScreenHeight - 100;
+        var x = 450;
+        var y = ScreenHeight - 150;
 
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 100, 100),
+            destinationRectangle: new(x, y, 115, 150),
             sourceRectangle: new(8, 48, 24, 24),
             Color.White);
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 100, 33),
+            destinationRectangle: new(x, y, 115, 50),
             sourceRectangle: new(8, 32, 24, 8),
             Color.White);
 
-        CenterText(Font50, "100", x, y + 15, 100, 100, Color.Black, Color.DarkGray);
+        CenterText(Font50, "-", x, y + 50, 115, 100, Color.Black, Color.DarkGray);
     }
 
     private void DrawFace()
     {
-        var x = ScreenWidth / 2 - 50;
-        var y = ScreenHeight - 100;
+        var x = ScreenWidth / 2 - 75;
+        var y = ScreenHeight - 150;
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 100, 100),
+            destinationRectangle: new(x, y, 150, 150),
             sourceRectangle: new(8, 0, 24, 24),
             Color.White);
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 100, 100),
+            destinationRectangle: new(x, y, 150, 150),
             sourceRectangle: new(32 + 24 * Player.FaceIndex, 96 + 24 * Player.HealthIndex, 24, 24),
             Color.White);
     }
     private void DrawWeapons()
     {
-        var x = ScreenWidth / 2 + 150;
-        var y = ScreenHeight - 100;
+        var x = ScreenWidth / 2 + 75;
+        var y = ScreenHeight - 150;
+        var width = ScreenWidth / 2 - 75;
 
         SpriteBatch.Draw(UxTexture,
-            destinationRectangle: new(x, y, 170, 100),
-            sourceRectangle: new(8, 112, 24, 24),
+            destinationRectangle: new(x, y, 50, 150),
+            sourceRectangle: new(8, 0, 8, 24),
             Color.White);
-        CenterText(Font30, "Weapons", x, y + 5, 170, 33, Color.DarkGray, Color.Black);
 
+        SpriteBatch.Draw(UxTexture,
+            destinationRectangle: new(x + 50, y, width - 100, 150),
+            sourceRectangle: new(16, 0, 8, 24),
+            Color.White);
+
+        SpriteBatch.Draw(UxTexture,
+            destinationRectangle: new(x + width - 50, y, 50, 150),
+            sourceRectangle: new(24, 0, 8, 24),
+            Color.White);
+
+        //CenterText(Font30, "Weapons", x, y + 5, 170, 33, Color.DarkGray, Color.Black);
+        x += 15;
+        y += 68;
+        var weapons = GetDefs<WeaponDef>().ToList();
+        for (var weaponIndex = 0; weaponIndex < weapons.Count; weaponIndex++)
+        {
+            var weapon = weapons[weaponIndex];
+
+            SpriteBatch.Draw(UxTexture,
+                destinationRectangle: new(x + 120 * weaponIndex, y, 120, 144),
+                sourceRectangle: new(8 + 24 * weaponIndex, 192, 24, 24),
+                Player.Weapons.Contains(weapon)
+                    ? Player.CurrentWeapon == weapon
+                        ? Color.White
+                        : Color.Gray
+                    : Color.Black, MathF.PI / 2, new(12, 16), SpriteEffects.None, 1);
+
+        }
     }
 }

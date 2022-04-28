@@ -8,7 +8,7 @@ public class TiledMooseObjectLayer : ObjectLayer<GameObjectBase>
 {
     public TiledMapObjectLayer Layer { get; private set; }
 
-    public TiledMooseObjectLayer(TiledMapObjectLayer layer)
-        : base(layer.Name)
+    public TiledMooseObjectLayer(TiledMapObjectLayer layer, int width, int height)
+        : base(layer.Name, width, height)
         => Layer = layer;
 }

@@ -27,7 +27,7 @@ public class Actor : RayGameObject
     public bool Aware = false;
 
     public bool Shootable => ActorFrame?.Shootable ?? false;
-    public bool Blocking => ActorFrame?.Blocking ?? false;
+    public override bool Blocking => ActorFrame?.Blocking ?? false;
     
     public List<ActorFrame> CurrentState => ActorDef.States[State];
     public ActorFrame ActorFrame => CurrentState[FrameIndex];

@@ -36,10 +36,10 @@ public class DungeonMap : BaseMap
     public DungeonMap(int width, int height)
     {
         DungeonLayer = AddLayer(new DungeonLayer(width, height));
-        AddLayer(new ObjectLayer<DungeonPlayer>("player"));
-        ItemLayer = AddLayer(new ObjectLayer<DungeonItem>("items"));
-        MonsterLayer = AddLayer(new ObjectLayer<DungeonMonster>("monsters"));
-        SpellLayer = AddLayer(new ObjectLayer<Spell>("spells"));
+        AddLayer(new ObjectLayer<DungeonPlayer>("player", width, height));
+        ItemLayer = AddLayer(new ObjectLayer<DungeonItem>("items", width, height));
+        MonsterLayer = AddLayer(new ObjectLayer<DungeonMonster>("monsters", width, height));
+        SpellLayer = AddLayer(new ObjectLayer<Spell>("spells", width, height));
     }
 
     public void ClearDungeon()

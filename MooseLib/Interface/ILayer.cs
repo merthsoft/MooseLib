@@ -2,6 +2,9 @@
 
 public interface ILayer
 {
+    int Width { get; }
+    int Height { get; }
+
     string Name { get; }
     bool IsHidden { get; set; }
     Vector2 DrawOffset { get; set; }
@@ -9,4 +12,6 @@ public interface ILayer
     Color DrawColor { get; set; }
 
     string? RendererKey { get; }
+
+    public void Update(GameTime gameTime);
 }

@@ -62,4 +62,6 @@ public class TileLayer<TTile> : ITileLayer<TTile>
             for (var deltaY = -thickness; deltaY <= thickness; deltaY++)
                 SetTileValue(x + deltaX, y + deltaY, value);
     }
+
+    public virtual void Update(GameTime gameTime) { }
 }
