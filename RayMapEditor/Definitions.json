@@ -1,1 +1,600 @@
-{"objects":[{"name":"Puddle","index":0,"type":"Static","blocking":false,"frames":[{"frame":0,"minTime":0,"maxTime":0}]},{"name":"Chandelier","index":1,"type":"Static","blocking":false,"frames":[{"frame":1,"minTime":0,"maxTime":0}]},{"name":"Potted Plant","index":2,"type":"Static","blocking":true,"frames":[{"frame":2,"minTime":0,"maxTime":0}]},{"name":"Empty Bowl","index":3,"type":"Static","blocking":false,"frames":[{"frame":3,"minTime":0,"maxTime":0}]},{"name":"Barrel","index":4,"type":"Static","blocking":true,"frames":[{"frame":4,"minTime":0,"maxTime":0}]},{"name":"Silver Framed Face","index":5,"type":"Overlay","blocking":true,"frames":[{"frame":5,"minTime":0,"maxTime":0}]},{"name":"Golden Symbol","index":6,"type":"Overlay","blocking":true,"frames":[{"frame":7,"minTime":0,"maxTime":0}]},{"name":"Flag","index":7,"type":"Overlay","blocking":false,"frames":[{"frame":9,"minTime":0,"maxTime":0}]},{"name":"Chest","index":8,"type":"Pickup","blocking":false,"frames":[{"frame":11,"minTime":0,"maxTime":0}]},{"name":"Chalice","index":9,"type":"Pickup","blocking":false,"frames":[{"frame":12,"minTime":0,"maxTime":0}]},{"name":"Crown","index":10,"type":"Pickup","blocking":false,"frames":[{"frame":13,"minTime":0,"maxTime":0}]},{"name":"Industrial Barrel","index":11,"type":"Static","blocking":true,"frames":[{"frame":14,"minTime":0,"maxTime":0}]},{"name":"Pillar","index":12,"type":"Static","blocking":true,"frames":[{"frame":15,"minTime":0,"maxTime":0}]},{"name":"Pot","index":13,"type":"Static","blocking":true,"frames":[{"frame":16,"minTime":0,"maxTime":0}]},{"name":"Suit of Armor","index":14,"type":"Static","blocking":true,"frames":[{"frame":17,"minTime":0,"maxTime":0}]},{"name":"Well","index":15,"type":"Static","blocking":true,"frames":[{"frame":18,"minTime":0,"maxTime":0}]},{"name":"Golden Bird","index":16,"type":"Overlay","blocking":false,"frames":[{"frame":19,"minTime":0,"maxTime":0}]},{"name":"Raven Flag","index":17,"type":"Overlay","blocking":false,"frames":[{"frame":21,"minTime":0,"maxTime":0}]},{"name":"Dog Food","index":18,"type":"Pickup","blocking":false,"frames":[{"frame":23,"minTime":0,"maxTime":0}]},{"name":"Bullet Box","index":19,"type":"Pickup","blocking":false,"frames":[{"frame":24,"minTime":0,"maxTime":0}]},{"name":"Gold Key","index":20,"type":"Pickup","blocking":false,"frames":[{"frame":25,"minTime":0,"maxTime":0}]},{"name":"Ammo","index":21,"type":"Pickup","blocking":false,"frames":[{"frame":26,"minTime":0,"maxTime":0}]},{"name":"Meal","index":22,"type":"Pickup","blocking":false,"frames":[{"frame":27,"minTime":0,"maxTime":0}]},{"name":"Table","index":23,"type":"Static","blocking":true,"frames":[{"frame":28,"minTime":0,"maxTime":0}]},{"name":"Potted Tree","index":24,"type":"Static","blocking":true,"frames":[{"frame":29,"minTime":0,"maxTime":0}]},{"name":"Bone Pile","index":25,"type":"Static","blocking":false,"frames":[{"frame":30,"minTime":0,"maxTime":0}]},{"name":"Cage","index":26,"type":"Static","blocking":true,"frames":[{"frame":31,"minTime":0,"maxTime":0}]},{"name":"Hanging Pots","index":27,"type":"Static","blocking":false,"frames":[{"frame":32,"minTime":0,"maxTime":0}]},{"name":"Golden Face","index":28,"type":"Overlay","blocking":false,"frames":[{"frame":33,"minTime":0,"maxTime":0}]},{"name":"Shield","index":29,"type":"Overlay","blocking":false,"frames":[{"frame":35,"minTime":0,"maxTime":0}]},{"name":"Machine Gun","index":30,"type":"Pickup","blocking":false,"frames":[{"frame":37,"minTime":0,"maxTime":0}]},{"name":"Chain Gun","index":31,"type":"Pickup","blocking":false,"frames":[{"frame":38,"minTime":0,"maxTime":0}]},{"name":"Silver Key","index":32,"type":"Pickup","blocking":false,"frames":[{"frame":39,"minTime":0,"maxTime":0}]},{"name":"Backpack","index":33,"type":"Pickup","blocking":false,"frames":[{"frame":40,"minTime":0,"maxTime":0}]},{"name":"Pistol","index":34,"type":"Pickup","blocking":false,"frames":[{"frame":41,"minTime":0,"maxTime":0}]},{"name":"Lamp","index":35,"type":"Static","blocking":true,"frames":[{"frame":42,"minTime":0,"maxTime":0}]},{"name":"Flag Pole","index":36,"type":"Static","blocking":true,"frames":[{"frame":43,"minTime":0,"maxTime":0}]},{"name":"Ceiling Light","index":37,"type":"Static","blocking":false,"frames":[{"frame":44,"minTime":0,"maxTime":0}]},{"name":"King Rabbit","index":38,"type":"Overlay","blocking":false,"frames":[{"frame":45,"minTime":0,"maxTime":0}]},{"name":"Warning","index":39,"type":"Overlay","blocking":false,"frames":[{"frame":47,"minTime":0,"maxTime":0}]},{"name":"Attention","index":40,"type":"Overlay","blocking":false,"frames":[{"frame":48,"minTime":0,"maxTime":0}]},{"name":"Map","index":41,"type":"Overlay","blocking":false,"frames":[{"frame":49,"minTime":0,"maxTime":0}]},{"name":"Rocket Launcher","index":42,"type":"Pickup","blocking":false,"frames":[{"frame":51,"minTime":0,"maxTime":0}]},{"name":"Med Kit","index":43,"type":"Pickup","blocking":false,"frames":[{"frame":52,"minTime":0,"maxTime":0}]},{"name":"Health Orb","index":44,"type":"Pickup","blocking":false,"frames":[{"frame":53,"minTime":0,"maxTime":0}]},{"name":"Rocket Box","index":45,"type":"Pickup","blocking":false,"frames":[{"frame":54,"minTime":0,"maxTime":0}]},{"name":"Blinking Light","index":46,"type":"Static","blocking":false,"frames":[{"frame":55,"minTime":25,"maxTime":1000}]},{"name":"Blinking Lamp","index":47,"type":"Static","blocking":false,"frames":[{"frame":56,"minTime":25,"maxTime":1000}]}]}
+{
+    "actors": [
+        { "name": "Guard" },
+        { "name": "Officer" },
+        { "name": "SS" }
+    ],
+    "doors": [
+        { "name": "Steel Door", "index": 1 },
+        { "name": "Gold Locked Door", "index": 2, "key": 2 },
+        { "name": "Silver Locked Door", "index": 3, "key": 1 },
+        { "name": "Elevator Door", "index": 10 }
+    ],
+    "special": [
+        { "name": "Pushwall", "index": 0 },
+        { "name": "Start (E)", "index": 1 },
+        { "name": "Start (W)", "index": 2 },
+        { "name": "Start (N)", "index": 3 },
+        { "name": "Start (S)", "index": 4 },
+        { "name": "Elevator (Up)", "index": 5 },
+        { "name": "Elevator (Down)", "index": 6 }
+    ],
+    "objects": [
+        {
+            "name": "Puddle",
+            "type": "Static",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 0,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Chandelier",
+            "type": "Static",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 1,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Potted Plant",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 2,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Empty Bowl",
+            "type": "Static",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 3,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Barrel",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 4,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Silver Framed Face",
+            "type": "Overlay",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 5,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Golden Symbol",
+            "type": "Overlay",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 7,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Flag",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 9,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Chest",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 11,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Chalice",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 12,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Crown",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 13,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Industrial Barrel",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 14,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Pillar",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 15,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Pot",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 16,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Suit of Armor",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 17,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Well",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 18,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Golden Bird",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 19,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Raven Flag",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 21,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Dog Food",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 23,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Bullet Box",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 24,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Gold Key",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 25,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Ammo",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 26,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Meal",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 27,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Table",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 28,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Potted Tree",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 29,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Bone Pile",
+            "type": "Static",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 30,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Cage",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 31,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Hanging Pots",
+            "type": "Static",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 32,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Golden Face",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 33,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Shield",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 35,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Machine Gun",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 37,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Chain Gun",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 38,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Silver Key",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 39,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Backpack",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 40,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Pistol",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 41,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Lamp",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 42,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Flag Pole",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 43,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Ceiling Light",
+            "type": "Static",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 44,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "King Rabbit",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 45,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Warning",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 47,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Attention",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 48,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Map",
+            "type": "Overlay",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 49,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Rocket Launcher",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 51,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Med Kit",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 52,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Health Orb",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 53,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Rocket Box",
+            "type": "Pickup",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 54,
+                    "minTime": 0,
+                    "maxTime": 0
+                }
+            ]
+        },
+        {
+            "name": "Blinking Light",
+            "type": "Static",
+            "blocking": false,
+            "frames": [
+                {
+                    "frame": 55,
+                    "minTime": 25,
+                    "maxTime": 1000
+                }
+            ]
+        },
+        {
+            "name": "Blinking Lamp",
+            "type": "Static",
+            "blocking": true,
+            "frames": [
+                {
+                    "frame": 56,
+                    "minTime": 25,
+                    "maxTime": 1000
+                }
+            ]
+        }
+    ]
+}

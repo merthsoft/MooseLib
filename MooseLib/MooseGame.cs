@@ -235,9 +235,14 @@ public abstract class MooseGame : Game
         if (PreMapUpdate(gameTime) && ActiveMaps.Any())
             foreach (var map in ActiveMaps)
             {
-                map.Update(this, gameTime);
                 foreach (var layer in map.Layers)
+                {
                     layer.Update(gameTime);
+                    if (layer is IObjectLayer objectLayer)
+                        foreach (var obj in objectLayer.Objects)
+                            objectLayer.ObjectUpdate(obj);
+                }
+                map.Update(this, gameTime);
             }
 
         if (PreObjectsUpdate(gameTime))
@@ -257,8 +262,6 @@ public abstract class MooseGame : Game
                     layer.RemoveObject(obj);
                     obj.OnRemove();
                 }
-                else
-                    layer.ObjectUpdate(obj);
             }
         }
 

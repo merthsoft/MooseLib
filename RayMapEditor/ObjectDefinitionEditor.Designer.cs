@@ -32,8 +32,6 @@ partial class ObjectDefinitionEditor
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.objectListView = new System.Windows.Forms.ListView();
             this.objectImageList = new System.Windows.Forms.ImageList(this.components);
-            this.indexInput = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
             this.saveButton = new System.Windows.Forms.Button();
             this.clearFramesButton = new System.Windows.Forms.Button();
             this.removeFrameButton = new System.Windows.Forms.Button();
@@ -55,7 +53,6 @@ partial class ObjectDefinitionEditor
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.indexInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.image)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -72,8 +69,6 @@ partial class ObjectDefinitionEditor
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.indexInput);
-            this.splitContainer1.Panel2.Controls.Add(this.label3);
             this.splitContainer1.Panel2.Controls.Add(this.saveButton);
             this.splitContainer1.Panel2.Controls.Add(this.clearFramesButton);
             this.splitContainer1.Panel2.Controls.Add(this.removeFrameButton);
@@ -107,35 +102,9 @@ partial class ObjectDefinitionEditor
             this.objectImageList.ImageSize = new System.Drawing.Size(16, 16);
             this.objectImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // indexInput
-            // 
-            this.indexInput.Location = new System.Drawing.Point(142, 86);
-            this.indexInput.Maximum = new decimal(new int[] {
-            65536,
-            0,
-            0,
-            0});
-            this.indexInput.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            -2147483648});
-            this.indexInput.Name = "indexInput";
-            this.indexInput.Size = new System.Drawing.Size(120, 27);
-            this.indexInput.TabIndex = 12;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(142, 62);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 20);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "Index";
-            // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(168, 116);
+            this.saveButton.Location = new System.Drawing.Point(3, 119);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(94, 29);
             this.saveButton.TabIndex = 10;
@@ -169,6 +138,7 @@ partial class ObjectDefinitionEditor
             this.addFrameButton.TabIndex = 7;
             this.addFrameButton.Text = "Add";
             this.addFrameButton.UseVisualStyleBackColor = true;
+            this.addFrameButton.Click += new System.EventHandler(this.addFrameButton_Click);
             // 
             // framesBox
             // 
@@ -193,7 +163,7 @@ partial class ObjectDefinitionEditor
             // blockingCheckBox
             // 
             this.blockingCheckBox.AutoSize = true;
-            this.blockingCheckBox.Location = new System.Drawing.Point(2, 119);
+            this.blockingCheckBox.Location = new System.Drawing.Point(174, 85);
             this.blockingCheckBox.Name = "blockingCheckBox";
             this.blockingCheckBox.Size = new System.Drawing.Size(88, 24);
             this.blockingCheckBox.TabIndex = 4;
@@ -205,7 +175,7 @@ partial class ObjectDefinitionEditor
             this.typeComboBox.FormattingEnabled = true;
             this.typeComboBox.Location = new System.Drawing.Point(1, 85);
             this.typeComboBox.Name = "typeComboBox";
-            this.typeComboBox.Size = new System.Drawing.Size(135, 28);
+            this.typeComboBox.Size = new System.Drawing.Size(167, 28);
             this.typeComboBox.TabIndex = 3;
             // 
             // label2
@@ -297,7 +267,6 @@ partial class ObjectDefinitionEditor
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.indexInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.image)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -328,6 +297,4 @@ partial class ObjectDefinitionEditor
     private ToolStripMenuItem saveToolStripMenuItem;
     private System.Windows.Forms.Timer updateImageTimer;
     private ToolStripMenuItem deleteToolStripMenuItem;
-    private NumericUpDown indexInput;
-    private Label label3;
 }

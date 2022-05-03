@@ -17,7 +17,7 @@ public record DoorDef : ActorDef
         States = new()
         {
             { DoorStates.Open, new() { new(Blocking: false, Length: 2000, EndAction: Door.CheckClose) } },
-            { DoorStates.Closed, new() { new() } },
+            { DoorStates.Closed, new() { new(Blocking: true) } },
             { DoorStates.Opening, new() { new(Length: 25, EndAction: Door.Opening) } },
             { DoorStates.Closing, new() { new(Length: 25, EndAction: Door.Closing) } }
         };

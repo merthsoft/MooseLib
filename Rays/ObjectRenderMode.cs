@@ -5,5 +5,6 @@ public enum ObjectRenderMode
     Sprite,
     Wall,
     Directional,
-    Door
+    Door,
+    Overlay
 }

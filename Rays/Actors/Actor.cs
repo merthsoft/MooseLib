@@ -1,6 +1,6 @@
 ﻿namespace Merthsoft.Moose.Rays.Actors;
 public record ActorDef(string DefName, string DefaultState = ActorStates.ChaseState)
-    : RayGameObjectDef(DefName, 0, ObjectRenderMode.Directional)
+    : RayGameObjectDef(DefName, 0, ObjectRenderMode.Directional, false)
 {
     public Dictionary<string, List<ActorFrame>> States = new();
     public int Health;
@@ -22,8 +22,6 @@ public class Actor : RayGameObject
 {
     public ActorDef ActorDef;
     public int Health = 1;
-    public int FrameIndex = 0;
-    public double FrameTimer = 0;
     public bool Aware = false;
 
     public bool Shootable => ActorFrame?.Shootable ?? false;

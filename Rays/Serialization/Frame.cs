@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace RayMapEditor;
+namespace Merthsoft.Moose.Rays.Serialization;
 
 public class Frame
 {

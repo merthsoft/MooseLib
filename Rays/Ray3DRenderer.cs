@@ -11,6 +11,8 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
 
     protected RayPlayer Player = null!;
     protected float TextureWidth = 0;
+    public int WallCount = 0;
+    public int DoorCount = 0;
 
     public Ray3DRenderer(GraphicsDevice graphics, BasicEffect effect) : base(graphics, effect)
     {
@@ -20,6 +22,8 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
     {
         TextureWidth = RayGame.Instance.TextureAtlas.Width;
         Player ??= RayGame.Instance.Player;
+        WallCount = RayGame.Instance.WallCount;
+        DoorCount = RayGame.Instance.DoorCount;
 
         VertexBuffer.Clear();
         IndexBuffer.Clear();
@@ -61,6 +65,9 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
                 case ObjectRenderMode.Wall:
                     CreateWalls(map, x - 8, y - 8, obj.TextureIndex + obj.TextureIndexOffset);
                     break;
+                case ObjectRenderMode.Overlay:
+                    CreateWalls(map, x - 8, y - 8, WallCount + DoorCount + obj.TextureIndex + obj.TextureIndexOffset);
+                    break;
                 case ObjectRenderMode.Door:
                     CreateDoor(x, y, (obj as Door)!);
                     break;
@@ -86,18 +93,6 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         }
     }
 
-    private bool IsWallRedundant(RayMap map, float x, float y)
-    {
-        var wall = map.WallLayer.GetTileValue((int)x, (int)y);
-        if (wall != -1)
-            return true;
-        //var wallCell = new Point((int)x, (int)y);
-        //var o = map.ObjectLayer.Objects.Where(o => o.GetCell() == wallCell);
-        //if (o.Any(o => o.ObjectRenderMode == ObjectRenderMode.Door))
-        //    return true;
-        return false;
-    }
-
     private void CreateWalls(RayMap map, float x, float y, int wall)
     {
         CreateWall(x, y, wall, 0);
@@ -110,7 +105,7 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
 
     private void CreateSprite(float x, float y, RayGameObject obj)
     {
-        var textureIndex = obj.TextureIndex + obj.TextureIndexOffset;
+        var textureIndex = WallCount + DoorCount + obj.TextureIndex + obj.TextureIndexOffset;
 
         if (obj.ObjectRenderMode == ObjectRenderMode.Directional)
         {
@@ -122,10 +117,10 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         }
 
         var vectors = new Vector3[4];
-        vectors[0] = new Vector3(-4, 0, obj.RayGameObjectDef.RenderBottom);
-        vectors[1] = new Vector3(-4, 0, obj.RayGameObjectDef.RenderTop);
-        vectors[2] = new Vector3(+4, 0, obj.RayGameObjectDef.RenderTop);
-        vectors[3] = new Vector3(+4, 0, obj.RayGameObjectDef.RenderBottom); 
+        vectors[0] = new Vector3(-8, 0, obj.RayGameObjectDef.RenderBottom);
+        vectors[1] = new Vector3(-8, 0, obj.RayGameObjectDef.RenderTop);
+        vectors[2] = new Vector3(+8, 0, obj.RayGameObjectDef.RenderTop);
+        vectors[3] = new Vector3(+8, 0, obj.RayGameObjectDef.RenderBottom); 
         
         var currIndex = VertexBuffer.Count;
         var xStart = (textureIndex * 16) / TextureWidth;
@@ -252,8 +247,8 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         //var map = RayGame.Instance.RayMap;
         //Effect.View = Matrix.CreateLookAt(
         //    new Vector3(map.Width * 8, map.Height * 8, 450),
-        //    new Vector3(map.Width * 8, map.Height * 8, 0), Vector3.Up);
-        //Effect.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
+        //    new Vector3(map.Width * 8, map.Height * 8, 0), Vector3.Down);
+        Effect.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
 
         GraphicsDevice.RasterizerState = new RasterizerState { CullMode = CullMode.None };
 

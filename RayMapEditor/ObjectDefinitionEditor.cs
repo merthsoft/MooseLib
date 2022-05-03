@@ -5,19 +5,19 @@ public partial class ObjectDefinitionEditor : Form
 {
     Definitions Definitions;
     List<ObjectDefinition> ObjectDefinitions;
-    private readonly List<Bitmap> Images;
+    private readonly Bitmap[] Images;
     Dictionary<ObjectType, ListViewGroup> ListViewGroups = new();
 
     ObjectDefinition? SelectedDefinition = null;
     public int FrameIndex = 0;
 
-    public ObjectDefinitionEditor(Definitions definitions, List<Bitmap> images)
+    public ObjectDefinitionEditor(Definitions definitions, Bitmap[] images)
     {
         InitializeComponent();
         Definitions = definitions;
         ObjectDefinitions = definitions.Objects;
         Images = images;
-        objectImageList.Images.AddRange(images.ToArray());
+        objectImageList.Images.AddRange(images);
 
         foreach (var item in Enum.GetValues<ObjectType>())
         {
@@ -32,9 +32,9 @@ public partial class ObjectDefinitionEditor : Form
     private void RebuildObjects()
     {
         objectListView.Items.Clear();
-        foreach (var o in ObjectDefinitions.OrderBy(o => o.Index))
+        foreach (var o in ObjectDefinitions.OrderBy(o => o.Name))
             objectListView.Items.Add(
-                new ListViewItem(o.ToString(), o.Frames[0].Index, ListViewGroups[o.Type]) { Tag = o });
+                new ListViewItem(o.ToString(), o.FirstFrameIndex, ListViewGroups[o.Type]) { Tag = o });
     }
 
     private void newObjectToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -46,14 +46,15 @@ public partial class ObjectDefinitionEditor : Form
     {
         var frame = new Frame();
         var fe = new FrameEditor(frame, Images);
-        fe.ShowDialog();
+        if (fe.ShowDialog() != DialogResult.OK)
+            return;
+
         var newDef = new ObjectDefinition
         {
             Name = "new object",
             Blocking = false,
             Type = ObjectType.Static,
-            Frames = new() { frame },
-            Index = ObjectDefinitions.Count
+            Frames = new() { frame }
         };
         ObjectDefinitions.Add(newDef);
         RebuildObjects();
@@ -70,7 +71,6 @@ public partial class ObjectDefinitionEditor : Form
         nameTextBox.Text = null;
         typeComboBox.SelectedItem = null;
         blockingCheckBox.Checked = false;
-        indexInput.Value = 0;
         framesBox.Items.Clear();
         
         if (objectListView.SelectedItems.Count == 0)
@@ -80,7 +80,6 @@ public partial class ObjectDefinitionEditor : Form
         nameTextBox.Text = SelectedDefinition.Name;
         typeComboBox.SelectedItem = SelectedDefinition.Type;
         blockingCheckBox.Checked = SelectedDefinition.Blocking;
-        indexInput.Value = SelectedDefinition.Index;
 
         foreach (var frame in SelectedDefinition.Frames)
         {
@@ -121,7 +120,6 @@ public partial class ObjectDefinitionEditor : Form
         SelectedDefinition.Name = nameTextBox.Text;
         SelectedDefinition.Type = (ObjectType)typeComboBox.SelectedItem;
         SelectedDefinition.Blocking = blockingCheckBox.Checked;
-        SelectedDefinition.Index = (int)indexInput.Value;
 
         RebuildObjects();
     }
@@ -130,5 +128,21 @@ public partial class ObjectDefinitionEditor : Form
     {
         SaveDefinition();
         File.WriteAllText("Definitions.json", JsonSerializer.Serialize(Definitions));
+    }
+
+    private void addFrameButton_Click(object sender, EventArgs e)
+    {
+        if (SelectedDefinition == null)
+            return;
+
+        var frame = new Frame();
+        var fe = new FrameEditor(frame, Images);
+        if (fe.ShowDialog() != DialogResult.OK)
+            return;
+        SelectedDefinition.Frames.Add(frame);
+
+        framesBox.Items.Clear();
+        foreach (var f in SelectedDefinition.Frames)
+            framesBox.Items.Add(f);
     }
 }

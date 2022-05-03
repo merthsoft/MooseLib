@@ -1,12 +1,20 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.GameObjects;
+using Merthsoft.Moose.Rays.Serialization;
 
 namespace Merthsoft.Moose.Rays;
-public record RayGameObjectDef(string DefName, int DefaultTextureIndex, ObjectRenderMode ObjectRenderMode, int RenderBottom = 0, int RenderTop = 16) : GameObjectDef(DefName)
+public record RayGameObjectDef(string DefName, int DefaultTextureIndex,
+    ObjectRenderMode ObjectRenderMode, bool Blocking,
+    int RenderBottom = 0, int RenderTop = 16,
+    List<Frame>? Frames = null) : GameObjectDef(DefName)
 {
     public int DefaultTextureIndex { get; set; } = DefaultTextureIndex;
-    public int RenderBottom { get; set; } = RenderBottom;
-    public int RenderTop { get; set; } = RenderTop;
+
+    public RayGameObjectDef(ObjectDefinition definition)
+        : this(definition.Name, definition.FirstFrameIndex,
+             definition.Type == ObjectType.Overlay ? ObjectRenderMode.Overlay : ObjectRenderMode.Sprite, 
+             definition.Blocking, Frames: definition.Frames)
+    { }
 }
 
 public class RayGameObject : GameObjectBase
@@ -20,8 +28,12 @@ public class RayGameObject : GameObjectBase
 
     public ObjectRenderMode ObjectRenderMode;
 
-    public virtual bool Blocking => TextureIndexOffset is 2 or 4 or 14 or 15 or 16 or 17 or 18 or 28 or 29 or 31 or 42 or 43;
+    public virtual bool Blocking => RayGameObjectDef.Blocking;
 
+    public int FrameIndex;
+    public double FrameCounter;
+    public double FrameTimer;
+    
     public RayGameObject(RayGameObjectDef def, int x, int y) : base(def, new Vector2(x*16+8, y*16+8), layer: "objects")
     {
         RayGameObjectDef = def;
@@ -30,13 +42,24 @@ public class RayGameObject : GameObjectBase
         ObjectRenderMode = def.ObjectRenderMode;
     }
 
-    public override void PreUpdate(MooseGame mooseGame, GameTime gameTime)
-    {
-        base.PreUpdate(mooseGame, gameTime);
-    }
-
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch) { }
-    public override void Update(MooseGame game, GameTime gameTime) { }
+    public override void Update(MooseGame game, GameTime gameTime)
+    {
+        var frames = RayGameObjectDef.Frames;
+        if (frames != null && frames.Count > 1)
+        {
+            FrameCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (FrameCounter >= FrameTimer)
+            {
+                FrameIndex++;
+                if (FrameIndex >= frames.Count)
+                    FrameIndex = 0;
+                FrameTimer = game.Random.Next(frames[FrameIndex].MinTime, frames[FrameIndex].MaxTime);
+                FrameCounter = 0;
+            }
+            TextureIndex = frames[FrameIndex].Index;
+        }
+    }
 
     public override void PostUpdate(MooseGame game, GameTime gameTime)
     {

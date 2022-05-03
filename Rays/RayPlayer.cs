@@ -2,7 +2,7 @@
 
 namespace Merthsoft.Moose.Rays;
 
-public record RayPlayerDef() : RayGameObjectDef("player", 0, ObjectRenderMode.Directional) { }
+public record RayPlayerDef() : RayGameObjectDef("player", 0, ObjectRenderMode.Directional, false) { }
 public class RayPlayer : RayGameObject
 {
     public static RayPlayer Instance = null!;
@@ -108,7 +108,7 @@ public class RayPlayer : RayGameObject
             var moveX = 16 * moveVector.X.Round();
             var moveY = 16 * moveVector.Y.Round();
             
-            if (rayGame.MainMap.GetBlockingVector(new(Position.X + moveX, Position.Y + moveY)).Sum() <= 0)
+            if (rayGame.MainMap.GetBlockingVector(new(Position.X + moveX, Position.Y + moveY)).All(i => i <= 0))
                 Position = new(Position.X + moveX, Position.Y + moveY);
 
             Position.Round();

@@ -2,18 +2,18 @@
 public partial class FrameEditor : Form
 {
     Frame Frame;
-    public FrameEditor(Frame frame, List<Bitmap> images)
+    public FrameEditor(Frame frame, Bitmap[] images)
     {
         InitializeComponent();
         
         Frame = frame;
-        imageList1.Images.AddRange(images.ToArray());
+        imageList1.Images.AddRange(images);
         imageBox.Image = imageList1.Images[Frame.Index];
 
         minTimeBox.Value = frame.MinTime;
         maxTimeBox.Value = frame.MaxTime;
 
-        for (int i = 0; i < images.Count; i++)
+        for (int i = 0; i < images.Length; i++)
             listView1.Items.Add(i.ToString(), i);
     }
 
@@ -33,7 +33,7 @@ public partial class FrameEditor : Form
         Frame.Index = listView1.SelectedIndices[0];
         Frame.MinTime = (int)minTimeBox.Value;
         Frame.MaxTime = (int)maxTimeBox.Value;
-
+        DialogResult = DialogResult.OK;
         Close();
     }
 }

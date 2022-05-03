@@ -1,13 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace RayMapEditor;
+namespace Merthsoft.Moose.Rays.Serialization;
+
 public class ObjectDefinition
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; } = null!; 
-    
-    [JsonPropertyName("index")]
-    public int Index { get; set; }
+    public string Name { get; set; } = null!;
 
     [JsonPropertyName("type")]
     public ObjectType Type { get; set; }
@@ -18,6 +16,9 @@ public class ObjectDefinition
     [JsonPropertyName("frames")]
     public List<Frame> Frames { get; set; } = new();
 
+    [JsonIgnore]
+    public int FirstFrameIndex => Frames[0].Index;
+
     public override string ToString()
-        => $"{Index}: {Name}";
+        => Name + (Blocking ? "*" : "");
 }

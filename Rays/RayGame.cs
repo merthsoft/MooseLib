@@ -32,22 +32,13 @@ public class RayGame : MooseGame
     Texture2D StaticObjectsTexture = null!;
     public int StaticObjectCount;
     
-    public int StaticStart;
-
-    Texture2D BlockingTexture = null!;
-    public int BlockingCount;
-
-    Texture2D PickupsTexture = null!;
-    public int PickupsCount;
-
-    public int TotalObjectsCount;
-
     public int ActorFrameCount = 0;
 
     public Texture2D TextureAtlas = null!;
     public Texture2D UxTexture = null!;
-    public MapFile MapFile = null!;
 
+    Definitions Definitions;
+    
     public RayGame()
     {
         Instance = this;
@@ -66,24 +57,12 @@ public class RayGame : MooseGame
         WallTexture = ContentManager.LoadImage("Walls");
         WallCount = WallTexture.Width / 16;
 
-        FloorTexture = ContentManager.LoadImage("Floors");
-        FloorCount = DoorTexture.Width / 16;
-
         DoorTexture = ContentManager.LoadImage("Doors");
         DoorCount = DoorTexture.Width / 16;
 
-        StaticObjectsTexture = ContentManager.LoadImage("Static");
+        StaticObjectsTexture = ContentManager.LoadImage("Objects");
         StaticObjectCount = StaticObjectsTexture.Width / 16;
-        StaticStart = WallCount + DoorCount + FloorCount;
-
-        BlockingTexture = ContentManager.LoadImage("Blocking");
-        BlockingCount = StaticObjectsTexture.Width / 16;
-
-        PickupsTexture = ContentManager.LoadImage("Pickups");
-        PickupsCount = StaticObjectsTexture.Width / 16;
-
-        TotalObjectsCount = StaticObjectCount + BlockingCount + PickupsCount;
-
+        
         UxTexture = ContentManager.LoadImage("UI");
 
         Effect = new(GraphicsDevice)
@@ -101,10 +80,7 @@ public class RayGame : MooseGame
         AddDef(new RayPlayerDef());
 
         WeaponTexture = ContentManager.LoadImage("Weapons");
-
-        AddDef(new TreasureDef(100, "chest", 68));
-        AddDef(new RayGameObjectDef("static-object", StaticStart, ObjectRenderMode.Sprite));
-
+        
         AddDef(new WeaponDef("knife", 0, 0, Keys.D1, 5, new() { 3 }, Weapon.KnifeAttack));
         AddDef(new WeaponDef("pistol", 0, 1, Keys.D2, 5, new() { 2 }, Weapon.RayAttack));
         AddDef(new WeaponDef("machine-gun", 94, 2, Keys.D3, 5, new() { 2 }, Weapon.RayAttack));
@@ -116,8 +92,6 @@ public class RayGame : MooseGame
         AddDef(new DoorDef());
         AddDef(new SecretWallDef());
         AddDef(new ElevatorDef());
-
-        AddDef(new BlinkingLightDef());
 
         var guardDef = AddDef(new ActorDef("Guard")
         {
@@ -159,20 +133,31 @@ public class RayGame : MooseGame
         Font30 = ContentManager.BakeFont("Tomorrow_Night", 30);
         Font50 = ContentManager.BakeFont("Tomorrow_Night", 50);
 
-        var options = new JsonSerializerOptions { DefaultBufferSize = int.MaxValue };
-        MapFile = JsonSerializer.Deserialize<MapFile>(File.ReadAllText("Content/Maps/Map1.json"))!;
+        Definitions = JsonSerializer.Deserialize<Definitions>(File.ReadAllText("Definitions.json"))!;
+        foreach (var objDef in Definitions.Objects)
+            AddDef(new RayGameObjectDef(objDef));
     }
 
-    public SecretWall SpawnSecretWall(int wall, int x, int y)
-        => AddObject(new SecretWall(GetDef<SecretWallDef>()!, wall, x, y));
+    public SecretWall SpawnSecretWall(int x, int y)
+    {
+        var wall = RayMap.WallLayer.GetTileValue(x, y);
+        RayMap.WallLayer.SetTileValue(x, y, -1);
+        return AddObject(new SecretWall(GetDef<SecretWallDef>()!, wall, x, y));
+    }
+    
     public Actor SpawnActor(string actor, int x, int y, Vector3 facing)
         => AddObject(new Actor(GetDef<ActorDef>(actor), x, y) { FacingDirection = facing });
 
-    public Door SpawnDoor(int x, int y, bool horizontal, int tile)
-        => AddObject(new Door(GetDef<DoorDef>()!, x, y, horizontal, tile));
+    public Door SpawnDoor(string doorName, int x, int y)
+    {
+        var doorDefinition = Definitions.Doors.First(d => d.Name == doorName);
+        var horizontal = RayMap.WallLayer.GetTileValue(x - 1, y) > 0;
+        RayMap.WallLayer.SetTileValue(x, y, -1);
+        return AddObject(new Door(GetDef<DoorDef>()!, x, y, horizontal, WallCount + doorDefinition.Index));
+    }
 
-    public RayGameObject SpawnStatic(int staticIndex, int x, int y)
-        => AddObject(new RayGameObject(GetDef<RayGameObjectDef>("static-object"), x, y) { TextureIndexOffset = staticIndex });
+    public RayGameObject SpawnStatic(string objectName, int x, int y)
+        => AddObject(new RayGameObject(GetDef<RayGameObjectDef>(objectName), x, y));
 
     public RayGameObject SpawnStaticOverlay(int drawIndex, int x, int y)
         => AddObject(new RayGameObject(GetDef<RayGameObjectDef>("static-object"), x, y)
@@ -226,7 +211,10 @@ public class RayGame : MooseGame
 
         Player.CurrentWeapon = Player.Weapons[0];
 
-        RayMap.Load(this, MapFile);
+
+        var options = new JsonSerializerOptions { DefaultBufferSize = int.MaxValue };
+        var mapFile = JsonSerializer.Deserialize<SaveMap>(File.ReadAllText("Content/Maps/testmap.json"))!;
+        RayMap.Load(this, Definitions, mapFile);
     }
 
     public void SetPlayerPosition(int x, int y)
