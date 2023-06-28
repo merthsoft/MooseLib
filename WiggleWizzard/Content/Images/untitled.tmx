@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="Dungeon.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztlusKwjAMhfu2XrCCiOIPRfTJbbAHSkgva7LCoIEDW+n6dUmTxrlpsF3QPugZdRjEvVbeJ9fGLu4fX+gVx09BPuoTdB6wF2J+2dh9APuxcHxrXPJrGkP49M3mcN9reViPeHSOjkG3KM/mWDCltSz/SzIpVhIT+WSRS7l/4nvh87S51HJec3vTsHPcdM1SzvTmU+k7YtfOby9X4yvtee9hW+UY6kSJj9rijZgSX9KaNWRtS+9yrpZYowdEH9jaA2pzsrcnmtxlXOoBKa68B6wZaiDuNTxvPV+4/QCNvUG0
+  </data>
+ </layer>
+</map>
