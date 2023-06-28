@@ -10,14 +10,14 @@ public class SpellBookPanel : Panel
     
     private int selectedSpell;
 
-    public SpellBookPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 285)
+    public SpellBookPanel(IControlContainer container, float x, float y) : base(container, x, y, 320, 390)
     {
         player = DungeonPlayer.Instance;
         BackgroundDrawingMode = BackgroundDrawingMode.None;
 
         this.AddLabel("Spells", 5, 5, color: Color.DarkMagenta);
         this.AddLabel("Spells", 0, 0);
-        spellPanel = this.AddPanel(0, 60, 320, Height, BackgroundDrawingMode.None);
+        spellPanel = this.AddPanel(0, 60, Width, Height, BackgroundDrawingMode.None);
     }
 
     private void RebuildSpells()
@@ -32,15 +32,15 @@ public class SpellBookPanel : Panel
             for (var i = 0; i < 3; i++)
             {
                 var index = spellIndex;
-                var button = spellPanel.AddButton(i * 97, j * 110, "", (c, u) => {
+                var button = spellPanel.AddButton(i * 145, j * 165, "", (c, u) => {
                     c.Toggled = true;
                     player.SelectedSpellIndex = index < spellList.Count ? index : player.SelectedSpellIndex;
                 }, 1);
                 button.Toggleable = true;
                 button.Toggled = spellIndex == player.SelectedSpellIndex;
 
-                button.WidthOverride = 75;
-                button.HeightOverride = 75;
+                button.WidthOverride = 97;
+                button.HeightOverride = 97;
                 button.BackgroundDrawingMode = BackgroundDrawingMode.Texture;
                 
                 if (spellIndex < spellList.Count)
@@ -49,7 +49,7 @@ public class SpellBookPanel : Panel
                     button.Text = spell.Name;
                     button.LabelOffset = new(2, 0);
                     button.Texture = spell.Icon;
-                    button.TextureScale = new(4, 4);
+                    button.TextureScale = new(6, 6);
                 }
                 spellIndex++;
             }
@@ -59,7 +59,7 @@ public class SpellBookPanel : Panel
     {
         if (player == null)
             player = DungeonPlayer.Instance;
-        if (!spellList.SequenceEqual(player.KnownSpells) || selectedSpell != player.SelectedSpellIndex)
+        //if (!spellList.SequenceEqual(player.KnownSpells) || selectedSpell != player.SelectedSpellIndex)
             RebuildSpells();
         base.Update(updateParameters);
     }

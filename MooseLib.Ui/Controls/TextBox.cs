@@ -82,9 +82,10 @@ public class TextBox : Control
         {
             var keyChar = (char)key;
             shift |= key == Keys.LeftShift || key == Keys.RightShift;
+            
             if (!previousPressedKeys.Contains(key))
             {
-                if (keyChar.IsPrintableAscii())
+                if (keyChar.IsPrintableAscii() && !keyChar.IsLowercaseLetter())
                     newChars.Add(keyChar);
 
                 back |= key == Keys.Back || key == Keys.Delete;

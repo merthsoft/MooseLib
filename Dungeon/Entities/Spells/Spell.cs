@@ -34,7 +34,7 @@ public record SpellDef : AnimatedGameObjectDef
 
 public abstract class Spell : AnimatedGameObject
 {
-    protected DungeonGame game;
+    protected WiggleWizzardGame game;
     protected DungeonPlayer player;
 
     public SpellDef SpellDef;
@@ -57,7 +57,7 @@ public abstract class Spell : AnimatedGameObject
     {
         SpellDef = def;
         Position = new((int)Position.X / 16 * 16, (int)Position.Y / 16 * 16);
-        game = DungeonGame.Instance;
+        game = WiggleWizzardGame.Instance;
         player = DungeonPlayer.Instance;
         Owner = owner;
     }
@@ -66,7 +66,7 @@ public abstract class Spell : AnimatedGameObject
     {
         base.Update(game, gameTime);
 
-        if (SpellDef.TurnBased && !player.HasInputThisFrame)
+        if (SpellDef.TurnBased && !player.HasInputThisFrame && State != Dead)
             return;
 
         if (State == Hit && !hasHit)

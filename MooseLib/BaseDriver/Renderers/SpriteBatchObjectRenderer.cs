@@ -1,5 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.GameObjects;
-using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 

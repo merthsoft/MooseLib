@@ -10,7 +10,7 @@ public class DungeonObjectRenderer : SpriteBatchRenderer
 
     public override void Draw(MooseGame game, GameTime gameTime, ILayer layer, Vector2 drawOffset)
     {
-        var dungeonGame = (game as DungeonGame)!;
+        var dungeonGame = (game as WiggleWizzardGame)!;
         if (layer is not IObjectLayer objectLayer)
             throw new Exception("Object layer expected");
 

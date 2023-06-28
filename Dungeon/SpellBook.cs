@@ -5,6 +5,7 @@ namespace Merthsoft.Moose.Dungeon;
 public class SpellBook
 {
     public List<SpellDef> AllSpells { get; } = new();
+    public Dictionary<string, SpellDef> SpellDictionary { get; } = new();
 
     public Dictionary<string, Func<SpellDef, DungeonObject, Vector2, Spell>> Factory { get; } = new();
     
@@ -12,6 +13,7 @@ public class SpellBook
     {
         Factory[spellDef.DefName] = generator;
         AllSpells.Add(spellDef);
+        SpellDictionary[spellDef.DefName] = spellDef;
     }
 
     public Spell Cast(SpellDef spell, DungeonObject owner, Vector2 position) 

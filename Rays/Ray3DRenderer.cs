@@ -117,10 +117,16 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         }
 
         var vectors = new Vector3[4];
-        vectors[0] = new Vector3(-8, 0, obj.RayGameObjectDef.RenderBottom);
-        vectors[1] = new Vector3(-8, 0, obj.RayGameObjectDef.RenderTop);
-        vectors[2] = new Vector3(+8, 0, obj.RayGameObjectDef.RenderTop);
-        vectors[3] = new Vector3(+8, 0, obj.RayGameObjectDef.RenderBottom); 
+
+        var drawOffset = obj is Actor || obj.RayGameObjectDef.Type != Serialization.ObjectType.Pickup
+            ? 8 : 4;
+        var drawBottom = obj.YDraw - (drawOffset - 1);
+        var drawTop = obj.YDraw + 9;
+
+        vectors[0] = new Vector3(-drawOffset, 0, drawBottom);
+        vectors[1] = new Vector3(-drawOffset, 0, drawTop);
+        vectors[2] = new Vector3(drawOffset, 0, drawTop);
+        vectors[3] = new Vector3(drawOffset, 0, drawBottom); 
         
         var currIndex = VertexBuffer.Count;
         var xStart = (textureIndex * 16) / TextureWidth;
@@ -143,9 +149,9 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         IndexBuffer.Add(currIndex + 2);
         PrimitiveCount++;
 
-        IndexBuffer.Add(currIndex + 2);
-        IndexBuffer.Add(currIndex + 3);
         IndexBuffer.Add(currIndex + 0);
+        IndexBuffer.Add(currIndex + 3);
+        IndexBuffer.Add(currIndex + 2);
         PrimitiveCount++;
     }
 
@@ -200,8 +206,10 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         }
 
         var currIndex = VertexBuffer.Count;
-        var xStart = (wall * 16) / TextureWidth;
-        var xEnd = ((wall + 1) * 16) / TextureWidth;
+        var xEnd = 
+            (wall * 16) / TextureWidth;
+        var xStart = 
+            ((wall + 1) * 16) / TextureWidth;
         var yStart = 0;
         var yEnd = 1;
 
@@ -254,6 +262,7 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
 
         foreach (var pass in Effect.CurrentTechnique.Passes)
         {
+            var pass = Effect.CurrentTechnique.Passes.First();
             pass.Apply();
             GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, VertexBuffer.ToArray(), 0, VertexBuffer.Count, IndexBuffer.ToArray(), 0, PrimitiveCount);
         }

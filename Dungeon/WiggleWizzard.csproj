@@ -9,7 +9,7 @@
 		<Nullable>enable</Nullable>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<ApplicationIcon>Icon.ico</ApplicationIcon>
-		<AssemblyName>Dungeon</AssemblyName>
+		<AssemblyName>WW</AssemblyName>
 		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
@@ -39,7 +39,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Karcero" Version="0.4.0" />
-		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
 		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2089-develop" />
 	</ItemGroup>
 	<ItemGroup>
@@ -106,6 +106,12 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Content\Fonts\TooMuchInk2.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\Willow_Branch.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Fonts\Willow_Branch_Monospaced.ttf">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Content\Fonts\Witchqueen.ttf">

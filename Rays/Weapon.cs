@@ -3,7 +3,7 @@
 namespace Merthsoft.Moose.Rays;
 
 public record WeaponDef(string DefName, int DefaultTextureIndex, int TextureRow, Keys Key, int NumFrames, List<int> AttackFrames, Action<RayGameObject> Attack)
-    : RayGameObjectDef(DefName, DefaultTextureIndex, ObjectRenderMode.Sprite, false, 8)
+    : RayGameObjectDef(DefName, DefaultTextureIndex, ObjectRenderMode.Sprite, false)
 {
 }
 

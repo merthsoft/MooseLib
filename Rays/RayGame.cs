@@ -213,7 +213,7 @@ public class RayGame : MooseGame
 
 
         var options = new JsonSerializerOptions { DefaultBufferSize = int.MaxValue };
-        var mapFile = JsonSerializer.Deserialize<SaveMap>(File.ReadAllText("Content/Maps/testmap.json"))!;
+        var mapFile = JsonSerializer.Deserialize<SaveMap>(File.ReadAllText("Content/Maps/Map.json"))!;
         RayMap.Load(this, Definitions, mapFile);
     }
 

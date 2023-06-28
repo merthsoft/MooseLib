@@ -1,8 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
-
-namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class TextGrid : Control
 {

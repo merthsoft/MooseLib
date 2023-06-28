@@ -33,9 +33,9 @@ public class Button : Control
         if (Texture == null)
             return new(w, h);
 
-        if (w < (SourceRectangle?.Width ?? Texture.Width) * TextureScale.X)
+        if (WidthOverride == null && w < (SourceRectangle?.Width ?? Texture.Width) * TextureScale.X)
             w = (SourceRectangle?.Width ?? Texture.Width) * TextureScale.X;
-        if (h < (SourceRectangle?.Height ?? Texture.Height) * TextureScale.Y + FontSize.Y)
+        if (HeightOverride == null && h < (SourceRectangle?.Height ?? Texture.Height) * TextureScale.Y + FontSize.Y)
             h = (SourceRectangle?.Height ?? Texture.Height) * TextureScale.Y + FontSize.Y;
         return Theme.CalculateNewSize(new(w, h));
     }
@@ -60,7 +60,7 @@ public class Button : Control
     {
         if (Texture != null)
             spriteBatch.Draw(Texture, Position + drawOffset + new Vector2(2f, 2f), SourceRectangle,
-                ResolvedTextColor, 0, Vector2.Zero, TextureScale, SpriteEffects.None, 1f);
+                Color.White, 0, Vector2.Zero, TextureScale, SpriteEffects.None, 1f);
     }
 
     protected virtual void DrawEmptyButton(SpriteBatch spriteBatch, Vector2 drawOffset)

@@ -10,6 +10,9 @@ public static class Extensions
             ? string.Join(separator, set)
             : string.Join(separator, set.Select(selector));
 
+    public static bool IsLowercaseLetter(this char c)
+        => char.IsLower(c);
+
     public static bool IsPrintableAscii(this char c)
         => char.IsLetterOrDigit(c)
         || char.IsPunctuation(c)

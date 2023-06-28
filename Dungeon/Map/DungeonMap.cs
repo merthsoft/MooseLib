@@ -125,7 +125,7 @@ public class DungeonMap : BaseMap
             weightedRooms.Add(room, (int)(100 * room.Weight));
         }
 
-        var dungeonGame = DungeonGame.Instance;
+        var dungeonGame = WiggleWizzardGame.Instance;
         ClearDungeon();
         var generator = new DungeonGenerator<DungeonCell>();
         if (seed != null)
@@ -162,11 +162,11 @@ public class DungeonMap : BaseMap
                 {
                     int spotX;
                     int spotY;
-                    //do
-                    //{
+                    do
+                    {
                         spiral.MoveNext();
                         (spotX, spotY) = spiral.Current;
-                    //} while (DungeonGame.Instance.IsCellOccupied(spotX, spotY));
+                    } while (IsCellOccupied(spotX, spotY));
                     return (spotX, spotY);
                 }
 
@@ -260,7 +260,7 @@ public class DungeonMap : BaseMap
         else
             SeedUsed = Math.Abs((int)DateTime.UtcNow.Ticks);
 
-        var gamme = DungeonGame.Instance;
+        var gamme = WiggleWizzardGame.Instance;
         gamme.SetSeed(SeedUsed);
 
         gamme.Player.ResetVision();
@@ -283,6 +283,20 @@ public class DungeonMap : BaseMap
         var tileY = y + height / 2;
         DungeonLayer.SetTileValue(tileX, tileY, DungeonTile.StairsDown);
         DungeonPlayer.Instance.Position = new Vector2((tileX + 1)*16, tileY*16);
+    }
+
+    public bool IsCellOccupied(int x, int y)
+    {
+        var dungeonTile = DungeonLayer.GetTileValue(x, y);
+        if (dungeonTile != DungeonTile.None && !dungeonTile.IsFloor())
+            return true;
+        
+        if (MonsterLayer.GetObjects(x, y).Any()
+            || ItemLayer.GetObjects(x, y).Any()
+            || SpellLayer.GetObjects(x, y).Any())
+            return true;
+
+        return false;
     }
 
     private void HollowOutRooms(List<Rectangle> rooms)

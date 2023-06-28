@@ -24,7 +24,7 @@ public abstract class DungeonObject : AnimatedGameObject
     public const string Dying = "dying";
     public const string Inanimate = "inanimate";
 
-    protected DungeonGame game;
+    protected WiggleWizzardGame game;
     protected DungeonPlayer player;
 
     public DungeonObjectDef DungeonObjectDef;
@@ -49,7 +49,7 @@ public abstract class DungeonObject : AnimatedGameObject
     public DungeonObject(DungeonObjectDef def, Vector2? position, string direction, float? rotation, string layer)
         : base(def, position, layer, Vector2.Zero, rotation ?? 0, Vector2.One, "idle", direction)
     {
-        game = DungeonGame.Instance;
+        game = WiggleWizzardGame.Instance;
         player = game.Player;
 
         DungeonObjectDef = def;
@@ -66,7 +66,7 @@ public abstract class DungeonObject : AnimatedGameObject
         if (HitPoints <= 0 && State == Alive)
         {
             State = Dying;
-            Die((game as DungeonGame)!);
+            Die((game as WiggleWizzardGame)!);
             CurrentlyBlockingInput = true;
         }
         if (State == Dead)
@@ -82,7 +82,7 @@ public abstract class DungeonObject : AnimatedGameObject
                 Sprite.TextureRegion.Bounds,
                 Color, Rotation - AnimationRotation, Origin, SpriteEffects, LayerDepth);
 
-    public virtual void Die(DungeonGame game)
+    public virtual void Die(WiggleWizzardGame game)
     {
         this.AddTween(p => p.AnimationRotation, MathF.PI * 2, .25f, repeatCount: -1);
         this.AddTween(p => p.Scale, new Vector2(2, 2), .5f, 

@@ -17,7 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rays", "Rays\Rays.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MooseEngine.Tiled", "MooseLib.Tiled\MooseEngine.Tiled.csproj", "{589B34AE-0596-41EC-8D80-B8CE00EF3E2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RayMapEditor", "RayMapEditor\RayMapEditor.csproj", "{23AB8276-6BD8-4283-8B3F-C77840C9673D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RayMapEditor", "RayMapEditor\RayMapEditor.csproj", "{23AB8276-6BD8-4283-8B3F-C77840C9673D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Island", "Island\Island.csproj", "{97ABD4E3-03E4-4382-B160-49B758257B9F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Town", "Town\Town.csproj", "{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,14 @@ Global
 		{23AB8276-6BD8-4283-8B3F-C77840C9673D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23AB8276-6BD8-4283-8B3F-C77840C9673D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23AB8276-6BD8-4283-8B3F-C77840C9673D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97ABD4E3-03E4-4382-B160-49B758257B9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97ABD4E3-03E4-4382-B160-49B758257B9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97ABD4E3-03E4-4382-B160-49B758257B9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97ABD4E3-03E4-4382-B160-49B758257B9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

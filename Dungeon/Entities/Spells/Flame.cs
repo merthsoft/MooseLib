@@ -1,5 +1,5 @@
 ﻿namespace Merthsoft.Moose.Dungeon.Entities.Spells;
-public record FlameDef : SpellDef { 
+public record FlameDef : SpellDef {
     public FlameDef() : base("Flame", 1, targetMode: TargetMode.FourWay) 
     {
         BlocksPlayer = false;

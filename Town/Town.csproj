@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	  <OutputType>WinExe</OutputType>
 	  <TargetFramework>net7.0</TargetFramework>
@@ -9,7 +9,7 @@
 	  <Nullable>enable</Nullable>
 	  <ApplicationManifest>app.manifest</ApplicationManifest>
 	  <ApplicationIcon>Icon.ico</ApplicationIcon>
-	  <AssemblyName>Rays</AssemblyName>
+	  <AssemblyName>Town</AssemblyName>
 	  <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	  <Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 	  <Deterministic>False</Deterministic>
@@ -22,9 +22,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Actor1.cs" />
-  </ItemGroup>
   <ItemGroup>
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
@@ -40,14 +37,14 @@
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
   </ItemGroup>
   <ItemGroup>
-	  <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
 	  <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2089-develop" />
+	  <PackageReference Include="SimplexNoise" Version="2.0.0" />
   </ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
-		<ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
-	</ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
+    <ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
+  </ItemGroup>
 	<ItemGroup>
 		<Using Include="Microsoft.Xna.Framework" />
 		<Using Include="Microsoft.Xna.Framework.Graphics" />
@@ -59,35 +56,9 @@
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls.Prompts" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <Folder Include="Content\Images\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Content\Fonts\Outward_Bound.ttf">
+	  <None Update="Content\Fonts\Tomorrow_Night_Monospaced.ttf">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Content\Fonts\Tomorrow_Night.ttf">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Content\Maps\map.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Content\Maps\Map1.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Content\Maps\Map2.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Content\Maps\map3.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Content\Maps\Map_DY1.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Content\Maps\testmap.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 </Project>

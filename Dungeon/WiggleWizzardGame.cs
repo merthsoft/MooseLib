@@ -8,15 +8,14 @@ using Merthsoft.Moose.Dungeon.Map;
 using Merthsoft.Moose.Dungeon.Renderers;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.Dungeon.Ux;
-using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Interface;
 using MonoGame.Extended.Tweening;
 
 namespace Merthsoft.Moose.Dungeon;
 
-public class DungeonGame : MooseGame
+public class WiggleWizzardGame : MooseGame
 {
-    public static new DungeonGame Instance = null!;
+    public static new WiggleWizzardGame Instance = null!;
 
     public SpellBook SpellBook = new();
     public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, DungeonMonster>)> MonsterFactory = new();
@@ -77,7 +76,7 @@ public class DungeonGame : MooseGame
     public bool CanPlay = true;
     public bool MouseInGame => CurrentMouseState.X > 320;
 
-    public DungeonGame()
+    public WiggleWizzardGame()
     {
         Instance = this;
         IsMouseVisible = false;
@@ -92,8 +91,8 @@ public class DungeonGame : MooseGame
     protected override StartupParameters Startup()
         => base.Startup() with
         {
-            ScreenWidth = 1280,
-            ScreenHeight = 960,
+            ScreenWidth = 1392,
+            ScreenHeight = 1088,
             DefaultBackgroundColor = new(53, 32, 42),
         };
 
@@ -149,7 +148,7 @@ public class DungeonGame : MooseGame
         AddSpellDef(new LightningDef(), (spellDef, owner, position) => new Lightning(spellDef, owner, position));
         AddSpellDef(new SpellDef("Dark Shield", 1, "Shield"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
         AddSpellDef(new SpellDef("AnimateDead", 1, "Raise"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
-        AddSpellDef(new SpellDef("Slow", 1, "Tangle"), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
+        AddSpellDef(new SpellDef("Slow", 1), (spellDef, owner, position) => new Fireball(spellDef, owner, position));
 
         AddMonsterDef(new MonsterDef("Marshall", MonsterTile.Marshall) { HitPoints = 5 }, 
             (def, x, y) => new Marshall(def, new Vector2(x * 16, y * 16)));
@@ -173,9 +172,9 @@ public class DungeonGame : MooseGame
         AddItemDef(new ChestDef(), (itemDef, x, y) => new Chest((ChestDef)itemDef, x, y));
 
         var fonts = new[] {
-            ContentManager.BakeFont("BrightLinger", 62),
-            ContentManager.BakeFont("BrightLinger", 15),
-            ContentManager.BakeFont("BrightLinger_monospace", 25)
+            ContentManager.BakeFont("Willow_Branch", 65),
+            ContentManager.BakeFont("Willow_Branch_Monospaced", 22),
+            ContentManager.BakeFont("Willow_Branch_Monospaced", 30)
         };
 
         UxWindow = new(
@@ -189,11 +188,11 @@ public class DungeonGame : MooseGame
             }, 0, 0, ScreenWidth, ScreenHeight) 
         { BackgroundDrawingMode = BackgroundDrawingMode.None };
 
-        var panel = UxWindow.AddPanel(0, 0, 320, 960);
+        var panel = UxWindow.AddPanel(0, 0, 432, ScreenHeight);
         var spellBook = panel.AddControlPassThrough(new SpellBookPanel(UxWindow, 0, 0));
-        MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, spellBook.Height));
-        var statsPanel = panel.AddControlPassThrough(new StatsPanel(UxWindow, 0, MapPanel.Height + spellBook.Height));
-        ItemsPanel = panel.AddControlPassThrough(new ItemsPanel(UxWindow, 0, statsPanel.Y + statsPanel.Height));
+        ItemsPanel = panel.AddControlPassThrough(new ItemsPanel(UxWindow, 0, spellBook.Height));
+        var statsPanel = panel.AddControlPassThrough(new StatsPanel(UxWindow, 0, ItemsPanel.Y + ItemsPanel.Height));
+        MapPanel = panel.AddControlPassThrough(new MapPanel(miniMapRenderer, UxWindow, 0, statsPanel.Y + statsPanel.Height));
 
         var potionTiles = Enumerable.Range((int)ItemTile.POTION_START, (int)ItemTile.POTION_END);
         var potion = (ItemTile)potionTiles.First();
@@ -211,6 +210,9 @@ public class DungeonGame : MooseGame
         Player = new(PlayerDef) { };
         AddObject(Player);
         GenerateTown();
+
+        Player.LearnSpell(GetDef<FlameDef>()!);
+        Player.LearnSpell(GetDef<SpellDef>("Slow")!);
     }
 
     private void AddItemDef(ItemDef itemDef, Func<ItemDef, int, int, DungeonItem> generator)
@@ -260,8 +262,8 @@ public class DungeonGame : MooseGame
         => DungeonMap.Spells.FirstOrDefault(o => o.InCell(x, y));
 
     public bool IsCellOccupied(int x, int y)
-        => !GetDungeonTile(x, y).IsFloor()
-        || ReadObjects.Any(o => o.InCell(x, y));
+        => DungeonMap.IsCellOccupied(x, y) 
+        || Player.GetCell() == new Point(x, y);
 
     public bool IsCellBlocked(int x, int y)
         => DungeonMap.IsBlockedAt(x, y);
@@ -318,7 +320,7 @@ public class DungeonGame : MooseGame
 
     protected override void PreUpdate(GameTime gameTime)
     {
-        var x = (Player.Position.X + Player.AnimationPosition.X - 800 / MainCamera.Zoom).Round(2);
+        var x = (Player.Position.X + Player.AnimationPosition.X - (ScreenWidth + 432)/ 2 / MainCamera.Zoom).Round(2);
         var y = (Player.Position.Y + Player.AnimationPosition.Y - 480 / MainCamera.Zoom).Round(2);
         MainCamera.Position = new(x, y);
 
@@ -438,10 +440,6 @@ public class DungeonGame : MooseGame
         SpriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
 
         UxWindow.Draw(SpriteBatch, gameTime);
-
-        SpriteBatch.DrawString(DebugFont,
-            $"FPS: {FramesPerSecondCounter.FramesPerSecond} - Seed: {DungeonMap.SeedUsed}",
-            new(325, 920), DefaultBackgroundColor.Shade(3f));
 
         SpriteBatch.Draw(CursorTexture, CurrentMouseState.Position.ToVector2(), null, Color.White, 0, Vector2.Zero, 3, SpriteEffects.None, 1);
         SpriteBatch.End();

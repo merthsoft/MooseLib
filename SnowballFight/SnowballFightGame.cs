@@ -64,11 +64,12 @@ public class SnowballFightGame : MooseGame
         VersionString = $"v{version[0]}{version[1][0]} - {fileVersionInfo.LegalCopyright}";
     }
 
-    protected override void Initialize()
+    protected override StartupParameters Startup() => base.Startup() with
     {
-        base.Initialize();
-        SetScreenSize(WindowSize, WindowSize);
-    }
+        ScreenHeight = WindowSize,
+        ScreenWidth = WindowSize,
+        IsMouseVisible = true
+    };
 
     protected override void Load()
     {

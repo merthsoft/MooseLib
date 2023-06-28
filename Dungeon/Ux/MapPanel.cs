@@ -17,11 +17,11 @@ public class MapPanel : Panel
     {
         BackgroundDrawingMode = BackgroundDrawingMode.None;
         
-        mapPicture = this.AddPicture(0, 0, DungeonGame.Instance.MapTexture);
+        mapPicture = this.AddPicture(0, 0, WiggleWizzardGame.Instance.MapTexture);
         rendererHost = this.AddControlPassThrough(new RendererHost(this, 0, 0));
-        mapCornerPicture = this.AddPicture(0, 0, DungeonGame.Instance.MapCornerTexture);
+        mapCornerPicture = this.AddPicture(0, 0, WiggleWizzardGame.Instance.MapCornerTexture);
 
-        rendererHost.AddLayer(new MiniMapLayer("minimap", DungeonGame.Instance.DungeonSize, DungeonGame.Instance.DungeonSize), renderer);
+        rendererHost.AddLayer(new MiniMapLayer("minimap", WiggleWizzardGame.Instance.DungeonSize, WiggleWizzardGame.Instance.DungeonSize), renderer);
 
         NormalPosition = Position;
     }

@@ -5,15 +5,14 @@ using Merthsoft.Moose.Rays.Serialization;
 namespace Merthsoft.Moose.Rays;
 public record RayGameObjectDef(string DefName, int DefaultTextureIndex,
     ObjectRenderMode ObjectRenderMode, bool Blocking,
-    int RenderBottom = 0, int RenderTop = 16,
-    List<Frame>? Frames = null) : GameObjectDef(DefName)
+    ObjectType? Type = null, List<Frame>? Frames = null) : GameObjectDef(DefName)
 {
     public int DefaultTextureIndex { get; set; } = DefaultTextureIndex;
 
     public RayGameObjectDef(ObjectDefinition definition)
         : this(definition.Name, definition.FirstFrameIndex,
              definition.Type == ObjectType.Overlay ? ObjectRenderMode.Overlay : ObjectRenderMode.Sprite, 
-             definition.Blocking, Frames: definition.Frames)
+             definition.Blocking, Frames: definition.Frames, Type: definition.Type)
     { }
 }
 
@@ -23,8 +22,9 @@ public class RayGameObject : GameObjectBase
     public int TextureIndex;
     public int TextureIndexOffset;
 
-    public Vector3 PositionIn3dSpace => new(Position, 7);
+    public Vector3 PositionIn3dSpace => new(Position, YDraw);
     public Vector3 FacingDirection;
+    public float YDraw = 7;
 
     public ObjectRenderMode ObjectRenderMode;
 
@@ -33,7 +33,10 @@ public class RayGameObject : GameObjectBase
     public int FrameIndex;
     public double FrameCounter;
     public double FrameTimer;
-    
+
+    public double HoverCounter;
+    private int YDelta = 1;
+
     public RayGameObject(RayGameObjectDef def, int x, int y) : base(def, new Vector2(x*16+8, y*16+8), layer: "objects")
     {
         RayGameObjectDef = def;
@@ -46,9 +49,10 @@ public class RayGameObject : GameObjectBase
     public override void Update(MooseGame game, GameTime gameTime)
     {
         var frames = RayGameObjectDef.Frames;
+        var totalMilliseconds = gameTime.ElapsedGameTime.TotalMilliseconds;
         if (frames != null && frames.Count > 1)
         {
-            FrameCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
+            FrameCounter += totalMilliseconds;
             if (FrameCounter >= FrameTimer)
             {
                 FrameIndex++;
