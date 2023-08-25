@@ -20,7 +20,7 @@ public abstract class BaseMap : IMap
     public virtual IReadOnlyDictionary<string, ILayer> LayerMap => layerMap.AsReadOnly();
 
 
-    protected List<int>[,] blockingMap = new List<int>[0, 0];
+    protected List<int>[,] blockingMap = null!;
 
     public TLayer AddLayer<TLayer>(TLayer layer) where TLayer : ILayer
     {
@@ -59,12 +59,13 @@ public abstract class BaseMap : IMap
 
     protected virtual void BuildFullBlockingMap()
     {
-        blockingMap = new List<int>[Width, Height];
+        blockingMap ??= new List<int>[Width, Height];
 
         for (var x = 0; x < Width; x++)
             for (var y = 0; y < Height; y++)
             {
-                blockingMap[x, y] = new();
+                blockingMap[x, y] ??= new();
+                blockingMap[x, y].Clear();
                 foreach (var layer in layers)
                     blockingMap[x, y].Add(IsBlockedAt(layer.Name, x, y));
             }

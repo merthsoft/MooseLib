@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Island", "Island\Island.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Town", "Town\Town.csproj", "{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WiggleWizzard", "WiggleWizzard\WiggleWizzard.csproj", "{AECA1C05-540F-4F0B-9123-5FEA59397BC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GravityCa", "GravityCa\GravityCa.csproj", "{01E135DB-1462-4B4A-8442-4AF1390AA783}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BD96A3A-0B7A-478D-80DE-370F79CFD29C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AECA1C05-540F-4F0B-9123-5FEA59397BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AECA1C05-540F-4F0B-9123-5FEA59397BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AECA1C05-540F-4F0B-9123-5FEA59397BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AECA1C05-540F-4F0B-9123-5FEA59397BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01E135DB-1462-4B4A-8442-4AF1390AA783}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01E135DB-1462-4B4A-8442-4AF1390AA783}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01E135DB-1462-4B4A-8442-4AF1390AA783}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01E135DB-1462-4B4A-8442-4AF1390AA783}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

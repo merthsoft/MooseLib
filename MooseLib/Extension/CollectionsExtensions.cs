@@ -26,9 +26,6 @@ public static class CollectionsExtensions
         return set.Current;
     }
 
-    public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) where TKey : notnull
-        => new ReadOnlyDictionary<TKey, TValue>(dictionary);
-
     public static T RandomElement<T>(this IList<T> items, Random random)
            => items[random.Next(items.Count)];
 

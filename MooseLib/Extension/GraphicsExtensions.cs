@@ -105,4 +105,79 @@ public static class GraphicsExtensions
         sourceTexture.GetData(0, sourceTexture.Bounds, data, 0, count);
         destinationTexture.SetData(0, destinationRect, data, 0, count);
     }
+
+    public static IEnumerable<Color> ColorGradient(Color start, Color end, int steps)
+    {
+        int stepA = ((end.A - start.A) / (steps - 1));
+        int stepR = ((end.R - start.R) / (steps - 1));
+        int stepG = ((end.G - start.G) / (steps - 1));
+        int stepB = ((end.B - start.B) / (steps - 1));
+
+        for (int i = 0; i < steps; i++)
+        {
+            yield return Color.FromNonPremultiplied(start.R + (stepR * i),
+                                                    start.G + (stepG * i),
+                                                    start.B + (stepB * i),
+                                                    start.A + (stepA * i));
+        }
+    }
+
+    public static Color ColorGradientPercentage(Color start, Color end, double percent)
+    {
+        var startHsl = end.ToHsl();
+        var endHsl = start.ToHsl();
+        var alt = 1.0f - percent;
+
+        var h = percent * startHsl.H + alt * endHsl.H;
+        var s = percent * startHsl.S + alt * endHsl.S;
+        var l = percent * startHsl.L + alt * endHsl.L;
+
+        return FromHsl(h, s, l);
+    }
+
+    public static Color FromHsl(double h, double s, double l)
+    {
+        byte r = 0;
+        byte g = 0;
+        byte b = 0;
+
+        if (s == 0)
+        {
+            r = g = b = (byte)(l * 255);
+        }
+        else
+        {
+            double v1, v2;
+            double hue = h / 360.0;
+
+            v2 = (l < 0.5) ? (l * (1 + s)) : ((l + s) - (l * s));
+            v1 = 2 * l - v2;
+
+            r = (byte)(255 * HueToRGB(v1, v2, hue + (1.0 / 3)));
+            g = (byte)(255 * HueToRGB(v1, v2, hue));
+            b = (byte)(255 * HueToRGB(v1, v2, hue - (1.0 / 3)));
+        }
+
+        return new(r, g, b);
+    }
+
+    private static double HueToRGB(double v1, double v2, double vH)
+    {
+        if (vH < 0)
+            vH += 1;
+
+        if (vH > 1)
+            vH -= 1;
+
+        if ((6 * vH) < 1)
+            return (v1 + (v2 - v1) * 6 * vH);
+
+        if ((2 * vH) < 1)
+            return v2;
+
+        if ((3 * vH) < 2)
+            return (v1 + (v2 - v1) * ((2.0f / 3) - vH) * 6);
+
+        return v1;
+    }
 }

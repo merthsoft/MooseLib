@@ -168,9 +168,7 @@ public abstract class MooseGame : Game
     }
 
     public void AddRenderer(string rendererKey, ILayerRenderer renderer)
-    {
-        RendererDictionary[rendererKey] = renderer;
-    }
+        => RendererDictionary[rendererKey] = renderer;
 
     public void SetDefaultRenderer<TRenderer>(string rendererKey) where TRenderer : ILayer
         => DefaultRenderers[typeof(TRenderer)] = rendererKey;
@@ -329,7 +327,7 @@ public abstract class MooseGame : Game
             if (rendererKey == null)
                 rendererKey = DefaultRenderers.GetValueOrDefault(layerType) ?? (DefaultRenderers.FirstOrDefault(r => layerType.IsAssignableTo(r.Key)).Value);
             if (rendererKey != null)
-                renderer = RendererDictionary[rendererKey];
+                renderer = RendererDictionary.GetValueOrDefault(rendererKey);
 
             renderer?.Begin(transformMatrix);
             hookTuple?.PreHook?.Invoke(layerName);
@@ -341,6 +339,9 @@ public abstract class MooseGame : Game
             renderer?.End();
         }
     }
+
+    public int ScrollWheelDelta()
+        => CurrentMouseState.ScrollWheelValue - PreviousMouseState.ScrollWheelValue;
 
     public bool WasLeftMouseJustPressed()
         => CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released;

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	  <OutputType>WinExe</OutputType>
-	  <TargetFramework>net7.0</TargetFramework>
+	  <TargetFramework>net8.0</TargetFramework>
 	  <EnablePreviewFeatures>true</EnablePreviewFeatures>
 	  <PublishReadyToRun>false</PublishReadyToRun>
 	  <TieredCompilation>false</TieredCompilation>
@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
 	  <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
-	  <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.2089-develop" />
+	  <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
@@ -88,6 +88,9 @@
 	  </None>
 	  <None Update="Content\Maps\testmap.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Definitions.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 </Project>

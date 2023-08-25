@@ -262,7 +262,6 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
 
         foreach (var pass in Effect.CurrentTechnique.Passes)
         {
-            var pass = Effect.CurrentTechnique.Passes.First();
             pass.Apply();
             GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, VertexBuffer.ToArray(), 0, VertexBuffer.Count, IndexBuffer.ToArray(), 0, PrimitiveCount);
         }

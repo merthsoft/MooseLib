@@ -16,7 +16,13 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     public virtual Vector2 DrawOffset { get; set; }
     public virtual Vector2 DrawSize { get; set; }
 
-    public TTile[,] Tiles { get; }
+    public TTile[,] Tiles { get; protected set; }
+
+    public TTile this[int i, int j]
+    {
+        get => GetTileValue(i, j);
+        set => SetTileValue(i, j, value);
+    }
 
     public TTile EdgeTile { get; set; }
     public Color DrawColor { get; set; } = Color.White;
@@ -61,6 +67,13 @@ public class TileLayer<TTile> : ITileLayer<TTile>
         for (var deltaX = -thickness; deltaX <= thickness; deltaX++)
             for (var deltaY = -thickness; deltaY <= thickness; deltaY++)
                 SetTileValue(x + deltaX, y + deltaY, value);
+    }
+
+    public void CopyTiles(TTile[,] tiles)
+    {
+        for (var x = 0; x < Width; x++)
+            for (var y = 0; y < Height; y++)
+                Tiles[x, y] = tiles[x, y];
     }
 
     public virtual void Update(GameTime gameTime) { }

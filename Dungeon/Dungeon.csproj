@@ -10,7 +10,7 @@
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <ApplicationManifest>app.manifest</ApplicationManifest>
 	  <ApplicationIcon>Icon.ico</ApplicationIcon>
-	  <AssemblyName>Island</AssemblyName>
+	  <AssemblyName>Dungeon</AssemblyName>
 	  <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	  <Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 	  <Deterministic>False</Deterministic>
@@ -31,31 +31,14 @@
     <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
-    <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
-  </ItemGroup>
-  <ItemGroup>
-	  <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
-	  <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
-	  <PackageReference Include="SimplexNoise" Version="2.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
     <ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
   </ItemGroup>
-
-	<ItemGroup>
-		<Using Include="Microsoft.Xna.Framework" />
-		<Using Include="Microsoft.Xna.Framework.Graphics" />
-		<Using Include="Microsoft.Xna.Framework.Input" />
-		<Using Include="MonoGame.Extended" />
-		<Using Include="Merthsoft.Moose.MooseEngine" />
-		<Using Include="Merthsoft.Moose.MooseEngine.Extension" />
-		<Using Include="Merthsoft.Moose.MooseEngine.Ui" />
-		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls" />
-		<Using Include="Merthsoft.Moose.MooseEngine.Ui.Controls.Prompts" />
-		<Using Include="Merthsoft.Moose.MooseEngine.BaseDriver" />
-	</ItemGroup>
+  <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+    <Message Text="Restoring dotnet tools" Importance="High" />
+    <Exec Command="dotnet tool restore" />
+  </Target>
 </Project>
