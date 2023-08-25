@@ -9,7 +9,7 @@ public class SpriteBatchSpectrumRenderer  : SpriteBatchRenderer
     public int Height { get; private set; }
     public Point ScaledSize => new(Width * (int)DrawScale.X, Height *  (int)DrawScale.Y);
 
-    public List<Color> Colors { get; } = new();
+    public List<Color> Colors { get; set; } = new();
     public UInt128 MaxValue { get; private set; }
 
     public bool UseTransparentForZero { get; set; } = false;

@@ -10,15 +10,19 @@ using System.Reflection;
 namespace GravityCa;
 public class GravityCellularAutomataGame : MooseGame
 {
-    public const int MapSize = 200;
-    public const int DrawSize = 6;
+    public const int MapSize = 300;
+    public const int DrawSize = 1;
 
     public static UInt128 MaxValue = UInt64.MaxValue;
     static readonly GravityMap Map = new(MapSize, MapSize);
     bool running = false;
     SpriteFont font = null!;
     private SpriteBatchSpectrumRenderer massRenderer = null!;
+    private SpriteBatchSpectrumRenderer gravityRenderer = null!;
     public UInt128 MassDivisor = 8;
+
+    int currentPalette = 0;
+    List<List<Color>> GravityPalettes = new();
 
     public GravityCellularAutomataGame()
     {
@@ -41,8 +45,15 @@ public class GravityCellularAutomataGame : MooseGame
 
         Window.Title = $"Gravity - v{fileVersionInfo.ProductVersion?.Split('+')[0] ?? "??"}";
 
-        ActiveMaps.Add(Map);
-        AddRenderer("gravity", new SpriteBatchSpectrumRenderer(SpriteBatch, MapSize, MapSize, MaxValue,
+        GravityPalettes.Add(new List<Color>()
+        {
+            Color.DarkRed,
+            Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet,
+            Color.White,
+            Color.Black
+        });
+        GravityPalettes.Add(new List<Color>()
+        {
             Color.DarkRed,
             Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet,
             Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet,
@@ -61,9 +72,18 @@ public class GravityCellularAutomataGame : MooseGame
             Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet,
             Color.Red, Color.Orange, Color.Yellow, Color.Green, Color.Blue, Color.Indigo, Color.Violet,
             Color.White,
-            Color.Black) { UseTransparentForZero = true, DrawScale = new(DrawSize, DrawSize) });
-        massRenderer = new SpriteBatchSpectrumRenderer(SpriteBatch, MapSize, MapSize, MaxValue, Color.PaleVioletRed, Color.White) { UseTransparentForZero = true, DrawScale = new(DrawSize, DrawSize) };
-        AddRenderer("mass", massRenderer);
+            Color.Black
+        });
+        GravityPalettes.Add(new List<Color>()
+        {
+            Color.Black,
+            Color.White
+        });
+
+        ActiveMaps.Add(Map);
+        gravityRenderer = AddRenderer("gravity", new SpriteBatchSpectrumRenderer(SpriteBatch, MapSize, MapSize, MaxValue, GravityPalettes[0].ToArray()) { UseTransparentForZero = true, DrawScale = new(DrawSize, DrawSize) });
+        
+        massRenderer = AddRenderer("mass", new SpriteBatchSpectrumRenderer(SpriteBatch, MapSize, MapSize, MaxValue, Color.PaleVioletRed, Color.White) { UseTransparentForZero = true, DrawScale = new(DrawSize, DrawSize) });
 
         MainCamera.ZoomIn(0);
 
@@ -100,12 +120,31 @@ public class GravityCellularAutomataGame : MooseGame
         if (WasKeyJustPressed(Keys.M))
             massRenderer.IsActive = !massRenderer.IsActive;
 
+        if (WasKeyJustPressed(Keys.G)) 
+        {
+            if (gravityRenderer.IsActive)
+            {
+                currentPalette++;
+                if (currentPalette >= GravityPalettes.Count)
+                {
+                    currentPalette = 0;
+                    gravityRenderer.IsActive = false;
+                }
+            } else
+            {
+                gravityRenderer.IsActive = true;
+            }
+            gravityRenderer.Colors = GravityPalettes[currentPalette];
+        }
+
         if (IsLeftMouseDown() || IsRightMouseDown())
         {
             var x = CurrentMouseState.X / DrawSize;
             var y = CurrentMouseState.Y / DrawSize;
             var mass = IsLeftMouseDown() ? MaxValue / MassDivisor : 0;
             Map.SetMass(x, y, mass);
+            Map.SetMass(x, y + 1, mass);
+            Map.SetMass(x + 1, y, mass);
             Map.SetMass(x + 1, y + 1, mass);
         }
 

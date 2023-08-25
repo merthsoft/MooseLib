@@ -167,8 +167,8 @@ public abstract class MooseGame : Game
         AddRenderer(rendererKey, renderer);
     }
 
-    public void AddRenderer(string rendererKey, ILayerRenderer renderer)
-        => RendererDictionary[rendererKey] = renderer;
+    public TRenderer AddRenderer<TRenderer>(string rendererKey, TRenderer renderer) where TRenderer : ILayerRenderer
+        => (TRenderer)(RendererDictionary[rendererKey] = renderer);
 
     public void SetDefaultRenderer<TRenderer>(string rendererKey) where TRenderer : ILayer
         => DefaultRenderers[typeof(TRenderer)] = rendererKey;
