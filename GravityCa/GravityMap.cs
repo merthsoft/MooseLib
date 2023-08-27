@@ -1,4 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.Extension;
+using Merthsoft.Moose.MooseEngine.Topologies;
 
 namespace GravityCa;
 public class GravityMap : BaseMap
@@ -16,18 +18,20 @@ public class GravityMap : BaseMap
     private static UInt128[,] BackBoard = null!;
 
     public int Generation { get; private set; } = 0;
+    public double TotalMass { get; private set; } = 0;
 
     private static AdjacentTile<UInt128>[] AdjacentTiles = new AdjacentTile<UInt128>[9];
 
-    private int UpdateState = 0;
+    public int UpdateState { get; private set; } = 0;
 
-    public GravityMap(int width, int height)
+    public GravityMap(int width, int height, Topology topology)
     {
+        Topology = topology;
         this.width = width;
         this.height = height;
 
-        GravityLayer = AddLayer(new TileLayer<UInt128>("gravity", Width, Height, 0) { RendererKey = "gravity" });
-        MassLayer = AddLayer(new TileLayer<UInt128>("mass", Width, Height, 0) { RendererKey = "mass" });
+        GravityLayer = AddLayer(new TileLayer<UInt128>("gravity", Width, Height, 0) { RendererKey = "gravity", Topology = topology });
+        MassLayer = AddLayer(new TileLayer<UInt128>("mass", Width, Height, 0) { RendererKey = "mass", Topology = topology });
 
         BackBoard = new UInt128[Width, Height];
 
@@ -47,20 +51,6 @@ public class GravityMap : BaseMap
     public void SetMass(int x, int y, UInt128 mass)
         => MassLayer[x, y] = mass;
 
-    public void AddMass(int x, int y, UInt128 mass)
-    {
-        MassLayer[x, y] += mass;
-        if (MassLayer[x, y] > GravityCellularAutomataGame.MaxValue)
-            MassLayer[x, y] = GravityCellularAutomataGame.MaxValue;
-    }
-
-    public void SubtractMass(int x, int y, UInt128 mass)
-    {
-        MassLayer[x, y] -= mass;
-        if (MassLayer[x, y] > GravityCellularAutomataGame.MaxValue)
-            MassLayer[x, y] = GravityCellularAutomataGame.MaxValue;
-    }
-
     public void SetGravity(int x, int y, UInt128 gravity)
         => GravityLayer[x, y] = gravity;
 
@@ -77,35 +67,36 @@ public class GravityMap : BaseMap
             for (var x = 0; x < Width; x++)
                 for (var y = 0; y < Height; y++)
                 {
-                    var adjGrav = GravityLayer[x - 1, y - 1]
-                                + GravityLayer[x - 1, y]
-                                + GravityLayer[x - 1, y + 1]
-                                + GravityLayer[x, y - 1]
-                                + GravityLayer[x, y + 1]
-                                + GravityLayer[x + 1, y - 1]
-                                + GravityLayer[x + 1, y]
-                                + GravityLayer[x + 1, y + 1];
-                    var gravity = (MassLayer[x, y] >> 3) + (adjGrav >> 3);
+                    var adjGrav = (GravityLayer[x - 1, y - 1] >> 3)
+                                + (GravityLayer[x - 1, y] >> 3)
+                                + (GravityLayer[x - 1, y + 1] >> 3)
+                                + (GravityLayer[x, y - 1] >> 3)
+                                + (GravityLayer[x, y + 1] >> 3)
+                                + (GravityLayer[x + 1, y - 1] >> 3)
+                                + (GravityLayer[x + 1, y] >> 3)
+                                + (GravityLayer[x + 1, y + 1] >> 3);
+                    var gravity = (MassLayer[x, y] >> 4) + adjGrav;
                     if (gravity == 0 && adjGrav > 0)
                         gravity = 1;
 
                     if (gravity < 0)
                         gravity = 0;
 
-                    if (gravity > GravityCellularAutomataGame.MaxValue)
-                        gravity = GravityCellularAutomataGame.MaxValue;
+                    if (gravity > GravityCellularAutomataGame.MaxGravity)
+                        gravity = GravityCellularAutomataGame.MaxGravity;
 
                     BackBoard[x, y] = gravity;
                 }
 
             GravityLayer.CopyTiles(BackBoard);
         }
-        else
+        else if (UpdateState == 1)
         {
             for (var x = 0; x < Width; x++)
                 for (var y = 0; y < Height; y++)
                     BackBoard[x, y] = 0;
 
+            TotalMass = 0;
             for (var x = 0; x < Width; x++)
                 for (var y = 0; y < Height; y++)
                 {
@@ -114,39 +105,120 @@ public class GravityMap : BaseMap
                     {
                         continue;
                     }
-                    var spotGrav = GravityLayer[x, y];
+                    TotalMass += (double)mass;
 
-                    AdjacentTiles[0].Value = GravityLayer[x - 1, y - 1];
-                    AdjacentTiles[1].Value = GravityLayer[x - 1, y];
-                    AdjacentTiles[2].Value = GravityLayer[x - 1, y + 1];
-                    AdjacentTiles[3].Value = GravityLayer[x, y - 1];
-                    AdjacentTiles[4].Value = spotGrav;
-                    AdjacentTiles[5].Value = GravityLayer[x, y + 1];
-                    AdjacentTiles[6].Value = GravityLayer[x + 1, y - 1];
-                    AdjacentTiles[7].Value = GravityLayer[x + 1, y];
-                    AdjacentTiles[8].Value = GravityLayer[x + 1, y + 1];
+                    AdjacentTiles[0].Value = MassLayer[x - 1, y - 1];
+                    AdjacentTiles[1].Value = MassLayer[x - 1, y];
+                    AdjacentTiles[2].Value = MassLayer[x - 1, y + 1];
+                    AdjacentTiles[3].Value = MassLayer[x, y - 1];
+                    AdjacentTiles[4].Value = mass;
+                    AdjacentTiles[5].Value = MassLayer[x, y + 1];
+                    AdjacentTiles[6].Value = MassLayer[x + 1, y - 1];
+                    AdjacentTiles[7].Value = MassLayer[x + 1, y];
+                    AdjacentTiles[8].Value = MassLayer[x + 1, y + 1];
 
-                    var gravList = AdjacentTiles.OrderByDescending(x => x.Value).GroupBy(x => x.Value);
+                    var surrounded = AdjacentTiles.All(t => t.Value > 0);
                     var set = false;
-                    foreach (var g in gravList)
-                    {
-                        if (g.Key < spotGrav)
-                            break;
-                        foreach (var selected in g)
-                        {
-                            var (xOffset, yOffset, _) = selected;
-                            if (xOffset < -1 || xOffset > 1 || yOffset < -1 || yOffset > 1
-                                || MassLayer[x + xOffset, y + yOffset] != 0)
-                                continue;
-                            BackBoard[x + xOffset, y + yOffset] = mass;
-                            MassLayer[x, y] = 0;
-                            set = true;
-                            break;
-                        }
-                        if (set)
-                            break;
-                    }
 
+                    if (!surrounded)
+                    {
+                        var spotGrav = GravityLayer[x, y];
+
+                        AdjacentTiles[0].Value = GravityLayer[x - 1, y - 1];
+                        AdjacentTiles[1].Value = GravityLayer[x - 1, y];
+                        AdjacentTiles[2].Value = GravityLayer[x - 1, y + 1];
+                        AdjacentTiles[3].Value = GravityLayer[x, y - 1];
+                        AdjacentTiles[4].Value = spotGrav;
+                        AdjacentTiles[5].Value = GravityLayer[x, y + 1];
+                        AdjacentTiles[6].Value = GravityLayer[x + 1, y - 1];
+                        AdjacentTiles[7].Value = GravityLayer[x + 1, y];
+                        AdjacentTiles[8].Value = GravityLayer[x + 1, y + 1];
+
+                        var gravList = AdjacentTiles.GroupBy(x => x.Value).OrderByDescending(x => x.Key);
+                        foreach (var g in gravList)
+                        {
+                            if (g.Key < spotGrav)
+                                break;
+                            foreach (var selected in g.Shuffle())
+                            {
+                                var (xOffset, yOffset, _) = selected;
+                                var (newX, newY) = TranslatePoint(x + xOffset, y + yOffset);
+                                if (newX < 0 || newX > Width || newY < 0 || newY > Height
+                                    || MassLayer[newX, newY] != 0
+                                    || BackBoard[newX, newY] != 0)
+                                    continue;
+                                BackBoard[newX, newY] = mass;
+                                MassLayer[x, y] = 0;
+                                set = true;
+                                break;
+                            }
+                            if (set)
+                                break;
+                        }
+                    }
+                    if (!set)
+                        BackBoard[x, y] = mass;
+                }
+
+            MassLayer.CopyTiles(BackBoard);
+        }
+        else if (UpdateState == 2)
+        {
+            for (var x = 0; x < Width; x++)
+                for (var y = 0; y < Height; y++)
+                    BackBoard[x, y] = 0;
+
+            TotalMass = 0;
+            for (var x = 0; x < Width; x++)
+                for (var y = 0; y < Height; y++)
+                {
+                    var mass = MassLayer[x, y];
+                    if (mass == 0)
+                    {
+                        continue;
+                    }
+                    TotalMass += (double)mass;
+
+                    AdjacentTiles[0].Value = MassLayer[x - 1, y - 1];
+                    AdjacentTiles[1].Value = MassLayer[x - 1, y];
+                    AdjacentTiles[2].Value = MassLayer[x - 1, y + 1];
+                    AdjacentTiles[3].Value = MassLayer[x, y - 1];
+                    AdjacentTiles[4].Value = mass;
+                    AdjacentTiles[5].Value = MassLayer[x, y + 1];
+                    AdjacentTiles[6].Value = MassLayer[x + 1, y - 1];
+                    AdjacentTiles[7].Value = MassLayer[x + 1, y];
+                    AdjacentTiles[8].Value = MassLayer[x + 1, y + 1];
+
+                    var surrounded = AdjacentTiles.All(t => t.Value > 0);
+                    var set = false;
+                    if (surrounded && mass < GravityCellularAutomataGame.MaxMass)
+                    {
+                        var smallestGroup = AdjacentTiles.Where(x => x.Value > 0 && x.Value <= mass).GroupBy(x => x.Value).OrderBy(x => x.Key).FirstOrDefault();
+                        var eaten = smallestGroup?.Shuffle().First();
+                        if (eaten != null)
+                        {
+                            var (xOffset, yOffset, eatenMass) = eaten.Value;
+                            var (newX, newY) = TranslatePoint(x + xOffset, y + yOffset);
+                            if (newX >= 0 && newX < Width && newY >= 0 && newY < Height)
+                            {
+                                if (eatenMass + mass < GravityCellularAutomataGame.MaxMass)
+                                {
+                                    BackBoard[x, y] = mass + eatenMass;
+                                    BackBoard[newX, newY] = 0;
+                                    MassLayer[newX, newY] = 0;
+                                    set = true;
+                                }
+                                else
+                                {
+                                    //var diff = GravityCellularAutomataGame.MaxMass - mass;
+                                    //BackBoard[x, y] = GravityCellularAutomataGame.MaxMass;
+                                    //BackBoard[x + xOffset, y + yOffset] = eatenMass - diff;
+                                    //MassLayer[x + xOffset, y + yOffset] = eatenMass - diff;
+                                    //set = true;
+                                }
+                            }
+                        }
+                    }
                     if (!set)
                         BackBoard[x, y] = mass;
                 }
@@ -154,6 +226,6 @@ public class GravityMap : BaseMap
             MassLayer.CopyTiles(BackBoard);
         }
 
-        UpdateState = (UpdateState + 1) % 2;
+        UpdateState = (UpdateState + 1) % 3;
     }
 }

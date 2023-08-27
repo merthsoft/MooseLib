@@ -1,5 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.GameObjects;
 using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.Topologies;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
@@ -13,6 +14,7 @@ public class ObjectLayer<TObject> : IObjectLayer where TObject : GameObjectBase
     public string Name { get; }
     public int Width { get; }
     public int Height { get; }
+    public Topology Topology { get; set; } = Topology.Plane;
     public bool IsHidden { get; set; } = false;
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawSize { get; set; }
@@ -55,10 +57,16 @@ public class ObjectLayer<TObject> : IObjectLayer where TObject : GameObjectBase
         if (x >= 0 && x < Width && y >= 0 && y < Height)
             ObjectMap[x, y].Add((obj as TObject)!);
     }
-    
+
     public IEnumerable<TObject> GetObjects(int x, int y)
-        => x < 0 || x >= Width || y < 0 || y >= Height ? Enumerable.Empty<TObject>() : ObjectMap[x, y];
-    
-    IEnumerable<GameObjectBase> IObjectLayer.GetObjects(int x, int y) 
-        => x < 0 || x >= Width || y < 0 || y >= Height ? Enumerable.Empty<GameObjectBase>() : ObjectMap[x, y];
+    {
+        (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
+        return x < 0 || x >= Width || y < 0 || y >= Height ? Enumerable.Empty<TObject>() : ObjectMap[x, y];
+    }
+
+    IEnumerable<GameObjectBase> IObjectLayer.GetObjects(int x, int y)
+    {
+        (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
+        return x < 0 || x >= Width || y < 0 || y >= Height ? Enumerable.Empty<GameObjectBase>() : ObjectMap[x, y];
+    }
 }

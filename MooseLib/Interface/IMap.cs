@@ -1,7 +1,6 @@
 ﻿using Roy_T.AStar.Grids;
 
 namespace Merthsoft.Moose.MooseEngine.Interface;
-
 public interface IMap
 {
     int Height { get; }
@@ -25,10 +24,6 @@ public interface IMap
 
     public bool CellIsInBounds(Point cell);
     public bool CellIsInBounds(int cellX, int cellY);
-
-    public bool WorldIsInBounds(Vector2 world)
-        => (int)world.X / TileWidth >= 0 && (int)world.X / TileWidth < Width
-        && (int)world.Y / TileHeight >= 0 && (int)world.Y / TileHeight < Height;
 
     TLayer GetLayer<TLayer>(int layerNumber) where TLayer : ILayer;
     TLayer GetLayer<TLayer>(string layerName) where TLayer : ILayer;

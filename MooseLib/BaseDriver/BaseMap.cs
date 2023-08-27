@@ -1,4 +1,5 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.Topologies;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
@@ -12,6 +13,7 @@ public abstract class BaseMap : IMap
     public abstract int Width { get; }
     public abstract int TileWidth { get; }
     public abstract int TileHeight { get; }
+    public Topology Topology { get; set; } = Topology.Plane;
     
     protected List<ILayer> layers = new();
     public virtual IReadOnlyList<ILayer> Layers => layers.AsReadOnly();
@@ -42,17 +44,31 @@ public abstract class BaseMap : IMap
     public TLayer GetLayer<TLayer>(string layerName) where TLayer : ILayer
         => (TLayer)Layers.First(l => l.Name == layerName);
 
+    public Point TranslatePoint(int x, int y)
+        => TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
+
+    public Point TranslatePoint(Point cell)
+        => cell.TranslatePoint(Topology, Width, Height);
+
+    public Vector2 TranslateVector(Vector2 cell)
+        => cell.TranslateVector(Topology, Width, Height);
+
     public bool CellIsInBounds(Point cell)
-        => cell.X >= 0 && cell.X < Width
-        && cell.Y >= 0 && cell.Y < Height;
+    {
+        cell = cell.TranslatePoint(Topology, Width, Height);
+        return cell.X >= 0 && cell.X < Width
+            && cell.Y >= 0 && cell.Y < Height;
+    }
 
     public bool PositionIsInBounds(Vector2 position)
-        => position.X >= 0 && position.X < Width * TileWidth
-        && position.Y >= 0 && position.Y < Height * TileHeight;
+    {
+        position = position.TranslateVector(Topology, Width, Height);
+        return position.X >= 0 && position.X < Width * TileWidth
+            && position.Y >= 0 && position.Y < Height * TileHeight;
+    }
 
     public bool CellIsInBounds(int cellX, int cellY)
-        => cellX >= 0 && cellX < Width
-        && cellY >= 0 && cellY < Height;
+        => CellIsInBounds(new(cellX, cellY));
 
     public virtual void Update(MooseGame game, GameTime gameTime)
         => BuildFullBlockingMap();
@@ -74,7 +90,10 @@ public abstract class BaseMap : IMap
     protected abstract int IsBlockedAt(string layer, int x, int y);
 
     public virtual IList<int> GetBlockingVector(int x, int y)
-        => x < 0 || x>= Width || y < 0 || y>= Height ? new() { } : blockingMap[x, y];
+    {
+        (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
+        return x < 0 || x >= Width || y < 0 || y >= Height ? new() { } : blockingMap[x, y];
+    }
 
     protected virtual Grid BaseGrid
         => Grid.CreateGridWithLateralConnections(
@@ -114,8 +133,4 @@ public abstract class BaseMap : IMap
             return Enumerable.Empty<Point>();
         }
     }
-
-    public bool WorldPositionIsInBounds(float worldX, float worldY)
-        => worldX > 0 && worldX < Width * TileWidth
-        && worldY > 0 && worldY < Height * TileHeight;
 }

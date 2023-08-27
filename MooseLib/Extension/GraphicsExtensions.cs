@@ -37,19 +37,9 @@ public static class GraphicsExtensions
 
     private static uint BlendChannel(uint a1, uint a2, uint outA, uint channel1, uint channel2)
         => (uint)((channel1 * a1 + channel2 * a2 * (1 - a1)) / (float)outA).Round(0);
-
-    public static uint DarkenColor(this uint color, double ratio)
-    {
-        ratio = ratio > 1 ? 1 : ratio;
-        var r = ((color & RedMask) >> 16) * ratio;
-        r = r > 0xFF ? 0xFF : r;
-        var g = ((color & GreenMask) >> 8) * ratio;
-        g = g > 0xFF ? 0xFF : g;
-        var b = (color & BlueMask) * ratio;
-        b = b > 0xFF ? 0xFF : b;
-
-        return (color & AlphaMask) | ((uint)r << 16) | ((uint)g << 8) | (uint)b;
-    }
+    
+    public static Color Shade(this Color c, float delta)
+        => new((c.R * delta).Round(), (c.G * delta).Round(), (c.B * delta).Round());
 
     public static Rectangle GetSourceRectangle(this Texture2D texture, int spriteIndex, int tileWidth, int tileHeight, int tilePadding = 0, int textureMargin = 0)
     {
@@ -59,6 +49,13 @@ public static class GraphicsExtensions
         var sourceY = (spriteIndex / columns) * (tileHeight + tilePadding) + textureMargin;
 
         return new(sourceX, sourceY, tileWidth, tileHeight);
+    }
+
+    public static SpriteBatch DrawStringShadow(this SpriteBatch sb, SpriteFont font, string text, Vector2 position, Color foreColor, Color? shadowColor = null, Vector2? shadowOffset = null)
+    {
+        sb.DrawString(font, text, position, shadowColor ?? Color.Black);
+        sb.DrawString(font, text, position + (shadowOffset ?? Vector2.One), foreColor);
+        return sb;
     }
 
     public static SpriteBatch DrawRect(this SpriteBatch s, RectangleF r, Color c)
@@ -80,9 +77,6 @@ public static class GraphicsExtensions
 
     public static void DrawEllipse(this SpriteBatch spriteBatch, RectangleF rect, int sides, Color color, float thickness = 1f, float layerDepth = 0)
         => spriteBatch.DrawEllipse(rect.Center, rect.Size, sides, color, thickness, layerDepth);
-
-    public static Color Shade(this Color c, float delta)
-        => new((c.R * delta).Round(), (c.G * delta).Round(), (c.B * delta).Round());
 
 
     public static Color HalveAlphaChannel(this Color c)

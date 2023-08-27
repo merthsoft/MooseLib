@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace Merthsoft.Moose.MooseEngine.Extension;
+﻿namespace Merthsoft.Moose.MooseEngine.Extension;
 public static class CollectionsExtensions
 {
     public static void Resize<T>(this List<T?> list, int size, T? @default = default)
@@ -30,7 +28,7 @@ public static class CollectionsExtensions
            => items[random.Next(items.Count)];
 
     public static T RandomElement<T>(this IList<T> items)
-           => items[MooseGame.Instance.Random.Next(items.Count)];
+           => RandomElement(items, MooseGame.Instance.Random);
 
     public static T RemoveRandomElement<T>(this IList<T> items)
     {

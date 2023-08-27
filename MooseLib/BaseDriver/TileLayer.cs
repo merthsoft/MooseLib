@@ -1,4 +1,5 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.Topologies;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
@@ -8,7 +9,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
 
     public int Height { get; }
     public int Width { get; }
-
+    public Topology Topology { get; set; } = Topology.Plane;
     public string Name { get; }
 
     public bool IsHidden { get; set; } = false;
@@ -46,12 +47,17 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     }
 
     public TTile GetTileValue(int x, int y)
-        => x < 0 || x >= Width || y < 0 || y >= Height
-        ? EdgeTile 
-        : Tiles[x, y];
+    {
+        (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
+        if (x < 0 || x >= Width || y < 0 || y >= Height)
+            return EdgeTile;
+        else
+            return Tiles[x, y];
+    }
 
     public void SetTileValue(int x, int y, TTile value)
     {
+        (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
         if (x < 0 || x >= Width || y < 0 || y >= Height)
             return;
         Tiles[x, y] = value;
@@ -61,12 +67,16 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     {
         if (thickness == 0)
         {
+            (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
             SetTileValue(x, y, value);
             return;
         }
         for (var deltaX = -thickness; deltaX <= thickness; deltaX++)
             for (var deltaY = -thickness; deltaY <= thickness; deltaY++)
-                SetTileValue(x + deltaX, y + deltaY, value);
+            {
+                var (newX, newY) = TopologyHelper.TranslatePoint(x + deltaX, y + deltaY, Topology, Width, Height);
+                SetTileValue(newX, newY, value);
+            }
     }
 
     public void CopyTiles(TTile[,] tiles)

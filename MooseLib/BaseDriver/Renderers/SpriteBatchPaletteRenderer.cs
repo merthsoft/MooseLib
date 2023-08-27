@@ -3,13 +3,14 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
-public class SpriteBatchSpectrumRenderer  : SpriteBatchRenderer
+public class SpriteBatchPaletteRenderer  : SpriteBatchRenderer
 {
     public int Width { get; private set; }
     public int Height { get; private set; }
     public Point ScaledSize => new(Width * (int)DrawScale.X, Height *  (int)DrawScale.Y);
 
     public List<Color> Colors { get; set; } = new();
+    public bool BlendColors { get; set; } = true;
     public UInt128 MaxValue { get; private set; }
 
     public bool UseTransparentForZero { get; set; } = false;
@@ -18,7 +19,7 @@ public class SpriteBatchSpectrumRenderer  : SpriteBatchRenderer
     private Texture2D BackingTexture = null!; // LoadContent
     private Color[] ColorArray;
 
-    public SpriteBatchSpectrumRenderer(SpriteBatch spriteBatch, int width, int height, UInt128 maxValue, params Color[] colors) : base(spriteBatch)
+    public SpriteBatchPaletteRenderer(SpriteBatch spriteBatch, int width, int height, UInt128 maxValue, params Color[] colors) : base(spriteBatch)
     {
         Width = width;
         Height = height;
@@ -56,8 +57,12 @@ public class SpriteBatchSpectrumRenderer  : SpriteBatchRenderer
                 {
                     var colorLocation = (Colors.Count - 1) * percentage;
                     var colorIndex = (int)(colorLocation);
-                    var newPercentage = colorLocation - colorIndex;
-                    color = GraphicsExtensions.ColorGradientPercentage(Colors[colorIndex], Colors[colorIndex + 1], newPercentage);
+                    color = Colors[colorIndex];
+                    if (BlendColors)
+                    {
+                        var newPercentage = colorLocation - colorIndex;
+                        color = GraphicsExtensions.ColorGradientPercentage(Colors[colorIndex], Colors[colorIndex + 1], newPercentage);
+                    }
                 }
 
                 ColorArray[j * Height + i] = color;
