@@ -38,12 +38,12 @@ public static class TopologyHelper
                 lC = c; lR = r;
                 break;
             case Topology.Ring:
-                lC = ovC ? Cycle(c - 1, mapWidth) + 1 : c;
+                lC = ovC ? Cycle(c, mapWidth) : c;
                 lR = r;
                 break;
             case Topology.Mobius:
-                lC = ovC ? Cycle(c - 1, mapWidth) + 1 : c;
-                lR = ovC ? mapHeight - r + 2 : r;
+                lC = ovC ? Cycle(c, mapWidth) : c;
+                lR = ovC ? mapHeight - r : r;
                 break;
             case Topology.Torus:
                 lC = ovC ? Cycle(c, mapWidth) : c;
@@ -90,15 +90,15 @@ public static class TopologyHelper
                     break;
                 }
             case Topology.Klein:
-                lC = ovC ? Cycle(c - 1, mapWidth) + 1 : c;
-                lR = ovR ? Cycle(r - 1, mapHeight) + 1 : r;
-                lR = ovC ? mapHeight - lR + 2 : lR;
+                lC = ovC ? Cycle(c, mapWidth) : c;
+                lR = ovR ? Cycle(r, mapHeight): r;
+                lR = ovC ? mapHeight - lR : lR;
                 break;
             case Topology.Proj:
-                lC = ovC ? Cycle(c - 1, mapWidth) + 1 : c;
-                lC = ovR ? mapWidth - lC + 2 : lC;
-                lR = ovR ? Cycle(r - 1, mapHeight) + 1 : r;
-                lR = ovC ? mapHeight - lR + 2 : lR;
+                lC = ovC ? Cycle(c, mapWidth) : c;
+                lC = ovR ? mapWidth - lC : lC;
+                lR = ovR ? Cycle(r, mapHeight) : r;
+                lR = ovC ? mapHeight - lR : lR;
                 break;
         }
         return new(lC, lR);
