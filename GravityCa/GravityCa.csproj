@@ -15,7 +15,7 @@
 	  <Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 	  <Deterministic>False</Deterministic>
 	  <VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-	  <VersionPrefix>0.1</VersionPrefix>
+	  <VersionPrefix>0.2</VersionPrefix>
 	  <DebugType>embedded</DebugType>
 	  <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>

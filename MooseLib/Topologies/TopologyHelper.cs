@@ -1,13 +1,18 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Topologies;
+﻿using System.Runtime.CompilerServices;
+
+namespace Merthsoft.Moose.MooseEngine.Topologies;
 public static class TopologyHelper
 {
-    private static int Cycle(int n, int c) => (((n) + (c)) % (c));
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int Cycle(int n, int c) 
+        => ((n) + (c)) % (c);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int ShiftBool(this bool b, int amount)
+        => b ? 1 << amount : 0;
 
     public static Vector2 TranslateVector(this Vector2 vector, Topology toTopology, int mapWidth, int mapHeight)
-        => TranslatePoint(vector.ToPoint(), toTopology, mapWidth, mapHeight).ToVector2();
-
-    private static int ShiftBool(this bool b, int amount)
-        => (b ? 1 : 0) << amount;
+        => TranslatePoint((int)vector.X, (int)vector.Y, toTopology, mapWidth, mapHeight).ToVector2();
 
     public static Point TranslatePoint(this Point p, Topology toTopology, int mapWidth, int mapHeight)
         => TranslatePoint(p.X, p.Y, toTopology, mapWidth, mapHeight);
