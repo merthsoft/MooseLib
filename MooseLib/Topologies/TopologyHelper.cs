@@ -94,7 +94,7 @@ public static class TopologyHelper
                 lR = ovR ? Cycle(r, mapHeight): r;
                 lR = ovC ? mapHeight - lR : lR;
                 break;
-            case Topology.Proj:
+            case Topology.ProjectivePlane:
                 lC = ovC ? Cycle(c, mapWidth) : c;
                 lC = ovR ? mapWidth - lC : lC;
                 lR = ovR ? Cycle(r, mapHeight) : r;

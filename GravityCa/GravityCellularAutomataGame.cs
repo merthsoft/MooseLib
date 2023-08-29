@@ -11,8 +11,8 @@ using System.Reflection;
 namespace GravityCa;
 public class GravityCellularAutomataGame : MooseGame
 {
-    public const int MapSize = 100;
-    public const int DrawSize = 10;
+    public const int MapSize = 600;
+    public const int DrawSize = 2;
 
     public static UInt128 MaxGravity = UInt128.MaxValue >> 1;
     public static UInt128 MaxMass = MaxGravity - 1;
@@ -21,7 +21,7 @@ public class GravityCellularAutomataGame : MooseGame
     SpriteFont font = null!;
     private SpriteBatchPaletteRenderer massRenderer = null!;
     private SpriteBatchPaletteRenderer gravityRenderer = null!;
-    public UInt128 MassDivisor = 8;
+    public UInt128 MassDivisor = 512;
     public bool DrawText = true;
 
     List<List<Color>> GravityPalettes = new();
@@ -771,7 +771,7 @@ public class GravityCellularAutomataGame : MooseGame
         if (keyPressed >= Keys.D0 && keyPressed <= Keys.D9)
             gravityRenderer.Colors = GravityPalettes[keyPressed - Keys.D0];
 
-        if (IsLeftMouseDown() || IsRightMouseDown())
+        if (IsActive && (IsLeftMouseDown() || IsRightMouseDown()))
         {
             var x = CurrentMouseState.X / DrawSize;
             var y = CurrentMouseState.Y / DrawSize;
@@ -797,12 +797,20 @@ public class GravityCellularAutomataGame : MooseGame
                     Map.SetMass(x, y, 0);
         }
 
-        if (WasKeyJustPressed(Keys.R))
+        if (WasKeyJustPressed(Keys.X))
         {
             for (var x = 0; x < MapSize; x++)
                 for (var y = 0; y < MapSize; y++)
+                    Map.SetGravity(x, y, 0);
+        }
+
+        if (WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.F))
+        {
+            var chance = WasKeyJustPressed(Keys.R) ? .01f : 1f;
+            for (var x = 0; x < MapSize; x++)
+                for (var y = 0; y < MapSize; y++)
                 {
-                    if (Map.MassLayer[x, y] == 0 && Random.NextSingle() <= .01f)
+                    if (Map.MassLayer[x, y] == 0 && Random.NextSingle() <= chance)
                         Map.SetMass(x, y, MaxMass / MassDivisor);
                 }
         }

@@ -1,4 +1,5 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+﻿using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Extension;
 using Merthsoft.Moose.MooseEngine.Topologies;
 
@@ -189,11 +190,13 @@ public class GravityMap : BaseMap
                     AdjacentTiles[7].Value = MassLayer[x + 1, y];
                     AdjacentTiles[8].Value = MassLayer[x + 1, y + 1];
 
-                    var surrounded = AdjacentTiles.All(t => t.Value > 0);
+                    var surrounded = AdjacentTiles.Count(t => t.Value > 0) > 1;
                     var set = false;
-                    if (surrounded && mass < GravityCellularAutomataGame.MaxMass)
+                    var hungry = MooseGame.Instance.Random.NextDouble() < .25f;
+                    if (hungry && surrounded && mass < GravityCellularAutomataGame.MaxMass)
                     {
-                        var smallestGroup = AdjacentTiles.Where(x => x.Value > 0 && x.Value <= mass).GroupBy(x => x.Value).OrderBy(x => x.Key).FirstOrDefault();
+                        var smallestGroup = AdjacentTiles.Where((x, i) => i != 4 && x.Value > 0 && x.Value <= mass)
+                                                            .GroupBy(x => x.Value).OrderBy(x => x.Key).FirstOrDefault();
                         var eaten = smallestGroup?.Shuffle().First();
                         if (eaten != null)
                         {
@@ -212,8 +215,8 @@ public class GravityMap : BaseMap
                                 {
                                     //var diff = GravityCellularAutomataGame.MaxMass - mass;
                                     //BackBoard[x, y] = GravityCellularAutomataGame.MaxMass;
-                                    //BackBoard[x + xOffset, y + yOffset] = eatenMass - diff;
-                                    //MassLayer[x + xOffset, y + yOffset] = eatenMass - diff;
+                                    //BackBoard[newX, newY] = eatenMass - diff;
+                                    //MassLayer[newX, newY] = eatenMass - diff;
                                     //set = true;
                                 }
                             }

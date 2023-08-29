@@ -8,5 +8,5 @@ public enum Topology
     Torus = 3,
     Sphere = 4,
     Klein = 5,
-    Proj = 6
+    ProjectivePlane = 6
 };
