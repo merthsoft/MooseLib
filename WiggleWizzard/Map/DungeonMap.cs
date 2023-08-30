@@ -467,7 +467,7 @@ public class DungeonMap : BaseMap
                 SetDungeonTile(x, y, tile);
     }
 
-    protected override int IsBlockedAt(string layer, int x, int y)
+    public override int IsBlockedAt(string layer, int x, int y)
     {
         switch (layer)
         {

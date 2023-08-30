@@ -1,4 +1,4 @@
-﻿using Roy_T.AStar.Grids;
+﻿using Merthsoft.Moose.MooseEngine.GameObjects;
 
 namespace Merthsoft.Moose.MooseEngine.Interface;
 public interface IMap
@@ -19,12 +19,13 @@ public interface IMap
     IList<int> GetBlockingVector(Vector2 worldPosition)
         => GetBlockingVector((int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight));
 
-    Grid BuildCollisionGrid(params Point[] walkableOverrides);
-    IEnumerable<Point> FindCellPath(Point startCell, Point endCell, Grid? grid = null);
+    Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid BuildCollisionGrid(params Point[] walkableOverrides);
+    IEnumerable<Point> FindCellPath(Point startCell, Point endCell, Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid? grid = null);
 
     public bool CellIsInBounds(Point cell);
     public bool CellIsInBounds(int cellX, int cellY);
 
     TLayer GetLayer<TLayer>(int layerNumber) where TLayer : ILayer;
     TLayer GetLayer<TLayer>(string layerName) where TLayer : ILayer;
+    void MoveObject(GameObjectBase gameObject, Vector2 toLocation) { }
 }

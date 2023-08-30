@@ -305,7 +305,7 @@ public class SnowballFightGame : MooseGame
 
             if (state == Unit.States.Walk)
             {
-                var startCell = SelectedUnit.GetCell();
+                var startCell = SelectedUnit.Cell;
                 var endCell = new Point(startCell.X + Random.Next(-3, 4), startCell.Y + Random.Next(-3, 4));
                 var path = MainMap.FindCellPath(startCell, endCell);
                 if (path.Any())
@@ -385,7 +385,7 @@ public class SnowballFightGame : MooseGame
             }
             else if (TargettedUnit == null)
             {
-                var unitCell = SelectedUnit.GetCell();
+                var unitCell = SelectedUnit.Cell;
                 var mouseCell = MainCamera.ScreenToWorld(
                             CurrentMouseState.Position.X / TileWidth * TileWidth,
                             CurrentMouseState.Position.Y / TileHeight * TileHeight);
@@ -424,7 +424,7 @@ public class SnowballFightGame : MooseGame
         StatsWindow.AddLabel(112, yOffset + 2 + smallFontHeight * 1, $"HP: {unit.DisplayHealth}/{unit.DisplayMaxHealth}", 1);
         StatsWindow.AddLabel(112, yOffset + 2 + smallFontHeight * 2, $"Accuracy: {unit.DisplayAccuracy}", 1);
 
-        var unitCell = unit.GetCell();
+        var unitCell = unit.Cell;
         var cachedGrid = MainMap.BuildCollisionGrid(unitCell);
         for (var x = 0; x < MapWidth; x++)
             for (var y = 0; y < MapHeight; y++)
@@ -471,8 +471,8 @@ public class SnowballFightGame : MooseGame
         if (TargettedUnit == null || SelectedUnit == null)
             return;
 
-        var selectedUnitCell = SelectedUnit.GetCell();
-        var targettedUnitCell = TargettedUnit.GetCell();
+        var selectedUnitCell = SelectedUnit.Cell;
+        var targettedUnitCell = TargettedUnit.Cell;
 
         var startWorldPosition = SelectedUnit.Position + HalfTileSize;
         var endWorldPosition = TargettedUnit.Position + HalfTileSize;
@@ -517,7 +517,7 @@ public class SnowballFightGame : MooseGame
                             CurrentMouseState.Position.Y / TileHeight * TileHeight);
         mouseCell /= TileSize;
 
-        var unitCell = SelectedUnit.GetCell();
+        var unitCell = SelectedUnit.Cell;
         var mousePath = MainMap.FindCellPath(unitCell, mouseCell.ToPoint());
         var mousePathCount = mousePath.Count();
         if (mousePathCount > 0 && mousePathCount <= SelectedUnit.DisplaySpeed)

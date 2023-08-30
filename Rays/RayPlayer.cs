@@ -66,7 +66,7 @@ public class RayPlayer : RayGameObject
         {
             var checkCell3 = PositionIn3dSpace + 16 * FacingDirection;
             var checkCell = new Point((int)(checkCell3.X / 16), (int)(checkCell3.Y / 16));
-            var actor = rayGame.ReadObjects.FirstOrDefault(a => a.GetCell() == checkCell);
+            var actor = rayGame.ReadObjects.FirstOrDefault(a => a.Cell == checkCell);
             (actor as Actor)?.Interact();
             return;
         }

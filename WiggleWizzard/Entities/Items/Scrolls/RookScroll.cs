@@ -8,7 +8,7 @@ public class RookScroll : Scroll
 
     protected override IEnumerable<Point> AllowedCells()
     {
-        var (playerX, playerY) = player.GetCell();
+        var (playerX, playerY) = player.Cell;
         var deltaX = -1;
         while (!game.GetDungeonTile(playerX + deltaX, playerY).BlocksSight())
         {

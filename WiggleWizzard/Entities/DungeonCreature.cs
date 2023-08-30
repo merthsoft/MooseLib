@@ -79,7 +79,7 @@ public abstract class DungeonCreature : DungeonObject
                     : SightMap[x, y];
 
         var visibleMonsters = new List<(float distance, DungeonCreature creature)>();
-        var cell = GetCell();
+        var cell = Cell;
         var (creatureX, creatureY) = cell;
         SetTileVisible(creatureX, creatureY);
 
@@ -185,7 +185,7 @@ public abstract class DungeonCreature : DungeonObject
                     });
             }
             
-            var playerCell = game.Player.GetCell();
+            var playerCell = game.Player.Cell;
             if (playerCell == newcell.ToPoint())
                 player.TakeDamage(1);
 

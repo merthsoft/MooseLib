@@ -84,7 +84,7 @@ public class DungeonPlayer : DungeonCreature
         StartCursorTween();
         Blinking = true;
         BlinkCells.Clear();
-        var myCell = GetCell();
+        var myCell = Cell;
         foreach (var cell in blinkCells.ToHashSet())
         {
             var (x, y) = cell;
@@ -208,8 +208,8 @@ public class DungeonPlayer : DungeonCreature
             if (CanMove && CanSee(x, y) != FogOfWar.Full)
             {
                 spriteBatch.FillRect(mouse, 16, 16, Color.Cyan with { A = 100 });
-                var grid = ParentMap.BuildCollisionGrid(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
-                var path = ParentMap.FindCellPath(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16), grid);
+                var grid = ParentMap.BuildCollisionGrid(Cell, new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
+                var path = ParentMap.FindCellPath(Cell, new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16), grid);
                 foreach (var p in path)
                     spriteBatch.FillRectangle(p.X * 16, p.Y * 16, 16, 16, Color.Orange.HalveAlphaChannel());
             }
@@ -387,11 +387,11 @@ public class DungeonPlayer : DungeonCreature
                     Target(monster);
                 else
                 {
-                    var grid = ParentMap.BuildCollisionGrid(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
-                    var path = ParentMap.FindCellPath(GetCell(), new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16), grid);
+                    var grid = ParentMap.BuildCollisionGrid(Cell, new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16));
+                    var path = ParentMap.FindCellPath(Cell, new((int)game.WorldMouse.X / 16, (int)game.WorldMouse.Y / 16), grid);
                     if (path.Any())
                     {
-                        var lastCell = GetCell();
+                        var lastCell = Cell;
                         Direction = null!;
                         foreach (var p in path)
                         {
@@ -596,7 +596,7 @@ public class DungeonPlayer : DungeonCreature
     {
         if (!UseVisionCircle)
             return game.GetMiniMapTile(i, j);
-        var (x, y) = GetCell();
+        var (x, y) = Cell;
         if (x == i && y == j)
             return MiniMapTile.Player;
 

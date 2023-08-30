@@ -8,7 +8,7 @@ public class SpiralScroll : Scroll
 
     protected override IEnumerable<Point> AllowedCells()
     {
-        var spiralEnumerator = player.GetCell().SpiralAround().GetEnumerator();
+        var spiralEnumerator = player.Cell.SpiralAround().GetEnumerator();
         for (var i = 0; i < 200; i++)
             yield return spiralEnumerator.MoveNextGetCurrent();
     }

@@ -12,10 +12,24 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public string Layer { get; set; }
 
-    int tileWidth;
-    int tileHeight;
+    int tileWidth = 1;
+    int tileHeight = 1;
 
-    public Vector2 Position { get; set; }
+    private Vector2 position;
+    public Vector2 Position {
+        get => position;
+        set {
+            position = value;
+
+            CellCache.X = (int)Position.X / tileWidth;
+            CellCache.Y = (int)Position.Y / tileHeight;
+        }
+    }
+
+    private Point CellCache;
+
+    public Point Cell => CellCache;
+
     public Vector2 WorldSize { get; set; }
     public float Rotation { get; set; }
     public SpriteEffects Effects { get; set; }
@@ -127,6 +141,9 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
     public virtual void OnAdd() {
         tileWidth = ParentMap.TileWidth;
         tileHeight = ParentMap.TileHeight;
+
+        CellCache.X = (int)Position.X / tileWidth;
+        CellCache.Y = (int)Position.Y / tileHeight;
     }
 
     public virtual void OnRemove() { }
@@ -165,11 +182,6 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public virtual bool AtWorldPosition(Vector2 worldPosition)
         => WorldRectangle.Contains(worldPosition);
-
-    public Point GetCell()
-        => new(
-            (int)Position.X / tileWidth,
-            (int)Position.Y / tileHeight);
 
     public bool InCell(int x, int y)
         => Position.X / tileWidth == x

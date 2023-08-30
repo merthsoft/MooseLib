@@ -340,11 +340,18 @@ public abstract class MooseGame : Game
         }
     }
 
+    public bool WasMouseMoved()
+        => CurrentMouseState.X != PreviousMouseState.X
+        || CurrentMouseState.Y != PreviousMouseState.Y;
+
     public int ScrollWheelDelta()
         => CurrentMouseState.ScrollWheelValue - PreviousMouseState.ScrollWheelValue;
 
     public bool WasLeftMouseJustPressed()
         => CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released;
+
+    public bool WasMiddleMouseJustPressed()
+        => CurrentMouseState.MiddleButton == ButtonState.Pressed && PreviousMouseState.MiddleButton == ButtonState.Released;
 
     public bool WasRightMouseJustPressed()
         => CurrentMouseState.RightButton == ButtonState.Pressed && PreviousMouseState.RightButton == ButtonState.Released;

@@ -52,7 +52,7 @@ public class ObjectLayer<TObject> : IObjectLayer where TObject : GameObjectBase
 
     public void ObjectUpdate(GameObjectBase obj)
     {
-        var cell = obj.GetCell();
+        var cell = obj.Cell;
         var (x, y) = cell;
         if (x >= 0 && x < Width && y >= 0 && y < Height)
             ObjectMap[x, y].Add((obj as TObject)!);

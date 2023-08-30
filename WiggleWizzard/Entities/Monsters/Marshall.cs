@@ -15,8 +15,8 @@ public class Marshall : DungeonMonster
 
         if (NextMove != "")
             ProcessMove(NextMove);
-        var myCell = GetCell();
-        var path = ParentMap.FindCellPath(myCell, game.Player.GetCell());
+        var myCell = Cell;
+        var path = ParentMap.FindCellPath(myCell, game.Player.Cell);
         if (!path.Any())
             return "";
         var cell = path.FirstOrDefault();

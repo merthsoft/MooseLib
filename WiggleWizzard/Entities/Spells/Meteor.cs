@@ -24,7 +24,7 @@ public class Meteor : Spell
 
     public override void Effect()
     {
-        var (x, y) = GetCell();
+        var (x, y) = Cell;
         var target = game.GetMonster(x, y);
         target?.TakeDamage(2);
     }

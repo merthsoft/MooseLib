@@ -84,7 +84,7 @@ public class TiledMooseMap : BaseMap
         BuildLayerCache();
     }
 
-    protected override int IsBlockedAt(string layer, int x, int y)
+    public override int IsBlockedAt(string layer, int x, int y)
         => layerMap[layer] switch
         {
             TiledMooseObjectLayer objectLayer => objectLayer.Objects.Any(o => o.InCell(layer, x, y)) ? 1 : 0,

@@ -10,7 +10,7 @@ public class BishopScroll : Scroll
 
     protected override IEnumerable<Point> AllowedCells()
     {
-        var (playerX, playerY) = player.GetCell();
+        var (playerX, playerY) = player.Cell;
         var deltaX = -1;
         var deltaY = -1;
         while (!game.GetDungeonTile(playerX + deltaX, playerY + deltaY).BlocksSight())

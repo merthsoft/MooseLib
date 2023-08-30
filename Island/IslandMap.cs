@@ -21,7 +21,7 @@ public class IslandMap : BaseMap
         RandomizeMap();
     }
 
-    protected override int IsBlockedAt(string layer, int x, int y) => 0;
+    public override int IsBlockedAt(string layer, int x, int y) => 0;
 
     public void RandomizeMap()
     {

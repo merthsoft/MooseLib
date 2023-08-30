@@ -34,7 +34,7 @@ public class Fireball : Spell
 
     public override void Effect()
     {
-        var (x, y) = GetCell();
+        var (x, y) = Cell;
         var target = game.GetMonster(x, y);
         target?.TakeDamage(3);
     }
@@ -51,7 +51,7 @@ public class Fireball : Spell
             FlightPath.MoveNext();
 
             Position = FlightPath.Current;
-            var (x, y) = GetCell();
+            var (x, y) = Cell;
             if (game.GetDungeonTile(x, y).IsBlocking()
                 || game.GetMonsterTile(x, y) != MonsterTile.None)
             {

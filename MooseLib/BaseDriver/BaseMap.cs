@@ -1,9 +1,9 @@
-﻿using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.GameObjects;
+using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.PathFinding.Grids;
+using Merthsoft.Moose.MooseEngine.PathFinding.Paths;
+using Merthsoft.Moose.MooseEngine.PathFinding.Paths.AStar;
 using Merthsoft.Moose.MooseEngine.Topologies;
-using Roy_T.AStar.Grids;
-using Roy_T.AStar.Paths;
-using Roy_T.AStar.Primitives;
-using Size = Roy_T.AStar.Primitives.Size;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
@@ -21,8 +21,11 @@ public abstract class BaseMap : IMap
     protected Dictionary<string, ILayer> layerMap = new();
     public virtual IReadOnlyDictionary<string, ILayer> LayerMap => layerMap.AsReadOnly();
 
-
     protected List<int>[,] blockingMap = null!;
+    protected Grid blockingGrid = null!;
+    public Grid BlockingGrid => blockingGrid;
+
+    private IPathFinder PathFinder = new AStarPathFinder();
 
     public TLayer AddLayer<TLayer>(TLayer layer) where TLayer : ILayer
     {
@@ -75,7 +78,10 @@ public abstract class BaseMap : IMap
 
     protected virtual void BuildFullBlockingMap()
     {
-        blockingMap ??= new List<int>[Width, Height];
+        if (blockingMap == null)
+            blockingMap = new List<int>[Width, Height];
+        if (blockingGrid == null)
+            blockingGrid = BaseGrid();
 
         for (var x = 0; x < Width; x++)
             for (var y = 0; y < Height; y++)
@@ -83,11 +89,42 @@ public abstract class BaseMap : IMap
                 blockingMap[x, y] ??= new();
                 blockingMap[x, y].Clear();
                 foreach (var layer in layers)
-                    blockingMap[x, y].Add(IsBlockedAt(layer.Name, x, y));
+                {
+                    var blocked = IsBlockedAt(layer.Name, x, y);
+                    blockingMap[x, y].Add(blocked);
+                    if (blocked > 0)
+                        blockingGrid.DisconnectIncoming(x, y);
+                    else
+                        blockingGrid.ConnectIncomingLaterally(x, y, DefaultVelocity);
+                }
             }
     }
 
-    protected abstract int IsBlockedAt(string layer, int x, int y);
+    public void MoveObject(GameObjectBase gameObject, Vector2 toPosition)
+    {
+        var layer = gameObject.Layer;
+        var layerIndex = layers.IndexOf(l => l.Name == layer);
+        var (x, y) = gameObject.Cell;
+        gameObject.Position = toPosition;
+        FixGrid(x, y);
+
+        (x, y) = gameObject.Cell;
+        FixGrid(x, y);
+
+        void FixGrid(int x, int y)
+        {
+            return;
+            var blockedAt = IsBlockedAt(layer, x, y);
+            blockingMap[x, y][layerIndex] = blockedAt;
+
+            if (blockedAt > 0)
+                blockingGrid.DisconnectNode(x, y);
+            else
+                blockingGrid.ConnectIncomingLaterally(x, y, DefaultVelocity);
+        }
+    }
+
+    public abstract int IsBlockedAt(string layer, int x, int y);
 
     public virtual IList<int> GetBlockingVector(int x, int y)
     {
@@ -95,21 +132,25 @@ public abstract class BaseMap : IMap
         return x < 0 || x >= Width || y < 0 || y >= Height ? new() { } : blockingMap[x, y];
     }
 
-    protected virtual Grid BaseGrid
-        => Grid.CreateGridWithLateralConnections(
-            new GridSize(Width, Height),
-            new Size(Distance.FromMeters(1), Distance.FromMeters(1)),
-            Velocity.FromMetersPerSecond(1));
+    protected Merthsoft.Moose.MooseEngine.PathFinding.Primitives.Velocity DefaultVelocity
+        => Merthsoft.Moose.MooseEngine.PathFinding.Primitives.Velocity.FromMetersPerSecond(1);
 
-    public Grid BuildCollisionGrid(params Point[] walkableOverrides)
-        => BaseGrid.DisconnectWhere((x, y) => blockingMap[x, y].Any(t => t > 0) && !walkableOverrides.Contains(new(x, y)));
+    protected Merthsoft.Moose.MooseEngine.PathFinding.Primitives.Distance DefaultDistance
+        => Merthsoft.Moose.MooseEngine.PathFinding.Primitives.Distance.FromMeters(1);
 
-    public virtual IEnumerable<Point> FindCellPath(Point startCell, Point endCell, Grid? grid = null)
+    protected virtual Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid BaseGrid()
+        => Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid.CreateGridWithLateralConnections(
+            new Merthsoft.Moose.MooseEngine.PathFinding.Primitives.GridSize(Width, Height),
+            new Merthsoft.Moose.MooseEngine.PathFinding.Primitives.Size(DefaultDistance, DefaultDistance),
+            DefaultVelocity);
+
+    public Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid BuildCollisionGrid(params Point[] walkableOverrides)
+        => BaseGrid().DisconnectIncomingWhere((x, y) => blockingMap[x, y].Any(t => t > 0) && !walkableOverrides.Contains(new(x, y)));
+
+    public virtual IEnumerable<Point> FindCellPath(Point startCell, Point endCell, Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid? grid = null)
     {
         if (!CellIsInBounds(startCell) || !CellIsInBounds(endCell))
             return Enumerable.Empty<Point>();
-
-        grid ??= BuildCollisionGrid(startCell);
 
         var startX = startCell.X;
         var startY = startCell.Y;
@@ -118,14 +159,24 @@ public abstract class BaseMap : IMap
 
         try
         {
-            var path = new PathFinder()
-                .FindPath(new GridPosition(startX, startY), new GridPosition(endX, endY), grid);
+            var g = grid ?? blockingGrid;
+            //if (grid == null)
+            //    g.ConnectOutgoing(startX, endX, DefaultVelocity);
 
-            if (path.Type != PathType.Complete)
+            var path = PathFinder.FindPath(startX, startY, endX, endY, g);
+
+            //var blocked = blockingMap[startX, startY].Any(x => x > 0);
+            //if (blocked)
+            //    blockingGrid.DisconnectNode(startX, startY);
+
+            //if (path.Type != PathType.Complete)
+            //    return Enumerable.Empty<Point>();
+
+            if (path.Edges.Count == 0)
                 return Enumerable.Empty<Point>();
 
             return path.Edges
-                .Select(e => new Point((int)e.End.Position.X, (int)e.End.Position.Y))
+                .Select(e => e.End.PointPosition)
                 .Distinct();
         }
         catch

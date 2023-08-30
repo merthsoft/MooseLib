@@ -56,7 +56,7 @@ internal class Unit : AnimatedGameObject
             else
             {
                 var nextCell = MoveQueue.Dequeue();
-                var cell = GetCell();
+                var cell = Cell;
                 MoveDirection = new(nextCell.X - cell.X, nextCell.Y - cell.Y);
                 NextLocation = nextCell.ToVector2() * ParentMap!.TileSize;
             }

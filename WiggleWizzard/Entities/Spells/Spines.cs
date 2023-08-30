@@ -37,7 +37,7 @@ public class Spines : Spell
 
     public override void Effect()
     {
-        var (x, y) = GetCell();
+        var (x, y) = Cell;
         var target = game.GetMonster(x, y);
         if (target != null && !HitObjects.Contains(target))
         {
@@ -58,7 +58,7 @@ public class Spines : Spell
             FlightPath.MoveNext();
 
             Position = FlightPath.Current;
-            var (x, y) = GetCell();
+            var (x, y) = Cell;
             var monster = game.GetMonster(x, y);
             if (game.GetDungeonTile(x, y).IsBlocking())
             {

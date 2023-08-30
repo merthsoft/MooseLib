@@ -29,7 +29,7 @@ public class RayMap : BaseMap
                 WallLayer.SetTileValue(x, y, wallMap[y][x]);
     }
 
-    protected override int IsBlockedAt(string layer, int x, int y)
+    public override int IsBlockedAt(string layer, int x, int y)
         => layer switch
         {
             "walls" => WallLayer.GetTileValue(x, y),

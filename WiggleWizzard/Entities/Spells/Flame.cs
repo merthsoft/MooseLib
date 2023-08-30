@@ -26,7 +26,7 @@ public class Flame : Spell
             State = Dead; 
         else if (!hasHit)
         {
-            var (x, y) = GetCell();
+            var (x, y) = Cell;
             var monster = game.GetMonster(x, y);
             if (monster != null)
                 State = Hit;
@@ -43,7 +43,7 @@ public class Flame : Spell
 
     public override void Effect()
     {
-        var (x, y) = GetCell();
+        var (x, y) = Cell;
         var target = game.GetMonster(x, y);
         target?.TakeDamage(2);
     }

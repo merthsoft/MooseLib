@@ -16,7 +16,7 @@ public class TownMap : BaseMap
         BaseLayer = AddLayer(new TileLayer<int>("base", Width, Height, -1, 0) { RendererKey = "base" });
     }
 
-    protected override int IsBlockedAt(string layer, int x, int y)
+    public override int IsBlockedAt(string layer, int x, int y)
         => 0;
 
     public void RandomizeMap()

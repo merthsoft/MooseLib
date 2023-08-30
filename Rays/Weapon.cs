@@ -20,7 +20,7 @@ public class Weapon : RayGameObject
     {
         var checkCell3 = o.PositionIn3dSpace + 16 * o.FacingDirection;
         var checkCell = new Point((int)(checkCell3.X / 16), (int)(checkCell3.Y / 16));
-        var actor = RayGame.Instance.ReadObjects.OfType<Actor>().FirstOrDefault(a => a.Shootable && a.GetCell() == checkCell);
+        var actor = RayGame.Instance.ReadObjects.OfType<Actor>().FirstOrDefault(a => a.Shootable && a.Cell == checkCell);
         actor?.TakeDamage(1);
     }
 

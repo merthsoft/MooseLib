@@ -31,7 +31,7 @@ public class Snowball : AnimatedGameObject
     public override void OnAdd()
     {
         base.OnAdd();
-        StartCell = GetCell();
+        StartCell = Cell;
     }
 
     public override void Update(MooseGame _game, GameTime gameTime)
@@ -56,6 +56,6 @@ public class Snowball : AnimatedGameObject
     }
 
     private bool IsBlocked()
-        => !ParentMap.CellIsInBounds(GetCell())
-        || (GetCell() != StartCell && ParentMap.GetBlockingVector(Position).Skip(2).Take(3).Any(b => b != 0));
+        => !ParentMap.CellIsInBounds(Cell)
+        || (Cell != StartCell && ParentMap.GetBlockingVector(Position).Skip(2).Take(3).Any(b => b != 0));
 }

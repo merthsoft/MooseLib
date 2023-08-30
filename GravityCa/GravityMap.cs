@@ -46,7 +46,7 @@ public class GravityMap : BaseMap
                 AdjacentTiles[index++] = new() { XOffset = x, YOffset = y };
     }
 
-    protected override int IsBlockedAt(string layer, int x, int y) 
+    public override int IsBlockedAt(string layer, int x, int y) 
         => 0;
 
     public void SetMass(int x, int y, UInt128 mass)

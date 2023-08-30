@@ -237,9 +237,9 @@ public class WiggleWizzardGame : MooseGame
     public MiniMapTile GetMiniMapTile(int x, int y)
     {
         var mapCell = new Point(x, y);
-        var (playerX, playerY) = Player.GetCell();
+        var (playerX, playerY) = Player.Cell;
 
-        var obj = ReadObjects.OfType<DungeonObject>().FirstOrDefault(o => o.GetCell() == mapCell);
+        var obj = ReadObjects.OfType<DungeonObject>().FirstOrDefault(o => o.Cell == mapCell);
         if (obj != null)
             return obj.MiniMapTile;
 
@@ -263,7 +263,7 @@ public class WiggleWizzardGame : MooseGame
 
     public bool IsCellOccupied(int x, int y)
         => DungeonMap.IsCellOccupied(x, y) 
-        || Player.GetCell() == new Point(x, y);
+        || Player.Cell == new Point(x, y);
 
     public bool IsCellBlocked(int x, int y)
         => DungeonMap.IsBlockedAt(x, y);
@@ -391,7 +391,7 @@ public class WiggleWizzardGame : MooseGame
 
         FallingTexts.RemoveAll(text => text.Done || text.Age++ > 1500);
 
-        var (playerX, playerY) = Player.GetCell();
+        var (playerX, playerY) = Player.Cell;
         if (Player.CanTakeDamage && !GeneratingDungeon && GetDungeonTile(playerX, playerY) == DungeonTile.StairsDown)
         {
             GeneratingDungeon = true;

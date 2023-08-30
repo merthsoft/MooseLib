@@ -27,7 +27,7 @@ public class Lightning : Spell
 
     public override void Effect()
     {
-        var (x, y) = GetCell();
+        var (x, y) = Cell;
         var target = game.GetMonster(x, y);
         target?.TakeDamage(Damage);
     }

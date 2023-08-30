@@ -75,7 +75,7 @@ public class Chest : InteractiveItem
 
     public void SpawnItems()
     {
-        var spiralEnumerator = GetCell().SpiralAround().GetEnumerator();
+        var spiralEnumerator = Cell.SpiralAround().GetEnumerator();
         foreach (var item in Contents)
         {
             Point cell;
