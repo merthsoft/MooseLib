@@ -110,11 +110,20 @@ public abstract class DungeonCreature : DungeonObject
         VisibleMonsters.AddRange(visibleMonsters.OrderBy(v => v.Item1).Select(v => v.Item2));
     }
 
+
+    private Point _seePoint;
     public FogOfWar CanSee(int i, int j)
-        => !ParentMap.CellIsInBounds(i, j)
+    {
+        _seePoint.X = i;
+        _seePoint.Y = j;
+        return CanSee(_seePoint);
+    }
+
+    public FogOfWar CanSee(Point p)
+        => !ParentMap.CellIsInBounds(p)
             ? FogOfWar.Full
             : UseVisionCircle
-                ? SightMap[i, j]
+                ? SightMap[p.X, p.Y]
                 : FogOfWar.None;
 
     public FogOfWar CanSee(Vector2 worldPosition)

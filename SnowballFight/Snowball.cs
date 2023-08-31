@@ -1,5 +1,6 @@
-﻿using Merthsoft.Moose.MooseEngine.Defs;
-using Merthsoft.Moose.MooseEngine.GameObjects;
+﻿using Merthsoft.Moose.MooseEngine.GameObjects;
+using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.Tiled;
 
 namespace Merthsoft.Moose.SnowballFight;
 
@@ -17,6 +18,8 @@ public class Snowball : AnimatedGameObject
     private IEnumerator<Vector2> FlightPath { get; }
     private Point StartCell { get; set; }
 
+    public new TiledMooseMap ParentMap { get; private set; }
+
     public Snowball(IEnumerable<Vector2> flightPath)
         : base(SnowballFightGame.SnowballDef, flightPath.First(), SnowballFightGame.SnowballLayer, state: States.Fly)
     {
@@ -32,6 +35,7 @@ public class Snowball : AnimatedGameObject
     {
         base.OnAdd();
         StartCell = Cell;
+        ParentMap = (base.ParentMap as TiledMooseMap)!;
     }
 
     public override void Update(MooseGame _game, GameTime gameTime)

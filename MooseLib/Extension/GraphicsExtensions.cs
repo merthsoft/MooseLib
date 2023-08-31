@@ -51,6 +51,12 @@ public static class GraphicsExtensions
         return new(sourceX, sourceY, tileWidth, tileHeight);
     }
 
+    public static SpriteBatch DrawString(this SpriteBatch sb, SpriteFont font, string text, float x, float y, Color color)
+    {
+        sb.DrawString(font, text, new Vector2(x, y), color);
+        return sb;
+    }
+
     public static SpriteBatch DrawStringShadow(this SpriteBatch sb, SpriteFont font, string text, Vector2 position, Color foreColor, Color? shadowColor = null, Vector2? shadowOffset = null)
     {
         sb.DrawString(font, text, position, shadowColor ?? Color.Black);

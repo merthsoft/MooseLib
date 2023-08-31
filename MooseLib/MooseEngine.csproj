@@ -50,9 +50,6 @@
 		<PackageReference Include="MonoGame.Extended.Graphics" Version="3.9.0-alpha0051" />
 		<PackageReference Include="MonoGame.Extended.Tweening" Version="3.9.0-alpha0051" />
 	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\MooseEngine.AStar\MooseEngine.PathFinding.csproj" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Using Include="Microsoft.Xna.Framework" />

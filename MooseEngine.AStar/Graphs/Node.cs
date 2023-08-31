@@ -1,28 +1,21 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.PathFinding.Graphs;
 
-public sealed class Node : INode
+public class Node
 {
-    private Dictionary<INode, (Edge i, Edge o)> EdgeDictionary = new();
+    private readonly Dictionary<Node, Edge> OutgoingEdges = new();
+    private readonly Dictionary<Node, Edge> IncomingEdges = new();
 
     public Node(Vector2 position)
-    {
-        Incoming = new List<IEdge>(0);
-        Outgoing = new List<IEdge>(0);
-
-        this.Position = position;
-    }
+        => Position = position;
 
     public Node(float x, float y)
-    {
-        Incoming = new List<IEdge>(0);
-        Outgoing = new List<IEdge>(0);
+        => Position = new(x, y);
 
-        Position = new(x, y);
-    }
+    public IList<Edge> Incoming => IncomingEdges.Select(x => x.Value).Where(x => x.IsConnected).ToList();
+    public IList<Edge> AllIncoming => IncomingEdges.Select(x => x.Value).ToList();
 
-    public IList<IEdge> Incoming { get; }
-
-    public IList<IEdge> Outgoing { get; }
+    public IList<Edge> Outgoing => OutgoingEdges.Select(x => x.Value).Where(x => x.IsConnected).ToList();
+    public IList<Edge> AllOutgoing => OutgoingEdges.Select(x => x.Value).ToList();
 
     private Vector2 position;
     public Vector2 Position
@@ -37,37 +30,38 @@ public sealed class Node : INode
 
     public Point PointPosition { get; private set; }
 
-    public (Edge i, Edge o) GetEdgeTuple(INode n)
-        => EdgeDictionary[n];
+    public void AddOutgoingEdge(Edge edge)
+        => OutgoingEdges[edge.End] = edge;
 
-    public void ConnectIncoming(INode node, Velocity traversalVelocity)
+    public void AddIncomingEdge(Edge edge)
+        => IncomingEdges[edge.Start] = edge;
+
+    public bool IsIncomingConnected(Node node)
+        => IncomingEdges.TryGetValue(node, out var edge) ? edge.IsConnected : false;
+
+    public bool IsOutgoingConnected(Node node)
+        => OutgoingEdges.TryGetValue(node, out var edge) ? edge.IsConnected : false;
+
+    public void ConnectIncoming(Node node, Velocity traversalVelocity)
     {
-        if (!EdgeDictionary.TryGetValue(node, out var edge))
+        if (!IncomingEdges.TryGetValue(node, out var edge))
         {
-            edge = (new Edge(this, node, traversalVelocity) { IsIncoming  = true }, new Edge(this, node, traversalVelocity));
-            EdgeDictionary[node] = edge;
+            edge = new Edge(node, this, traversalVelocity);
+            node.AddOutgoingEdge(edge);
+            IncomingEdges[node] = edge;
         }
-
-        if (!edge.i.IsConnected)
-        {
-            Incoming.Add(edge.i);
-            edge.i.IsConnected = true;
-        }
+        edge.IsConnected = true;
     }
 
-    public void ConnectOutgoing(INode node, Velocity traversalVelocity)
+    public void ConnectOutgoing(Node node, Velocity traversalVelocity)
     {
-        if (!EdgeDictionary.TryGetValue(node, out var edge))
+        if (!OutgoingEdges.TryGetValue(node, out var edge))
         {
-            edge = (new Edge(this, node, traversalVelocity) { IsIncoming = true }, new Edge(this, node, traversalVelocity));
-            EdgeDictionary[node] = edge;
+            edge = new Edge(this, node, traversalVelocity);
+            node.AddIncomingEdge(edge);
+            OutgoingEdges[node] = edge;
         }
-
-        if (!edge.o.IsConnected)
-        {
-            Outgoing.Add(edge.o);
-            edge.o.IsConnected = true;
-        }
+        edge.IsConnected = true;
     }
 
     public void DisconnectAll()
@@ -77,7 +71,6 @@ public sealed class Node : INode
             edge.End.Disconnect(this);
             edge.IsConnected = false;
         }
-        Outgoing.Clear();
     }
 
     public void DisconnectOutgoing()
@@ -86,7 +79,6 @@ public sealed class Node : INode
         {
             edge.IsConnected = false;
         }
-        Outgoing.Clear();
     }
 
     public void DisconnectIncoming()
@@ -95,10 +87,9 @@ public sealed class Node : INode
         {
             edge.IsConnected = false;
         }
-        Incoming.Clear();
     }
 
-    public void Disconnect(INode node)
+    public void Disconnect(Node node)
     {
         for (var i = Outgoing.Count - 1; i >= 0; i--)
         {
@@ -114,4 +105,7 @@ public sealed class Node : INode
     }
 
     public override string ToString() => Position.ToString();
+    
+    public Edge GetOutgoingEdge(Node node) 
+        => OutgoingEdges[node];
 }

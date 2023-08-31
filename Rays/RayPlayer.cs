@@ -1,4 +1,5 @@
-﻿using Merthsoft.Moose.Rays.Actors;
+﻿using Merthsoft.Moose.MooseEngine.PathFinding.Maps;
+using Merthsoft.Moose.Rays.Actors;
 
 namespace Merthsoft.Moose.Rays;
 
@@ -108,7 +109,7 @@ public class RayPlayer : RayGameObject
             var moveX = 16 * moveVector.X.Round();
             var moveY = 16 * moveVector.Y.Round();
             
-            if (rayGame.MainMap.GetBlockingVector(new(Position.X + moveX, Position.Y + moveY)).All(i => i <= 0))
+            if ((rayGame.MainMap as PathFinderMap)!.GetBlockingVector(new(Position.X + moveX, Position.Y + moveY)).All(i => i <= 0))
                 Position = new(Position.X + moveX, Position.Y + moveY);
 
             Position.Round();

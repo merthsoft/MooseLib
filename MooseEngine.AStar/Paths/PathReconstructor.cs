@@ -2,17 +2,17 @@
 
 internal sealed class PathReconstructor
 {
-    private readonly Dictionary<INode, IEdge> CameFrom;
+    private readonly Dictionary<Node, Edge> CameFrom;
 
-    public PathReconstructor() => CameFrom = new Dictionary<INode, IEdge>();
+    public PathReconstructor() => CameFrom = new Dictionary<Node, Edge>();
 
-    public void SetCameFrom(INode node, IEdge via)
+    public void SetCameFrom(Node node, Edge via)
         => CameFrom[node] = via;
 
-    public Path ConstructPathTo(INode node, INode goal)
+    public Path ConstructPathTo(Node node, Node goal)
     {
         var current = node;
-        var edges = new List<IEdge>();
+        var edges = new List<Edge>();
 
         while (CameFrom.TryGetValue(current, out var via))
         {

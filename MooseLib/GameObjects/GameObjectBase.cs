@@ -103,7 +103,7 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public string Direction { get; set; } = "";
 
-    public IMap ParentMap { get; set; } = null!;
+    public IMap ParentMap { get; private set; } = null!;
 
     public List<Tween> ActiveTweens { get; } = new();
 
@@ -120,6 +120,9 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
         Direction = direction;
     }
+
+    public virtual void SetMap(IMap map)
+        => ParentMap = map;
 
     public virtual void PreUpdate(MooseGame mooseGame, GameTime gameTime)
     {

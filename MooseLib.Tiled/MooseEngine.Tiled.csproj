@@ -35,6 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\MooseEngine.AStar\MooseEngine.PathFinding.csproj" />
 		<ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
 	</ItemGroup>
 

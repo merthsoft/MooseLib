@@ -1,10 +1,10 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.PathFinding.Graphs;
 
-public sealed class Edge : IEdge
+public class Edge
 {
     private Velocity traversalVelocity;
 
-    public Edge(INode start, INode end, Velocity traversalVelocity)
+    public Edge(Node start, Node end, Velocity traversalVelocity)
     {
         Start = start;
         End = end;
@@ -27,12 +27,11 @@ public sealed class Edge : IEdge
 
     public Distance Distance { get; }
 
-    public INode Start { get; }
+    public Node Start { get; }
 
-    public INode End { get; }
+    public Node End { get; }
 
     public bool IsConnected { get; set; } = false;
-    public bool IsIncoming { get; set; } = false;
 
     public override string ToString() => $"{Start} {(IsConnected ? "->" : "-/>")} {End} @ {TraversalVelocity}";
 }

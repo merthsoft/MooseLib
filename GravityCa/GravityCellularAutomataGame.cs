@@ -11,7 +11,7 @@ using System.Reflection;
 namespace GravityCa;
 public class GravityCellularAutomataGame : MooseGame
 {
-    public const int MapSize = 600;
+    public const int MapSize = 100;
     public const int DrawSize = 2;
 
     public static UInt128 MaxGravity = UInt128.MaxValue >> 1;

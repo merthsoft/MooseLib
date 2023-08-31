@@ -2,7 +2,7 @@
 
 public sealed class Path
 {
-    public Path(PathType type, IReadOnlyList<IEdge> edges)
+    public Path(PathType type, IReadOnlyList<Edge> edges)
     {
         Type = type;
         Edges = edges;
@@ -18,7 +18,7 @@ public sealed class Path
 
     public Duration Duration { get; }
 
-    public IReadOnlyList<IEdge> Edges { get; }
+    public IReadOnlyList<Edge> Edges { get; }
 
     public Distance Distance { get; }
 }

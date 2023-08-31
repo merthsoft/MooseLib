@@ -1,11 +1,11 @@
 ﻿
 using Merthsoft.Moose.MooseEngine.PathFinding.Collections;
 
-namespace Merthsoft.Moose.MooseEngine.PathFinding.Paths.AStar; 
+namespace Merthsoft.Moose.MooseEngine.PathFinding.Paths.AStar;
 public sealed class AStarPathFinder : IPathFinder
 {
     private readonly MinHeap<AStarPathFinderNode> Interesting;
-    private readonly Dictionary<INode, AStarPathFinderNode> Nodes;
+    private readonly Dictionary<Node, AStarPathFinderNode> Nodes;
     private readonly PathReconstructor PathReconstructor;
 
     private AStarPathFinderNode? NodeClosestToGoal;
@@ -15,13 +15,19 @@ public sealed class AStarPathFinder : IPathFinder
     public AStarPathFinder()
     {
         Interesting = new MinHeap<AStarPathFinderNode>();
-        Nodes = new Dictionary<INode, AStarPathFinderNode>();
+        Nodes = new Dictionary<Node, AStarPathFinderNode>();
         PathReconstructor = new PathReconstructor();
     }
 
-    public Path FindPath(INode start, INode goal, Velocity maximumVelocity)
+    public Path FindPath(int x1, int y1, int x2, int y2, Grid grid, Velocity? maxVel = null)
     {
         ResetState();
+
+        var start = grid.GetNode(x1, y1);
+        var goal = grid.GetNode(x2, y2);
+
+        var maximumVelocity = maxVel ?? grid.GetAllNodes().SelectMany(n => n.Outgoing).Select(e => e.TraversalVelocity).Max();
+
         AddFirstNode(start, goal, maximumVelocity);
 
         var depth = 0;
@@ -40,9 +46,6 @@ public sealed class AStarPathFinder : IPathFinder
                     continue;
 
                 var oppositeNode = edge.End;
-
-                if (!oppositeNode.GetEdgeTuple(edge.Start).i.IsConnected)
-                    continue;
 
                 var costSoFar = current.DurationSoFar + edge.TraversalDuration;
 
@@ -64,7 +67,7 @@ public sealed class AStarPathFinder : IPathFinder
         NodeClosestToGoal = null;
     }
 
-    private void AddFirstNode(INode start, INode goal, Velocity maximumVelocity)
+    private void AddFirstNode(Node start, Node goal, Velocity maximumVelocity)
     {
         var head = new AStarPathFinderNode(start, Duration.Zero, ExpectedDuration(start, goal, maximumVelocity));
         Interesting.Insert(head);
@@ -72,7 +75,7 @@ public sealed class AStarPathFinder : IPathFinder
         NodeClosestToGoal = head;
     }
 
-    private static bool GoalReached(INode goal, AStarPathFinderNode current) => current.Node == goal;
+    private static bool GoalReached(Node goal, AStarPathFinderNode current) => current.Node == goal;
 
     private void UpdateNodeClosestToGoal(AStarPathFinderNode current)
     {
@@ -80,7 +83,7 @@ public sealed class AStarPathFinder : IPathFinder
             NodeClosestToGoal = current;
     }
 
-    private void UpdateExistingNode(INode goal, Velocity maximumVelocity, AStarPathFinderNode current, IEdge edge, INode oppositeNode, Duration costSoFar, AStarPathFinderNode node)
+    private void UpdateExistingNode(Node goal, Velocity maximumVelocity, AStarPathFinderNode current, Edge edge, Node oppositeNode, Duration costSoFar, AStarPathFinderNode node)
     {
         if (node.DurationSoFar > costSoFar)
         {
@@ -89,7 +92,7 @@ public sealed class AStarPathFinder : IPathFinder
         }
     }
 
-    private void InsertNode(INode current, IEdge via, INode goal, Duration costSoFar, Velocity maximumVelocity)
+    private void InsertNode(Node current, Edge via, Node goal, Duration costSoFar, Velocity maximumVelocity)
     {
         PathReconstructor.SetCameFrom(current, via);
 
@@ -98,6 +101,6 @@ public sealed class AStarPathFinder : IPathFinder
         Nodes[current] = node;
     }
 
-    public static Duration ExpectedDuration(INode a, INode b, Velocity maximumVelocity)
+    public static Duration ExpectedDuration(Node a, Node b, Velocity maximumVelocity)
         => Distance.BeweenPositions(a.Position, b.Position) / maximumVelocity;
 }

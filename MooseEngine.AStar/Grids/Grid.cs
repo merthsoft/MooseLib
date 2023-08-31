@@ -4,33 +4,33 @@ public sealed class Grid
 {
     public readonly Node[,] Nodes;
 
-    public static Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid CreateGridWithLateralConnections(GridSize gridSize, Size cellSize, Velocity traversalVelocity)
+    public static Grid CreateGridWithLateralConnections(GridSize gridSize, Size cellSize, Velocity traversalVelocity)
     {
         CheckArguments(gridSize, cellSize, traversalVelocity);
 
-        var grid = new Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid(gridSize, cellSize);
+        var grid = new Grid(gridSize, cellSize);
 
         grid.CreateLateralConnections(traversalVelocity);
 
         return grid;
     }
 
-    public static Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid CreateGridWithDiagonalConnections(GridSize gridSize, Size cellSize, Velocity traversalVelocity)
+    public static Grid CreateGridWithDiagonalConnections(GridSize gridSize, Size cellSize, Velocity traversalVelocity)
     {
         CheckArguments(gridSize, cellSize, traversalVelocity);
 
-        var grid = new Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid(gridSize, cellSize);
+        var grid = new Grid(gridSize, cellSize);
 
         grid.CreateDiagonalConnections(traversalVelocity);
 
         return grid;
     }
 
-    public static Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid CreateGridWithLateralAndDiagonalConnections(GridSize gridSize, Size cellSize, Velocity traversalVelocity)
+    public static Grid CreateGridWithLateralAndDiagonalConnections(GridSize gridSize, Size cellSize, Velocity traversalVelocity)
     {
         CheckArguments(gridSize, cellSize, traversalVelocity);
 
-        var grid = new Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid(gridSize, cellSize);
+        var grid = new Grid(gridSize, cellSize);
 
         grid.CreateDiagonalConnections(traversalVelocity);
         grid.CreateLateralConnections(traversalVelocity);
@@ -38,7 +38,7 @@ public sealed class Grid
         return grid;
     }
 
-    public static Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid CreateGridFrom2DArrayOfNodes(Node[,] nodes) => new Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid(nodes);
+    public static Grid CreateGridFrom2DArrayOfNodes(Node[,] nodes) => new Grid(nodes);
 
     private static void CheckGridSize(GridSize gridSize)
     {
@@ -116,8 +116,6 @@ public sealed class Grid
     {
         node.ConnectIncoming(eastNode, defaultSpeed);
         node.ConnectOutgoing(eastNode, defaultSpeed);
-        eastNode.ConnectIncoming(node, defaultSpeed);
-        eastNode.ConnectOutgoing(node, defaultSpeed);
     }
 
     private void CreateDiagonalConnections(Velocity defaultSpeed)
@@ -147,12 +145,12 @@ public sealed class Grid
 
     public int Rows => GridSize.Rows;
 
-    public INode GetNode(Point  position) => Nodes[position.X, position.Y];
-    public INode GetNode(int x, int y) => Nodes[x, y];
+    public Node GetNode(Point position) => Nodes[position.X, position.Y];
+    public Node GetNode(int x, int y) => Nodes[x, y];
 
-    public IReadOnlyList<INode> GetAllNodes()
+    public IReadOnlyList<Node> GetAllNodes()
     {
-        var list = new List<INode>(Columns * Rows);
+        var list = new List<Node>(Columns * Rows);
 
         for (var x = 0; x < Columns; x++)
             for (var y = 0; y < Rows; y++)
@@ -161,7 +159,7 @@ public sealed class Grid
         return list;
     }
 
-    public Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid DisconnectIncomingWhere(Func<int, int, bool> func)
+    public Grid DisconnectIncomingWhere(Func<int, int, bool> func)
     {
         for (var x = 0; x < Columns; x++)
             for (var y = 0; y < Rows; y++)
@@ -187,29 +185,29 @@ public sealed class Grid
     {
         Point position = new(x, y);
 
-        var left = new Point (x - 1, y);
+        var left = new Point(x - 1, y);
         if (IsInsideGrid(left))
             ConnectIncomming(position, left, velocity);
 
-        var top = new Point (x, y - 1);
+        var top = new Point(x, y - 1);
         if (IsInsideGrid(top))
             ConnectIncomming(position, top, velocity);
 
-        var right = new Point (x + 1, y);
+        var right = new Point(x + 1, y);
         if (IsInsideGrid(right))
             ConnectIncomming(position, right, velocity);
 
-        var bottom = new Point (x, y + 1);
+        var bottom = new Point(x, y + 1);
         if (IsInsideGrid(bottom))
             ConnectIncomming(position, bottom, velocity);
     }
 
-    public void RemoveDiagonalConnectionsIntersectingWithNode(Point  position)
+    public void RemoveDiagonalConnectionsIntersectingWithNode(Point position)
     {
-        var left = new Point (position.X - 1, position.Y);
-        var top = new Point (position.X, position.Y - 1);
-        var right = new Point (position.X + 1, position.Y);
-        var bottom = new Point (position.X, position.Y + 1);
+        var left = new Point(position.X - 1, position.Y);
+        var top = new Point(position.X, position.Y - 1);
+        var right = new Point(position.X + 1, position.Y);
+        var bottom = new Point(position.X, position.Y + 1);
 
         if (IsInsideGrid(left) && IsInsideGrid(top))
         {
@@ -236,7 +234,7 @@ public sealed class Grid
         }
     }
 
-    public void RemoveEdge(Point  from, Point  to)
+    public void RemoveEdge(Point from, Point to)
     {
         var fromNode = Nodes[from.X, from.Y];
         var toNode = Nodes[to.X, to.Y];
@@ -244,7 +242,7 @@ public sealed class Grid
         fromNode.Disconnect(toNode);
     }
 
-    public void ConnectIncomming(Point  from, Point  to, Velocity traversalVelocity)
+    public void ConnectIncomming(Point from, Point to, Velocity traversalVelocity)
     {
         var fromNode = Nodes[from.X, from.Y];
         var toNode = Nodes[to.X, to.Y];
@@ -253,5 +251,5 @@ public sealed class Grid
     }
 
     public void ConnectOutgoing(int startX, int endX, Velocity defaultVelocity) => throw new System.NotImplementedException();
-    private bool IsInsideGrid(Point  position) => position.X >= 0 && position.X < Columns && position.Y >= 0 && position.Y < Rows;
+    private bool IsInsideGrid(Point position) => position.X >= 0 && position.X < Columns && position.Y >= 0 && position.Y < Rows;
 }

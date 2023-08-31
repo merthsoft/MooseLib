@@ -1,4 +1,6 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Extension;
+﻿using System;
+
+namespace Merthsoft.Moose.MooseEngine.Extension;
 public static class MathExtensions
 {
     public static int CardinalDirection2IndexDegrees(this float angle)

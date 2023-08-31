@@ -17,6 +17,7 @@ public class SnowballFightGame : MooseGame
     private Team? PlayerTeam = null;
 
     public new static SnowballFightGame Instance { get; private set; } = null!;
+    public new TiledMooseMap MainMap { get; private set; }
 
     public static string UnitLayer { get; private set; } = "Units";
     public static string SnowballLayer { get; private set; } = "Snowballs";
@@ -266,7 +267,8 @@ public class SnowballFightGame : MooseGame
     private void LoadMap(string mapName)
     {
         ActiveMaps.Clear();
-        ActiveMaps.Add(new TiledMooseMap(Content.Load<TiledMap>($"Maps/{mapName}")));
+        MainMap = new TiledMooseMap(Content.Load<TiledMap>($"Maps/{mapName}"));
+        ActiveMaps.Add(MainMap);
         GetRenderer<TiledMooseMapRenderer>("map").Load(MainMap!);
     }
 

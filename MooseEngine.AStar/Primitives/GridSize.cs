@@ -25,4 +25,6 @@ public struct GridSize : IEquatable<GridSize>
     public bool Equals(GridSize other) => Columns == other.Columns && Rows == other.Rows;
 
     public override int GetHashCode() => -1609761766 + Columns.GetHashCode() + Rows.GetHashCode();
+
+    public void Deconstruct(out int Columns, out int Rows) => (Columns, Rows) = (this.Columns, this.Rows);
 }

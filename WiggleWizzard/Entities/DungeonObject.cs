@@ -1,7 +1,9 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities.Spells;
+using Merthsoft.Moose.Dungeon.Map;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.GameObjects;
+using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Entities;
 public abstract record DungeonObjectDef : ManualAnimatedGameObjectDef
@@ -46,6 +48,8 @@ public abstract class DungeonObject : AnimatedGameObject
 
     public override string PlayKey => "idle";
 
+    public new DungeonMap ParentMap { get; private set; }
+
     public DungeonObject(DungeonObjectDef def, Vector2? position, string direction, float? rotation, string layer)
         : base(def, position, layer, Vector2.Zero, rotation ?? 0, Vector2.One, "idle", direction)
     {
@@ -58,6 +62,12 @@ public abstract class DungeonObject : AnimatedGameObject
         MiniMapTile = DungeonObjectDef.MiniMapTile;
         DrawIndex = def.DrawIndex;
         Origin = new(8, 8);
+    }
+
+    public override void SetMap(IMap map)
+    {
+        base.SetMap(map);
+        ParentMap = (map as DungeonMap)!;
     }
 
     public override void Update(MooseGame game, GameTime gameTime)

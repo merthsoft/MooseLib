@@ -50,7 +50,7 @@ public class SecretWall : Actor
         var cell = wall.PositionIn3dSpace + 16 * wall.MoveDirection - new Vector3(8, 8, 0);
         if (cell.X / 16 == (int)(cell.X / 16) && cell.Y / 16 == (int)(cell.Y / 16))
         {
-            if (wall.ParentMap.GetBlockingVector(new(cell.X, cell.Y)).Any(a => a > 0))
+            if (wall.ParentMap.GetBlockingVector((int)cell.X, (int)cell.Y).Any(a => a > 0))
                 wall.State = SecretWallStates.Done;
         }
     }

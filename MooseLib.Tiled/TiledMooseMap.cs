@@ -1,10 +1,11 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.PathFinding.Maps;
+using Merthsoft.Moose.MooseEngine.PathFinding.Paths.AStar;
 using MonoGame.Extended.Tiled;
 
 namespace Merthsoft.Moose.MooseEngine.Tiled;
 
-public class TiledMooseMap : BaseMap
+public class TiledMooseMap : PathFinderMap
 {
     public TiledMap Map { get; protected set; }
 
@@ -13,7 +14,7 @@ public class TiledMooseMap : BaseMap
     public override int TileWidth => Map.TileWidth;
     public override int TileHeight => Map.TileHeight;
 
-    public TiledMooseMap(TiledMap map)
+    public TiledMooseMap(TiledMap map) : base(new AStarPathFinder())
     {
         Map = map;
         BuildLayerCache();

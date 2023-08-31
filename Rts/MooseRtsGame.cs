@@ -1,14 +1,17 @@
 ﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+using Merthsoft.Moose.MooseEngine.PathFinding.Paths.FlowFieldPathFinder;
 using System.Linq;
 
 namespace Merthsoft.Moose.Rts;
 public class MooseRtsGame : MooseGame
 {
-    public static int MapSize = 40;
+    public static int MapSize = 100;
     RtsMap Map = new(MapSize, MapSize);
     SpriteFont font = null!;
+    SpriteFont smallFont = null!;
     int reservation = 2;
+    FlowNode[,] costMap = null!;
 
     public MooseRtsGame()
     {
@@ -26,6 +29,7 @@ public class MooseRtsGame : MooseGame
     protected override void Load()
     {
         font = ContentManager.BakeFont("Capital_Hill_Monospaced", 12);
+        smallFont = ContentManager.BakeFont("Capital_Hill_Monospaced", 6);
         ActiveMaps.Add(Map);
         var archerDef = AddDef(new UnitDef("Archer"));
 
@@ -39,12 +43,12 @@ public class MooseRtsGame : MooseGame
         //AddObject(new Unit(archerDef, new(32, 24)), Map);
 
         MainCamera.Origin = new(0, 0);
-        MainCamera.ZoomIn(2);
+        MainCamera.ZoomIn(0);
     }
 
     protected override void PostUpdate(GameTime gameTime)
     {
-        if (!IsActive)
+        if (!IsActiveAndMouseInBounds)
             return;
 
         var mousePoint = MainCamera.ScreenToWorld(
@@ -53,11 +57,10 @@ public class MooseRtsGame : MooseGame
 
         if (WasLeftMouseJustPressed() || (IsLeftMouseDown() && WasMouseMoved()))
         {
-            var mouseVector = new Vector2(mousePoint.X * TileWidth + TileWidth / 2, mousePoint.Y * TileHeight + TileHeight / 2);
-            var spiral = mousePoint.SpiralAround().GetEnumerator();
-            foreach (var unit in Map.UnitLayer.Objects.OrderBy(x => x.DistanceSquaredTo(mouseVector)))
+            costMap = (Map.PathFinder as FlowFieldPathFinder)?.GetFlow(Map.BlockingGrid, mousePoint);
+            foreach (var unit in ReadObjects.OfType<Unit>())
             {
-                unit.MoveTo(spiral.MoveNextGetCurrent());
+                unit.MoveTo(mousePoint);
             }
         }
 
@@ -73,7 +76,14 @@ public class MooseRtsGame : MooseGame
 
         if (IsRightMouseDown())
         {
-            Map.ReservationMap[mousePoint.X, mousePoint.Y] = reservation;
+            (Map.PathFinder as FlowFieldPathFinder)?.ClearCache();
+            Map.SetReservationIfInBounds(mousePoint.X, mousePoint.Y, reservation);
+            Map.SetReservationIfInBounds(mousePoint.X + 1, mousePoint.Y, reservation);
+            Map.SetReservationIfInBounds(mousePoint.X, mousePoint.Y + 1, reservation);
+            Map.SetReservationIfInBounds(mousePoint.X + 1, mousePoint.Y + 1, reservation);
+            Map.SetReservationIfInBounds(mousePoint.X - 1, mousePoint.Y, reservation    );
+            Map.SetReservationIfInBounds(mousePoint.X, mousePoint.Y - 1, reservation);
+            Map.SetReservationIfInBounds(mousePoint.X - 1, mousePoint.Y - 1, reservation);
         }
     }
 
@@ -81,23 +91,6 @@ public class MooseRtsGame : MooseGame
     {
         var transformMatrix = MainCamera.GetViewMatrix();
         SpriteBatch.Begin(transformMatrix: transformMatrix);
-
-        var mouseCell = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
-        mouseCell = new Vector2((int)mouseCell.X / TileWidth * TileWidth, (int)mouseCell.Y / TileHeight * TileHeight);
-        SpriteBatch.DrawRectangle(mouseCell, new(TileWidth, TileHeight), Color.AliceBlue);
-
-        foreach (var unit in Map.UnitLayer.Objects.Cast<Unit>())
-        {
-            if (unit.State != Unit.States.Walk)
-                continue;
-            var prevCell = new Vector2(unit.Position.X + TileWidth / 2, unit.Position.Y + TileHeight / 2);
-            foreach (var cell in unit.MoveQueue)
-            {
-                var nextCell = new Vector2(cell.X * TileWidth + TileWidth / 2, cell.Y * TileHeight + TileHeight / 2);
-                SpriteBatch.DrawLine(prevCell, nextCell, Color.Green);
-                prevCell = nextCell;
-            }
-        }
 
         for (var x = 0; x < MapWidth; x++)
             for (var y = 0; y < MapHeight; y++)
@@ -114,7 +107,42 @@ public class MooseRtsGame : MooseGame
                 //    SpriteBatch.FillRectangle(x * TileWidth, y * TileHeight, TileWidth, TileHeight, Color.Red);
                 //if (!cell.Outgoing.Any(e => e.IsConnected))
                 //SpriteBatch.FillRectangle(x * TileWidth + TileWidth / 2, y * TileHeight, TileWidth / 2, TileHeight, Color.Green);
+
+                if (costMap != null)
+                {
+                    var flow = costMap[x, y];
+                    var startX = x * TileWidth + TileWidth / 2;
+                    var startY = y * TileHeight + TileHeight / 2;
+                    if (flow.Valid)
+                    {
+                        var endX = flow.NextX * TileWidth + TileWidth / 2;
+                        var endY = flow.NextY * TileHeight + TileHeight / 2;
+                        SpriteBatch.DrawLine(startX, startY, endX, endY, Color.Red);
+                    }
+                    else
+                    {
+                        SpriteBatch.DrawCircle(startX, startY, 4, 10, Color.Yellow);
+                    }
+                }
             }
+
+        var mouseCell = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
+        mouseCell = new Vector2((int)mouseCell.X / TileWidth * TileWidth, (int)mouseCell.Y / TileHeight * TileHeight);
+        SpriteBatch.DrawRectangle(mouseCell, new(TileWidth, TileHeight), Color.AliceBlue);
+
+        foreach (var unit in Map.UnitLayer.Objects.Cast<Unit>())
+        {
+            var prevCell = new Vector2(unit.Position.X + TileWidth / 2, unit.Position.Y + TileHeight / 2);
+            SpriteBatch.DrawCircle(prevCell, TileWidth / 2, 25, Color.Green);
+            if (unit.State != Unit.States.Walk)
+                continue;
+            foreach (var cell in unit.MoveQueue)
+            {
+                var nextCell = new Vector2(cell.X * TileWidth + TileWidth / 2, cell.Y * TileHeight + TileHeight / 2);
+                SpriteBatch.DrawLine(prevCell, nextCell, Color.Green);
+                prevCell = nextCell;
+            }
+        }
 
         SpriteBatch.End();
     }
@@ -127,8 +155,11 @@ public class MooseRtsGame : MooseGame
 
     protected override void PostDraw(GameTime gameTime)
     {
+        var mouseCell = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
+        mouseCell = new Vector2((int)mouseCell.X / TileWidth, (int)mouseCell.Y / TileHeight);
+
         SpriteBatch.Begin();
-        SpriteBatch.DrawStringShadow(font, $"FPS {FramesPerSecondCounter.FramesPerSecond}", new(4, 4), Color.White);
+        SpriteBatch.DrawStringShadow(font, $"FPS {FramesPerSecondCounter.FramesPerSecond} - {mouseCell}", new(4, 4), Color.White);
         SpriteBatch.End();
     }
 }

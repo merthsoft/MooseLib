@@ -1,5 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.GameObjects;
+using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.Rays.Serialization;
 
 namespace Merthsoft.Moose.Rays;
@@ -37,12 +38,20 @@ public class RayGameObject : GameObjectBase
     public double HoverCounter;
     private int YDelta = 1;
 
+    public new RayMap ParentMap { get; private set; }
+
     public RayGameObject(RayGameObjectDef def, int x, int y) : base(def, new Vector2(x*16+8, y*16+8), layer: "objects")
     {
         RayGameObjectDef = def;
         TextureIndex = RayGameObjectDef.DefaultTextureIndex;
         FacingDirection = Vector3.Left;
         ObjectRenderMode = def.ObjectRenderMode;
+    }
+
+    public override void SetMap(IMap map)
+    {
+        base.SetMap(map);
+        ParentMap = (map as RayMap)!;
     }
 
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch) { }

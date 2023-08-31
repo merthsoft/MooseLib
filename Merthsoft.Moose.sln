@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GravityCa", "GravityCa\Grav
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rts", "Rts\Rts.csproj", "{1732B88C-D12F-4FDF-A5A8-24C62CCABD15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MooseEngine.PathFinding", "MooseEngine.AStar\MooseEngine.PathFinding.csproj", "{A3B96DB7-A434-49F5-B974-5FD5E1B99D8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MooseEngine.PathFinding", "MooseEngine.AStar\MooseEngine.PathFinding.csproj", "{A3B96DB7-A434-49F5-B974-5FD5E1B99D8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

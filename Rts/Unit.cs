@@ -43,13 +43,12 @@ internal class Unit : TextureGameObject
     public Unit(UnitDef def, Vector2 position) 
         : base(def, position)
     {
-        
+        State = States.Idle;
     }
 
     public void MoveTo(Point point)
     {
         FinalCell = point;
-        State = States.Seeking;
         MoveQueue.Clear();
         StartCell = Cell;
     }
@@ -59,7 +58,7 @@ internal class Unit : TextureGameObject
         if (!StartCell.HasValue)
             return;
 
-        var path = ParentMap.FindCellPath(StartCell!.Value, FinalCell);
+        var path = Map.FindCellPath(StartCell!.Value, FinalCell);
         if (path.Any())
         {
             foreach (var c in path)
@@ -81,7 +80,7 @@ internal class Unit : TextureGameObject
             case States.Walk:
                 Walk();
                 break;
-            case States.Idle:
+            default:
                 Idle();
                 break;
         }
@@ -89,10 +88,17 @@ internal class Unit : TextureGameObject
 
     private void Idle()
     {
-        StartCell = null;
-        MoveDirection = Vector2.Zero;
-        NextLocation = Vector2.Zero;
-        Map.ReserveLocation(Layer, Cell);
+        if (StartCell != null)
+        {
+            State = States.Seeking;
+        }
+        else
+        {
+            StartCell = null;
+            MoveDirection = Vector2.Zero;
+            NextLocation = Vector2.Zero;
+            //Map.ReserveLocation(Layer, Cell);
+        }
     }
 
     private void Walk()
@@ -106,6 +112,10 @@ internal class Unit : TextureGameObject
         }
         else if (MoveQueue.Count == 0)
         {
+            if (Cell != FinalCell)
+            {
+                State = States.Idle;
+            }
             if (StartCell.HasValue && StartCell.Value == FinalCell)
             {
                 StartCell = null;
@@ -131,8 +141,8 @@ internal class Unit : TextureGameObject
                 var cell = Cell;
                 MoveDirection = new(NextCell.X - cell.X, NextCell.Y - cell.Y);
                 NextLocation = NextCell.ToVector2() * ParentMap!.TileSize;
-                Map.ClearReservation(Layer, cell);
-                Map.ReserveLocation(Layer, NextCell);
+                //Map.ClearReservation(Layer, cell);
+                //Map.ReserveLocation(Layer, NextCell);
                 takeStep();
             }
         }
@@ -144,7 +154,7 @@ internal class Unit : TextureGameObject
         if (State == States.Seeking)
         {
             seekCount++;
-            if (seekCount == 50)
+            if (seekCount == 5)
             {
                 seekCount = 0;
                 State = States.Idle;
@@ -158,7 +168,7 @@ internal class Unit : TextureGameObject
 
     void takeStep()
     {
-        Map.MoveObject(this, Position + MoveDirection);
+        Position += MoveDirection;
         if (Position.GetFloor() == NextLocation.GetFloor())
             MoveDirection = Vector2.Zero;
     }

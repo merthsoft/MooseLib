@@ -2,7 +2,7 @@
 
 internal sealed class AStarPathFinderNode : IComparable<AStarPathFinderNode>
 {
-    public AStarPathFinderNode(INode node, Duration durationSoFar, Duration expectedRemainingTime)
+    public AStarPathFinderNode(Node node, Duration durationSoFar, Duration expectedRemainingTime)
     {
         Node = node;
         DurationSoFar = durationSoFar;
@@ -10,7 +10,7 @@ internal sealed class AStarPathFinderNode : IComparable<AStarPathFinderNode>
         ExpectedTotalTime = DurationSoFar + ExpectedRemainingTime;
     }
 
-    public INode Node { get; }
+    public Node Node { get; }
 
     public Duration DurationSoFar { get; }
 

@@ -7,9 +7,11 @@ using Merthsoft.Moose.Dungeon.Entities.Spells;
 using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.PathFinding.Maps;
+using Merthsoft.Moose.MooseEngine.PathFinding.Paths.AStar;
 
 namespace Merthsoft.Moose.Dungeon.Map;
-public class DungeonMap : BaseMap
+public class DungeonMap : PathFinderMap
 {
     public readonly DungeonLayer DungeonLayer;
     public readonly ObjectLayer<DungeonMonster> MonsterLayer;
@@ -33,7 +35,7 @@ public class DungeonMap : BaseMap
 
     public WeightedSet<ItemTile> Treasures = new();
 
-    public DungeonMap(int width, int height)
+    public DungeonMap(int width, int height) : base(new AStarPathFinder())
     {
         DungeonLayer = AddLayer(new DungeonLayer(width, height));
         AddLayer(new ObjectLayer<DungeonPlayer>("player", width, height));

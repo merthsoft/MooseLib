@@ -46,7 +46,7 @@ public static class GridSerializer
 
     private static Merthsoft.Moose.MooseEngine.PathFinding.Serialization.GridDto ToDto(this Merthsoft.Moose.MooseEngine.PathFinding.Grids.Grid grid)
     {
-        var nodeToGridPositionDict = new Dictionary<INode, Point >();
+        var nodeToGridPositionDict = new Dictionary<Node, Point>();
         var nodes = new NodeDto[grid.Columns][];
         for (var i = 0; i < grid.Columns; i++)
             for (var j = 0; j < grid.Rows; j++)
@@ -68,7 +68,7 @@ public static class GridSerializer
         };
     }
 
-    private static NodeDto ToDto(this INode node, Dictionary<INode, Point > nodeToGridPositionDict) => new NodeDto
+    private static NodeDto ToDto(this Node node, Dictionary<Node, Point> nodeToGridPositionDict) => new NodeDto
     {
         Position = node.Position.ToPositionDto(),
         GridPoint = nodeToGridPositionDict[node].ToGridPoitionDto(),
@@ -76,9 +76,9 @@ public static class GridSerializer
         IncomingEdges = node.Incoming.ToDto(nodeToGridPositionDict),
     };
 
-    private static List<EdgeDto> ToDto(this IList<IEdge> edge, Dictionary<INode, Point > nodeToGridPositionDict) => edge.Select(e => e.ToDto(nodeToGridPositionDict)).ToList();
+    private static List<EdgeDto> ToDto(this IList<Edge> edge, Dictionary<Node, Point> nodeToGridPositionDict) => edge.Select(e => e.ToDto(nodeToGridPositionDict)).ToList();
 
-    private static EdgeDto ToDto(this IEdge edge, Dictionary<INode, Point > nodeToGridPositionDict) => new EdgeDto
+    private static EdgeDto ToDto(this Edge edge, Dictionary<Node, Point> nodeToGridPositionDict) => new EdgeDto
     {
         TraversalVelocity = edge.TraversalVelocity.ToDto(),
         Start = nodeToGridPositionDict[edge.Start].ToGridPoitionDto(),
@@ -106,5 +106,5 @@ public static class GridSerializer
         Y = position.Y
     };
 
-    private static Point  FromDto(this GridPositionDto position) => new Point (position.X, position.Y);
+    private static Point FromDto(this GridPositionDto position) => new Point(position.X, position.Y);
 }

@@ -34,6 +34,15 @@ public abstract class MooseGame : Game
     public KeyboardState PreviousKeyState => PreviousKeyStates[^1];
 
     public KeyboardState CurrentKeyState { get; private set; }
+    
+    public bool IsActiveAndMouseInBounds
+    {
+        get
+        {
+            var (mx, my) = CurrentMouseState.Position;
+            return IsActive && mx >= 0 && mx < ScreenWidth && my >= 0 && my < ScreenHeight;
+        }
+    }
 
     public Vector2 WorldMouse { get; private set; }
 
@@ -176,7 +185,7 @@ public abstract class MooseGame : Game
     public TObject AddObject<TObject>(TObject gameObject, IMap? parentMap = null) where TObject : GameObjectBase
     {
         ObjectsToAdd.Enqueue(gameObject);
-        gameObject.ParentMap = parentMap ?? MainMap;
+        gameObject.SetMap(parentMap ?? MainMap);
         return gameObject;
     }
 
