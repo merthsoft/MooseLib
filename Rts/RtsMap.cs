@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.PathFinding.Maps;
-using Merthsoft.Moose.MooseEngine.PathFinding.Paths.FlowFieldPathFinder;
+using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.FlowField;
 
 namespace Merthsoft.Moose.Rts;
 internal class RtsMap : PathFinderMap

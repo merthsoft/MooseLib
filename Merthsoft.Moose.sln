@@ -29,8 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GravityCa", "GravityCa\Grav
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rts", "Rts\Rts.csproj", "{1732B88C-D12F-4FDF-A5A8-24C62CCABD15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MooseEngine.PathFinding", "MooseEngine.AStar\MooseEngine.PathFinding.csproj", "{A3B96DB7-A434-49F5-B974-5FD5E1B99D8B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,10 +87,6 @@ Global
 		{1732B88C-D12F-4FDF-A5A8-24C62CCABD15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1732B88C-D12F-4FDF-A5A8-24C62CCABD15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1732B88C-D12F-4FDF-A5A8-24C62CCABD15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3B96DB7-A434-49F5-B974-5FD5E1B99D8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3B96DB7-A434-49F5-B974-5FD5E1B99D8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3B96DB7-A434-49F5-B974-5FD5E1B99D8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3B96DB7-A434-49F5-B974-5FD5E1B99D8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

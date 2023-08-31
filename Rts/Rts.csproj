@@ -38,7 +38,6 @@
     <Folder Include="Content\Images\Units\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MooseEngine.AStar\MooseEngine.PathFinding.csproj" />
     <ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">

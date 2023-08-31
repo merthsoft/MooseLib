@@ -8,7 +8,7 @@ using Merthsoft.Moose.Dungeon.Tiles;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.MooseEngine.PathFinding.Maps;
-using Merthsoft.Moose.MooseEngine.PathFinding.Paths.AStar;
+using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.AStar;
 
 namespace Merthsoft.Moose.Dungeon.Map;
 public class DungeonMap : PathFinderMap

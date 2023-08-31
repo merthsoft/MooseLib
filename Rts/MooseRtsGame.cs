@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
-using Merthsoft.Moose.MooseEngine.PathFinding.Paths.FlowFieldPathFinder;
+using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.FlowField;
 using System.Linq;
 
 namespace Merthsoft.Moose.Rts;

@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.MooseEngine.PathFinding.Maps;
-using Merthsoft.Moose.MooseEngine.PathFinding.Paths.AStar;
+using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.AStar;
 using MonoGame.Extended.Tiled;
 
 namespace Merthsoft.Moose.MooseEngine.Tiled;

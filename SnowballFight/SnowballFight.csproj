@@ -45,7 +45,6 @@
 		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\MooseEngine.AStar\MooseEngine.PathFinding.csproj" />
 		<ProjectReference Include="..\MooseLib.Tiled\MooseEngine.Tiled.csproj" />
 		<ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />
 		<ProjectReference Include="..\MooseLib\MooseEngine.csproj" />
