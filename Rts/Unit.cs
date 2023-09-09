@@ -71,7 +71,7 @@ internal class Unit : TextureGameObject
     public override void Update(MooseGame mooseGame, GameTime gameTime)
     {
         base.Update(mooseGame, gameTime);
-
+        
         switch (State)
         {
             case States.Seeking:
@@ -88,13 +88,14 @@ internal class Unit : TextureGameObject
 
     private void Idle()
     {
-        if (StartCell != null)
+        if (StartCell != null && StartCell.Value != FinalCell)
         {
             State = States.Seeking;
         }
         else
         {
             StartCell = null;
+            seekCount = 0;
             MoveDirection = Vector2.Zero;
             NextLocation = Vector2.Zero;
             //Map.ReserveLocation(Layer, Cell);
@@ -114,15 +115,18 @@ internal class Unit : TextureGameObject
         {
             if (Cell != FinalCell)
             {
+                seekCount = 0;
                 State = States.Idle;
             }
             if (StartCell.HasValue && StartCell.Value == FinalCell)
             {
+                seekCount = 0;
                 StartCell = null;
                 State = States.Idle;
             }
             else
             {
+                seekCount = 0;
                 StartCell = Cell;
                 State = States.Seeking;
             }
@@ -156,6 +160,7 @@ internal class Unit : TextureGameObject
             seekCount++;
             if (seekCount == 5)
             {
+                StartCell = null;
                 seekCount = 0;
                 State = States.Idle;
             }
@@ -168,7 +173,23 @@ internal class Unit : TextureGameObject
 
     void takeStep()
     {
-        Position += MoveDirection;
+        var updatedPosition = Position + MoveDirection;
+        var collides = Map.GetUnits().Any(o => this.Id.GetHashCode() > o.Id.GetHashCode() && o.DistanceTo(this) < 10);
+        //if (!collides)
+        //{
+            seekCount = 0;
+            Position = updatedPosition;
+        //} else
+        //{
+        //    seekCount++;
+        //    if (seekCount >= 50)
+        //    {
+        //        MoveDirection = Vector2.Zero;
+        //        seekCount = 0;
+        //        StartCell = null;
+        //        State = States.Idle;
+        //    }
+        //}
         if (Position.GetFloor() == NextLocation.GetFloor())
             MoveDirection = Vector2.Zero;
     }

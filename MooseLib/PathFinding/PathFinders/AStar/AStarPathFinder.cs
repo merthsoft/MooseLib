@@ -18,7 +18,7 @@ public sealed class AStarPathFinder : IPathFinder
 
     public Path FindPath(int x1, int y1, int x2, int y2, Grid grid, Velocity? maxVel = null)
     {
-        ResetState();
+        ClearCache();
 
         var start = grid.GetNode(x1, y1);
         var goal = grid.GetNode(x2, y2);
@@ -56,7 +56,7 @@ public sealed class AStarPathFinder : IPathFinder
         return PathReconstructor.ConstructPathTo(NodeClosestToGoal!.Node, goal);
     }
 
-    private void ResetState()
+    public void ClearCache()
     {
         Interesting.Clear();
         Nodes.Clear();

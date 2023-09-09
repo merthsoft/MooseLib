@@ -1,5 +1,5 @@
 ﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using SimplexNoise;
+using Merthsoft.Moose.MooseEngine.Noise;
 
 namespace Merthsoft.Moose.Town;
 public class TownMap : BaseMap
@@ -15,6 +15,8 @@ public class TownMap : BaseMap
     {
         BaseLayer = AddLayer(new TileLayer<int>("base", Width, Height, -1, 0) { RendererKey = "base" });
     }
+
+    public override void Update(MooseGame game, GameTime gameTime) { }
 
     public override int IsBlockedAt(string layer, int x, int y)
         => 0;
@@ -47,7 +49,7 @@ public class TownMap : BaseMap
 
     private float[,] GenNoise(float scale)
     {
-        Noise.Seed = (int)DateTime.Now.Ticks;
-        return Noise.Calc2D(Width, Height, scale);
+        SimplexNoise.Seed = (int)DateTime.Now.Ticks;
+        return SimplexNoise.Calc2D(Width, Height, scale);
     }
 }

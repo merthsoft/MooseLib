@@ -1,6 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
 
 namespace Merthsoft.Moose.MooseEngine.PathFinding.Maps;
+
 public class PathFinderMap : BaseMap
 {
     public override int Height { get; }
@@ -8,37 +9,63 @@ public class PathFinderMap : BaseMap
     public override int TileWidth { get; }
     public override int TileHeight { get; }
 
+    protected int[,][] blockingMap = null!;
     public IPathFinder PathFinder;
     protected Grid blockingGrid = null!;
     public Grid BlockingGrid => blockingGrid;
-
+    
+    private bool isBlockingMapDirty = true;
+    public bool IsBlockingMapDirty
+    {
+        get => isBlockingMapDirty;
+        set
+        {
+            isBlockingMapDirty = value;
+            if (isBlockingMapDirty)
+                PathFinder.ClearCache();
+        }
+    }
+    
     public PathFinderMap(IPathFinder pathFinder)
         => PathFinder = pathFinder;
 
-    public override int IsBlockedAt(string layer, int x, int y) => throw new NotImplementedException();
+    public override int IsBlockedAt(string layer, int x, int y) 
+        => throw new NotImplementedException();
 
-    protected override void BuildFullBlockingMap()
+    public override void Update(MooseGame game, GameTime gameTime)
+        => BuildFullBlockingMap();
+
+
+    protected void BuildFullBlockingMap()
     {
+        if (!IsBlockingMapDirty)
+            return;
+        IsBlockingMapDirty = false;
+
         if (blockingMap == null)
-            blockingMap = new List<int>[Width, Height];
+            blockingMap = new int[Width, Height][];
         if (blockingGrid == null)
             blockingGrid = BaseGrid();
 
         for (var x = 0; x < Width; x++)
             for (var y = 0; y < Height; y++)
             {
-                blockingMap[x, y] ??= new();
-                blockingMap[x, y].Clear();
-                foreach (var layer in layers)
+                blockingMap[x, y] ??= new int[Layers.Count];
+                
+                for (var i = 0; i < layers.Count; i++)
                 {
-                    var blocked = IsBlockedAt(layer.Name, x, y);
-                    blockingMap[x, y].Add(blocked);
+                    var blocked = IsBlockedAt(layers[i].Name, x, y);
+                    if (blockingMap[x, y][i] == blocked)
+                        continue;
+                    
+                    blockingMap[x, y][i] = blocked;
                     if (blocked > 0)
                         blockingGrid.DisconnectIncoming(x, y);
                     else
-                        blockingGrid.ConnectIncomingLaterally(x, y, DefaultVelocity);
+                        blockingGrid.ReconnectIncoming(x, y);
                 }
             }
+        
     }
 
     protected Velocity DefaultVelocity
@@ -48,7 +75,7 @@ public class PathFinderMap : BaseMap
         => Distance.FromMeters(1);
 
     protected virtual Grid BaseGrid()
-        => Grid.CreateGridWithLateralConnections(
+        => Grid.CreateGridWithLateralAndDiagonalConnections(
             new Size(Width, Height),
             new CellSize(DefaultDistance, DefaultDistance),
             DefaultVelocity);

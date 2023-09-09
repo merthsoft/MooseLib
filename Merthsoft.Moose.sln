@@ -29,6 +29,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GravityCa", "GravityCa\Grav
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rts", "Rts\Rts.csproj", "{1732B88C-D12F-4FDF-A5A8-24C62CCABD15}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A084688F-0760-4C8B-AC06-4D437F3C5A2A}"
+	ProjectSection(SolutionItems) = preProject
+		LISCENSE = LISCENSE
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

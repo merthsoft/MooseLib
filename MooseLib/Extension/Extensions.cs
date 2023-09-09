@@ -67,4 +67,11 @@ public static class Extensions
 
         return new(k + x, k - (m - n - t) + y);
     }
+
+    public static void ZoomToPoint(this OrthographicCamera camera, float deltaZoom, Vector2 zoomCenter)
+    {
+        float pastZoom = camera.Zoom;
+        camera.ZoomIn(deltaZoom);
+        camera.Position += (zoomCenter - camera.Origin - camera.Position) * ((camera.Zoom - pastZoom) / camera.Zoom);
+    }
 }

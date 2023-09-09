@@ -94,4 +94,44 @@ public static class MathExtensions
 
     public static float Atan2(this Vector2 vector)
         => MathF.Atan2(vector.Y, vector.X);
+
+    public static float DistanceSquaredTo(this Vector2 vector, Vector2 position)
+    {
+        var (x1, y1) = position;
+        var (x2, y2) = vector;
+        var xDiff = x2 - x1;
+        var yDiff = y2 - y1;
+
+        return xDiff * xDiff + yDiff * yDiff;
+    }
+
+    public static int DistanceSquaredTo(this Point point, Point position)
+    {
+        var (x1, y1) = position;
+        var (x2, y2) = point;
+        var xDiff = x2 - x1;
+        var yDiff = y2 - y1;
+
+        return xDiff * xDiff + yDiff * yDiff;
+    }
+
+    public static float DistanceTo(this Point point, Point position)
+    {
+        var (x1, y1) = position;
+        var (x2, y2) = point;
+        var xDiff = x2 - x1;
+        var yDiff = y2 - y1;
+
+        return MathF.Sqrt(xDiff * xDiff + yDiff * yDiff);
+    }
+
+    public static int ManhattanDistanceTo(this Point point, Point position)
+    {
+        var (x1, y1) = position;
+        var (x2, y2) = point;
+        var xDiff = Math.Abs(x1 - x2);
+        var yDiff = Math.Abs(y1 - y2);
+
+        return xDiff + yDiff;
+    }
 }

@@ -2,8 +2,8 @@
 
 public class Node
 {
-    private readonly Dictionary<Node, Edge> OutgoingEdges = new();
-    private readonly Dictionary<Node, Edge> IncomingEdges = new();
+    private readonly HashSet<Edge> OutgoingEdges = new();
+    private readonly HashSet<Edge> IncomingEdges = new();
 
     public Node(Vector2 position)
         => Position = position;
@@ -11,11 +11,18 @@ public class Node
     public Node(float x, float y)
         => Position = new(x, y);
 
-    public IList<Edge> Incoming => IncomingEdges.Select(x => x.Value).Where(x => x.IsConnected).ToList();
-    public IList<Edge> AllIncoming => IncomingEdges.Select(x => x.Value).ToList();
+    public IEnumerable<Edge> Incoming => IncomingEdges.Where(x => x.IsConnected).ToList();
+    public IEnumerable<Edge> AllIncoming => IncomingEdges.ToList();
 
-    public IList<Edge> Outgoing => OutgoingEdges.Select(x => x.Value).Where(x => x.IsConnected).ToList();
-    public IList<Edge> AllOutgoing => OutgoingEdges.Select(x => x.Value).ToList();
+    public int IncomingCount => IncomingEdges.Count(a => a.IsConnected);
+    public int AllIncomingCount => IncomingEdges.Count;
+
+    public IEnumerable<Edge> Outgoing => OutgoingEdges.Where(x => x.IsConnected).ToList();
+    public IEnumerable<Edge> AllOutgoing => OutgoingEdges.ToList();
+
+    public int OutgoingCount => OutgoingEdges.Count(a => a.IsConnected);
+    public int AllOutgoingCount => OutgoingEdges.Count;
+
 
     private Vector2 position;
     public Vector2 Position
@@ -31,51 +38,53 @@ public class Node
     public Point PointPosition { get; private set; }
 
     public void AddOutgoingEdge(Edge edge)
-        => OutgoingEdges[edge.End] = edge;
+        => OutgoingEdges.Add(edge);
 
     public void AddIncomingEdge(Edge edge)
-        => IncomingEdges[edge.Start] = edge;
+        => IncomingEdges.Add(edge);
 
     public bool IsIncomingConnected(Node node)
-        => IncomingEdges.TryGetValue(node, out var edge) ? edge.IsConnected : false;
+        => IncomingEdges.FirstOrDefault(e => e.End == node)?.IsConnected ?? false;
 
     public bool IsOutgoingConnected(Node node)
-        => OutgoingEdges.TryGetValue(node, out var edge) ? edge.IsConnected : false;
+        => OutgoingEdges.FirstOrDefault(e => e.Start == node)?.IsConnected ?? false;
 
     public void ConnectIncoming(Node node, Velocity traversalVelocity)
     {
-        if (!IncomingEdges.TryGetValue(node, out var edge))
+        var edge = IncomingEdges.FirstOrDefault(e => e.End == node);
+        if (edge == null)
         {
             edge = new Edge(node, this, traversalVelocity);
             node.AddOutgoingEdge(edge);
-            IncomingEdges[node] = edge;
+            IncomingEdges.Add(edge);
         }
         edge.IsConnected = true;
     }
 
     public void ConnectOutgoing(Node node, Velocity traversalVelocity)
     {
-        if (!OutgoingEdges.TryGetValue(node, out var edge))
+        var edge = OutgoingEdges.FirstOrDefault(e => e.Start == node);
+        if (edge == null)
         {
             edge = new Edge(this, node, traversalVelocity);
             node.AddIncomingEdge(edge);
-            OutgoingEdges[node] = edge;
+            OutgoingEdges.Add(edge);
         }
         edge.IsConnected = true;
     }
 
     public void DisconnectAll()
     {
-        foreach (var edge in Outgoing)
+        foreach (var edge in OutgoingEdges)
         {
-            edge.End.Disconnect(this);
+            edge.End.RemoveEdge(this);
             edge.IsConnected = false;
         }
     }
 
     public void DisconnectOutgoing()
     {
-        foreach (var edge in Outgoing)
+        foreach (var edge in OutgoingEdges)
         {
             edge.IsConnected = false;
         }
@@ -83,29 +92,35 @@ public class Node
 
     public void DisconnectIncoming()
     {
-        foreach (var edge in Incoming)
+        foreach (var edge in IncomingEdges)
         {
             edge.IsConnected = false;
         }
     }
 
-    public void Disconnect(Node node)
+    public void ReconnectIncoming()
     {
-        for (var i = Outgoing.Count - 1; i >= 0; i--)
+        foreach (var edge in IncomingEdges)
         {
-            var edge = Outgoing[i];
-            if (edge.End == node)
-            {
-                Outgoing.Remove(edge);
-                node.Incoming.Remove(edge);
-                edge.Start.Incoming.Remove(edge);
-                edge.IsConnected = false;
-            }
+            edge.IsConnected = true;
         }
     }
 
-    public override string ToString() => Position.ToString();
+    public void RemoveEdge(Node node)
+    {
+        return;
+        //for (var i = OutgoingEdges.Count - 1; i >= 0; i--)
+        //{
+        //    var edge = Outgoing[i];
+        //    if (edge.End == node)
+        //    {
+        //        Outgoing.Remove(edge);
+        //        node.IncomingEdges.Remove(edge);
+        //        edge.Start.IncomingEdges.Remove(edge);
+        //        edge.IsConnected = false;
+        //    }
+        //}
+    }
 
-    public Edge GetOutgoingEdge(Node node)
-        => OutgoingEdges[node];
+    public override string ToString() => Position.ToString();
 }

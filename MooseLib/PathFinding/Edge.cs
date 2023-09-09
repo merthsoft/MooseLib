@@ -1,6 +1,6 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.PathFinding;
 
-public class Edge
+public class Edge : IEquatable<Edge>
 {
     private Velocity traversalVelocity;
 
@@ -32,6 +32,15 @@ public class Edge
     public Node End { get; }
 
     public bool IsConnected { get; set; } = false;
+
+    public static bool operator ==(Edge? lhs, Edge? rhs)
+        => lhs is null && rhs is null ? true : lhs?.Equals(rhs) ?? false;
+
+    public static bool operator !=(Edge? lhs, Edge? rhs)
+        => !(lhs == rhs);
+
+    public bool Equals(Edge? other)
+        => Start == other?.Start && End == other?.End;
 
     public override string ToString() => $"{Start} {(IsConnected ? "->" : "-/>")} {End} @ {TraversalVelocity}";
 }

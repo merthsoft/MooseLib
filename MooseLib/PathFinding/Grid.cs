@@ -26,13 +26,13 @@ public sealed class Grid
         return grid;
     }
 
-    public static Grid CreateGridWithLateralAndDiagonalConnections(Size gridSize, CellSize cellSize, Velocity traversalVelocity)
+    public static Grid CreateGridWithLateralAndDiagonalConnections(Size gridSize, CellSize cellSize, Velocity traversalVelocity, Velocity? diagonalTraversalVelocity = null)
     {
         CheckArguments(gridSize, cellSize, traversalVelocity);
 
         var grid = new Grid(gridSize, cellSize);
 
-        grid.CreateDiagonalConnections(traversalVelocity);
+        grid.CreateDiagonalConnections(diagonalTraversalVelocity ?? traversalVelocity);
         grid.CreateLateralConnections(traversalVelocity);
 
         return grid;
@@ -169,17 +169,14 @@ public sealed class Grid
         return this;
     }
 
-    public void DisconnectNode(int x, int y)
-    {
-        var node = Nodes[x, y];
-        node.DisconnectAll();
-    }
+    public void DisconnectNode(int x, int y) 
+        => Nodes[x, y].DisconnectAll();
 
-    public void DisconnectIncoming(int x, int y)
-    {
-        var node = Nodes[x, y];
-        node.DisconnectIncoming();
-    }
+    public void DisconnectIncoming(int x, int y) 
+        => Nodes[x, y].DisconnectIncoming();
+
+    public void ReconnectIncoming(int x, int y)
+        => Nodes[x, y].ReconnectIncoming();
 
     public void ConnectIncomingLaterally(int x, int y, Velocity velocity)
     {
@@ -239,7 +236,7 @@ public sealed class Grid
         var fromNode = Nodes[from.X, from.Y];
         var toNode = Nodes[to.X, to.Y];
 
-        fromNode.Disconnect(toNode);
+        fromNode.RemoveEdge(toNode);
     }
 
     public void ConnectIncomming(Point from, Point to, Velocity traversalVelocity)

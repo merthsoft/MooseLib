@@ -39,7 +39,6 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
 	  <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
-	  <PackageReference Include="SimplexNoise" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MooseLib.Ui\MooseEngine.Ui.csproj" />

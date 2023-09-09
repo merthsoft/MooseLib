@@ -782,9 +782,9 @@ public class GravityCellularAutomataGame : MooseGame
             //Map.SetMass(x + 1, y + 1, mass);
         }
 
-        if (ScrollWheelDelta() > 0)
+        if (GetScrollWheelDelta() > 0)
             MassDivisor <<= 1;
-        else if (ScrollWheelDelta() < 0)
+        else if (GetScrollWheelDelta() < 0)
             MassDivisor >>= 1 ;
 
         if (MassDivisor < 1)

@@ -353,7 +353,7 @@ public abstract class MooseGame : Game
         => CurrentMouseState.X != PreviousMouseState.X
         || CurrentMouseState.Y != PreviousMouseState.Y;
 
-    public int ScrollWheelDelta()
+    public int GetScrollWheelDelta()
         => CurrentMouseState.ScrollWheelValue - PreviousMouseState.ScrollWheelValue;
 
     public bool WasLeftMouseJustPressed()

@@ -21,10 +21,15 @@ public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
             throw new Exception("TileLayer<int> layer expected");
 
         for (int i = 0; i < tileLayer.Width; i++)
-            for (int j = 0; j < tileLayer.Height; j++)            
+            for (int j = 0; j < tileLayer.Height; j++)
+            {
+                var color = Palette[tileLayer.Tiles[i, j]];
+                if (color == Color.Transparent)
+                    continue;
+
                 SpriteBatch.FillRectangle(
                     i * TileWidth + drawOffset.X, j * TileHeight + drawOffset.Y,
-                    TileWidth, TileHeight,
-                    Palette[tileLayer.Tiles[i, j]]);
+                    TileWidth, TileHeight, color);
+            }
     }
 }

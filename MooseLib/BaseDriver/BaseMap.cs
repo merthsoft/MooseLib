@@ -1,5 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.GameObjects;
-using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.MooseEngine.Topologies;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver;
@@ -12,13 +11,12 @@ public abstract class BaseMap : IMap
     public abstract int TileHeight { get; }
     public Topology Topology { get; set; } = Topology.Plane;
     
+    public int NumLayers { get; set; }
     protected List<ILayer> layers = new();
     public virtual IReadOnlyList<ILayer> Layers => layers.AsReadOnly();
 
     protected Dictionary<string, ILayer> layerMap = new();
     public virtual IReadOnlyDictionary<string, ILayer> LayerMap => layerMap.AsReadOnly();
-
-    protected List<int>[,] blockingMap = null!;
 
     public abstract int IsBlockedAt(string layer, int x, int y);
 
@@ -26,7 +24,7 @@ public abstract class BaseMap : IMap
     {
         layers.Add(layer);
         layerMap[layer.Name] = layer;
-
+        NumLayers++;
         return layer;
     }
 
@@ -52,11 +50,7 @@ public abstract class BaseMap : IMap
         => cell.TranslateVector(Topology, Width, Height);
 
     public bool CellIsInBounds(Point cell)
-    {
-        cell = cell.TranslatePoint(Topology, Width, Height);
-        return cell.X >= 0 && cell.X < Width
-            && cell.Y >= 0 && cell.Y < Height;
-    }
+        => CellIsInBounds(cell.X, cell.Y);
 
     public bool PositionIsInBounds(Vector2 position)
     {
@@ -66,35 +60,11 @@ public abstract class BaseMap : IMap
     }
 
     public bool CellIsInBounds(int cellX, int cellY)
-        => CellIsInBounds(new(cellX, cellY));
-
-    public virtual void Update(MooseGame game, GameTime gameTime)
-        => BuildFullBlockingMap();
-
-    protected virtual void BuildFullBlockingMap()
     {
-        if (blockingMap == null)
-            blockingMap = new List<int>[Width, Height];
-
-        for (var x = 0; x < Width; x++)
-            for (var y = 0; y < Height; y++)
-            {
-                blockingMap[x, y] ??= new();
-                blockingMap[x, y].Clear();
-                foreach (var layer in layers)
-                {
-                    var blocked = IsBlockedAt(layer.Name, x, y);
-                    blockingMap[x, y].Add(blocked);
-                }
-            }
+        var cell = TranslatePoint(cellX, cellY);
+        return cell.X >= 0 && cell.X < Width
+            && cell.Y >= 0 && cell.Y < Height;
     }
 
-    public virtual IList<int> GetBlockingVector(int x, int y)
-    {
-        (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
-        return x < 0 || x >= Width || y < 0 || y >= Height ? new() { } : blockingMap[x, y];
-    }
-
-    public IList<int> GetBlockingVector(Vector2 worldPosition)
-        => GetBlockingVector((int)(worldPosition.X / TileWidth), (int)(worldPosition.Y / TileHeight));
+    public abstract void Update(MooseGame game, GameTime gameTime);
 }
