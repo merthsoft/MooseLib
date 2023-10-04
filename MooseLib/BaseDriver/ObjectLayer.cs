@@ -21,6 +21,8 @@ public class ObjectLayer<TObject> : IObjectLayer where TObject : GameObjectBase
     public Color DrawColor { get; set; } = Color.White;
     IEnumerable<GameObjectBase> IObjectLayer.Objects => objects;
 
+    public bool IsRenderDirty { get => true ; set { } }
+
     public List<TObject>[,] ObjectMap;
 
     public ObjectLayer(string name, int width, int height)

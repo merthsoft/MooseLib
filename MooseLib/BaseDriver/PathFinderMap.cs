@@ -51,19 +51,22 @@ public class PathFinderMap : BaseMap
             for (var y = 0; y < Height; y++)
             {
                 blockingMap[x, y] ??= new int[Layers.Count];
-                
+
+                var overall = 0;
                 for (var i = 0; i < layers.Count; i++)
                 {
                     var blocked = IsBlockedAt(layers[i].Name, x, y);
+                    overall += blocked;
                     if (blockingMap[x, y][i] == blocked)
                         continue;
                     
                     blockingMap[x, y][i] = blocked;
-                    if (blocked > 0)
-                        blockingGrid.DisconnectIncoming(x, y);
-                    else
-                        blockingGrid.ReconnectIncoming(x, y);
                 }
+
+                if (overall > 0)
+                    blockingGrid.DisconnectIncoming(x, y);
+                else
+                    blockingGrid.ReconnectIncoming(x, y);
             }
         
     }

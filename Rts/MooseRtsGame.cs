@@ -6,7 +6,7 @@ using System.Linq;
 namespace Merthsoft.Moose.Rts;
 public class MooseRtsGame : MooseGame
 {
-    public static int MapSize = 100;
+    public static int MapSize = 250;
     RtsMap Map = null!;
     SpriteFont font = null!;
     SpriteFont smallFont = null!;
@@ -34,13 +34,14 @@ public class MooseRtsGame : MooseGame
         AddDef(new UnitDef("Opossum"));
 
         Map = new(MapSize, MapSize);
+        Map.RandomizeMap();
         ActiveMaps.Add(Map);
 
         //AddDefaultRenderer<TileLayer<int>>("tiles", new SpriteBatchPrimitiveRectangleRenderer(SpriteBatch, TileWidth, TileHeight, [Color.Transparent, Color.Green, Color.Red]));
-        var terrainRenderer = new SpriteBatchTileTextureRenderer(SpriteBatch, TileWidth, TileHeight, ContentManager.LoadImage("Tiles/Terrain"));
+        var terrainRenderer = new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Terrain"));
         AddDefaultRenderer<TileLayer>("terrain", terrainRenderer);
         
-        AddDefaultRenderer<TileLayer>("resource", new SpriteBatchTileTextureRenderer(SpriteBatch, TileWidth, TileHeight, ContentManager.LoadImage("Tiles/Resources")));
+        AddDefaultRenderer<TileLayer>("resource", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Resources")));
         AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectRenderer(SpriteBatch));
 
         MainCamera.Origin = new(0, 0);
@@ -125,7 +126,7 @@ public class MooseRtsGame : MooseGame
         var mouseCell = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
         var mousePoint = new Point((int)mouseCell.X / TileWidth, (int)mouseCell.Y / TileHeight);
         SpriteBatch.Begin();
-        SpriteBatch.DrawStringShadow(font, $"FPS {FramesPerSecondCounter.FramesPerSecond} - #possos: {ReadObjects.OfType<Unit>().Count()} - {mousePoint}", new(4, 4), Color.White);
+        SpriteBatch.DrawStringShadow(font, $"FPS {FramesPerSecondCounter.FramesPerSecond} - #possos: {ReadObjects.OfType<Unit>().Count()} - {mousePoint} - seed {RandomSeed:X}", new(4, 4), Color.White);
         SpriteBatch.End();
     }
 }

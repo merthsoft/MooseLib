@@ -68,8 +68,6 @@ internal class RtsMap : PathFinderMap
         ResourceLayer = AddLayer(new TileLayer("resource", Width, Height, -1) { RendererKey = "resource" });
         //ItemLayer = AddLayer(new TileLayer<int>("item", Width, Height, -1));
         UnitLayer = AddLayer(new ObjectLayer<Unit>("units", width, height));
-
-        RandomizeMap();
     }
 
     public IEnumerable<Unit> GetUnits()
@@ -79,7 +77,7 @@ internal class RtsMap : PathFinderMap
         => layer switch
         {
             "terrain" => TerrainLayer.GetTileValue(x, y) < TerrainTile.Land ? 1 : 0,
-            "resource" => ResourceLayer.GetTileValue(x, y) >= 5 ? 1 : 0,
+            "resource" => ResourceLayer.GetTileValue(x, y) >= 9 ? 1 : 0,
             "item" => ItemLayer.GetTileValue(x, y),
             "units" => UnitLayer.ObjectMap[x, y].Count,
             _ => GetBlockingVector(x, y).Sum(),
@@ -119,6 +117,7 @@ internal class RtsMap : PathFinderMap
 
     public void RandomizeMap()
     {
+        MooseGame.Instance.SetSeed((int)DateTime.Now.Ticks);
         var treeNoise = GenNoise(Width / 2, Height / 2, .1f);
         var waterNoise = GenNoise(Width / 2, Height / 2, .02f);
         var fieldNoise = GenNoise(Width / 2, Height / 2, .02f);
@@ -162,11 +161,11 @@ internal class RtsMap : PathFinderMap
                         break;
                     case GeneratedType.Tree:
                         SetTerrainLayerSquare(x, y, valueGenerator: randomGrass);
-                        SetLayerSquare(ResourceLayer, x, y, valueGenerator: (i) => i + 5);
+                        SetLayerSquare(ResourceLayer, x, y, valueGenerator: (i) => i + 9);
                         break;
                     case GeneratedType.Stump:
                         SetTerrainLayerSquare(x, y, valueGenerator: randomGrass);
-                        SetLayerSquare(ResourceLayer, x, y, valueGenerator: (i) => i + 9);
+                        SetLayerSquare(ResourceLayer, x, y, valueGenerator: (i) => i + 5);
                         break;
                     case GeneratedType.Flower:
                         SetTerrainLayerSquare(x, y, valueGenerator: randomFlower);

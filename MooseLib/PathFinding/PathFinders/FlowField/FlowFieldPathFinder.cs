@@ -99,7 +99,9 @@ public class FlowFieldPathFinder : IPathFinder
 
     public FlowField GetFlow(Grid grid, Point endPoint)
     {
-        return flowCache[endPoint] = flowCache.GetValueOrDefault(endPoint) ?? FlowField.GenerateFlow(grid, endPoint);
+        if (flowCache.TryGetValue(endPoint, out var flowField))
+            return flowField;
+        return flowCache[endPoint] = FlowField.GenerateFlow(grid, endPoint);
     }
 
     public Path FindPath(int x1, int y1, int x2, int y2, Grid grid, Velocity? maximumVelocity = null)

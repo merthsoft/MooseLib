@@ -29,6 +29,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     public string Name { get; }
 
     public bool IsHidden { get; set; } = false;
+    public bool IsRenderDirty { get; set; } = true;
     public float Opacity { get; set; }
     public virtual Vector2 DrawOffset { get; set; }
     public virtual Vector2 DrawSize { get; set; }
@@ -82,6 +83,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
         (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
         if (x < 0 || x >= Width || y < 0 || y >= Height)
             return;
+        IsRenderDirty = true;
         Tiles[x, y] = value;
     }
 
@@ -106,6 +108,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
         for (var x = 0; x < Width; x++)
             for (var y = 0; y < Height; y++)
                 Tiles[x, y] = tiles[x, y];
+        IsRenderDirty = true;
     }
 
     public virtual void Update(GameTime gameTime) { }

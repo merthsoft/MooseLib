@@ -12,7 +12,7 @@ public abstract class MooseGame : Game
 {
     public static MooseGame Instance { get; protected set; } = null!;
     public static Random Random { get; protected set; } = null!;
-    public static int RandomSeed { get; } = (int)DateTime.Now.Ticks;
+    public static int RandomSeed { get; protected set; } = (int)DateTime.Now.Ticks;
 
     public Tweener Tweener { get; protected set; } = new();
     public MooseContentManager ContentManager { get; protected set; } = null!; // Set in initialize
@@ -90,6 +90,7 @@ public abstract class MooseGame : Game
 
     public void SetSeed(int seed)
     {
+        RandomSeed = seed;
         Random = new(RandomSeed);
         SimplexNoise.Seed = RandomSeed;
     }
