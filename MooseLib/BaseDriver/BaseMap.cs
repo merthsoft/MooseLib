@@ -20,6 +20,15 @@ public abstract class BaseMap : IMap
 
     public abstract int IsBlockedAt(string layer, int x, int y);
 
+    public virtual IEnumerable<int> GetBlockingVector(int x, int y)
+    {
+        (x, y) = TopologyHelper.TranslatePoint(x, y, Topology, Width, Height);
+        if (x < 0 || x >= Width || y < 0 || y >= Height)
+            return Enumerable.Empty<int>();
+        
+        return Layers.Select(l => IsBlockedAt(l.Name, x, y));
+    }
+
     public TLayer AddLayer<TLayer>(TLayer layer) where TLayer : ILayer
     {
         layers.Add(layer);

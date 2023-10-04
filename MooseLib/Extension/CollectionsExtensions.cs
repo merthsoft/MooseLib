@@ -28,11 +28,11 @@ public static class CollectionsExtensions
            => items[random.Next(items.Count)];
 
     public static T RandomElement<T>(this IList<T> items)
-           => RandomElement(items, MooseGame.Instance.Random);
+           => RandomElement(items, MooseGame.Random);
 
     public static T RemoveRandomElement<T>(this IList<T> items)
     {
-        var index = MooseGame.Instance.Random.Next(items.Count);
+        var index = MooseGame.Random.Next(items.Count);
         var item = items[index];
         items.RemoveAt(index);
         return item;
@@ -87,7 +87,7 @@ public static class CollectionsExtensions
     }
 
     public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) 
-        => source.Shuffle(MooseGame.Instance.Random);
+        => source.Shuffle(MooseGame.Random);
 
     public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random rng) 
         => source.ShuffleIterator(rng);

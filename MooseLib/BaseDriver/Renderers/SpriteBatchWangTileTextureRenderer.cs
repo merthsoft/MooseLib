@@ -2,9 +2,9 @@
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
-public class SpriteBatchWangTileTextureRenderer<TTile> : SpriteBatchTextureRenderer<TTile> where TTile : struct
+public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
 {
-    public Dictionary<TTile, int> WangDefinitions = new();
+    public Dictionary<int, int> WangDefinitions = new();
     public List<WangTile> WangTiles = new();
     public Dictionary<string, List<WangTile>> Cache = new();
 
@@ -21,9 +21,9 @@ public class SpriteBatchWangTileTextureRenderer<TTile> : SpriteBatchTextureRende
             Cache[tile.Key] = tile.ToList();
     }
 
-    protected virtual WangTile GetWangId(int x, int y, ITileLayer<TTile> layer)
+    protected virtual WangTile GetWangId(int x, int y, ITileLayer layer)
     {
-        var baseTile = layer.GetTileValue(x, y);
+        var baseTile = layer.GetTileIndex(x, y);
         var wangTile = new WangTile(-1);
         wangTile.North.Add(GetNeighborValue(x, y - 1, baseTile, layer));
         wangTile.NorthEast.Add(GetNeighborValue(x + 1, y - 1, baseTile, layer));
@@ -36,22 +36,22 @@ public class SpriteBatchWangTileTextureRenderer<TTile> : SpriteBatchTextureRende
         return wangTile;
     }
 
-    protected virtual int GetNeighborValue(int x, int y, TTile baseTile, ITileLayer<TTile> layer)
+    protected virtual int GetNeighborValue(int x, int y, int baseTile, ITileLayer layer)
     {
         if (x < 0 || y < 0 || x >= layer.Width || y >= layer.Height)
             return 0;
-        var neighborValue = layer.GetTileValue(x, y);
+        var neighborValue = layer.GetTileIndex(x, y);
         return WangDefinitions.GetValueOrDefault(neighborValue, 0);
         
     }
 
-    public override void DrawSprite(int spriteIndex, TTile tile, int i, int j, ITileLayer<TTile> layer, Vector2 drawOffset, float layerDepth = 1)
+    public override void DrawSprite(int spriteIndex, int i, int j, ITileLayer layer, Vector2 drawOffset, float layerDepth = 1)
     {
         var destRect = GetDestinationRectangle(i, j, layer.DrawOffset + drawOffset);
         if (destRect == null)
             return;
 
-        var wangDef = WangDefinitions.GetValueOrDefault(tile, -1);
+        var wangDef = WangDefinitions.GetValueOrDefault(spriteIndex, -1);
 
         var wangTile = GetWangId(i, j, layer);
         var wangId = wangTile.WangId;

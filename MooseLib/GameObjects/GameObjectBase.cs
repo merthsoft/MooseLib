@@ -107,6 +107,8 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public List<Tween> ActiveTweens { get; } = new();
 
+    public Dictionary<string, Func<MooseGame, GameTime, string>> StateMap { get; } = new();
+
     public GameObjectBase(GameObjectDef def, Vector2? position = null, string direction = "", float? rotation = null, Vector2? size = null, string? layer = null)
     {
         Def = def;
@@ -119,17 +121,25 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
         Origin = Def.DefaultOrigin;
 
         Direction = direction;
+
+        StateMap[State] = EmptyState;
     }
+
+    public virtual string EmptyState(MooseGame mooseGame, GameTime gameTime)
+        => "";
 
     public virtual void SetMap(IMap map)
         => ParentMap = map;
 
-    public virtual void PreUpdate(MooseGame mooseGame, GameTime gameTime)
-    {
-        PreviousState = State;
-    }
+    public virtual bool PreUpdate(MooseGame mooseGame, GameTime gameTime)
+        => true;
 
-    public abstract void Update(MooseGame game, GameTime gameTime);
+    public virtual void Update(MooseGame game, GameTime gameTime)
+    {
+        var state = State;
+        State = StateMap[State](game, gameTime);
+        PreviousState = state;
+    }
 
     public virtual void PostUpdate(MooseGame game, GameTime gameTime)
     {

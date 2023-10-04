@@ -3,6 +3,22 @@ using Merthsoft.Moose.MooseEngine.Topologies;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
+public class TileLayer : TileLayer<int>
+{
+    public TileLayer(string name, int width, int height, int edgeTile) : base(name, width, height, edgeTile)
+    {
+
+    }
+
+    public TileLayer(string name, int width, int height, int edgeTile, int defaultTile) : base(name, width, height, edgeTile, defaultTile)
+    {
+
+    }
+
+    public override int GetTileIndex(int x, int y) 
+        => GetTileValue(x, y);
+}
+
 public class TileLayer<TTile> : ITileLayer<TTile>
 {
     public string? RendererKey { get; set; }
@@ -53,6 +69,12 @@ public class TileLayer<TTile> : ITileLayer<TTile>
             return EdgeTile;
         else
             return Tiles[x, y];
+    }
+
+    public virtual int GetTileIndex(int x, int y)
+    {
+        var t = GetTileValue(x, y);
+        return t == null ? 0 : (int)Enum.ToObject(typeof(TTile), t);
     }
 
     public void SetTileValue(int x, int y, TTile value)

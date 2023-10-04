@@ -1,5 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.GameObjects;
+using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.FlowField;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,22 +22,20 @@ internal class Unit : TextureGameObject
 {
     public class States
     {
-        public const string Seeking = "seeking";
-        public const string Idle = "idle";
-        public const string Walk = "walk";
-        public const string Attack = "attack";
+        public const string Idle = nameof(Idle);
+        public const string Walk = nameof(Walk);
+        public const string Step = nameof(Step);
+        public const string IdleStep = nameof(IdleStep);
     }
 
-    public Queue<Point> MoveQueue { get; } = new Queue<Point>();
-    public Vector2 MoveDirection = Vector2.Zero;
-    public Vector2 NextLocation = Vector2.Zero;
-    public Point NextCell = Point.Zero;
-    
-    public Point FinalCell = Point.Zero;
-    public Point? StartCell = null;
-    
-    private bool stepFlag;
-    int seekCount = 0;
+    private FlowField? flowField;
+    private bool followFlowField = false;
+
+    private Vector2 MoveDirection;
+    private Vector2 NextPosition;
+    Size2 tileSize = Size2.Empty;
+
+    private int idleTimer = 0;
 
     public RtsMap Map => (ParentMap as RtsMap)!;
 
@@ -44,153 +43,90 @@ internal class Unit : TextureGameObject
         : base(def, position)
     {
         State = States.Idle;
+
+        StateMap[States.Idle] = Idle;
+        StateMap[States.Walk] = Walk;
+        StateMap[States.Step] = Step;
+        StateMap[States.IdleStep] = Step;
     }
 
-    public void MoveTo(Point point)
+    public override void OnAdd()
     {
-        FinalCell = point;
-        MoveQueue.Clear();
-        StartCell = Cell;
+        base.OnAdd();
+
+        tileSize = ParentMap!.TileSize;
     }
 
-    private void FillMoveQueue()
+    public void SetFlow(FlowField flowField)
     {
-        if (!StartCell.HasValue)
-            return;
-
-        var path = Map.FindCellPath(StartCell!.Value, FinalCell);
-        if (path.Any())
-        {
-            foreach (var c in path)
-                MoveQueue.Enqueue(c);
-
-            State = States.Walk;
-        }
+        this.flowField = flowField;
+        followFlowField = true;
     }
 
-    public override void Update(MooseGame mooseGame, GameTime gameTime)
+    private string Idle(MooseGame mooseGame, GameTime gameTime)
     {
-        base.Update(mooseGame, gameTime);
+        if (followFlowField)
+            return States.Walk;
         
-        switch (State)
+        if (idleTimer == 0)
         {
-            case States.Seeking:
-                Seek();
-                break;
-            case States.Walk:
-                Walk();
-                break;
-            default:
-                Idle();
-                break;
+            idleTimer = MooseGame.Random.Next(25, 100);
+            var tiles = new List<Vector2>();
+            var (cX, cY) = Cell;
+            for (var x = -1; x <= 1; x++)
+                for (var y = -1; y <= 1; y++)
+                {
+                    if (x == 0 && y == 0)
+                        continue;
+                    var blockingVector = ParentMap.GetBlockingVector(cX + x, cY + y);
+                    if (blockingVector.Any() && blockingVector.Sum() == 0)
+                        tiles.Add(new(x, y));
+                }
+
+            if (!tiles.Any())
+                return States.Idle;
+
+            MoveDirection = tiles.RandomElement();
+            NextPosition = Position + MoveDirection * tileSize;
+            return States.IdleStep;
         }
+        idleTimer--;
+        return States.Idle;
     }
 
-    private void Idle()
+    private string Walk(MooseGame mooseGame, GameTime gameTime)
     {
-        if (StartCell != null && StartCell.Value != FinalCell)
+        if (flowField == null)
         {
-            State = States.Seeking;
+            followFlowField = false;
+            return States.Idle;
         }
-        else
+
+        var cell = Cell;
+        var f = flowField.CostMap[cell.X, cell.Y];
+
+        if (f.CostValue == 0 || !f.Valid)
         {
-            StartCell = null;
-            seekCount = 0;
-            MoveDirection = Vector2.Zero;
-            NextLocation = Vector2.Zero;
-            //Map.ReserveLocation(Layer, Cell);
+            followFlowField = false;
+            return States.Idle;
         }
+
+        MoveDirection = new(2 * (f.NextX - cell.X), 2 * (f.NextY - cell.Y));
+        NextPosition = new(f.NextX * tileSize.Width, f.NextY * tileSize.Height);
+        NextPosition.Floor();
+        return States.Step;
     }
 
-    private void Walk()
+    private string Step(MooseGame mooseGame, GameTime gameTime)
     {
         if (MoveDirection != Vector2.Zero)
         {
-            takeStep();
-            //if (stepFlag)
-            //    takeStep();
-            //stepFlag = !stepFlag;
-        }
-        else if (MoveQueue.Count == 0)
-        {
-            if (Cell != FinalCell)
-            {
-                seekCount = 0;
-                State = States.Idle;
-            }
-            if (StartCell.HasValue && StartCell.Value == FinalCell)
-            {
-                seekCount = 0;
-                StartCell = null;
-                State = States.Idle;
-            }
-            else
-            {
-                seekCount = 0;
-                StartCell = Cell;
-                State = States.Seeking;
-            }
-        }
-        else
-        {
-            NextCell = MoveQueue.Dequeue();
-            if (Map.IsBlockedAt(Layer, NextCell.X, NextCell.Y) > 0)
-            {
-                StartCell = Cell;
-                State = States.Seeking;
-                MoveQueue.Clear();
-            }
-            else
-            {
-                var cell = Cell;
-                MoveDirection = new(NextCell.X - cell.X, NextCell.Y - cell.Y);
-                NextLocation = NextCell.ToVector2() * ParentMap!.TileSize;
-                //Map.ClearReservation(Layer, cell);
-                //Map.ReserveLocation(Layer, NextCell);
-                takeStep();
-            }
-        }
-    }
+            Position = Position + MoveDirection;
+            if (Position.GetFloor() != NextPosition)
+                return State;
 
-    private void Seek()
-    {
-        FillMoveQueue();
-        if (State == States.Seeking)
-        {
-            seekCount++;
-            if (seekCount == 5)
-            {
-                StartCell = null;
-                seekCount = 0;
-                State = States.Idle;
-            }
-        }
-        else
-        {
-            seekCount = 0;
-        }
-    }
-
-    void takeStep()
-    {
-        var updatedPosition = Position + MoveDirection;
-        var collides = Map.GetUnits().Any(o => this.Id.GetHashCode() > o.Id.GetHashCode() && o.DistanceTo(this) < 10);
-        //if (!collides)
-        //{
-            seekCount = 0;
-            Position = updatedPosition;
-        //} else
-        //{
-        //    seekCount++;
-        //    if (seekCount >= 50)
-        //    {
-        //        MoveDirection = Vector2.Zero;
-        //        seekCount = 0;
-        //        StartCell = null;
-        //        State = States.Idle;
-        //    }
-        //}
-        if (Position.GetFloor() == NextLocation.GetFloor())
             MoveDirection = Vector2.Zero;
+        }
+        return State == States.IdleStep ? States.Idle : States.Walk;
     }
 }

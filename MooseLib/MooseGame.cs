@@ -1,6 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.GameObjects;
 using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.Noise;
 using MonoGame.Extended.Tweening;
 using MonoGame.Extended.ViewportAdapters;
 using System.Linq.Expressions;
@@ -10,8 +11,9 @@ namespace Merthsoft.Moose.MooseEngine;
 public abstract class MooseGame : Game
 {
     public static MooseGame Instance { get; protected set; } = null!;
+    public static Random Random { get; protected set; } = null!;
+    public static int RandomSeed { get; } = (int)DateTime.Now.Ticks;
 
-    public Random Random { get; protected set; } = new();
     public Tweener Tweener { get; protected set; } = new();
     public MooseContentManager ContentManager { get; protected set; } = null!; // Set in initialize
     public OrthographicCamera MainCamera { get; protected set; } = null!; // Set in load content
@@ -52,7 +54,6 @@ public abstract class MooseGame : Game
 
     private readonly Dictionary<Type, string> DefaultRenderers = new();
     private readonly Dictionary<string, ILayerRenderer> RendererDictionary = new();
-    private readonly Dictionary<string, string> LayerRenderers = new();
 
     public virtual int MapHeight => MainMap?.Height ?? 0;
 
@@ -83,10 +84,15 @@ public abstract class MooseGame : Game
 
         IsMouseVisible = true;
         Graphics = new GraphicsDeviceManager(this);
+        Random = new(RandomSeed);
+        SimplexNoise.Seed = RandomSeed;
     }
 
     public void SetSeed(int seed)
-        => Random = new Random(seed);
+    {
+        Random = new(RandomSeed);
+        SimplexNoise.Seed = RandomSeed;
+    }
 
     protected virtual StartupParameters Startup()
         => new()
@@ -105,7 +111,6 @@ public abstract class MooseGame : Game
     protected override void Initialize()
     {
         ContentManager = new MooseContentManager(this, Content, GraphicsDevice);
-
         var initialization = Startup();
         IsMouseVisible = initialization.IsMouseVisible;
 
@@ -169,11 +174,11 @@ public abstract class MooseGame : Game
         where TRenderer : ILayerRenderer
         => (TRenderer)RendererDictionary[rendererKey];
 
-    public void AddDefaultRenderer<TLayer>(string rendererKey, ILayerRenderer renderer)
+    public ILayerRenderer AddDefaultRenderer<TLayer>(string rendererKey, ILayerRenderer renderer)
         where TLayer : ILayer
     {
         DefaultRenderers[typeof(TLayer)] = rendererKey;
-        AddRenderer(rendererKey, renderer);
+        return AddRenderer(rendererKey, renderer);
     }
 
     public TRenderer AddRenderer<TRenderer>(string rendererKey, TRenderer renderer) where TRenderer : ILayerRenderer
@@ -253,9 +258,8 @@ public abstract class MooseGame : Game
             }
 
         if (PreObjectsUpdate(gameTime))
-            foreach (var obj in Objects)
+            foreach (var obj in Objects.Where(o => o.PreUpdate(this, gameTime)))
             {
-                obj.PreUpdate(this, gameTime);
                 obj.Update(this, gameTime);
                 obj.PostUpdate(this, gameTime);
             }
@@ -332,9 +336,10 @@ public abstract class MooseGame : Game
             var layerType = layer.GetType()!;
             ILayerRenderer? renderer = null;
             
-            var rendererKey = layer.RendererKey ?? LayerRenderers.GetValueOrDefault(layerName);
+            var rendererKey = layer.RendererKey;
             if (rendererKey == null)
-                rendererKey = DefaultRenderers.GetValueOrDefault(layerType) ?? (DefaultRenderers.FirstOrDefault(r => layerType.IsAssignableTo(r.Key)).Value);
+                rendererKey = DefaultRenderers.GetValueOrDefault(layerType) 
+                                ?? (DefaultRenderers.FirstOrDefault(r => layerType.IsAssignableTo(r.Key)).Value);
             if (rendererKey != null)
                 renderer = RendererDictionary.GetValueOrDefault(rendererKey);
 

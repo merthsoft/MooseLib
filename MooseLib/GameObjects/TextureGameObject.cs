@@ -13,8 +13,6 @@ public class TextureGameObject : GameObjectBase
         TextureGameObjectDef = def;
     }
 
-    public override void Update(MooseGame game, GameTime gameTime) { }
-
     public override void Draw(MooseGame game, GameTime gameTime, SpriteBatch spriteBatch)
         => spriteBatch.Draw(TextureGameObjectDef.Texture,
                 WorldRectangle.Move(Origin).ToRectangle(), 

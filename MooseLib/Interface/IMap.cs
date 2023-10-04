@@ -16,7 +16,9 @@ public interface IMap
 
     void Update(MooseGame game, GameTime gameTime);
 
-    public bool CellIsInBounds(Point cell);
+    bool CellIsInBounds(Point cell);
+    int IsBlockedAt(string? layer, int x, int y);
+    IEnumerable<int> GetBlockingVector(int x, int y);
 
     TLayer GetLayer<TLayer>(int layerNumber) where TLayer : ILayer;
     TLayer GetLayer<TLayer>(string layerName) where TLayer : ILayer;

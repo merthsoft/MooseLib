@@ -4,7 +4,7 @@ using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Renderers;
-public class MiniMapRenderer : SpriteBatchAutoTileTextureRenderer<MiniMapTile>
+public class MiniMapRenderer : SpriteBatchFourWayAutoTileTextureRenderer<MiniMapTile>
 {
     static Color FogOfWarColor = Color.Black.HalveAlphaChannel();
 
