@@ -14,6 +14,8 @@ public abstract class SpriteBatchRenderer : ILayerRenderer
     protected SpriteBatchRenderer(SpriteBatch spriteBatch)
         => SpriteBatch = spriteBatch;
 
+    public virtual bool PreDraw(MooseGame game, GameTime _gameTime, ILayer layer) => true;
+
     public virtual void Begin(Matrix viewMatrix)
         => SpriteBatch.Begin(
             SpriteSortMode.FrontToBack,

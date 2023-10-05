@@ -26,5 +26,7 @@ public abstract class GraphicsDeviceRenderer : ILayerRenderer
     public virtual void Update(MooseGame game, GameTime gameTime) { }
     public virtual void LoadContent(MooseContentManager contentManager) { }
 
-    public virtual void End() { } 
+    public virtual void End() { }
+
+    public virtual bool PreDraw(MooseGame game, GameTime gameTime, ILayer layer) => true;
 }

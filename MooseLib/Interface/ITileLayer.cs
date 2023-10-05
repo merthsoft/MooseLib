@@ -2,6 +2,7 @@
 
 public interface ITileLayer : ILayer
 {
+    IEnumerable<Point> RendererDirtyCells { get; }
     int GetTileIndex(int x, int y);
 }
 

@@ -5,6 +5,7 @@ using Merthsoft.Moose.MooseEngine.Noise;
 using MonoGame.Extended.Tweening;
 using MonoGame.Extended.ViewportAdapters;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 
 namespace Merthsoft.Moose.MooseEngine;
 
@@ -310,19 +311,44 @@ public abstract class MooseGame : Game
     }
 
     protected virtual bool PreClear(GameTime gameTime) => true;
-    protected virtual bool PreMapDraw(GameTime gameTime) => true;
+    protected virtual bool PreMapDraw(GameTime gameTime)
+    {
+        var ret = true;
+        foreach (var map in ActiveMaps)
+        {
+            for (var layerIndex = 0; layerIndex < map.Layers.Count; layerIndex++)
+            {
+                var layer = map.Layers[layerIndex];
+                var layerName = layer.Name;
+                var rendererKey = layer.RendererKey;
+                var layerType = layer.GetType()!;
+                ILayerRenderer? renderer = null;
+                if (rendererKey == null)
+                    rendererKey = DefaultRenderers.GetValueOrDefault(layerType)
+                                    ?? (DefaultRenderers.FirstOrDefault(r => layerType.IsAssignableTo(r.Key)).Value);
+                if (rendererKey != null)
+                    renderer = RendererDictionary.GetValueOrDefault(rendererKey);
+
+                ret = ret && renderer!.PreDraw(this, gameTime, layer);
+            }
+        }
+
+        return ret;
+    }
     protected virtual void PostDraw(GameTime gameTime) { return; }
 
     protected void Draw(GameTime gameTime, Dictionary<string, RenderHook>? renderHooks)
     {
-        if (PreClear(gameTime))
-            GraphicsDevice.Clear(DefaultBackgroundColor);
-
         var transformMatrix = MainCamera.GetViewMatrix();
 
-        if (PreMapDraw(gameTime) && ActiveMaps.Any())
+        if (PreMapDraw(gameTime))
+        {
+            if (PreClear(gameTime))
+                GraphicsDevice.Clear(DefaultBackgroundColor);
+
             foreach (var map in ActiveMaps)
                 DrawMap(map, gameTime, renderHooks, transformMatrix);
+        }
 
         PostDraw(gameTime);
     }

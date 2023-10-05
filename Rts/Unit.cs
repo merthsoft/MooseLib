@@ -26,6 +26,7 @@ internal class Unit : TextureGameObject
         public const string Walk = nameof(Walk);
         public const string Step = nameof(Step);
         public const string IdleStep = nameof(IdleStep);
+        public const string Harvest = nameof(Harvest);
     }
 
     private FlowField? flowField;
@@ -35,7 +36,7 @@ internal class Unit : TextureGameObject
     private Vector2 NextPosition;
     Size2 tileSize = Size2.Empty;
 
-    private int idleTimer = 0;
+    private int stateTimer = 0;
 
     public RtsMap Map => (ParentMap as RtsMap)!;
 
@@ -48,6 +49,7 @@ internal class Unit : TextureGameObject
         StateMap[States.Walk] = Walk;
         StateMap[States.Step] = Step;
         StateMap[States.IdleStep] = Step;
+        StateMap[States.Harvest] = Harvest;
     }
 
     public override void OnAdd()
@@ -63,34 +65,87 @@ internal class Unit : TextureGameObject
         followFlowField = true;
     }
 
+    private string Harvest(MooseGame mooseGame, GameTime gameTime)
+    {
+        if (followFlowField)
+            return States.Walk;
+
+        var (cX, cY) = Cell;
+        cX += (int)MoveDirection.X;
+        cY += (int)MoveDirection.Y;
+        if (!Map.CanHarvest(cX, cY))
+        {
+            stateTimer = 0;
+            return States.Idle;
+        }
+
+        if (stateTimer == 0)
+        {
+            Map.HarvestTile(cX, cY, this);
+            stateTimer = 0;
+            return States.Idle;
+        }
+        stateTimer--;
+        return States.Harvest;
+    }
+
+
     private string Idle(MooseGame mooseGame, GameTime gameTime)
     {
         if (followFlowField)
             return States.Walk;
         
-        if (idleTimer == 0)
+        if (stateTimer == 0)
         {
-            idleTimer = MooseGame.Random.Next(25, 100);
-            var tiles = new List<Vector2>();
             var (cX, cY) = Cell;
+            if (Map.CanHarvest(cX, cY))
+            {
+                MoveDirection = Vector2.Zero;
+                stateTimer = Map.GetHarvestDelay(cX, cY);
+                return States.Harvest;
+            }
+
+            var tiles = new List<Vector2>();
             for (var x = -1; x <= 1; x++)
                 for (var y = -1; y <= 1; y++)
                 {
                     if (x == 0 && y == 0)
                         continue;
-                    var blockingVector = ParentMap.GetBlockingVector(cX + x, cY + y);
-                    if (blockingVector.Any() && blockingVector.Sum() == 0)
-                        tiles.Add(new(x, y));
+                    tiles.Add(new(x, y));
                 }
 
-            if (!tiles.Any())
-                return States.Idle;
+            foreach (var tile in tiles)
+            {
+                var tX = cX + (int)tile.X;
+                var tY = cY + (int)tile.Y;
 
-            MoveDirection = tiles.RandomElement();
-            NextPosition = Position + MoveDirection * tileSize;
-            return States.IdleStep;
+                if (Map.CanHarvest(tX, tY))
+                {
+                    MoveDirection = tile;
+                    stateTimer = Map.GetHarvestDelay(tX, tY);
+                    return States.Harvest;
+                }
+            }
+
+            foreach (var tile in tiles.Shuffle())
+            {
+                var tX = cX + (int)tile.X;
+                var tY = cY + (int)tile.Y;
+
+                var blockingVector = ParentMap.GetBlockingVector(tX, tY);
+                if (blockingVector.Any() && blockingVector.Sum() == 0)
+                {
+                    MoveDirection = tile;
+                    stateTimer = MooseGame.Random.Next(25, 100);
+                    NextPosition = Position + MoveDirection * tileSize;
+                    return States.IdleStep;
+                }
+            }
+
+            // We can return in the foreach if we find something to work with
+            return States.Idle;
         }
-        idleTimer--;
+        stateTimer--;
         return States.Idle;
     }
 

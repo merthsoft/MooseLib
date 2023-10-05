@@ -9,6 +9,8 @@ public interface ILayerRenderer
 
     void Update(MooseGame game, GameTime gameTime) { }
 
+    bool PreDraw(MooseGame game, GameTime gameTime, ILayer layer);
+
     void Begin(Matrix transformMatrix) { }
     void Draw(MooseGame game, GameTime gameTime, ILayer layer, Vector2 drawOffset);
     void End() { }

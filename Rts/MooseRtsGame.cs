@@ -40,8 +40,9 @@ public class MooseRtsGame : MooseGame
         //AddDefaultRenderer<TileLayer<int>>("tiles", new SpriteBatchPrimitiveRectangleRenderer(SpriteBatch, TileWidth, TileHeight, [Color.Transparent, Color.Green, Color.Red]));
         var terrainRenderer = new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Terrain"));
         AddDefaultRenderer<TileLayer>("terrain", terrainRenderer);
-        
+
         AddDefaultRenderer<TileLayer>("resource", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Resources")));
+        AddDefaultRenderer<TileLayer>("item", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Items")));
         AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectRenderer(SpriteBatch));
 
         MainCamera.Origin = new(0, 0);
@@ -102,23 +103,6 @@ public class MooseRtsGame : MooseGame
         {
             Map.RandomizeMap();
         }
-    }
-
-    private void DrawUnderUnits()
-    {
-        var transformMatrix = MainCamera.GetViewMatrix();
-        SpriteBatch.Begin(transformMatrix: transformMatrix);
-
-        var mouseCell = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
-        mouseCell = new Vector2((int)mouseCell.X / TileWidth * TileWidth, (int)mouseCell.Y / TileHeight * TileHeight);
-        SpriteBatch.DrawRectangle(mouseCell, new(TileWidth, TileHeight), Color.AliceBlue);
-        SpriteBatch.End();
-    }
-
-    protected override bool PreMapDraw(GameTime gameTime)
-    {
-        DrawUnderUnits();
-        return true;
     }
 
     protected override void PostDraw(GameTime gameTime)

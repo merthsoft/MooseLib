@@ -1,4 +1,5 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
+using System.Reflection.Emit;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 
@@ -30,20 +31,25 @@ public class SpriteBatchTileTextureCachedRenderer : SpriteBatchRenderer
         TilePadding = tilePadding;
         MapWidth = parentMap.Width;
         MapHeight = parentMap.Height;
+        DestinationRectangle = new Rectangle(0, 0, MapWidth * TileWidth, MapHeight * TileHeight);
 
         foreach (var layer in parentMap.Layers.Where(l => l is ITileLayer))
         {
             BackingTextures[layer] = null!;
         }
-
-        DestinationRectangle = new Rectangle(0, 0, MapWidth * TileWidth, MapHeight * TileHeight);
     }
 
     public override void LoadContent(MooseContentManager contentManager)
     {
         base.LoadContent(contentManager);
         foreach (var key in BackingTextures.Keys)
-            BackingTextures[key] = new RenderTarget2D(contentManager.GraphicsDevice, MapWidth * TileWidth, MapHeight * TileHeight);
+        {
+            var target = new RenderTarget2D(SpriteBatch.GraphicsDevice, MapWidth * TileWidth, MapHeight * TileHeight, mipMap: false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            SpriteBatch.GraphicsDevice.SetRenderTarget(target);
+            SpriteBatch.GraphicsDevice.Clear(Color.Transparent);
+            SpriteBatch.GraphicsDevice.SetRenderTarget(null);
+            BackingTextures[key] = target;
+        }
     }
 
     public override void Begin(Matrix viewMatrix)
@@ -51,45 +57,60 @@ public class SpriteBatchTileTextureCachedRenderer : SpriteBatchRenderer
         ViewMatrix = viewMatrix;
     }
 
+    public override bool PreDraw(MooseGame game, GameTime _gameTime, ILayer layer)
+    {
+        if (layer is not ITileLayer tileLayer)
+            throw new Exception("TileLayer layer expected");
+
+        if (layer.IsRenderDirty)
+        {
+            var target = BackingTextures[layer];
+
+            SpriteBatch.GraphicsDevice.SetRenderTarget(target);
+            //SpriteBatch.GraphicsDevice.Clear(Color.Pink);
+            SpriteBatch.Begin(
+                SpriteSortMode.Texture,
+                BlendState.Opaque,
+                SamplerState.PointClamp,
+                effect: Effect);
+
+            foreach (var (i, j) in tileLayer.RendererDirtyCells)
+            {
+                var tileValue = tileLayer.GetTileIndex(i, j);
+                if (tileValue >= 0)
+                    DrawSprite(tileValue, i, j, tileLayer, Vector2.Zero);
+
+            }
+
+            //for (int i = 0; i < tileLayer.Width; i++)
+            //    for (int j = 0; j < tileLayer.Height; j++)
+            //    {
+            //        var tileValue = tileLayer.GetTileIndex(i, j);
+            //        if (tileValue >= 0)
+            //            DrawSprite(tileValue, i, j, tileLayer, Vector2.Zero);
+            //    }
+
+            layer.IsRenderDirty = false;
+            SpriteBatch.End();
+            SpriteBatch.GraphicsDevice.SetRenderTarget(null);
+        }
+
+        return true;
+    }
+
     public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
     {
         if (layer is not ITileLayer tileLayer)
             throw new Exception("TileLayer layer expected");
 
-        var target = BackingTextures[layer];
-
-        if (layer.IsRenderDirty)
-        {
-            SpriteBatch.Begin(
-                SpriteSortMode.FrontToBack,
-                BlendState.NonPremultiplied,
-                SamplerState.PointClamp,
-                effect: Effect);
-
-            SpriteBatch.GraphicsDevice.SetRenderTarget(BackingTextures[layer]);
-            SpriteBatch.GraphicsDevice.Clear(Color.Transparent);
-
-            for (int i = 0; i < tileLayer.Width; i++)
-                for (int j = 0; j < tileLayer.Height; j++)
-                {
-                    var tileValue = tileLayer.GetTileIndex(i, j);
-                    if (tileValue >= 0)
-                        DrawSprite(tileValue, i, j, tileLayer, drawOffset);
-                }
-
-            SpriteBatch.End();
-
-            layer.IsRenderDirty = false;
-            SpriteBatch.GraphicsDevice.SetRenderTarget(null);
-        }
-
         SpriteBatch.Begin(
             SpriteSortMode.FrontToBack,
-            BlendState.NonPremultiplied,
+            BlendState.AlphaBlend,
             SamplerState.PointClamp,
             effect: Effect,
             transformMatrix: ViewMatrix);
 
+        var target = BackingTextures[layer];
         SpriteBatch.Draw(target, 
                 destinationRectangle: DestinationRectangle, 
                 sourceRectangle: target.Bounds,

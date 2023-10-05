@@ -106,6 +106,14 @@ public static class GraphicsExtensions
         destinationTexture.SetData(0, destinationRect, data, 0, count);
     }
 
+    public static void Draw(this Texture2D destinationTexture, Texture2D sourceTexture, Rectangle destinationRect, Rectangle sourceRectangle)
+    {
+        var count = sourceRectangle.Width * sourceRectangle.Height;
+        Color[] data = new Color[count];
+        sourceTexture.GetData(0, sourceRectangle, data, 0, count);
+        destinationTexture.SetData(0, destinationRect, data, 0, count);
+    }
+
     public static IEnumerable<Color> ColorGradient(Color start, Color end, int steps)
     {
         int stepA = ((end.A - start.A) / (steps - 1));

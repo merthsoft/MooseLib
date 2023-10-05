@@ -29,7 +29,18 @@ public class TileLayer<TTile> : ITileLayer<TTile>
     public string Name { get; }
 
     public bool IsHidden { get; set; } = false;
-    public bool IsRenderDirty { get; set; } = true;
+    private bool isRenderDirty = true;
+    public bool IsRenderDirty {
+        get => isRenderDirty;
+        set {
+            isRenderDirty = value;
+            if (!isRenderDirty)
+                rendererDirtyCells.Clear();
+        }
+    }
+
+    private HashSet<Point> rendererDirtyCells = new();
+    public IEnumerable<Point> RendererDirtyCells => rendererDirtyCells;
     public float Opacity { get; set; }
     public virtual Vector2 DrawOffset { get; set; }
     public virtual Vector2 DrawSize { get; set; }
@@ -85,6 +96,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
             return;
         IsRenderDirty = true;
         Tiles[x, y] = value;
+        rendererDirtyCells.Add(new(x, y));
     }
 
     public void SetTileValue(int x, int y, TTile value, int thickness)
@@ -105,10 +117,15 @@ public class TileLayer<TTile> : ITileLayer<TTile>
 
     public void CopyTiles(TTile[,] tiles)
     {
+        rendererDirtyCells.Clear();
         for (var x = 0; x < Width; x++)
             for (var y = 0; y < Height; y++)
+            {
                 Tiles[x, y] = tiles[x, y];
+                rendererDirtyCells.Add(new(x, y));
+            }
         IsRenderDirty = true;
+        
     }
 
     public virtual void Update(GameTime gameTime) { }
