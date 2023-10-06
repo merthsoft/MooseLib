@@ -45,7 +45,7 @@ public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
         
     }
 
-    public override void DrawSprite(int spriteIndex, int i, int j, ITileLayer layer, Vector2 drawOffset, float layerDepth = 1)
+    public override void DrawSprite(int spriteIndex, int i, int j, ILayer layer, Vector2 drawOffset, float layerDepth = 1)
     {
         var destRect = GetDestinationRectangle(i, j, layer.DrawOffset + drawOffset);
         if (destRect == null)
@@ -53,7 +53,7 @@ public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
 
         var wangDef = WangDefinitions.GetValueOrDefault(spriteIndex, -1);
 
-        var wangTile = GetWangId(i, j, layer);
+        var wangTile = GetWangId(i, j, layer as ITileLayer);
         var wangId = wangTile.WangId;
 
         var tileIndex = Cache.GetValueOrDefault(wangId);

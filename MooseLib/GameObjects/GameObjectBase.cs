@@ -109,6 +109,8 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public Dictionary<string, Func<MooseGame, GameTime, string>> StateMap { get; } = new();
 
+    public int DrawIndex { get; set; } = 0; // Most objects won't actually use this, but it's helpful for certain things
+
     public GameObjectBase(GameObjectDef def, Vector2? position = null, string direction = "", float? rotation = null, Vector2? size = null, string? layer = null)
     {
         Def = def;

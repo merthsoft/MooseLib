@@ -8,13 +8,15 @@ namespace Merthsoft.Moose.Rts;
 
 internal record UnitDef : TextureGameObjectDef
 {
-    public UnitDef(string defName) : base($"Unit_{defName}", $"Units/{defName}", new(0, 0, 8, 8)) 
+    public UnitTile UnitTile { get; }
+    public UnitDef(string defName, UnitTile unitTile) : base($"Unit_{defName}", $"Units/{defName}", new(0, 0, 8, 8))
     {
         DefaultLayer = "units";
         DefaultSize = new(8, 8);
+        UnitTile = unitTile;
     }
 
-    public override void LoadContent(MooseContentManager contentManager) => base.LoadContent(contentManager);
+    public override void LoadContent(MooseContentManager contentManager) {}
 
 }
 
@@ -50,6 +52,7 @@ internal class Unit : TextureGameObject
         StateMap[States.Step] = Step;
         StateMap[States.IdleStep] = Step;
         StateMap[States.Harvest] = Harvest;
+        DrawIndex = (int)def.UnitTile;
     }
 
     public override void OnAdd()

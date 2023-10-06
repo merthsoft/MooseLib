@@ -6,7 +6,7 @@ using System.Linq;
 namespace Merthsoft.Moose.Rts;
 public class MooseRtsGame : MooseGame
 {
-    public static int MapSize = 250;
+    public static int MapSize = 400;
     RtsMap Map = null!;
     SpriteFont font = null!;
     SpriteFont smallFont = null!;
@@ -20,8 +20,8 @@ public class MooseRtsGame : MooseGame
 
     protected override StartupParameters Startup() => base.Startup() with
     {
-        ScreenHeight = 800,
-        ScreenWidth = 800,
+        ScreenHeight = 1024,
+        ScreenWidth = 1024,
         IsMouseVisible = true,
         DefaultBackgroundColor = new(18, 14, 25),
     };
@@ -31,7 +31,9 @@ public class MooseRtsGame : MooseGame
         IsFixedTimeStep = false;
         font = ContentManager.BakeFont("Capital_Hill_Monospaced", 12);
         smallFont = ContentManager.BakeFont("Capital_Hill_Monospaced", 6);
-        AddDef(new UnitDef("Opossum"));
+        AddDef(new UnitDef("Opossum", UnitTile.Opossum));
+        AddDef(new UnitDef("Skunk", UnitTile.Skunk));
+        AddDef(new UnitDef("Raccoon", UnitTile.Raccoon));
 
         Map = new(MapSize, MapSize);
         Map.RandomizeMap();
@@ -43,7 +45,8 @@ public class MooseRtsGame : MooseGame
 
         AddDefaultRenderer<TileLayer>("resource", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Resources")));
         AddDefaultRenderer<TileLayer>("item", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Items")));
-        AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectRenderer(SpriteBatch));
+        //AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectRenderer(SpriteBatch));
+        AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectTileRenderer(SpriteBatch, TileWidth, TileHeight, ContentManager.LoadImage("Tiles/Units")));
 
         MainCamera.Origin = new(0, 0);
         MainCamera.Position = new(-45, -40);
@@ -96,7 +99,7 @@ public class MooseRtsGame : MooseGame
 
         if (WasMiddleMouseJustPressed())
         {
-            AddObject(new Unit(GetDef<UnitDef>()!, new(mousePoint.X * TileWidth, mousePoint.Y * TileHeight)), Map);
+            AddObject(new Unit(GetDefs<UnitDef>().ToList().RandomElement(), new(mousePoint.X * TileWidth, mousePoint.Y * TileHeight)), Map);
         }
 
         if (WasKeyJustPressed(Keys.R))
@@ -107,6 +110,8 @@ public class MooseRtsGame : MooseGame
 
     protected override void PostDraw(GameTime gameTime)
     {
+        if (!IsKeyDown(Keys.Tab))
+            return;
         var mouseCell = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
         var mousePoint = new Point((int)mouseCell.X / TileWidth, (int)mouseCell.Y / TileHeight);
         SpriteBatch.Begin();

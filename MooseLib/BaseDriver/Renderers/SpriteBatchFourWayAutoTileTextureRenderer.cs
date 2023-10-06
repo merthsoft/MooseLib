@@ -34,7 +34,7 @@ public class SpriteBatchFourWayAutoTileTextureRenderer : SpriteBatchTileTextureR
     protected virtual int GetNeighborValue(int tile, int x, int y, ITileLayer layer, int neighborValue) 
         => x < 0 || y < 0 || x >= layer.Width || y >= layer.Height || tile == layer.GetTileIndex(x, y) ? 0 : neighborValue;
 
-    public override void DrawSprite(int spriteIndex, int i, int j, ITileLayer layer, Vector2 drawOffset, float layerDepth = 1)
+    public override void DrawSprite(int spriteIndex, int i, int j, ILayer layer, Vector2 drawOffset, float layerDepth = 1)
     {
         var texture = AutoTileTextureMap.GetValueOrDefault(spriteIndex);
 
@@ -52,7 +52,7 @@ public class SpriteBatchFourWayAutoTileTextureRenderer : SpriteBatchTileTextureR
             return;
         }
 
-        var neighborCount = CountNeighbors(spriteIndex, i, j, layer);
+        var neighborCount = CountNeighbors(spriteIndex, i, j, (layer as ITileLayer)!);
         var tileIndex = GetTileIndex(spriteIndex, neighborCount);
         SpriteBatch.Draw(texture,
                 position: destRect.Value.Position, scale: DrawScale,

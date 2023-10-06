@@ -6,7 +6,6 @@ using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.FlowField;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
 
 namespace Merthsoft.Moose.Rts;
 
@@ -179,7 +178,7 @@ internal class RtsMap : PathFinderMap
                 
             }
 
-        // Convolusion on final map
+        // Convolution on final map
         // Auto-tile the water, add some other random elements
         for (var x = 0; x < Width; x += 1)
             for (var y = 0; y < Height; y += 1)
@@ -207,7 +206,12 @@ internal class RtsMap : PathFinderMap
         IsBlockingMapDirty = true;
 
         ResourceTile randomTree(int index, double coinFlip)
-            => (ResourceTile)(index + (int)(coinFlip < .65 ? ResourceTile.Tree1_Start : ResourceTile.Tree2_Start));
+            => (ResourceTile)(index + (int)(coinFlip switch {
+                < .4 => ResourceTile.Tree1_Start,
+                < .5 => ResourceTile.Tree2_Start,
+                < .9 => ResourceTile.Tree3_Start,
+                _ => ResourceTile.Tree4_Start,
+            }));
 
         ResourceTile randomMushroom(int _i = 0, double _cf= 0)
             => (ResourceTile)MooseGame.Random.Next((int)ResourceTile.Mushroom_Start, (int)ResourceTile.Mushroom_End + 1);
@@ -239,17 +243,17 @@ internal class RtsMap : PathFinderMap
         var total = 0;
         var north = GetNeighborValue(tile_start, tile_end, x + 0, y + -1, layer, 0b00000010);
         total += north;
-        var west = GetNeighborValue(tile_start, tile_end, x + -1, y + 0, layer, 0b00001000);
+        var west = GetNeighborValue(tile_start, tile_end, x + -1, y + 0, layer,  0b00001000);
         total += west;
-        var east = GetNeighborValue(tile_start, tile_end, x + 1, y + 0, layer, 0b00010000);
+        var east = GetNeighborValue(tile_start, tile_end, x + 1, y + 0, layer,   0b00010000);
         total += east;
-        var south = GetNeighborValue(tile_start, tile_end, x + 0, y + 1, layer, 0b01000000);
+        var south = GetNeighborValue(tile_start, tile_end, x + 0, y + 1, layer,  0b01000000);
         total += south;
 
-        total += GetNeighborValue(tile_start, tile_end, x + -1, y + -1, layer, 0b00000001);
-        total += GetNeighborValue(tile_start, tile_end, x + 1, y + -1, layer, 0b00000100);
-        total += GetNeighborValue(tile_start, tile_end, x + -1, y + 1, layer, 0b00100000);
-        total += GetNeighborValue(tile_start, tile_end, x + 1, y + 1, layer, 0b10000000);
+        total += GetNeighborValue(tile_start, tile_end, x + -1, y + -1, layer,   0b00000001);
+        total += GetNeighborValue(tile_start, tile_end, x + 1, y + -1, layer,    0b00000100);
+        total += GetNeighborValue(tile_start, tile_end, x + -1, y + 1, layer,    0b00100000);
+        total += GetNeighborValue(tile_start, tile_end, x + 1, y + 1, layer,     0b10000000);
 
         return total;
     }
@@ -289,9 +293,19 @@ internal class RtsMap : PathFinderMap
             ResourceTile.Tree1_Start + 3 => (HarvestType.CutTree, 20, x-1, y-1, 2, 2, SingleWood, ResourceTile.Stump1_Start),
 
             ResourceTile.Tree2_Start => (HarvestType.CutTree, 25, x, y, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
-            ResourceTile.Tree2_Start + 1 => (HarvestType.CutTree, 25, x-1, y, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
-            ResourceTile.Tree2_Start + 2 => (HarvestType.CutTree, 25, x, y-1, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
-            ResourceTile.Tree2_Start + 3 => (HarvestType.CutTree, 25, x-1, y-1, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree2_Start + 1 => (HarvestType.CutTree, 25, x - 1, y, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree2_Start + 2 => (HarvestType.CutTree, 25, x, y - 1, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree2_Start + 3 => (HarvestType.CutTree, 25, x - 1, y - 1, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+
+            ResourceTile.Tree3_Start => (HarvestType.CutTree, 25, x, y, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree3_Start + 1 => (HarvestType.CutTree, 25, x - 1, y, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree3_Start + 2 => (HarvestType.CutTree, 25, x, y - 1, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree3_Start + 3 => (HarvestType.CutTree, 25, x - 1, y - 1, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+
+            ResourceTile.Tree4_Start => (HarvestType.CutTree, 25, x, y, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree4_Start + 1 => (HarvestType.CutTree, 25, x - 1, y, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree4_Start + 2 => (HarvestType.CutTree, 25, x, y - 1, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
+            ResourceTile.Tree4_Start + 3 => (HarvestType.CutTree, 25, x - 1, y - 1, 2, 2, DoubleWood, ResourceTile.Stump1_Start),
 
             var r => (HarvestType.None, 0, 0, 0, 0, 0, Empty, r),
         };
