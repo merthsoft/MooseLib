@@ -8,6 +8,8 @@ public class RayGame : MooseGame
 {
     public static new RayGame Instance = null!;
 
+    private Ray3DRenderer renderer;
+
     public RayMap RayMap = null!;
     public RayPlayer Player = null!;
 
@@ -49,7 +51,8 @@ public class RayGame : MooseGame
         DefaultBackgroundColor = Color.Black,
         ScreenHeight = 480*2,
         ScreenWidth = 640*2,
-        IsMouseVisible = false
+        IsMouseVisible = false,
+        RenderMode = RenderMode.Map
     };
 
     protected override void Load()
@@ -75,7 +78,7 @@ public class RayGame : MooseGame
             FogEnd = 400
         };
 
-        AddRenderer("walls", new Ray3DRenderer(GraphicsDevice, Effect));
+        renderer = AddMapRenderer("map", new Ray3DRenderer(GraphicsDevice, Effect));
 
         AddDef(new RayPlayerDef());
 
@@ -213,7 +216,7 @@ public class RayGame : MooseGame
 
 
         var options = new JsonSerializerOptions { DefaultBufferSize = int.MaxValue };
-        var mapFile = JsonSerializer.Deserialize<SaveMap>(File.ReadAllText("Content/Maps/Map3.json"))!;
+        var mapFile = JsonSerializer.Deserialize<SaveMap>(File.ReadAllText("Content/Maps/Map.json"))!;
         RayMap.Load(this, Definitions, mapFile);
     }
 
@@ -222,6 +225,13 @@ public class RayGame : MooseGame
     
     public void SetPlayerFacing(Vector3 vector3) 
         => Player.FacingDirection = vector3;
+
+    protected override void PreUpdate(GameTime gameTime)
+    {
+        renderer.CameraPosition = Player.PositionIn3dSpace;
+        renderer.CameraFacing = Player.FacingDirection;
+        base.PreUpdate(gameTime);
+    }
 
     protected override void PostDraw(GameTime gameTime)
     {

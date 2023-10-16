@@ -1,6 +1,5 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.FlowField;
-using Merthsoft.Moose.MooseEngine.Renderers;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -49,12 +48,12 @@ public class MooseRtsGame : MooseGame
 
         //AddDefaultRenderer<TileLayer<int>>("tiles", new SpriteBatchPrimitiveRectangleRenderer(SpriteBatch, TileWidth, TileHeight, [Color.Transparent, Color.Green, Color.Red]));
         var terrainRenderer = new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Terrain"));
-        AddDefaultRenderer<TileLayer>("terrain", terrainRenderer);
+        AddLayerRenderer("terrain", terrainRenderer);
 
-        AddDefaultRenderer<TileLayer>("resource", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Resources")));
-        AddDefaultRenderer<TileLayer>("item", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Items")));
+        AddLayerRenderer("resource", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Resources")));
+        AddLayerRenderer("item", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Items")));
         //AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectRenderer(SpriteBatch));
-        AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectTileRenderer(SpriteBatch, TileWidth, TileHeight, ContentManager.LoadImage("Tiles/Units")));
+        AddLayerRenderer("units", new SpriteBatchObjectTileRenderer(SpriteBatch, TileWidth, TileHeight, ContentManager.LoadImage("Tiles/Units")));
 
         ResetCamera();
     }

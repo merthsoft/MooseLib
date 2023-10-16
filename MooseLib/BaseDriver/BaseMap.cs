@@ -5,6 +5,8 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver;
 
 public abstract class BaseMap : IMap
 {
+    public string? RendererKey { get; set; }
+
     public abstract int Height { get; }
     public abstract int Width { get; }
     public abstract int TileWidth { get; }

@@ -1,9 +1,8 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
-public class SpriteBatchCharacterRenderer : SpriteBatchRenderer
+public class SpriteBatchCharacterRenderer : SpriteLayerBatchRenderer
 {
     public record CharacterDefinition(
         char Character,
@@ -21,15 +20,15 @@ public class SpriteBatchCharacterRenderer : SpriteBatchRenderer
         Font = font;
     }
 
-    public override void Draw(MooseGame game, GameTime gameTime, ILayer layer, Vector2 drawOffset)
+    public override void Draw(MooseGame game, GameTime gameTime, ILayer layer)
     {
         if (layer is TileLayer<int> tileLayer)
-            DrawTileLayer(drawOffset, tileLayer);
+            DrawTileLayer(tileLayer);
         else
             throw new Exception("TileLayer<int> or IObjectLayer layer expected");
     }
 
-    private void DrawTileLayer(Vector2 drawOffset, TileLayer<int> tileLayer)
+    private void DrawTileLayer(TileLayer<int> tileLayer)
     {
         var (tileWidth, tileHeight) = Font.MeasureString("M");
 
@@ -37,14 +36,14 @@ public class SpriteBatchCharacterRenderer : SpriteBatchRenderer
             for (int j = 0; j < tileLayer.Height; j++)
             {
                 var character = Palette[tileLayer.Tiles[i, j]];
-                DrawCharacter(drawOffset, tileWidth, tileHeight, i, j, character);
+                DrawCharacter(tileWidth, tileHeight, i, j, character);
             }
     }
 
-    private void DrawCharacter(Vector2 drawOffset, float tileWidth, float tileHeight, int i, int j, CharacterDefinition character)
+    private void DrawCharacter(float tileWidth, float tileHeight, int i, int j, CharacterDefinition character)
     {
-        var x = i * tileWidth + drawOffset.X;
-        var y = j * tileHeight + drawOffset.Y;
+        var x = i * tileWidth + DrawOffset.X;
+        var y = j * tileHeight + DrawOffset.Y;
 
         if (character.BackgroundColor != null)
             SpriteBatch.FillRectangle(x, y, tileWidth, tileHeight, character.BackgroundColor.Value, 0);

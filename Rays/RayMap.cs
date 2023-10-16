@@ -2,6 +2,7 @@
 using Merthsoft.Moose.MooseEngine.PathFinding.Maps;
 using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.AStar;
 using Merthsoft.Moose.Rays.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Merthsoft.Moose.Rays;
 public class RayMap : PathFinderMap
@@ -22,7 +23,7 @@ public class RayMap : PathFinderMap
 
     public RayMap() : base(new AStarPathFinder())
     {
-        
+        RendererKey = "map";
     }
 
     public void InitializeWalls(List<List<int>> wallMap)
@@ -82,10 +83,19 @@ public class RayMap : PathFinderMap
                 case ItemType.Object:
                     RayGame.Instance.SpawnStatic(item.Name, item.X, item.Y);
                     break;
+                case ItemType.Actor:
+                    var match = Regex.Match(item.Name, @"(?<actor>.*)(\s+)\((?<facing>.*)\)");
+                    if (!match.Success)
+                        continue;
+
+                    var name = match.Groups["actor"].Value.Trim();
+                    var facing = GetDir(item);
+                    RayGame.Instance.SpawnActor(name, item.X, item.Y, facing);
+                    break;
             }
         }
 
-        static Vector3 GetDir(SaveItem item) => item.Name.Split(' ')[1][1] switch
+        static Vector3 GetDir(SaveItem item) => item.Name.Split(' ')[1].ToUpper()[1] switch
         {
             'W' => Vector3.Left,
             'E' => Vector3.Right,

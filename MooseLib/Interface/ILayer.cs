@@ -2,7 +2,6 @@
 
 public interface ILayer
 {
-
     int Width { get; }
     int Height { get; }
 

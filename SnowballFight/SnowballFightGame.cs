@@ -1,10 +1,10 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
-using Merthsoft.Moose.MooseEngine.Defs;
+﻿using Merthsoft.Moose.MooseEngine.Defs;
 using Merthsoft.Moose.MooseEngine.Tiled;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tweening;
 using System.Diagnostics;
 using System.Reflection;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
 namespace Merthsoft.Moose.SnowballFight;
 
@@ -44,7 +44,7 @@ public class SnowballFightGame : MooseGame
     public static AnimatedGameObjectDef SnowballDef => GetDef<AnimatedGameObjectDef>("snowball")!;
 
     private readonly Dictionary<string, RenderHook> GameRenderHooks;
-    public override Dictionary<string, RenderHook>? DefaultRenderHooks => Mode == GameMode.Playing ? GameRenderHooks : null;
+    public override Dictionary<string, RenderHook>? LayerRenderHooks => Mode == GameMode.Playing ? GameRenderHooks : null;
 
     public readonly string VersionString;
 
@@ -79,8 +79,8 @@ public class SnowballFightGame : MooseGame
 
         Window.Title += $"Snowfight - v{fileVersionInfo.ProductVersion}";
 
-        AddDefaultRenderer<TiledMooseTileLayer>("map", new TiledMooseMapRenderer(GraphicsDevice));
-        AddDefaultRenderer<TiledMooseObjectLayer>("object", new SpriteBatchObjectRenderer(SpriteBatch));
+        AddLayerRenderer("map", new TiledMooseMapRenderer(GraphicsDevice));
+        AddLayerRenderer("object", new SpriteBatchObjectRenderer(SpriteBatch));
 
         LoadMap("title_screen");
 
@@ -279,11 +279,8 @@ public class SnowballFightGame : MooseGame
         return Instance.AddObject(new Snowball(flightPath));
     }
 
-    protected override bool PreRenderUpdate(GameTime gameTime)
-    {
-        HandleInput();
-        return true;
-    }
+    protected override void PreUpdate(GameTime gameTime)
+        => HandleInput();
 
     protected override void PostObjectsUpdate(GameTime gameTime)
     {
@@ -487,7 +484,7 @@ public class SnowballFightGame : MooseGame
             {
                 SpriteBatch.DrawPoint(worldPosition, color, thickness);
                 var cell = (worldPosition / TileSize).GetFloor().ToPoint();
-                var blockedVector = MainMap.GetBlockingVector(worldPosition);
+                var blockedVector = MainMap.GetBlockingVector((int)worldPosition.X, (int)worldPosition.Y);
                 if (blockedVector.Skip(2).Any(b => b > 0) && cell != selectedUnitCell && cell != targettedUnitCell)
                     break;
             }

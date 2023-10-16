@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
 public class SpriteBatchTileTextureRenderer : SpriteBatchAbstractTileRenderer
 {
@@ -12,7 +12,7 @@ public class SpriteBatchTileTextureRenderer : SpriteBatchAbstractTileRenderer
     }
 
 
-    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
+    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer)
     {
         if (layer is not ITileLayer tileLayer)
             throw new Exception("TileLayer layer expected");
@@ -22,7 +22,7 @@ public class SpriteBatchTileTextureRenderer : SpriteBatchAbstractTileRenderer
             {
                 var tileValue = tileLayer.GetTileIndex(i, j);
                 if (tileValue >= 0)
-                    DrawSprite(tileValue, i, j, tileLayer, drawOffset);
+                    DrawSprite(tileValue, i, j, tileLayer, DrawOffset);
             }
     }
 }

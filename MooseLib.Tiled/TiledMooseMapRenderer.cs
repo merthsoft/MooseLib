@@ -25,7 +25,7 @@ public record TiledMooseMapRenderer : ILayerRenderer, IDisposable
     public void Begin(Matrix transformMatrix)
         => this.transformMatrix = transformMatrix;
 
-    public void Draw(MooseGame _game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
+    public void Draw(MooseGame _game, GameTime _gameTime, ILayer layer)
         => MapRenderer.Draw((layer as TiledMooseTileLayer)?.Layer, transformMatrix);
 
     public void Dispose()

@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
 public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
 {

@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 using Merthsoft.Moose.MooseEngine.Extension;
-using Merthsoft.Moose.MooseEngine.Renderers;
 using Merthsoft.Moose.MooseEngine.Topologies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -738,9 +738,9 @@ public class GravityCellularAutomataGame : MooseGame
         });
         #endregion
         ActiveMaps.Add(Map);
-        gravityRenderer = AddRenderer("gravity", new SpriteBatchPaletteRenderer(SpriteBatch, MapSize, MapSize, MaxGravity, GravityPalettes[1].ToArray()) { UseTransparentForZero = true, DrawScale = new(DrawSize, DrawSize) });
+        gravityRenderer = AddLayerRenderer("gravity", new SpriteBatchPaletteRenderer(SpriteBatch, MapSize, MapSize, MaxGravity, GravityPalettes[1].ToArray()) { UseTransparentForZero = true, DrawScale = new(DrawSize, DrawSize) });
         
-        massRenderer = AddRenderer("mass", new SpriteBatchPaletteRenderer(SpriteBatch, MapSize, MapSize, MaxMass, Color.PaleVioletRed, Color.White) { UseTransparentForZero = true, DrawScale = new(DrawSize, DrawSize) });
+        massRenderer = AddLayerRenderer("mass", new SpriteBatchPaletteRenderer(SpriteBatch, MapSize, MapSize, MaxMass, Color.PaleVioletRed, Color.White) { UseTransparentForZero = true, DrawScale = new(DrawSize, DrawSize) });
 
         MainCamera.ZoomIn(0);
     }

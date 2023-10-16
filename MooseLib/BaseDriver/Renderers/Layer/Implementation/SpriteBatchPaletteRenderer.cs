@@ -1,10 +1,9 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
-public class SpriteBatchPaletteRenderer : SpriteBatchRenderer
+public class SpriteBatchPaletteRenderer : SpriteLayerBatchRenderer
 {
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -35,7 +34,7 @@ public class SpriteBatchPaletteRenderer : SpriteBatchRenderer
         BackingTexture = new Texture2D(contentManager.GraphicsDevice, Width, Height);
     }
 
-    public override void Draw(MooseGame game, GameTime gameTime, ILayer layer, Vector2 drawOffset)
+    public override void Draw(MooseGame game, GameTime gameTime, ILayer layer)
     {
         if (!IsActive)
             return;
@@ -70,6 +69,6 @@ public class SpriteBatchPaletteRenderer : SpriteBatchRenderer
             }
 
         BackingTexture.SetData(ColorArray);
-        SpriteBatch.Draw(BackingTexture, new Rectangle((drawOffset + DrawOffset).ToPoint(), ScaledSize), Color.White);
+        SpriteBatch.Draw(BackingTexture, new Rectangle(DrawOffset.ToPoint(), ScaledSize), Color.White);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using SimplexNoise;
+﻿using SimplexNoise;
 
 namespace Merthsoft.Moose.Island;
 public class IslandMap : BaseMap

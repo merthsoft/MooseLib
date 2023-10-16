@@ -1,8 +1,8 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer;
 
-public abstract class SpriteBatchRenderer : ILayerRenderer
+public abstract class SpriteLayerBatchRenderer : ILayerRenderer
 {
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawScale { get; set; } = Vector2.One;
@@ -11,7 +11,7 @@ public abstract class SpriteBatchRenderer : ILayerRenderer
     public SpriteBatch SpriteBatch { get; set; }
     public Effect? Effect { get; set; }
 
-    protected SpriteBatchRenderer(SpriteBatch spriteBatch)
+    protected SpriteLayerBatchRenderer(SpriteBatch spriteBatch)
         => SpriteBatch = spriteBatch;
 
     public virtual bool PreDraw(MooseGame game, GameTime _gameTime, ILayer layer) => true;
@@ -24,8 +24,8 @@ public abstract class SpriteBatchRenderer : ILayerRenderer
             effect: Effect,
             transformMatrix: viewMatrix);
 
-    public abstract void Draw(MooseGame game, GameTime gameTime, ILayer layer, Vector2 drawOffset);
-    public virtual void Update(MooseGame game, GameTime gameTime) { }
+    public abstract void Draw(MooseGame game, GameTime gameTime, ILayer layer);
+    public virtual void Update(MooseGame game, GameTime gameTime, ILayer layer) { }
     public virtual void LoadContent(MooseContentManager contentManager) { }
 
     public virtual void End()

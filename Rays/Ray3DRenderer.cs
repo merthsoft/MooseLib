@@ -1,14 +1,11 @@
-﻿using Merthsoft.Moose.MooseEngine.Interface;
-using Merthsoft.Moose.MooseEngine.Renderers;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
+using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.Rays.Actors;
 
 namespace Merthsoft.Moose.Rays;
-public class Ray3DRenderer : GraphicsDeviceRenderer
+public class Ray3DRenderer : GraphicsDevice3DMapRenderer
 {
-    protected List<VertexPositionColorTexture> VertexBuffer = new();
-    protected List<int> IndexBuffer = new();
-    protected int PrimitiveCount;
-
     protected RayPlayer Player = null!;
     protected float TextureWidth = 0;
     public int WallCount = 0;
@@ -18,7 +15,7 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
     {
     }
 
-    public override void Update(MooseGame game, GameTime gameTime)
+    public override void Update(MooseGame game, GameTime gameTime, IMap imap)
     {
         TextureWidth = RayGame.Instance.TextureAtlas.Width;
         Player ??= RayGame.Instance.Player;
@@ -29,7 +26,7 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         IndexBuffer.Clear();
         PrimitiveCount = 0;
 
-        var map = RayGame.Instance.RayMap;
+        var map = (imap as RayMap)!;
         var floorLayer = map.FloorLayer;
         var ceilingLayer = map.CeilingLayer;
         var wallLayer = map.WallLayer;
@@ -235,35 +232,5 @@ public class Ray3DRenderer : GraphicsDeviceRenderer
         IndexBuffer.Add(currIndex + 3);
         IndexBuffer.Add(currIndex + 0);
         PrimitiveCount++;
-    }
-
-    public override void Draw(MooseGame game, GameTime gameTime, ILayer layer, Vector2 drawOffset)
-    {
-        if (VertexBuffer == null || VertexBuffer.Count == 0)
-            return;
-
-        var rayGame = RayGame.Instance;
-
-        GraphicsDevice.BlendState = BlendState.AlphaBlend;
-        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-        GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-        Effect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(100), .85f, 1f, 1000f);
-        Effect.View = Matrix.CreateLookAt(
-            RayPlayer.Instance.PositionIn3dSpace,
-            RayPlayer.Instance.PositionIn3dSpace + RayPlayer.Instance.FacingDirection, Vector3.Forward);
-        //var map = RayGame.Instance.RayMap;
-        //Effect.View = Matrix.CreateLookAt(
-        //    new Vector3(map.Width * 8, map.Height * 8, 450),
-        //    new Vector3(map.Width * 8, map.Height * 8, 0), Vector3.Down);
-        Effect.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
-
-        GraphicsDevice.RasterizerState = new RasterizerState { CullMode = CullMode.None };
-
-        foreach (var pass in Effect.CurrentTechnique.Passes)
-        {
-            pass.Apply();
-            GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, VertexBuffer.ToArray(), 0, VertexBuffer.Count, IndexBuffer.ToArray(), 0, PrimitiveCount);
-        }
     }
 }

@@ -1,8 +1,7 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
-public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
+public class SpriteBatchPrimitiveRectangleRenderer : SpriteLayerBatchRenderer
 {
     private List<Color> Palette { get; } = new();
 
@@ -16,7 +15,7 @@ public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
         Palette.AddRange(colors);
     }
 
-    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
+    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer)
     {
         if (layer is not TileLayer<int> tileLayer)
             throw new Exception("TileLayer<int> layer expected");
@@ -29,7 +28,7 @@ public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
                     continue;
 
                 SpriteBatch.FillRectangle(
-                    i * TileWidth + drawOffset.X, j * TileHeight + drawOffset.Y,
+                    i * TileWidth + DrawOffset.X, j * TileHeight + DrawOffset.Y,
                     TileWidth, TileHeight, color);
             }
     }

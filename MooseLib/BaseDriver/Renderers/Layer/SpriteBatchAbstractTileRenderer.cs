@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
-public abstract class SpriteBatchAbstractTileRenderer : SpriteBatchRenderer
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer;
+public abstract class SpriteBatchAbstractTileRenderer : SpriteLayerBatchRenderer
 {
     protected Texture2D SpriteSheet { get; }
 

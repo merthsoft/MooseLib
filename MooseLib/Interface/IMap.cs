@@ -8,6 +8,8 @@ public interface IMap
     int TileWidth { get; }
     int TileHeight { get; }
 
+    string? RendererKey { get; }
+
     public Size2 TileSize => new(TileWidth, TileHeight);
     public Vector2 HalfTileSize => new(TileWidth / 2, TileHeight / 2);
 

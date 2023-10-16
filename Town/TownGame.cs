@@ -1,4 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.Renderers;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
 namespace Merthsoft.Moose.Town;
 
@@ -27,7 +27,7 @@ public class TownGame : MooseGame
 
         MainFont = ContentManager.BakeFont("Tomorrow_Night_Monospaced", 16);
 
-        AddRenderer("base", new SpriteBatchCharacterRenderer(SpriteBatch, MainFont,
+        AddLayerRenderer("base", new SpriteBatchCharacterRenderer(SpriteBatch, MainFont,
             new SpriteBatchCharacterRenderer.CharacterDefinition[] {
                 new(' ', Color.White),
                 new('t', Color.DarkGreen),

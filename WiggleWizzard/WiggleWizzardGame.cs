@@ -81,7 +81,7 @@ public class WiggleWizzardGame : MooseGame
         Instance = this;
         IsMouseVisible = false;
 
-        DefaultRenderHooks = new()
+        LayerRenderHooks = new()
         {
             { "monsters", new(PostHook: _ => DrawCursor()) },
             { "spells", new(PostHook: _ => DrawFallingTexts()) },
@@ -119,8 +119,8 @@ public class WiggleWizzardGame : MooseGame
         dungeonRenderer[DungeonTile.StoneWall] = ContentManager.LoadImage("StoneWall");
         dungeonRenderer[DungeonTile.BrickWall] = ContentManager.LoadImage("BrickWall");
 
-        AddDefaultRenderer<DungeonLayer>("dungeon", dungeonRenderer);
-        AddDefaultRenderer<IObjectLayer>("objects", new DungeonObjectRenderer(SpriteBatch));
+        AddLayerRenderer<DungeonLayer>("dungeon", dungeonRenderer);
+        AddLayerRenderer<IObjectLayer>("objects", new DungeonObjectRenderer(SpriteBatch));
 
         var miniMapRenderer = new MiniMapRenderer(SpriteBatch, 8, 8, MiniMapTiles);
 

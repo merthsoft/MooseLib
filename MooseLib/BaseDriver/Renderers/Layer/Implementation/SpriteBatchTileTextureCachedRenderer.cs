@@ -1,9 +1,8 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
-using System.Reflection.Emit;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
-public class SpriteBatchTileTextureCachedRenderer : SpriteBatchRenderer
+public class SpriteBatchTileTextureCachedRenderer : SpriteLayerBatchRenderer
 {
     protected Texture2D SpriteSheet { get; }
 
@@ -98,7 +97,7 @@ public class SpriteBatchTileTextureCachedRenderer : SpriteBatchRenderer
         return true;
     }
 
-    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer, Vector2 drawOffset)
+    public override void Draw(MooseGame game, GameTime _gameTime, ILayer layer)
     {
         if (layer is not ITileLayer tileLayer)
             throw new Exception("TileLayer layer expected");

@@ -25,13 +25,14 @@ public class RendererHost : Control
         foreach (var(renderer, layer) in Renderers.Zip(Layers))
         {
             renderer.DrawScale = Scale;
-            renderer.Draw(MooseGame.Instance, gameTime, layer, Position + parentOffset + renderer.DrawOffset * renderer.DrawScale);
+            renderer.DrawOffset = parentOffset;
+            renderer.Draw(MooseGame.Instance, gameTime, layer);
         }
     }
 
     public override void Update(UpdateParameters updateParameters)
     {
-        foreach (var (renderer, _) in Renderers.Zip(Layers))
-            renderer.Update(MooseGame.Instance, updateParameters.GameTime);
+        foreach (var (renderer, layer) in Renderers.Zip(Layers))
+            renderer.Update(MooseGame.Instance, updateParameters.GameTime, layer);
     }
 }

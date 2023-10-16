@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 using System.Runtime.CompilerServices;
 
-namespace Merthsoft.Moose.MooseEngine.Renderers;
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
 public class SpriteBatchFourWayAutoTileTextureRenderer : SpriteBatchTileTextureRenderer
 {

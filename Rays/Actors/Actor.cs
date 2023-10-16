@@ -1,5 +1,5 @@
 ﻿namespace Merthsoft.Moose.Rays.Actors;
-public record ActorDef(string DefName, string DefaultState = ActorStates.ChaseState)
+public record ActorDef(string DefName, string DefaultState = ActorStates.StandState)
     : RayGameObjectDef(DefName, 0, ObjectRenderMode.Directional, false)
 {
     public Dictionary<string, List<ActorFrame>> States = new();
@@ -90,12 +90,14 @@ public class Actor : RayGameObject
         if (!Aware)
             Health = 0;
         
-        State = "Hit";
+        State = ActorStates.HitState;
         Aware = true;        
     }
 
     public static void PostHit(Actor actor)
     {
+        actor.State = ActorStates.DeadState;
+        return;
         if (actor.Health <= 0)
             actor.State = ActorStates.DyingState;
         else
