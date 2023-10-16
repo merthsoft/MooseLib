@@ -356,9 +356,7 @@ public abstract class MooseGame : Game
     private void DrawMap(IMap map, GameTime gameTime, Matrix transformMatrix)
     {
         var rendererKey = map.RendererKey;
-        if (rendererKey == null)
-            return;
-        var renderer = MapRendererDictionary[rendererKey];
+        var renderer = MapRendererDictionary.GetValueOrDefault(rendererKey!);
         if (renderer == null)
             return;
 

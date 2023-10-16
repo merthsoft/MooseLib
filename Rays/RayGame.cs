@@ -78,7 +78,7 @@ public class RayGame : MooseGame
             FogEnd = 400
         };
 
-        renderer = AddMapRenderer("map", new Ray3DRenderer(GraphicsDevice, Effect));
+        //renderer = AddMapRenderer("map", new Ray3DRenderer(GraphicsDevice, Effect));
 
         AddDef(new RayPlayerDef());
 
@@ -209,8 +209,8 @@ public class RayGame : MooseGame
 
         Player = AddObject(new RayPlayer(GetDef<RayPlayerDef>()!, 3, 52) { FacingDirection = Vector3.Down });
 
-        Player.Weapons.Add(GetDef<WeaponDef>("knife"));
-        Player.Weapons.Add(GetDef<WeaponDef>("pistol"));
+        foreach (var def in GetDefs<WeaponDef>())
+            Player.Weapons.Add(def);
 
         Player.CurrentWeapon = Player.Weapons[0];
 
@@ -228,8 +228,11 @@ public class RayGame : MooseGame
 
     protected override void PreUpdate(GameTime gameTime)
     {
-        renderer.CameraPosition = Player.PositionIn3dSpace;
-        renderer.CameraFacing = Player.FacingDirection;
+        if (renderer != null)
+        {
+            renderer.CameraPosition = Player.PositionIn3dSpace;
+            renderer.CameraFacing = Player.FacingDirection;
+        }
         base.PreUpdate(gameTime);
     }
 
