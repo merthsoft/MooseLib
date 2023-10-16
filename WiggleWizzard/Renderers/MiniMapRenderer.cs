@@ -1,6 +1,5 @@
 ﻿using Merthsoft.Moose.Dungeon.Entities;
 using Merthsoft.Moose.Dungeon.Tiles;
-using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.Dungeon.Renderers;

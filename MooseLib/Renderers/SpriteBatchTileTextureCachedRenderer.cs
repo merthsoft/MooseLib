@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 using System.Reflection.Emit;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+namespace Merthsoft.Moose.MooseEngine.Renderers;
 
 public class SpriteBatchTileTextureCachedRenderer : SpriteBatchRenderer
 {
@@ -111,8 +111,8 @@ public class SpriteBatchTileTextureCachedRenderer : SpriteBatchRenderer
             transformMatrix: ViewMatrix);
 
         var target = BackingTextures[layer];
-        SpriteBatch.Draw(target, 
-                destinationRectangle: DestinationRectangle, 
+        SpriteBatch.Draw(target,
+                destinationRectangle: DestinationRectangle,
                 sourceRectangle: target.Bounds,
                 color: layer.DrawColor, rotation: Rotation, effects: SpriteEffects,
                 origin: Vector2.Zero, layerDepth: 1);

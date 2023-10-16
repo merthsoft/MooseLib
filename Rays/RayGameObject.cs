@@ -38,7 +38,7 @@ public class RayGameObject : GameObjectBase
     public double HoverCounter;
     private int YDelta = 1;
 
-    public new RayMap ParentMap { get; private set; }
+    public new RayMap ParentMap { get; private set; } = null!;
 
     public RayGameObject(RayGameObjectDef def, int x, int y) : base(def, new Vector2(x*16+8, y*16+8), layer: "objects")
     {
@@ -67,7 +67,7 @@ public class RayGameObject : GameObjectBase
                 FrameIndex++;
                 if (FrameIndex >= frames.Count)
                     FrameIndex = 0;
-                FrameTimer = game.Random.Next(frames[FrameIndex].MinTime, frames[FrameIndex].MaxTime);
+                FrameTimer = game.RandomInt(frames[FrameIndex].MinTime, frames[FrameIndex].MaxTime);
                 FrameCounter = 0;
             }
             TextureIndex = frames[FrameIndex].Index;

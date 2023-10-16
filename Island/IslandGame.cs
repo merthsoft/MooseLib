@@ -1,6 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
-
-namespace Merthsoft.Moose.Island;
+﻿namespace Merthsoft.Moose.Island;
 
 public enum IslandTile { Water = 1, Land }
 

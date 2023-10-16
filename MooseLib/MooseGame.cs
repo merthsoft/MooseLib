@@ -5,7 +5,6 @@ using Merthsoft.Moose.MooseEngine.Noise;
 using MonoGame.Extended.Tweening;
 using MonoGame.Extended.ViewportAdapters;
 using System.Linq.Expressions;
-using System.Reflection.Emit;
 
 namespace Merthsoft.Moose.MooseEngine;
 
@@ -329,7 +328,7 @@ public abstract class MooseGame : Game
                 if (rendererKey != null)
                     renderer = RendererDictionary.GetValueOrDefault(rendererKey);
 
-                ret = ret && renderer!.PreDraw(this, gameTime, layer);
+                ret = ret && (renderer?.PreDraw(this, gameTime, layer) ?? true);
             }
         }
 
@@ -399,6 +398,9 @@ public abstract class MooseGame : Game
 
     public bool IsLeftMouseDown()
         => CurrentMouseState.LeftButton == ButtonState.Pressed;
+
+    public bool IsMiddleMouseDown()
+        => CurrentMouseState.MiddleButton == ButtonState.Pressed;
 
     public bool IsRightMouseDown()
         => CurrentMouseState.RightButton == ButtonState.Pressed;
@@ -506,4 +508,19 @@ public abstract class MooseGame : Game
 
         return tween;
     }
+
+    public float RandomSingle()
+        => Random.NextSingle();
+
+    public int RandomInt()
+        => Random.Next();
+
+    public int RandomInt(int min, int max)
+        => Random.Next(min, max);
+
+    public int RandomInt(int max)
+        => Random.Next(max);
+
+    public double RandomDouble() 
+        => Random.NextDouble();
 }

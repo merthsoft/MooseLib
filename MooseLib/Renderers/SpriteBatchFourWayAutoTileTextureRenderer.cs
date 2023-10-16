@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 using System.Runtime.CompilerServices;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+namespace Merthsoft.Moose.MooseEngine.Renderers;
 
 public class SpriteBatchFourWayAutoTileTextureRenderer : SpriteBatchTileTextureRenderer
 {
@@ -13,10 +13,10 @@ public class SpriteBatchFourWayAutoTileTextureRenderer : SpriteBatchTileTextureR
         set => AutoTileTextureMap[index] = value;
     }
 
-    public SpriteBatchFourWayAutoTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) 
+    public SpriteBatchFourWayAutoTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0)
         : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
     {
-        
+
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -25,13 +25,13 @@ public class SpriteBatchFourWayAutoTileTextureRenderer : SpriteBatchTileTextureR
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected virtual int CountNeighbors(int tile, int x, int y, ITileLayer layer)
-        => GetNeighborValue(tile, x +  0, y + -1, layer, 1) 
-         + GetNeighborValue(tile, x + -1, y +  0, layer, 2) 
-         + GetNeighborValue(tile, x +  1, y +  0, layer, 4) 
-         + GetNeighborValue(tile, x +  0, y +  1, layer, 8);
+        => GetNeighborValue(tile, x + 0, y + -1, layer, 1)
+         + GetNeighborValue(tile, x + -1, y + 0, layer, 2)
+         + GetNeighborValue(tile, x + 1, y + 0, layer, 4)
+         + GetNeighborValue(tile, x + 0, y + 1, layer, 8);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected virtual int GetNeighborValue(int tile, int x, int y, ITileLayer layer, int neighborValue) 
+    protected virtual int GetNeighborValue(int tile, int x, int y, ITileLayer layer, int neighborValue)
         => x < 0 || y < 0 || x >= layer.Width || y >= layer.Height || tile == layer.GetTileIndex(x, y) ? 0 : neighborValue;
 
     public override void DrawSprite(int spriteIndex, int i, int j, ILayer layer, Vector2 drawOffset, float layerDepth = 1)
@@ -44,11 +44,11 @@ public class SpriteBatchFourWayAutoTileTextureRenderer : SpriteBatchTileTextureR
 
         if (texture == null)
         {
-                SpriteBatch.Draw(SpriteSheet,
-                    position: destRect.Value.Position,
-                    sourceRectangle: GetSourceRectangle(spriteIndex),
-                    color: layer.DrawColor, rotation: Rotation, effects: SpriteEffects,
-                    origin: Vector2.Zero, scale: DrawScale, layerDepth: layerDepth);
+            SpriteBatch.Draw(SpriteSheet,
+                position: destRect.Value.Position,
+                sourceRectangle: GetSourceRectangle(spriteIndex),
+                color: layer.DrawColor, rotation: Rotation, effects: SpriteEffects,
+                origin: Vector2.Zero, scale: DrawScale, layerDepth: layerDepth);
             return;
         }
 

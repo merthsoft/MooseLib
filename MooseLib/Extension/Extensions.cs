@@ -19,12 +19,12 @@ public static class Extensions
         || c == ' ';
 
     public static string UpperFirst(this string s)
-        => $"{char.ToUpper(s[0])}{new string(s.Skip(1).ToArray())}";
+        => $"{char.ToUpper(s[0])}{s[1..]}";
 
     public static string InsertSpacesBeforeCapitalLetters(this string s, char replacementChar = ' ')
     {
-        var sb = new StringBuilder(s[0].ToString());
-        foreach (var c in s.Skip(1))
+        var sb = new StringBuilder(s[0].ToString(), s.Length * 2);
+        foreach (var c in s[1..])
         {
             if (char.IsUpper(c))
                 sb.Append(replacementChar);

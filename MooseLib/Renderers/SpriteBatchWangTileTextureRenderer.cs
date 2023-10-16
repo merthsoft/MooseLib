@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+namespace Merthsoft.Moose.MooseEngine.Renderers;
 
 public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
 {
@@ -8,10 +8,10 @@ public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
     public List<WangTile> WangTiles = new();
     public Dictionary<string, List<WangTile>> Cache = new();
 
-    public SpriteBatchWangTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) 
+    public SpriteBatchWangTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0)
         : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
     {
-        
+
     }
 
     public virtual void RebuildCache()
@@ -42,7 +42,7 @@ public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
             return 0;
         var neighborValue = layer.GetTileIndex(x, y);
         return WangDefinitions.GetValueOrDefault(neighborValue, 0);
-        
+
     }
 
     public override void DrawSprite(int spriteIndex, int i, int j, ILayer layer, Vector2 drawOffset, float layerDepth = 1)
@@ -57,7 +57,8 @@ public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
         var wangId = wangTile.WangId;
 
         var tileIndex = Cache.GetValueOrDefault(wangId);
-        if (tileIndex == null || !tileIndex.Any(t => t.AppliesTo.HasValue ? t.AppliesTo.Value == wangDef : true)) {
+        if (tileIndex == null || !tileIndex.Any(t => t.AppliesTo.HasValue ? t.AppliesTo.Value == wangDef : true))
+        {
             var tileGroup = WangTiles.Where(t => t.AppliesTo.HasValue ? t.AppliesTo.Value == wangDef : true)
                                      .GroupBy(t => t.Compare(wangTile)).OrderByDescending(g => g.Key).FirstOrDefault();
 

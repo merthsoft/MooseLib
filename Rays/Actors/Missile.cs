@@ -43,7 +43,7 @@ public class Missile : Actor
         missile.Position = new(missile.Position.X + 2*missile.MoveDirection.X, missile.Position.Y +2* missile.MoveDirection.Y);
         var cell = missile.PositionIn3dSpace + 8 * missile.MoveDirection - new Vector3(8, 8, 0);
         
-        if (missile.ParentMap.GetBlockingVector(new(cell.X, cell.Y)).Any(a => a > 0))
+        if (missile.ParentMap.GetBlockingVector((int)cell.X, (int)cell.Y).Any(a => a > 0))
             missile.State = MissileStates.Exploding;
         
     }

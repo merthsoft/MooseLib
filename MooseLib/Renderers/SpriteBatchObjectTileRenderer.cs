@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+namespace Merthsoft.Moose.MooseEngine.Renderers;
 public class SpriteBatchObjectTileRenderer : SpriteBatchAbstractTileRenderer
 {
     public SpriteBatchObjectTileRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D sprites, int textureMargin = 0, int tilePadding = 0)

@@ -110,7 +110,7 @@ public class Actor : RayGameObject
 
     public virtual void Interact() { }
 
-    public override void PreUpdate(MooseGame game, GameTime gameTime)
+    public override bool PreUpdate(MooseGame game, GameTime gameTime)
     {
         if (State != PreviousState)
         {
@@ -120,7 +120,7 @@ public class Actor : RayGameObject
             ObjectRenderMode = ActorFrame?.RenderMode ?? ActorDef.ObjectRenderMode;
             FrameTimer = 0;
         }
-        base.PreUpdate(game, gameTime);
+        return base.PreUpdate(game, gameTime);
     }
 
     public static void RemoveActor(Actor a)

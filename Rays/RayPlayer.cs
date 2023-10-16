@@ -46,14 +46,14 @@ public class RayPlayer : RayGameObject
 
         if (FaceTick <= 0)
         {
-            var r = game.Random.NextSingle();
+            var r = game.RandomSingle();
             FaceIndex = r switch
             {
                 > .8f => 1,
                 < .2f => 2,
                 _ => 0,
             };
-            FaceTick = game.Random.Next(25, 70);
+            FaceTick = game.RandomInt(25, 70);
         }
         else
             FaceTick--;
@@ -109,7 +109,7 @@ public class RayPlayer : RayGameObject
             var moveX = 16 * moveVector.X.Round();
             var moveY = 16 * moveVector.Y.Round();
             
-            if ((rayGame.MainMap as PathFinderMap)!.GetBlockingVector(new(Position.X + moveX, Position.Y + moveY)).All(i => i <= 0))
+            if ((rayGame.MainMap as PathFinderMap)?.GetBlockingVector((int)Position.X + moveX, (int)Position.Y + moveY).All(i => i <= 0) ?? false)
                 Position = new(Position.X + moveX, Position.Y + moveY);
 
             Position.Round();

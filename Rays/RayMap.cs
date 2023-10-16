@@ -1,8 +1,10 @@
 ﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.PathFinding.Maps;
+using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.AStar;
 using Merthsoft.Moose.Rays.Serialization;
 
 namespace Merthsoft.Moose.Rays;
-public class RayMap : BaseMap
+public class RayMap : PathFinderMap
 {
     private int height;
     public override int Height => height;
@@ -18,8 +20,9 @@ public class RayMap : BaseMap
     public ObjectLayer<RayGameObject> ObjectLayer { get; set; } = null!;
     public TileLayer<int> CeilingLayer { get; set; } = null!;
 
-    public RayMap()
+    public RayMap() : base(new AStarPathFinder())
     {
+        
     }
 
     public void InitializeWalls(List<List<int>> wallMap)

@@ -77,6 +77,7 @@ internal class RtsMap : PathFinderMap
     {
         Land,
         Water,
+        Kelp,
         WaterDecoration,
         Grass,
         Tree,
@@ -124,6 +125,7 @@ internal class RtsMap : PathFinderMap
                     ( < 23, _, _, <= .69) => GeneratedType.Overgrowth,
                     ( < 23, _, _, _) => GeneratedType.Mushroom,
                     ( < 29, _, _, _) => GeneratedType.WaterDecoration,
+                    ( > 50 and <= 55, _, _, <= .6) => GeneratedType.Kelp,
                     ( < 55, _, _, _) => GeneratedType.Water,
                     (_, > 110 and < 150, _, >.1) => GeneratedType.Grass,
                     (_, > 110 and < 150, _, _) => GeneratedType.Flower,
@@ -171,6 +173,10 @@ internal class RtsMap : PathFinderMap
                     case GeneratedType.Overgrowth:
                         SetTerrainLayerSquare(x, y, valueGenerator: randomOvergrowth);
                         break;
+                    case GeneratedType.Kelp:
+                        SetTerrainLayerSquare(x, y, TerrainTile.Water);
+                        SetResourceLayerSquare(x, y, valueGenerator: randomKelp);
+                        break;
                     case GeneratedType.Land:
                     default:
                         break;
@@ -186,17 +192,22 @@ internal class RtsMap : PathFinderMap
                 ItemLayer.SetTileValue(x, y, ItemTile.Empty);
                 var coinFlip = MooseGame.Random.NextDouble();
                 var terrainTile = TerrainLayer.GetTileValue(x, y);
+                var resourceTile = ResourceLayer.GetTileValue(x, y);
                 if (terrainTile >= TerrainTile.Water && terrainTile <= TerrainTile.WaterDecoration_End)
                 {
                     var neighbors = CountNeighbors((int)TerrainTile.Water, (int)TerrainTile.WaterDecoration_End, x, y, TerrainLayer);
                     if (neighbors != 0)
+                    {
                         terrainTile = (TerrainTile)((int)TerrainTile.Water + indexMap.GetValueOrDefault(neighbors));
+                        resourceTile = ResourceTile.Empty;
+                    }
                     else if (coinFlip < .05)
                     {
                         terrainTile = randomWaterDecoration();
                     }
                     
                     TerrainLayer.SetTileValue(x, y, terrainTile);
+                    ResourceLayer.SetTileValue(x, y, resourceTile);
                 } else if (terrainTile == TerrainTile.Land && coinFlip < 0.05)
                 {
                     TerrainLayer.SetTileValue(x, y, randomTerrainDecoration());
@@ -212,6 +223,9 @@ internal class RtsMap : PathFinderMap
                 < .9 => ResourceTile.Tree3_Start,
                 _ => ResourceTile.Tree4_Start,
             }));
+
+        ResourceTile randomKelp(int _i, double _cf)
+            => (ResourceTile)MooseGame.Random.Next((int)ResourceTile.Kelp_Start, (int)ResourceTile.Kelp_End + 1);
 
         ResourceTile randomMushroom(int _i = 0, double _cf= 0)
             => (ResourceTile)MooseGame.Random.Next((int)ResourceTile.Mushroom_Start, (int)ResourceTile.Mushroom_End + 1);
@@ -273,10 +287,10 @@ internal class RtsMap : PathFinderMap
     public int GetHarvestDelay(int x, int y)
         => HarvestDetails(x, y).harvestDelay;
 
-    private static ItemTile[] Empty = [];
-    private static ItemTile[] SingleWood = [ItemTile.Wood];
-    private static ItemTile[] DoubleWood = [ItemTile.Wood, ItemTile.Wood];
-    private static ItemTile[] SingleMushroom = [ItemTile.Mushroom];
+    private static readonly ItemTile[] Empty = [];
+    private static readonly ItemTile[] SingleWood = [ItemTile.Wood];
+    private static readonly ItemTile[] DoubleWood = [ItemTile.Wood, ItemTile.Wood];
+    private static readonly ItemTile[] SingleMushroom = [ItemTile.Mushroom];
 
     private (HarvestType harvestType, int harvestDelay, int harvestStartX, int harvestStartY, int harvestWidth, int harvestHeight, ItemTile[] item, ResourceTile replacementTile) HarvestDetails(int x, int y)
         => ResourceLayer.GetTileValue(x, y) switch {

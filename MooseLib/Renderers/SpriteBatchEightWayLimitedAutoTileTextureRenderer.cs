@@ -1,6 +1,6 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+namespace Merthsoft.Moose.MooseEngine.Renderers;
 
 public class SpriteBatchEightWayLimitedAutoTileTextureRenderer : SpriteBatchFourWayAutoTileTextureRenderer
 {
@@ -31,17 +31,17 @@ public class SpriteBatchEightWayLimitedAutoTileTextureRenderer : SpriteBatchFour
         [0b11000000] = 2
     };
 
-    public SpriteBatchEightWayLimitedAutoTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0) 
+    public SpriteBatchEightWayLimitedAutoTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0)
         : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
     {
-        
+
     }
 
     protected override int GetTileIndex(int tile, int neighborCount)
         => indexMap.GetValueOrDefault(neighborCount);
-        
+
     protected override int CountNeighbors(int tile, int x, int y, ITileLayer layer)
-    {   
+    {
         var total = 0;
         var north = GetNeighborValue(tile, x + 0, y + -1, layer, 0b00000010);
         total += north;

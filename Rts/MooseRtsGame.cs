@@ -1,7 +1,10 @@
 ﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
 using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.FlowField;
+using Merthsoft.Moose.MooseEngine.Renderers;
+using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace Merthsoft.Moose.Rts;
 public class MooseRtsGame : MooseGame
@@ -28,6 +31,11 @@ public class MooseRtsGame : MooseGame
 
     protected override void Load()
     {
+        var assembly = Assembly.GetExecutingAssembly();
+        var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+        Window.Title = $"Posso Time - v{fileVersionInfo.ProductVersion?.Split('+').FirstOrDefault() ?? "-1"}";
+
         IsFixedTimeStep = false;
         font = ContentManager.BakeFont("Capital_Hill_Monospaced", 12);
         smallFont = ContentManager.BakeFont("Capital_Hill_Monospaced", 6);
@@ -48,9 +56,7 @@ public class MooseRtsGame : MooseGame
         //AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectRenderer(SpriteBatch));
         AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectTileRenderer(SpriteBatch, TileWidth, TileHeight, ContentManager.LoadImage("Tiles/Units")));
 
-        MainCamera.Origin = new(0, 0);
-        MainCamera.Position = new(-45, -40);
-        MainCamera.Zoom = 0.9f;
+        ResetCamera();
     }
 
     private void UpdateCamera(GameTime gameTime, Point mousePoint)
@@ -67,11 +73,22 @@ public class MooseRtsGame : MooseGame
 
         MainCamera.Move(movementDirection * 400 * gameTime.GetElapsedSeconds());
 
-        var delta = GetScrollWheelDelta() / 1200f;
-        if (delta != 0 && (delta > 0 || MainCamera.Zoom > .5f))
-            MainCamera.ZoomToPoint(delta, new(mousePoint.X * TileWidth + TileWidth / 2, mousePoint.Y * TileHeight + TileHeight / 2));
-        if (MainCamera.Zoom < .5f)
-            MainCamera.Zoom = .5f;
+        var delta = GetScrollWheelDelta();
+        if (delta != 0)
+            Debug.WriteLine($"{delta} - {MainCamera.Zoom}");
+        if (delta != 0 && ((delta < 0 && MainCamera.Zoom > .1f) || (delta > 0 && MainCamera.Zoom < 10)))
+            MainCamera.ZoomToPoint(Math.Sign(delta) / 12f, new Vector2(mousePoint.X * TileWidth + TileWidth / 2, mousePoint.Y * TileHeight + TileHeight / 2));
+
+        if (IsKeyDown(Keys.Z))
+            ResetCamera();
+    }
+
+    private void ResetCamera()
+    {
+        MainCamera.Origin = new(0, 0);
+        MainCamera.Position = new(-16, -7);
+        MainCamera.Zoom = 0.316667f;
+        MainCamera.Rotation = 0;
     }
 
     protected override void PostUpdate(GameTime gameTime)
@@ -97,7 +114,7 @@ public class MooseRtsGame : MooseGame
             }
         }
 
-        if (WasMiddleMouseJustPressed())
+        if (IsMiddleMouseDown())
         {
             AddObject(new Unit(GetDefs<UnitDef>().ToList().RandomElement(), new(mousePoint.X * TileWidth, mousePoint.Y * TileHeight)), Map);
         }
@@ -105,17 +122,18 @@ public class MooseRtsGame : MooseGame
         if (WasKeyJustPressed(Keys.R))
         {
             Map.RandomizeMap();
+            ResetCamera();
         }
     }
 
     protected override void PostDraw(GameTime gameTime)
     {
-        if (!IsKeyDown(Keys.Tab))
-            return;
         var mouseCell = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
         var mousePoint = new Point((int)mouseCell.X / TileWidth, (int)mouseCell.Y / TileHeight);
         SpriteBatch.Begin();
-        SpriteBatch.DrawStringShadow(font, $"FPS {FramesPerSecondCounter.FramesPerSecond} - #possos: {ReadObjects.OfType<Unit>().Count()} - {mousePoint} - seed {RandomSeed:X}", new(4, 4), Color.White);
+        if (IsKeyDown(Keys.Tab))
+            SpriteBatch.DrawStringShadow(font, $"FPS {FramesPerSecondCounter.FramesPerSecond} - #possos: {ReadObjects.OfType<Unit>().Count()} - {mousePoint} - seed {RandomSeed:X}", new(4, 4), Color.White);
+        
         SpriteBatch.End();
     }
 }

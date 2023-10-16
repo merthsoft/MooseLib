@@ -1,5 +1,5 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
-using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.Interface;
+using Merthsoft.Moose.MooseEngine.Renderers;
 using Merthsoft.Moose.Rays.Actors;
 
 namespace Merthsoft.Moose.Rays;

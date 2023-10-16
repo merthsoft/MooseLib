@@ -1,13 +1,14 @@
-﻿using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.Interface;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+namespace Merthsoft.Moose.MooseEngine.Renderers;
 
-public class SpriteBatchPaletteRenderer  : SpriteBatchRenderer
+public class SpriteBatchPaletteRenderer : SpriteBatchRenderer
 {
     public int Width { get; private set; }
     public int Height { get; private set; }
-    public Point ScaledSize => new(Width * (int)DrawScale.X, Height *  (int)DrawScale.Y);
+    public Point ScaledSize => new(Width * (int)DrawScale.X, Height * (int)DrawScale.Y);
 
     public List<Color> Colors { get; set; } = new();
     public bool BlendColors { get; set; } = true;
@@ -15,7 +16,7 @@ public class SpriteBatchPaletteRenderer  : SpriteBatchRenderer
 
     public bool UseTransparentForZero { get; set; } = false;
     public bool IsActive { get; set; } = true;
-    
+
     private Texture2D BackingTexture = null!; // LoadContent
     private Color[] ColorArray;
 
@@ -56,7 +57,7 @@ public class SpriteBatchPaletteRenderer  : SpriteBatchRenderer
                 else if (percentage > 0 || !UseTransparentForZero)
                 {
                     var colorLocation = (Colors.Count - 1) * percentage;
-                    var colorIndex = (int)(colorLocation);
+                    var colorIndex = (int)colorLocation;
                     color = Colors[colorIndex];
                     if (BlendColors)
                     {

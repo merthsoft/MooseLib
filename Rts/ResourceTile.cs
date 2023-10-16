@@ -15,5 +15,6 @@ internal enum ResourceTile
     Tree3_End = Tree3_Start + 3,
     Tree4_Start,
     Tree4_End = Tree4_Start + 3,
-
+    Kelp_Start,
+    Kelp_End = Kelp_Start + 2,
 }

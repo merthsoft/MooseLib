@@ -10,7 +10,7 @@
 	  <Nullable>enable</Nullable>
 	  <ApplicationManifest>app.manifest</ApplicationManifest>
 	  <ApplicationIcon>Icon.bmp</ApplicationIcon>
-	  <AssemblyName>Rts</AssemblyName>
+	  <AssemblyName>PossoTime</AssemblyName>
 	  <RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	  <Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 	  <Deterministic>False</Deterministic>

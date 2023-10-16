@@ -1,6 +1,7 @@
-﻿using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers;
+namespace Merthsoft.Moose.MooseEngine.Renderers;
 public class SpriteBatchPrimitiveRectangleRenderer : SpriteBatchRenderer
 {
     private List<Color> Palette { get; } = new();
