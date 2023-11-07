@@ -5,6 +5,10 @@ using Merthsoft.Moose.Rays.Actors;
 namespace Merthsoft.Moose.Rays;
 public class Ray3DRenderer : GraphicsDevice3DMapRenderer
 {
+    private const int TextureSize = RayGame.TextureSize;
+
+    private static Vector3[] Vectors = new Vector3[4];
+
     protected RayPlayer Player = null!;
     protected float TextureWidth = 0;
     public int WallCount = 0;
@@ -14,18 +18,21 @@ public class Ray3DRenderer : GraphicsDevice3DMapRenderer
     {
     }
 
-    public override void Update(MooseGame game, GameTime gameTime, IMap imap)
+    public override void Update(MooseGame game, GameTime gameTime, IMap iMap)
     {
+        VertexBufferIndex = 0;
+        IndexBufferIndex = 0;
+        PrimitiveCount = 0;
         TextureWidth = RayGame.Instance.TextureAtlas.Width;
         Player ??= RayGame.Instance.Player;
         WallCount = RayGame.Instance.WallCount;
         DoorCount = RayGame.Instance.DoorCount;
 
-        VertexBuffer.Clear();
-        IndexBuffer.Clear();
-        PrimitiveCount = 0;
+        //VertexBuffer.Clear();
+        //IndexBuffer.Clear();
+        //PrimitiveCount = 0;
 
-        var map = (imap as RayMap)!;
+        var map = (iMap as RayMap)!;
         var floorLayer = map.FloorLayer;
         var ceilingLayer = map.CeilingLayer;
         var wallLayer = map.WallLayer;
@@ -39,36 +46,68 @@ public class Ray3DRenderer : GraphicsDevice3DMapRenderer
                 {
                     var floor = floorLayer.GetTileValue(x, y);
                     var ceiling = ceilingLayer.GetTileValue(x, y);
-                    CreateWall(x * 16, y * 16, ceiling, 4);
-                    CreateWall(x * 16, y * 16, ceiling, 5);
+                    CreateWall(x * TextureSize, y * TextureSize, ceiling, 4);
+                    CreateWall(x * TextureSize, y * TextureSize, ceiling, 5);
                     continue;
                 }
-                CreateWalls(map, x * 16, y * 16, wall);
+                var neighbors = 0;
+                if (x > 0)
+                    neighbors += (wallLayer.GetTileValue(x - 1, y) > 0) ? 0b0001 : 0;
+                if (y < wallLayer.Height)
+                    neighbors += (wallLayer.GetTileValue(x, y + 1) > 0) ? 0b0010 : 0;
+                if (x < wallLayer.Width)
+                    neighbors += (wallLayer.GetTileValue(x + 1, y) > 0) ? 0b0100 : 0;
+                if (y > 0)
+                    neighbors += (wallLayer.GetTileValue(x, y - 1) > 0) ? 0b1000 : 0;
+
+                if (neighbors == 0)
+                {
+                    CreateWalls(x * TextureSize, y * TextureSize, wall);
+                    continue;
+                }
+
+                var direction = neighbors switch
+                {
+                    0b0011 => 6,
+                    0b1001 => 7,
+                    0b1100 => 8,
+                    0b0110 => 9,
+                    _ => -1,
+                };
+
+                if (direction == -1)
+                    CreateWalls(x * TextureSize, y * TextureSize, wall);
+                else
+                {
+                    CreateWall(x * TextureSize, y * TextureSize, wall, direction);
+                    CreateWall(x * TextureSize, y * TextureSize, 0, 4);
+                    CreateWall(x * TextureSize, y * TextureSize, 0, 5);
+                }
             }
 
-        foreach (var obj in objectLayer.Objects.Cast<RayGameObject>().OrderByDescending(o => o.DistanceSquaredTo(Player)))
-        {
-            if (obj is RayPlayer)
-                continue;
+        //foreach (var obj in objectLayer.Objects.Cast<RayGameObject>().OrderByDescending(o => o.DistanceSquaredTo(Player)))
+        //{
+        //    if (obj is RayPlayer)
+        //        continue;
 
-            var (x, y) = obj.Position;
-            switch (obj.ObjectRenderMode)
-            {
-                case ObjectRenderMode.Sprite:
-                case ObjectRenderMode.Directional:
-                    CreateSprite(x, y, obj);
-                    break;
-                case ObjectRenderMode.Wall:
-                    CreateWalls(map, x - 8, y - 8, obj.TextureIndex + obj.TextureIndexOffset);
-                    break;
-                case ObjectRenderMode.Overlay:
-                    CreateWalls(map, x - 8, y - 8, WallCount + DoorCount + obj.TextureIndex + obj.TextureIndexOffset);
-                    break;
-                case ObjectRenderMode.Door:
-                    CreateDoor(x, y, (obj as Door)!);
-                    break;
-            }
-        }
+        //    var (x, y) = obj.Position;
+        //    switch (obj.ObjectRenderMode)
+        //    {
+        //        case ObjectRenderMode.Sprite:
+        //        case ObjectRenderMode.Directional:
+        //            CreateSprite(x, y, obj);
+        //            break;
+        //        case ObjectRenderMode.Wall:
+        //            CreateWalls(x - 8, y - 8, obj.TextureIndex + obj.TextureIndexOffset);
+        //            break;
+        //        case ObjectRenderMode.Overlay:
+        //            CreateWalls(x - 8, y - 8, WallCount + DoorCount + obj.TextureIndex + obj.TextureIndexOffset);
+        //            break;
+        //        case ObjectRenderMode.Door:
+        //            CreateDoor(x, y, (obj as Door)!);
+        //            break;
+        //    }
+        //}
     }
 
     private void CreateDoor(float x, float y, Door door)
@@ -77,19 +116,19 @@ public class Ray3DRenderer : GraphicsDevice3DMapRenderer
         y -= 8;
         if (door.Horizontal)
         {
-            CreateWall(x - 16 * door.OpenPercent, y + 8, door.TextureIndex, 0);
+            CreateWall(x - TextureSize * door.OpenPercent, y + 8, door.TextureIndex, 0);
             CreateWall(x - .01f, y, 57, 1);
             CreateWall(x + .01f, y, 57, 3);
         }
         else
         {
-            CreateWall(x + 8, y - 16 * door.OpenPercent, door.TextureIndex, 3);
+            CreateWall(x + 8, y - TextureSize * door.OpenPercent, door.TextureIndex, 3);
             CreateWall(x, y + .01f, 57, 0);
             CreateWall(x, y - .01f, 57, 2);
         }
     }
 
-    private void CreateWalls(RayMap map, float x, float y, int wall)
+    private void CreateWalls(float x, float y, int wall)
     {
         CreateWall(x, y, wall, 0);
         CreateWall(x, y, wall, 1);
@@ -112,124 +151,100 @@ public class Ray3DRenderer : GraphicsDevice3DMapRenderer
             textureIndex += frames * objectRotation;
         }
 
-        var vectors = new Vector3[4];
-
         var drawOffset = obj is Actor || obj.RayGameObjectDef.Type != Serialization.ObjectType.Pickup
             ? 8 : 4;
         var drawBottom = obj.YDraw - (drawOffset - 1);
         var drawTop = obj.YDraw + 9;
 
-        vectors[0] = new Vector3(-drawOffset, 0, drawBottom);
-        vectors[1] = new Vector3(-drawOffset, 0, drawTop);
-        vectors[2] = new Vector3(drawOffset, 0, drawTop);
-        vectors[3] = new Vector3(drawOffset, 0, drawBottom); 
+        Vectors[0] = new Vector3(-drawOffset, 0, drawBottom);
+        Vectors[1] = new Vector3(-drawOffset, 0, drawTop);
+        Vectors[2] = new Vector3(drawOffset, 0, drawTop);
+        Vectors[3] = new Vector3(drawOffset, 0, drawBottom); 
         
-        var currIndex = VertexBuffer.Count;
-        var xStart = (textureIndex * 16) / TextureWidth;
-        var xEnd = ((textureIndex + 1) * 16) / TextureWidth;
+        var xStart = (textureIndex * TextureSize) / TextureWidth;
+        var xEnd = ((textureIndex + 1) * TextureSize) / TextureWidth;
         var yStart = 0;
         var yEnd = 1;
 
         var radians = MathF.Atan2(obj.Position.Y - Player.Position.Y, obj.Position.X - Player.Position.X);
         var rot = Matrix.CreateRotationZ(MathF.PI / 2 + radians);
-        for (var i = 0; i < vectors.Length; i++)
-            vectors[i] = Vector3.Transform(vectors[i], rot) + new Vector3(x, y, 0);
+        for (var i = 0; i < Vectors.Length; i++)
+            Vectors[i] = Vector3.Transform(Vectors[i], rot) + new Vector3(x, y, 0);
 
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[0], Color.White, new(xStart, yStart)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[1], Color.White, new(xStart, yEnd)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[2], Color.White, new(xEnd, yEnd)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[3], Color.White, new(xEnd, yStart)));
-
-        IndexBuffer.Add(currIndex + 0);
-        IndexBuffer.Add(currIndex + 1);
-        IndexBuffer.Add(currIndex + 2);
-        PrimitiveCount++;
-
-        IndexBuffer.Add(currIndex + 0);
-        IndexBuffer.Add(currIndex + 3);
-        IndexBuffer.Add(currIndex + 2);
-        PrimitiveCount++;
+        InsertRectangle(Vectors, xStart, xEnd, yStart, yEnd, Color.White);
     }
 
     private void CreateWall(float x, float y, int wall, int direction, Color? color = null)
     {
-        var vectors = new Vector3[4];
-
         switch (direction)
         {
             case 0:
-                vectors[0] = new Vector3(x, y, 0);
-                vectors[1] = new Vector3(x, y, 16);
-                vectors[2] = new Vector3(x + 16, y, 16);
-                vectors[3] = new Vector3(x + 16, y, 0);
+                Vectors[0] = new Vector3(x, y, 0);
+                Vectors[1] = new Vector3(x, y, TextureSize);
+                Vectors[2] = new Vector3(x + TextureSize, y, TextureSize);
+                Vectors[3] = new Vector3(x + TextureSize, y, 0);
                 break;
             case 1:
-                vectors[0] = new Vector3(x + 16, y, 0);
-                vectors[1] = new Vector3(x + 16, y, 16);
-                vectors[2] = new Vector3(x + 16, y + 16, 16);
-                vectors[3] = new Vector3(x + 16, y + 16, 0);
+                Vectors[0] = new Vector3(x + TextureSize, y, 0);
+                Vectors[1] = new Vector3(x + TextureSize, y, TextureSize);
+                Vectors[2] = new Vector3(x + TextureSize, y + TextureSize, TextureSize);
+                Vectors[3] = new Vector3(x + TextureSize, y + TextureSize, 0);
                 break;
             case 2:
-                vectors[0] = new Vector3(x + 16, y + 16, 0);
-                vectors[1] = new Vector3(x + 16, y + 16, 16);
-                vectors[2] = new Vector3(x, y + 16, 16);
-                vectors[3] = new Vector3(x, y + 16, 0);
+                Vectors[0] = new Vector3(x + TextureSize, y + TextureSize, 0);
+                Vectors[1] = new Vector3(x + TextureSize, y + TextureSize, TextureSize);
+                Vectors[2] = new Vector3(x, y + TextureSize, TextureSize);
+                Vectors[3] = new Vector3(x, y + TextureSize, 0);
                 break;
             case 3:
-                vectors[0] = new Vector3(x, y, 0);
-                vectors[1] = new Vector3(x, y, 16);
-                vectors[2] = new Vector3(x, y + 16, 16);
-                vectors[3] = new Vector3(x, y + 16, 0);
+                Vectors[0] = new Vector3(x, y, 0);
+                Vectors[1] = new Vector3(x, y, TextureSize);
+                Vectors[2] = new Vector3(x, y + TextureSize, TextureSize);
+                Vectors[3] = new Vector3(x, y + TextureSize, 0);
                 break;
             case 4:
-                vectors[0] = new Vector3(x, y, 0);
-                vectors[1] = new Vector3(x + 16, y, 0);
-                vectors[2] = new Vector3(x + 16, y + 16, 0);
-                vectors[3] = new Vector3(x, y + 16, 0);
+                Vectors[0] = new Vector3(x, y, 0);
+                Vectors[1] = new Vector3(x + TextureSize, y, 0);
+                Vectors[2] = new Vector3(x + TextureSize, y + TextureSize, 0);
+                Vectors[3] = new Vector3(x, y + TextureSize, 0);
                 break;
             case 5:
-                vectors[0] = new Vector3(x, y, 16);
-                vectors[1] = new Vector3(x + 16, y, 16);
-                vectors[2] = new Vector3(x + 16, y + 16, 16);
-                vectors[3] = new Vector3(x, y + 16, 16);
+                Vectors[0] = new Vector3(x, y, TextureSize);
+                Vectors[1] = new Vector3(x + TextureSize, y, TextureSize);
+                Vectors[2] = new Vector3(x + TextureSize, y + TextureSize, TextureSize);
+                Vectors[3] = new Vector3(x, y + TextureSize, TextureSize);
                 break;
             case 6:
-                vectors[0] = new Vector3(x, y, 16);
-                vectors[1] = new Vector3(x + 16, y, 16);
-                vectors[2] = new Vector3(x + 16, y + 16, 16);
-                vectors[3] = new Vector3(x, y + 16, 16);
+            case 8:
+                Vectors[0] = new Vector3(x, y, 0);
+                Vectors[1] = new Vector3(x, y, TextureSize);
+                Vectors[2] = new Vector3(x + TextureSize, y + TextureSize, TextureSize);
+                Vectors[3] = new Vector3(x + TextureSize, y + TextureSize, 0);
+                break;
+            case 7:
+            case 9:
+                Vectors[0] = new Vector3(x + TextureSize, y, 0);
+                Vectors[1] = new Vector3(x + TextureSize, y, TextureSize);
+                Vectors[2] = new Vector3(x, y + TextureSize, TextureSize);
+                Vectors[3] = new Vector3(x, y + TextureSize, 0);
                 break;
         }
 
-        var currIndex = VertexBuffer.Count;
         var xEnd = 
-            (wall * 16) / TextureWidth;
+            (wall * TextureSize) / TextureWidth;
         var xStart = 
-            ((wall + 1) * 16) / TextureWidth;
+            ((wall + 1) * TextureSize) / TextureWidth;
         var yStart = 0;
         var yEnd = 1;
 
-        var c = color ?? (direction is 1 or 3 
+        var c = color ?? (direction is 1 or 3 or 8 or 9
             ? new Color(170, 170, 170) 
             : direction is 4 
                 ? new Color(125, 125, 170)
                 : direction is 5 
                     ? new Color(70, 70, 70)
                     : Color.White);
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[0], c, new(xStart, yStart)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[1], c, new(xStart, yEnd)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[2], c, new(xEnd, yEnd)));
-        VertexBuffer.Add(new VertexPositionColorTexture(vectors[3], c, new(xEnd, yStart)));
         
-
-        IndexBuffer.Add(currIndex + 0);
-        IndexBuffer.Add(currIndex + 1);
-        IndexBuffer.Add(currIndex + 2);
-        PrimitiveCount++;
-
-        IndexBuffer.Add(currIndex + 2);
-        IndexBuffer.Add(currIndex + 3);
-        IndexBuffer.Add(currIndex + 0);
-        PrimitiveCount++;
+        InsertRectangle(Vectors, xStart, xEnd, yStart, yEnd, c);
     }
 }

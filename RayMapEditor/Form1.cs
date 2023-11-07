@@ -1,9 +1,12 @@
+using Microsoft.Xna.Framework.Graphics;
 using System.Text.Json;
 
 namespace RayMapEditor;
 
 public partial class Form1 : Form
 {
+    private int TextureSize = 64;
+
     Definitions Definitions;
     Bitmap[] Objects;
 
@@ -30,6 +33,8 @@ public partial class Form1 : Form
     List<SaveMap> UndoStack = new();
     int UndoPointer = -1;
 
+    Bitmap? mapPicture = null;
+
     public Form1()
     {
         InitializeComponent();
@@ -41,6 +46,7 @@ public partial class Form1 : Form
 
         Objects = LoadImageList("Objects");
         objectImageList.Images.AddRange(Objects);
+        wallsImageList.Images.Add(new Bitmap(TextureSize, TextureSize));
         wallsImageList.Images.AddRange(LoadImageList("Walls"));
         doorsImageList.Images.AddRange(LoadImageList("Doors"));
         specialImageList.Images.AddRange(LoadImageList("Special"));
@@ -79,7 +85,7 @@ public partial class Form1 : Form
             }
         }
 
-        mapPicture.Size = new((int)(16 * currentMap.Width * zoom), (int)(16 * currentMap.Height * zoom));
+        mapPictureBox.Size = new((int)(TextureSize * currentMap.Width * zoom), (int)(TextureSize * currentMap.Height * zoom));
         ResetHistory();
         PushHistory();
     }
@@ -109,7 +115,7 @@ public partial class Form1 : Form
         for (var i = 0; i < Definitions.Actors.Count; i++)
         {
             var actor = Definitions.Actors[i];
-            var actorSlices = LoadImageList($"Actors/{actor.Name}");
+            var actorSlices = LoadImageList($"Actors/{actor.Name}").ToArray();
             actorsImageList.Images.AddRange(new[] { actorSlices[2], actorSlices[6], actorSlices[4], actorSlices[0] });
             actorsListView.Items.Add($"{actor.Name} (W)", i * 4);
             actorsListView.Items.Add($"{actor.Name} (E)", i * 4 + 1);
@@ -127,21 +133,33 @@ public partial class Form1 : Form
     }
 
     private Bitmap[] LoadImageList(string assetName)
+        => (Directory.Exists(assetName) ? LoadImageListFromDirectory(assetName) : LoadImageListFromPng(assetName)).ToArray();
+
+    private IEnumerable<Bitmap> LoadImageListFromDirectory(string directory)
     {
-        using var image = (Bitmap.FromFile($"{assetName}.png") as Bitmap)!;
-        List<Bitmap> ret = new();
-        for (var y = 0; y < image.Height; y += 16)
-            for (var x = 0; x < image.Width; x += 16)
+        foreach (var image in Directory.EnumerateFiles(directory, "*.png"))
+        {
+            var bmp = (Bitmap.FromFile(image) as Bitmap)!;
+            if (bmp.Width != TextureSize || bmp.Height != TextureSize)
+                continue;
+            yield return bmp;
+        }
+    }
+
+    private IEnumerable<Bitmap> LoadImageListFromPng(string assetName)
+    {
+        var TileSize = 16;
+        var image = (Bitmap.FromFile($"{assetName}.png") as Bitmap)!;
+        for (var y = 0; y < image.Height; y += TileSize)
+            for (var x = 0; x < image.Width; x += TileSize)
             {
-                var tile = new Bitmap(16, 16);
-                for (var i = 0; i < 16; i++)
-                    for (var j = 0; j < 16; j++)
+                var tile = new Bitmap(TileSize, TileSize);
+                for (var i = 0; i < TileSize; i++)
+                    for (var j = 0; j < TileSize; j++)
                         tile.SetPixel(i, j, image.GetPixel(i + x, j + y));
 
-                ret.Add(tile);
+                yield return tile;
             }
-
-        return ret.ToArray();
     }
 
     private void editObjectDefinitionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -153,16 +171,55 @@ public partial class Form1 : Form
 
     private void mapPicture_Paint(object sender, PaintEventArgs e)
     {
+        mapPicture ??= new(currentMap.Width * TextureSize, currentMap.Height * TextureSize);
+        using (var mapGraphics = Graphics.FromImage(mapPicture))
+            DrawMapToGraphics(mapGraphics);
         var g = e.Graphics;
+        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+        g.DrawImage(mapPicture, 0, 0, currentMap.Width * TextureSize * zoom, currentMap.Height * TextureSize * zoom);
+    }
 
+    private void DrawMapToGraphics(Graphics g)
+    {
+        g.Clear(mapPictureBox.BackColor);
         for (var x = 0; x < currentMap.Width; x++)
             for (var y = 0; y < currentMap.Height; y++)
             {
-                var wall = currentMap.Walls[x][y];
+                var walls = currentMap.Walls;
+                var wall = walls[x][y];
                 if (wall > 0)
                 {
+                    if (wall > wallsImageList.Images.Count)
+                        wall = 1;
                     var wallImage = wallsImageList.Images[wall];
-                    g.DrawImage(wallImage, x * 16 * zoom, y * 16 * zoom, 16 * zoom, 16 * zoom);
+                    g.DrawImage(wallImage, x * TextureSize, y * TextureSize, TextureSize, TextureSize);
+
+                    var neighbors = 0;
+                    if (x > 0)
+                        neighbors += (walls[x - 1][y] > 0) ? 0b0001 : 0;
+                    if (y < currentMap.Height)
+                        neighbors += (walls[x][y + 1] > 0) ? 0b0010 : 0;
+                    if (x < currentMap.Width)
+                        neighbors += (walls[x + 1][y] > 0) ? 0b0100 : 0;
+                    if (y > 0)
+                        neighbors += (walls[x][y - 1] > 0) ? 0b1000 : 0;
+                    if (neighbors == 0)
+                        continue;
+
+                    var points = (neighbors switch
+                    {
+                        0b0011
+                            => new[] { (x, y), (x + 1, y), (x + 1, y + 1) },
+                        0b1001
+                            => [(x + 1, y + 1), (x, y + 1), (x + 1, y)],
+                        0b0110
+                            => [(x + 1, y), (x, y + 1), (x, y)],
+                        0b1100
+                            => [(x, y), (x, y + 1), (x + 1, y + 1)],
+                        _ => [],
+                    }).Select(a => new Point((int)(a.Item1 * TextureSize), (int)(a.Item2 * TextureSize))).ToArray();
+                    if (points.Any())
+                        g.FillPolygon(Brushes.Black, points);
                 }
             }
 
@@ -172,14 +229,14 @@ public partial class Form1 : Form
             var x = item.X;
             var y = item.Y;
 
-            g.DrawImage(image, x * 16 * zoom, y * 16 * zoom, 16 * zoom, 16 * zoom);
+            g.DrawImage(image, x * TextureSize, y * TextureSize, TextureSize, TextureSize);
         }
 
         foreach (var cell in phantomCells)
-            g.FillRectangle(Brushes.Blue, cell.x * 16 * zoom, cell.y * 16 * zoom, 16 * zoom, 16 * zoom);
+            g.FillRectangle(Brushes.Blue, cell.x * TextureSize, cell.y * TextureSize, TextureSize, TextureSize);
     }
 
-    private Image GetImage(SaveItem item) 
+    private Image GetImage(SaveItem item)
         => item.ItypeType switch
         {
             ItemType.Door => doorsImageList.Images[GetDoorDefinition(item.Name).Index],
@@ -205,7 +262,7 @@ public partial class Form1 : Form
 
     public DoorDefinition GetDoorDefinition(string doorName)
         => Definitions.Doors.First(d => d.Name == doorName);
-    
+
     private SpecialDefinition GetSpecialDefinition(string name)
         => Definitions.Special.First(s => s.Name == name);
 
@@ -216,8 +273,8 @@ public partial class Form1 : Form
 
         drawing = true;
 
-        var cellX = (int)(e.X / (16 * zoom));
-        var cellY = (int)(e.Y / (16 * zoom));
+        var cellX = (int)(e.X / (TextureSize * zoom));
+        var cellY = (int)(e.Y / (TextureSize * zoom));
 
         startCell = new(cellX, cellY);
 
@@ -290,8 +347,8 @@ public partial class Form1 : Form
 
     private void Draw(MouseEventArgs e)
     {
-        var cellX = (int)(e.X / (16 * zoom));
-        var cellY = (int)(e.Y / (16 * zoom));
+        var cellX = (int)(e.X / (TextureSize * zoom));
+        var cellY = (int)(e.Y / (TextureSize * zoom));
 
         switch (currentTool)
         {
@@ -319,10 +376,45 @@ public partial class Form1 : Form
             case Tool.CircleFill:
                 FilledCircleDraw(cellX, cellY);
                 break;
+            case Tool.Flood:
+                FloodFill(cellX, cellY);
+                break;
         }
 
         previousMouse = new(cellX, cellY);
-        mapPicture.Invalidate();
+        mapPictureBox.Invalidate();
+    }
+
+    public void FloodFill(int cellX, int cellY)
+    {
+        if (cellX < 0 || cellY < 0 || cellX >= currentMap.Width || cellY >= currentMap.Height)
+            return;
+
+        var ret = new HashSet<IntVec2>();
+
+        var cells = new Queue<IntVec2>();
+        cells.Enqueue(new (cellX, cellY));
+        var check = currentMap.Walls[cellX][cellY];
+
+        while (cells.Count() > 0 && ret.Count() < 15000 && cells.Count < 15000)
+        {
+            var cell = cells.Dequeue();
+            if (cell.x < 0 || cell.y < 0 || cell.x >= currentMap.Width || cell.y >= currentMap.Height)
+                continue;
+            if (ret.Contains(cell))
+                continue;
+
+            if (currentMap.Walls[cell.x][cell.y] == check)
+            {
+                ret.Add(cell);
+                PlaceItem(cell.x, cell.y);
+
+                cells.Enqueue(cell + IntVec2.North);
+                cells.Enqueue(cell + IntVec2.East);
+                cells.Enqueue(cell + IntVec2.South);
+                cells.Enqueue(cell + IntVec2.West);
+            }
+        }
     }
 
     private void PlaceItem(int cellX, int cellY)
@@ -341,14 +433,14 @@ public partial class Form1 : Form
             currentMap.Walls[cellX][cellY] = currentWallNumber.Value;
         else if (currentItemName != null && currentItemType.HasValue)
             currentMap.Items.Add(new(currentItemType.Value, currentItemName, cellX, cellY));
-        mapPicture.Invalidate();
+        mapPictureBox.Invalidate();
     }
 
     private void Delete(int cellX, int cellY)
     {
         currentMap.Items.RemoveAll(r => r.X == cellX && r.Y == cellY);
         currentMap.Walls[cellX][cellY] = -1;
-        mapPicture.Invalidate();
+        mapPictureBox.Invalidate();
     }
 
     private void PenDraw(int cellX, int cellY)
@@ -428,8 +520,8 @@ public partial class Form1 : Form
 
     private void numericUpDown1_ValueChanged(object sender, EventArgs e)
     {
-        mapPicture.Size = new((int)(16 * currentMap.Width * zoom), (int)(16 * currentMap.Height * zoom));
-        mapPicture.Invalidate();
+        mapPictureBox.Size = new((int)(TextureSize * currentMap.Width * zoom), (int)(TextureSize * currentMap.Height * zoom));
+        mapPictureBox.Invalidate();
     }
 
     private void doorsListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -533,7 +625,14 @@ public partial class Form1 : Form
             return;
         fileName = ofd.FileName;
         currentMap = open(fileName) ?? new(48, 48);
-        mapPicture.Invalidate();
+        
+    }
+
+    private void ResetDisplay()
+    {
+        mapPictureBox.Invalidate();
+        mapPicture?.Dispose();
+        mapPicture = null;
     }
 
     private SaveMap? open(string fileName)
@@ -543,8 +642,10 @@ public partial class Form1 : Form
             var ret = JsonSerializer.Deserialize<SaveMap>(File.ReadAllText(fileName));
             ResetHistory();
             PushHistory();
+            ResetDisplay();
             return ret;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             MessageBox.Show(ex.ToString(), "Could not open file", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return null;
@@ -563,7 +664,7 @@ public partial class Form1 : Form
         if (UndoPointer == 0)
             undoToolStripMenuItem.Enabled = undoButton.Enabled = false;
 
-        mapPicture.Invalidate();
+        mapPictureBox.Invalidate();
     }
 
     private void Redo()
@@ -577,7 +678,7 @@ public partial class Form1 : Form
         if (UndoPointer == UndoStack.Count - 1)
             redoToolStripMenuItem.Enabled = redoButton.Enabled = false;
 
-        mapPicture.Invalidate();
+        mapPictureBox.Invalidate();
     }
 
     private void undoButton_Click(object sender, EventArgs e)
@@ -591,4 +692,9 @@ public partial class Form1 : Form
 
     private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         => Redo();
+
+    private void newToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+
+    }
 }

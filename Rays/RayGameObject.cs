@@ -25,7 +25,7 @@ public class RayGameObject : GameObjectBase
 
     public Vector3 PositionIn3dSpace => new(Position, YDraw);
     public Vector3 FacingDirection;
-    public float YDraw = 7;
+    public float YDraw = RayGame.TextureSize/2-1;
 
     public ObjectRenderMode ObjectRenderMode;
 
@@ -40,7 +40,7 @@ public class RayGameObject : GameObjectBase
 
     public new RayMap ParentMap { get; private set; } = null!;
 
-    public RayGameObject(RayGameObjectDef def, int x, int y) : base(def, new Vector2(x*16+8, y*16+8), layer: "objects")
+    public RayGameObject(RayGameObjectDef def, int x, int y) : base(def, new Vector2(x*RayGame.TextureSize+ RayGame.TextureSize/2, y* RayGame.TextureSize + RayGame.TextureSize/2), layer: "objects")
     {
         RayGameObjectDef = def;
         TextureIndex = RayGameObjectDef.DefaultTextureIndex;

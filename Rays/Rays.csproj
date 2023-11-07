@@ -61,7 +61,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Content\Images\" />
+	  <Folder Include="Content\Images\Walls\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -81,6 +81,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Content\Maps\map3.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Content\Maps\map4.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Content\Maps\Map_DY1.json">

@@ -3,6 +3,7 @@ using MonoGame.Extended.Content;
 using MonoGame.Extended.Serialization;
 using MonoGame.Extended.Sprites;
 using SpriteFontPlus;
+using System.Text.RegularExpressions;
 
 namespace Merthsoft.Moose.MooseEngine;
 
@@ -47,6 +48,16 @@ public class MooseContentManager
             AnimationSpriteSheets[animationKey] = Content.Load<SpriteSheet>(loadKey, new JsonContentLoader());
 
         return AnimationSpriteSheets[animationKey];
+    }
+
+    public IEnumerable<Texture2D> LoadImagesFromDirectory(string folder)
+    {
+        var directoryPath = Path.Combine(Content.RootDirectory, "Images", folder);
+        foreach (var file in Directory.EnumerateFiles(directoryPath, "*.xnb"))
+        {
+            var assetName = Regex.Match(file, $@"{Content.RootDirectory}\\Images\\(.*)\.xnb").Groups[1].Value;
+            yield return LoadImage(assetName);
+        }
     }
 
     public SpriteFont BakeFont(string font, int fontPixelHeight, CharacterRange[]? characterRange = null)

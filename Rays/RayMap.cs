@@ -13,8 +13,8 @@ public class RayMap : PathFinderMap
     private int width;
     public override int Width => width;
 
-    public override int TileWidth { get; } = 16;
-    public override int TileHeight { get; } = 16;
+    public override int TileWidth { get; } = 64;
+    public override int TileHeight { get; } = 64;
 
     public TileLayer<int> FloorLayer { get; set; }   = null!;
     public TileLayer<int> WallLayer { get; set; }    = null!;

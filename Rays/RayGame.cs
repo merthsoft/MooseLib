@@ -6,6 +6,8 @@ namespace Merthsoft.Moose.Rays;
 
 public class RayGame : MooseGame
 {
+    public const int TextureSize = 64;
+
     public static new RayGame Instance = null!;
 
     private Ray3DRenderer renderer;
@@ -22,7 +24,7 @@ public class RayGame : MooseGame
     public SpriteFont Font30 = null!;
     public SpriteFont Font50 = null!;
 
-    Texture2D WallTexture = null!;
+    List<Texture2D> WallTextures = new();
     public int WallCount;
 
     Texture2D FloorTexture = null!;
@@ -48,7 +50,7 @@ public class RayGame : MooseGame
 
     protected override StartupParameters Startup() => base.Startup() with
     {
-        DefaultBackgroundColor = Color.Black,
+        DefaultBackgroundColor = Color.DarkGreen,
         ScreenHeight = 480*2,
         ScreenWidth = 640*2,
         IsMouseVisible = false,
@@ -57,8 +59,14 @@ public class RayGame : MooseGame
 
     protected override void Load()
     {
-        WallTexture = ContentManager.LoadImage("Walls");
-        WallCount = WallTexture.Width / 16;
+        WallCount = 0;
+        foreach (var texture in ContentManager.LoadImagesFromDirectory("Walls"))
+        {
+            if (texture.Width != TextureSize || texture.Height != TextureSize)
+                continue;
+            WallCount++;
+            WallTextures.Add(texture);
+        }
 
         DoorTexture = ContentManager.LoadImage("Doors");
         DoorCount = DoorTexture.Width / 16;
@@ -74,11 +82,14 @@ public class RayGame : MooseGame
             TextureEnabled = true,
             VertexColorEnabled = true,
             FogEnabled = true,
-            FogStart = 32,
-            FogEnd = 400
+            FogStart = TextureSize,
+            FogEnd = TextureSize*10,
+            FogColor = Color.DarkGreen.ToVector3(),
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(100), 1, 1f, 1000f),
+            World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up),
         };
-
-        //renderer = AddMapRenderer("map", new Ray3DRenderer(GraphicsDevice, Effect));
+        
+        renderer = AddMapRenderer("map", new Ray3DRenderer(GraphicsDevice, Effect));
 
         AddDef(new RayPlayerDef());
 
@@ -179,30 +190,39 @@ public class RayGame : MooseGame
     {
         base.PostLoad();
 
-        ActorFrameCount = 0;
-        foreach (var actorDef in GetDefs<ActorDef>())
+        //ActorFrameCount = 0;
+        //foreach (var actorDef in GetDefs<ActorDef>())
+        //{
+        //    if (actorDef.ObjectRenderMode is ObjectRenderMode.Door or ObjectRenderMode.Wall)
+        //        continue;
+        //    actorDef.DefaultTextureIndex = WallCount + DoorCount + StaticObjectCount + ActorFrameCount;
+        //    ActorFrameCount += actorDef.FrameCount;
+        //}
+        //WallCount = 200;
+        var textureWidth = TextureSize * (WallCount + 1); // + DoorCount + StaticObjectCount + ActorFrameCount);
+        TextureAtlas = new Texture2D(GraphicsDevice, textureWidth, TextureSize);
+
+        var textureData = new Color[TextureSize * TextureSize];
+        Array.Fill(textureData, Color.White);
+        TextureAtlas.SetData(0, new Rectangle(0, 0, TextureSize, TextureSize), textureData, 0, TextureSize * TextureSize);
+        for (var i = 0; i < WallCount; i++)
         {
-            if (actorDef.ObjectRenderMode is ObjectRenderMode.Door or ObjectRenderMode.Wall)
-                continue;
-            actorDef.DefaultTextureIndex = WallCount + DoorCount + StaticObjectCount + ActorFrameCount;
-            ActorFrameCount += actorDef.FrameCount;
+            var texture = WallTextures[i];
+            texture.GetData(textureData);
+            TextureAtlas.SetData(0, new Rectangle(i * TextureSize + TextureSize, 0, TextureSize, TextureSize), textureData, 0, TextureSize * TextureSize);
         }
 
-        var textureWidth = 16 * (WallCount + DoorCount + StaticObjectCount + ActorFrameCount);
-        TextureAtlas = new Texture2D(GraphicsDevice, textureWidth, 16);
+        //TextureAtlas.Draw(DoorTexture, new(WallCount * TextureSize, 0, DoorCount * TextureSize, TextureSize));
+        //TextureAtlas.Draw(StaticObjectsTexture, new((WallCount + DoorCount) * TextureSize, 0, StaticObjectCount * TextureSize, TextureSize));
 
-        TextureAtlas.Draw(WallTexture, WallTexture.Bounds);
-        TextureAtlas.Draw(DoorTexture, new(WallCount * 16, 0, DoorCount * 16, 16));
-        TextureAtlas.Draw(StaticObjectsTexture, new((WallCount + DoorCount) * 16, 0, StaticObjectCount * 16, 16));
-
-        ActorFrameCount = 0;
-        foreach (var actorDef in GetDefs<ActorDef>())
-        {
-            if (actorDef.ObjectRenderMode is ObjectRenderMode.Door or ObjectRenderMode.Wall)
-                continue;
-            TextureAtlas.Draw(actorDef.Texture, new(16 * actorDef.DefaultTextureIndex, 0, actorDef.Texture.Width, 16));
-            ActorFrameCount += actorDef.FrameCount;
-        }
+        //ActorFrameCount = 0;
+        //foreach (var actorDef in GetDefs<ActorDef>())
+        //{
+        //    if (actorDef.ObjectRenderMode is ObjectRenderMode.Door or ObjectRenderMode.Wall)
+        //        continue;
+        //    TextureAtlas.Draw(actorDef.Texture, new(TextureSize * actorDef.DefaultTextureIndex, 0, actorDef.Texture.Width, TextureSize));
+        //    ActorFrameCount += actorDef.FrameCount;
+        //}
         Effect.Texture = TextureAtlas;
 
         Mouse.SetPosition(ScreenWidth / 2, ScreenHeight / 2);
@@ -213,34 +233,32 @@ public class RayGame : MooseGame
             Player.Weapons.Add(def);
 
         Player.CurrentWeapon = Player.Weapons[0];
+        LoadMap();
+    }
 
-
-        var options = new JsonSerializerOptions { DefaultBufferSize = int.MaxValue };
-        var mapFile = JsonSerializer.Deserialize<SaveMap>(File.ReadAllText("Content/Maps/Map.json"))!;
+    private void LoadMap()
+    {
+        var mapFile = JsonSerializer.Deserialize<SaveMap>(File.ReadAllText("Content/Maps/Map4.json"))!;
         RayMap.Load(this, Definitions, mapFile);
     }
 
     public void SetPlayerPosition(int x, int y)
-        => Player.Position = new(x * 16 + 8, y * 16 + 8);
+        => Player.Position = new(x * TextureSize + TextureSize / 2, y * TextureSize + TextureSize / 2);
     
     public void SetPlayerFacing(Vector3 vector3) 
         => Player.FacingDirection = vector3;
 
     protected override void PreUpdate(GameTime gameTime)
     {
-        if (renderer != null)
-        {
-            renderer.CameraPosition = Player.PositionIn3dSpace;
-            renderer.CameraFacing = Player.FacingDirection;
-        }
+        Effect.View = Matrix.CreateLookAt(Player.PositionIn3dSpace, Player.PositionIn3dSpace + Player.FacingDirection, Vector3.Forward);
         base.PreUpdate(gameTime);
     }
 
     protected override void PostDraw(GameTime gameTime)
     {
         SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        DrawWeapon();
-        DrawStatusBar();
+        //DrawWeapon();
+        //DrawStatusBar();
 
         var fov = MathHelper.ToRadians(50);
         SpriteBatch.DrawString(Font30, $"FPS: {FramesPerSecondCounter.FramesPerSecond}", new(2, 2), Color.Black);
@@ -380,6 +398,7 @@ public class RayGame : MooseGame
             sourceRectangle: new(32 + 24 * Player.FaceIndex, 96 + 24 * Player.HealthIndex, 24, 24),
             Color.White);
     }
+
     private void DrawWeapons()
     {
         var x = ScreenWidth / 2 + 75;

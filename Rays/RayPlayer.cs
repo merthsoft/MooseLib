@@ -106,8 +106,8 @@ public class RayPlayer : RayGameObject
 
         if (moveVector != Vector3.Zero)
         {
-            var moveX = 16 * moveVector.X.Round();
-            var moveY = 16 * moveVector.Y.Round();
+            var moveX = 64 * moveVector.X.Round();
+            var moveY = 64 * moveVector.Y.Round();
             
             if ((rayGame.MainMap as PathFinderMap)?.GetBlockingVector((int)Position.X + moveX, (int)Position.Y + moveY).All(i => i <= 0) ?? false)
                 Position = new(Position.X + moveX, Position.Y + moveY);
