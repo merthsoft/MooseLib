@@ -1,10 +1,9 @@
-﻿using System.Linq;
-
-namespace Merthsoft.Moose.Rts;
+﻿namespace Merthsoft.Moose.Rts;
 
 internal enum UnitTile
 {
     Opossum,
     Skunk,
-    Raccoon
+    Raccoon,
+    Rabbit
 }

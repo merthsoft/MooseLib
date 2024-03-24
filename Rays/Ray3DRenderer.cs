@@ -85,29 +85,29 @@ public class Ray3DRenderer : GraphicsDevice3DMapRenderer
                 }
             }
 
-        //foreach (var obj in objectLayer.Objects.Cast<RayGameObject>().OrderByDescending(o => o.DistanceSquaredTo(Player)))
-        //{
-        //    if (obj is RayPlayer)
-        //        continue;
+        foreach (var obj in objectLayer.Objects.Cast<RayGameObject>().OrderByDescending(o => o.DistanceSquaredTo(Player)))
+        {
+            if (obj is RayPlayer)
+                continue;
 
-        //    var (x, y) = obj.Position;
-        //    switch (obj.ObjectRenderMode)
-        //    {
-        //        case ObjectRenderMode.Sprite:
-        //        case ObjectRenderMode.Directional:
-        //            CreateSprite(x, y, obj);
-        //            break;
-        //        case ObjectRenderMode.Wall:
-        //            CreateWalls(x - 8, y - 8, obj.TextureIndex + obj.TextureIndexOffset);
-        //            break;
-        //        case ObjectRenderMode.Overlay:
-        //            CreateWalls(x - 8, y - 8, WallCount + DoorCount + obj.TextureIndex + obj.TextureIndexOffset);
-        //            break;
-        //        case ObjectRenderMode.Door:
-        //            CreateDoor(x, y, (obj as Door)!);
-        //            break;
-        //    }
-        //}
+            var (x, y) = obj.Position;
+            switch (obj.ObjectRenderMode)
+            {
+                case ObjectRenderMode.Sprite:
+                case ObjectRenderMode.Directional:
+                    CreateSprite(x, y, obj);
+                    break;
+                case ObjectRenderMode.Wall:
+                    CreateWalls(x - 8, y - 8, obj.TextureIndex + obj.TextureIndexOffset);
+                    break;
+                case ObjectRenderMode.Overlay:
+                    CreateWalls(x - 8, y - 8, WallCount + DoorCount + obj.TextureIndex + obj.TextureIndexOffset);
+                    break;
+                case ObjectRenderMode.Door:
+                    CreateDoor(x, y, (obj as Door)!);
+                    break;
+            }
+        }
     }
 
     private void CreateDoor(float x, float y, Door door)
@@ -171,7 +171,7 @@ public class Ray3DRenderer : GraphicsDevice3DMapRenderer
         for (var i = 0; i < Vectors.Length; i++)
             Vectors[i] = Vector3.Transform(Vectors[i], rot) + new Vector3(x, y, 0);
 
-        InsertRectangle(Vectors, xStart, xEnd, yStart, yEnd, Color.White);
+        AddQuad(Vectors, xStart, xEnd, yStart, yEnd, Color.White);
     }
 
     private void CreateWall(float x, float y, int wall, int direction, Color? color = null)
@@ -245,6 +245,6 @@ public class Ray3DRenderer : GraphicsDevice3DMapRenderer
                     ? new Color(70, 70, 70)
                     : Color.White);
         
-        InsertRectangle(Vectors, xStart, xEnd, yStart, yEnd, c);
+        AddQuad(Vectors, xStart, xEnd, yStart, yEnd, c);
     }
 }

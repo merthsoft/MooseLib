@@ -1,4 +1,5 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.FlowField;
 using System;
 using System.Diagnostics;
@@ -41,6 +42,7 @@ public class MooseRtsGame : MooseGame
         AddDef(new UnitDef("Opossum", UnitTile.Opossum));
         AddDef(new UnitDef("Skunk", UnitTile.Skunk));
         AddDef(new UnitDef("Raccoon", UnitTile.Raccoon));
+        AddDef(new UnitDef("Rabbit", UnitTile.Rabbit));
 
         Map = new(MapSize, MapSize);
         Map.RandomizeMap();
@@ -52,9 +54,8 @@ public class MooseRtsGame : MooseGame
 
         AddLayerRenderer("resource", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Resources")));
         AddLayerRenderer("item", new SpriteBatchTileTextureCachedRenderer(SpriteBatch, Map, ContentManager.LoadImage("Tiles/Items")));
-        //AddDefaultRenderer<ObjectLayer<Unit>>("units", new SpriteBatchObjectRenderer(SpriteBatch));
         AddLayerRenderer("units", new SpriteBatchObjectTileRenderer(SpriteBatch, TileWidth, TileHeight, ContentManager.LoadImage("Tiles/Units")));
-
+        
         ResetCamera();
     }
 

@@ -64,6 +64,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
         EdgeTile = edgeTile;
 
         Tiles = new TTile[Width, Height];
+        RendererKey = name;
     }
 
     public TileLayer(string name, int width, int height, TTile edgeTile, TTile defaultTile)

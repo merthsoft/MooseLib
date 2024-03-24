@@ -39,6 +39,7 @@ internal class Unit : TextureGameObject
     Size2 tileSize = Size2.Empty;
 
     private int stateTimer = 0;
+    private int animationTimer = 0;
 
     public RtsMap Map => (ParentMap as RtsMap)!;
 
@@ -52,7 +53,20 @@ internal class Unit : TextureGameObject
         StateMap[States.Step] = Step;
         StateMap[States.IdleStep] = Step;
         StateMap[States.Harvest] = Harvest;
-        DrawIndex = (int)def.UnitTile;
+        DrawIndex = (int)def.UnitTile * 2;
+    }
+
+    public override void Update(MooseGame game, GameTime gameTime)
+    {
+        base.Update(game, gameTime);
+        animationTimer++;
+        if (animationTimer == 50)
+            DrawIndex++;
+        else if (animationTimer == 100)
+        {
+            DrawIndex--;
+            animationTimer = 0;
+        }
     }
 
     public override void OnAdd()

@@ -13,7 +13,7 @@ public abstract class GraphicsDevice3DMapRenderer : GraphicsDeviceMapRenderer
     public Vector3 CameraPosition { get; set; }
     public Vector3 CameraFacing { get; set; }
 
-    protected GraphicsDevice3DMapRenderer(GraphicsDevice graphicsDevice, BasicEffect effect, int initialPrimitiveCount = 1_000_000) : base(graphicsDevice, effect)
+    protected GraphicsDevice3DMapRenderer(GraphicsDevice graphicsDevice, BasicEffect effect, int initialPrimitiveCount = 10_000_000) : base(graphicsDevice, effect)
     {
         VertexBuffer = new VertexPositionColorTexture[initialPrimitiveCount];
         IndexBuffer = new int[initialPrimitiveCount];
@@ -49,7 +49,7 @@ public abstract class GraphicsDevice3DMapRenderer : GraphicsDeviceMapRenderer
         VertexBufferIndex++;
     }
 
-    protected virtual void InsertRectangle(Vector3[] vectors, float xStart, float xEnd, int yStart, int yEnd, Color c)
+    protected virtual void AddQuad(Vector3[] vectors, float xStart, float xEnd, int yStart, int yEnd, Color c)
     {
         var currIndex = VertexBufferIndex;
         SetVertexAndIncrementBufferIndex(vectors[0], c, xStart, yStart);

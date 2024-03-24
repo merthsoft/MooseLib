@@ -28,6 +28,7 @@ public class ObjectLayer<TObject> : IObjectLayer where TObject : GameObjectBase
     public ObjectLayer(string name, int width, int height)
     {
         Name = name;
+        RendererKey = name;
         Width = width;
         Height = height;
 
