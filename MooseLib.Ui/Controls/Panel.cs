@@ -17,7 +17,7 @@ public class Panel : Control, IControlContainer
         }
     }
 
-    protected List<Control> controls = new();
+    protected List<Control> controls = [];
     public Control[] Controls => controls.ToArray();
 
     public TControl GetControl<TControl>(int index) where TControl : Control

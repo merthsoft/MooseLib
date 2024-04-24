@@ -28,13 +28,13 @@ public abstract class MooseGame : Game
     public IMap MainMap => ActiveMaps.First();
     public IList<IMap> ActiveMaps = new List<IMap>();
 
-    public Dictionary<string, Def> Defs { get; } = new Dictionary<string, Def>();
+    public Dictionary<string, Def> Defs { get; } = [];
 
-    public List<MouseState> PreviousMouseStates { get; } = new();
+    public List<MouseState> PreviousMouseStates { get; } = [];
     public MouseState PreviousMouseState => PreviousMouseStates[^1];
     public MouseState CurrentMouseState { get; private set; }
 
-    public List<KeyboardState> PreviousKeyStates { get; } = new();
+    public List<KeyboardState> PreviousKeyStates { get; } = [];
     public KeyboardState PreviousKeyState => PreviousKeyStates[^1];
 
     public KeyboardState CurrentKeyState { get; private set; }
@@ -50,15 +50,15 @@ public abstract class MooseGame : Game
 
     public Vector2 WorldMouse { get; private set; }
 
-    private readonly List<GameObjectBase> Objects = new();
+    private readonly List<GameObjectBase> Objects = [];
     public IList<GameObjectBase> ReadObjects => Objects;
     private readonly Queue<GameObjectBase> ObjectsToAdd = new();
 
     public RenderMode RenderMode { get; set; } = RenderMode.Layer;
     private readonly Dictionary<RenderMode, Action<IMap, GameTime, Matrix>> RenderMethods;
     
-    private readonly Dictionary<string, ILayerRenderer> LayerRendererDictionary = new();
-    private readonly Dictionary<string, IMapRenderer> MapRendererDictionary = new();
+    private readonly Dictionary<string, ILayerRenderer> LayerRendererDictionary = [];
+    private readonly Dictionary<string, IMapRenderer> MapRendererDictionary = [];
 
     public virtual int MapHeight => MainMap?.Height ?? 0;
 
@@ -179,6 +179,7 @@ public abstract class MooseGame : Game
 
         Defs.ForEach(kvp => kvp.Value.LoadContent(ContentManager));
         LayerRendererDictionary.Values.ForEach(r => r.LoadContent(ContentManager));
+        MapRendererDictionary.Values.ForEach(r => r.LoadContent(ContentManager));
 
         PostLoad();
     }

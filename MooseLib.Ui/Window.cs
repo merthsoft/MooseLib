@@ -15,7 +15,7 @@ public class Window : IControlContainer, ITweenOwner
 
     private RectangleF rectangle;
 
-    protected List<Control> controls = new();
+    protected List<Control> controls = [];
     public Control[] Controls => controls.ToArray();
     public TControl GetControl<TControl>(int index) where TControl : Control
         => (TControl)controls[index];
@@ -71,7 +71,7 @@ public class Window : IControlContainer, ITweenOwner
     public float X => Rectangle.X;
     public float Y => Rectangle.Y;
 
-    public List<Tween> ActiveTweens { get; } = new();
+    public List<Tween> ActiveTweens { get; } = [];
 
     private Color overlayColor;
     public Color OverlayColor

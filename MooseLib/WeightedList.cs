@@ -3,7 +3,7 @@
 namespace Merthsoft.Moose.MooseEngine;
 public class WeightedSet<T> : IEnumerable<T>
 {
-    protected List<T> set = new List<T>();
+    protected List<T> set = [];
 
     public WeightedSet()
     {

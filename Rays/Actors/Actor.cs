@@ -2,7 +2,7 @@
 public record ActorDef(string DefName, string DefaultState = ActorStates.StandState)
     : RayGameObjectDef(DefName, 0, ObjectRenderMode.Directional, false)
 {
-    public Dictionary<string, List<ActorFrame>> States = new();
+    public Dictionary<string, List<ActorFrame>> States = [];
     public int Health;
     public Texture2D Texture = null!;
     public int FrameCount;

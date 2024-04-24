@@ -10,7 +10,7 @@ public partial class Form1 : Form
     Definitions Definitions;
     Bitmap[] Objects;
 
-    Dictionary<ObjectType, ListViewGroup> ObjectListViewGroups = new();
+    Dictionary<ObjectType, ListViewGroup> ObjectListViewGroups = [];
 
     string? fileName = null;
     SaveMap currentMap = new SaveMap(48, 48);
@@ -27,10 +27,10 @@ public partial class Form1 : Form
     string? currentItemName;
 
     IntVec2? previousMouse;
-    List<IntVec2> phantomCells = new();
+    List<IntVec2> phantomCells = [];
     IntVec2 startCell;
 
-    List<SaveMap> UndoStack = new();
+    List<SaveMap> UndoStack = [];
     int UndoPointer = -1;
 
     Bitmap? mapPicture = null;

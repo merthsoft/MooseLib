@@ -6,7 +6,7 @@ public partial class ObjectDefinitionEditor : Form
     Definitions Definitions;
     List<ObjectDefinition> ObjectDefinitions;
     private readonly Bitmap[] Images;
-    Dictionary<ObjectType, ListViewGroup> ListViewGroups = new();
+    Dictionary<ObjectType, ListViewGroup> ListViewGroups = [];
 
     ObjectDefinition? SelectedDefinition = null;
     public int FrameIndex = 0;
@@ -54,7 +54,7 @@ public partial class ObjectDefinitionEditor : Form
             Name = "new object",
             Blocking = false,
             Type = ObjectType.Static,
-            Frames = new() { frame }
+            Frames = [frame]
         };
         ObjectDefinitions.Add(newDef);
         RebuildObjects();

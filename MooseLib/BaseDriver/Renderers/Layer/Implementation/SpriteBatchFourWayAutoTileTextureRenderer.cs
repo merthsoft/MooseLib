@@ -5,7 +5,7 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
 public class SpriteBatchFourWayAutoTileTextureRenderer : SpriteBatchTileTextureRenderer
 {
-    public Dictionary<int, Texture2D> AutoTileTextureMap { get; } = new();
+    public Dictionary<int, Texture2D> AutoTileTextureMap { get; } = [];
 
     public Texture2D this[int index]
     {

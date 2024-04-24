@@ -12,7 +12,7 @@ public sealed class AStarPathFinder : IPathFinder
     public AStarPathFinder()
     {
         Interesting = new MinHeap<AStarPathFinderNode>();
-        Nodes = new Dictionary<Node, AStarPathFinderNode>();
+        Nodes = [];
         PathReconstructor = new PathReconstructor();
     }
 

@@ -105,9 +105,9 @@ public abstract class GameObjectBase : ITweenOwner, IComparable<GameObjectBase>,
 
     public IMap ParentMap { get; private set; } = null!;
 
-    public List<Tween> ActiveTweens { get; } = new();
+    public List<Tween> ActiveTweens { get; } = [];
 
-    public Dictionary<string, Func<MooseGame, GameTime, string>> StateMap { get; } = new();
+    public Dictionary<string, Func<MooseGame, GameTime, string>> StateMap { get; } = [];
 
     public int DrawIndex { get; set; } = 0; // Most objects won't actually use this, but it's helpful for certain things
 

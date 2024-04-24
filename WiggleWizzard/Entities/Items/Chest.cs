@@ -20,13 +20,13 @@ public record ChestDef : ItemDef
         {
             FrameDuration = .1f,
             IsLooping = true,
-            Frames = new() { new((int)ItemTile.ClosedChest), }
+            Frames = [new((int)ItemTile.ClosedChest),]
         }; 
         SpriteSheet.Cycles["open"] = new()
         {
             FrameDuration = .1f,
             IsLooping = true,
-            Frames = new() { new((int)ItemTile.OpenChest), }
+            Frames = [new((int)ItemTile.OpenChest),]
         };
     }
 }
@@ -34,7 +34,7 @@ public record ChestDef : ItemDef
 public class Chest : InteractiveItem
 {
     public bool IsOpen = false;
-    public List<ItemTile> Contents = new();
+    public List<ItemTile> Contents = [];
     public bool IsLocked = false;
 
     public override string PlayKey => IsOpen ? "open" : "closed";

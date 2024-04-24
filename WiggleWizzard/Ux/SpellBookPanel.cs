@@ -4,7 +4,7 @@ using Merthsoft.Moose.Dungeon.Entities.Spells;
 namespace Merthsoft.Moose.Dungeon.Ux;
 public class SpellBookPanel : Panel
 {
-    private readonly List<SpellDef> spellList = new();
+    private readonly List<SpellDef> spellList = [];
     private readonly Panel spellPanel;
     private DungeonPlayer player;
     

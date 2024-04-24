@@ -2,8 +2,8 @@
 
 public class Node
 {
-    private readonly HashSet<Edge> OutgoingEdges = new();
-    private readonly HashSet<Edge> IncomingEdges = new();
+    private readonly HashSet<Edge> OutgoingEdges = [];
+    private readonly HashSet<Edge> IncomingEdges = [];
 
     public Node(Vector2 position)
         => Position = position;

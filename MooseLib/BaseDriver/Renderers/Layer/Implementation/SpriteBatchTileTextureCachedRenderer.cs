@@ -18,7 +18,7 @@ public class SpriteBatchTileTextureCachedRenderer : SpriteLayerBatchRenderer
 
     private Matrix ViewMatrix;
 
-    private Dictionary<ILayer, RenderTarget2D> BackingTextures = new(); // LoadContent
+    private Dictionary<ILayer, RenderTarget2D> BackingTextures = []; // LoadContent
     private Rectangle DestinationRectangle;
 
     public SpriteBatchTileTextureCachedRenderer(SpriteBatch spriteBatch, IMap parentMap, Texture2D sprites, int textureMargin = 0, int tilePadding = 0) : base(spriteBatch)

@@ -41,7 +41,7 @@ public abstract class DungeonObject : AnimatedGameObject
     public int DrawIndex;
     public MiniMapTile MiniMapTile;
     
-    private List<Spell> activeSpells = new();
+    private List<Spell> activeSpells = [];
     public IEnumerable<Spell> ActiveSpells => activeSpells;
 
     public bool CurrentlyBlockingInput = false;

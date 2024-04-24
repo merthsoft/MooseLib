@@ -2,14 +2,14 @@
 
 public record WangTile(int TileId)
 {
-    public List<int> North = new();
-    public List<int> NorthEast = new();
-    public List<int> East = new();
-    public List<int> SouthEast = new();
-    public List<int> South = new();
-    public List<int> SouthWest = new();
-    public List<int> West = new();
-    public List<int> NorthWest = new();
+    public List<int> North = [];
+    public List<int> NorthEast = [];
+    public List<int> East = [];
+    public List<int> SouthEast = [];
+    public List<int> South = [];
+    public List<int> SouthWest = [];
+    public List<int> West = [];
+    public List<int> NorthWest = [];
 
     public int? AppliesTo = null;
         

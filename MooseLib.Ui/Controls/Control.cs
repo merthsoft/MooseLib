@@ -61,7 +61,7 @@ public abstract class Control : ITweenOwner
     }
 
     public Action<Control, UpdateParameters>? Action { get; set; }
-    public List<Tween> ActiveTweens { get; } = new();
+    public List<Tween> ActiveTweens { get; } = [];
 
     public Control(IControlContainer container, float x, float y)
     {

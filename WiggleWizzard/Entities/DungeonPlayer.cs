@@ -34,7 +34,7 @@ public class DungeonPlayer : DungeonCreature
 
     public float CrosshairHue;
 
-    public List<SpellDef> KnownSpells = new();
+    public List<SpellDef> KnownSpells = [];
     public int SelectedSpellIndex;
 
     public SpellDef SelectedSpell => KnownSpells[SelectedSpellIndex];
@@ -56,7 +56,7 @@ public class DungeonPlayer : DungeonCreature
     public bool StatsUpdated;
     public bool ItemsUpdated;
 
-    public List<UsableItem> Items = new();
+    public List<UsableItem> Items = [];
 
     public bool Targeting = false;
     public int TargetIndex = -1;
@@ -66,7 +66,7 @@ public class DungeonPlayer : DungeonCreature
     public bool Blinking = false;
     public int BlinkIndex = -1;
     public Vector2 BlinkPosition;
-    public List<Point> BlinkCells = new();
+    public List<Point> BlinkCells = [];
 
     public DungeonPlayer(DungeonPlayerDef def) : base(def, Vector2.Zero, Up, layer: "player")
     {

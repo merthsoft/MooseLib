@@ -87,7 +87,7 @@ public class FlowField
 
 public class FlowFieldPathFinder : IPathFinder
 {
-    Dictionary<Point, FlowField> flowCache = new();
+    Dictionary<Point, FlowField> flowCache = [];
 
     public FlowFieldPathFinder()
     {

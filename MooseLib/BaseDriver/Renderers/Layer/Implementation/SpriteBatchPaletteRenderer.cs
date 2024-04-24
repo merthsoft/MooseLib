@@ -7,11 +7,14 @@ public class SpriteBatchPaletteRenderer : SpriteLayerBatchRenderer
 {
     public int Width { get; private set; }
     public int Height { get; private set; }
-    public Point ScaledSize => new(Width * (int)DrawScale.X, Height * (int)DrawScale.Y);
+    public Point ScaledSize => new((int)(Width * DrawScale.X), (int)(Height * DrawScale.Y));
 
-    public List<Color> Colors { get; set; } = new();
+    public Color[] Colors { get; set; } = [];
     public bool BlendColors { get; set; } = true;
     public UInt128 MaxValue { get; private set; }
+
+    public UInt128? MinDrawValue { get; set; }
+    public UInt128? MaxDrawValue { get; set; }
 
     public bool UseTransparentForZero { get; set; } = false;
     public bool IsActive { get; set; } = true;
@@ -24,7 +27,7 @@ public class SpriteBatchPaletteRenderer : SpriteLayerBatchRenderer
         Width = width;
         Height = height;
         MaxValue = maxValue;
-        Colors.AddRange(colors);
+        Colors = colors;
         ColorArray = new Color[width * height];
     }
 
@@ -47,15 +50,21 @@ public class SpriteBatchPaletteRenderer : SpriteLayerBatchRenderer
             {
                 var value = tileLayer.Tiles[i, j];
                 var percentage = (double)value / (double)MaxValue;
-                var color = Color.Transparent;
+                Color color;
 
-                if (percentage >= 1)
+                if (MinDrawValue.HasValue && value < MinDrawValue.Value
+                    || MaxDrawValue.HasValue && value > MaxDrawValue.Value 
+                    || percentage == 0 && UseTransparentForZero)
+                {
+                    color = Color.Transparent;
+                }
+                else if (percentage >= 1)
                 {
                     color = Colors.Last();
                 }
-                else if (percentage > 0 || !UseTransparentForZero)
+                else
                 {
-                    var colorLocation = (Colors.Count - 1) * percentage;
+                    var colorLocation = (Colors.Length - 1) * percentage;
                     var colorIndex = (int)colorLocation;
                     color = Colors[colorIndex];
                     if (BlendColors)

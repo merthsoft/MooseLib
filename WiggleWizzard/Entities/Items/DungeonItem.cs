@@ -28,7 +28,7 @@ public record ItemDef : DungeonObjectDef
         {
             FrameDuration = .1f,
             IsLooping = true,
-            Frames = new() { new(index), }
+            Frames = [new(index),]
         };
     }
 }

@@ -18,8 +18,8 @@ public class WiggleWizzardGame : MooseGame
     public static new WiggleWizzardGame Instance = null!;
 
     public SpellBook SpellBook = new();
-    public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, DungeonMonster>)> MonsterFactory = new();
-    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, DungeonItem>)> ItemFactory = new();
+    public Dictionary<MonsterTile, (MonsterDef, Func<MonsterDef, int, int, DungeonMonster>)> MonsterFactory = [];
+    public Dictionary<ItemTile, (ItemDef, Func<ItemDef, int, int, DungeonItem>)> ItemFactory = [];
 
     public Texture2D DungeonTiles = null!;
     public Texture2D MiniMapTiles = null!;
@@ -71,7 +71,7 @@ public class WiggleWizzardGame : MooseGame
     readonly DungeonPlayerDef PlayerDef = new();
     public DungeonPlayer Player = null!;
 
-    readonly List<FallingText> FallingTexts = new();
+    readonly List<FallingText> FallingTexts = [];
 
     public bool CanPlay = true;
     public bool MouseInGame => CurrentMouseState.X > 320;

@@ -45,10 +45,10 @@
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="SpriteFontPlus.MonoGame" Version="0.7.0.22" />
-		<PackageReference Include="MonoGame.Extended" Version="3.9.0-alpha0051" />
-		<PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.9.0-alpha0051" />
-		<PackageReference Include="MonoGame.Extended.Graphics" Version="3.9.0-alpha0051" />
-		<PackageReference Include="MonoGame.Extended.Tweening" Version="3.9.0-alpha0051" />
+		<PackageReference Include="MonoGame.Extended" Version="3.9.0-alpha0107" />
+		<PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.9.0-alpha0107" />
+		<PackageReference Include="MonoGame.Extended.Graphics" Version="3.9.0-alpha0107" />
+		<PackageReference Include="MonoGame.Extended.Tweening" Version="3.9.0-alpha0107" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -59,4 +59,9 @@
 		<Using Include="Merthsoft.Moose.MooseEngine" />
 		<Using Include="Merthsoft.Moose.MooseEngine.Extension" />
 	</ItemGroup>
+
+	<Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+		<Message Text="Restoring dotnet tools" Importance="High" />
+		<Exec Command="dotnet tool restore" />
+	</Target>
 </Project>

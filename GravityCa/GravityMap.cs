@@ -2,6 +2,7 @@
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Extension;
 using Merthsoft.Moose.MooseEngine.Topologies;
+using Microsoft.Xna.Framework;
 
 namespace GravityCa;
 public class GravityMap : BaseMap
@@ -18,15 +19,21 @@ public class GravityMap : BaseMap
 
     private static UInt128[,] BackBoard = null!;
 
-    public int Generation { get; private set; } = 0;
+    public int Generation { get; set; } = 0;
     public double TotalMass { get; private set; } = 0;
+    public double MaxMass { get; private set; } = 0;
+    public double MaxGravity { get; private set; } = 0;
 
     private static AdjacentTile<UInt128>[] AdjacentTiles = new AdjacentTile<UInt128>[9];
 
     public int UpdateState { get; private set; } = 0;
 
+    public (UInt128 gravity, UInt128 mass) this[int x, int y]
+        => (GravityLayer[x, y], MassLayer[x, y]);
+
     public GravityMap(int width, int height, Topology topology)
     {
+        RendererKey = "map";
         Topology = topology;
         this.width = width;
         this.height = height;
@@ -55,6 +62,8 @@ public class GravityMap : BaseMap
     public void SetGravity(int x, int y, UInt128 gravity)
         => GravityLayer[x, y] = gravity;
 
+
+
     public void Update()
     {
         Generation++;
@@ -65,6 +74,7 @@ public class GravityMap : BaseMap
                 for (var y = 0; y < Height; y++)
                     BackBoard[x, y] = 0;
 
+            MaxGravity = 0;
             for (var x = 0; x < Width; x++)
                 for (var y = 0; y < Height; y++)
                 {
@@ -87,6 +97,9 @@ public class GravityMap : BaseMap
                         gravity = GravityCellularAutomataGame.MaxGravity;
 
                     BackBoard[x, y] = gravity;
+
+                    if ((double)gravity > MaxGravity)
+                        MaxGravity = (double)gravity;
                 }
 
             GravityLayer.CopyTiles(BackBoard);
@@ -98,6 +111,7 @@ public class GravityMap : BaseMap
                     BackBoard[x, y] = 0;
 
             TotalMass = 0;
+            MaxMass = 0;
             for (var x = 0; x < Width; x++)
                 for (var y = 0; y < Height; y++)
                 {
@@ -106,7 +120,11 @@ public class GravityMap : BaseMap
                     {
                         continue;
                     }
-                    TotalMass += (double)mass;
+
+                    var massAsDouble = (double)mass;
+                    TotalMass += massAsDouble;
+                    if (massAsDouble > MaxMass)
+                        MaxMass = massAsDouble;
 
                     AdjacentTiles[0].Value = MassLayer[x - 1, y - 1];
                     AdjacentTiles[1].Value = MassLayer[x - 1, y];
@@ -144,7 +162,7 @@ public class GravityMap : BaseMap
                             {
                                 var (xOffset, yOffset, _) = selected;
                                 var (newX, newY) = TranslatePoint(x + xOffset, y + yOffset);
-                                if (newX < 0 || newX > Width || newY < 0 || newY > Height
+                                if (newX < 0 || newX >= Width || newY < 0 || newY >= Height
                                     || MassLayer[newX, newY] != 0
                                     || BackBoard[newX, newY] != 0)
                                     continue;
@@ -192,7 +210,7 @@ public class GravityMap : BaseMap
 
                     var surrounded = AdjacentTiles.Count(t => t.Value > 0) > 1;
                     var set = false;
-                    var hungry = MooseGame.Instance.Random.NextDouble() < .25f;
+                    var hungry = MooseGame.Random.NextDouble() < .25f;
                     if (hungry && surrounded && mass < GravityCellularAutomataGame.MaxMass)
                     {
                         var smallestGroup = AdjacentTiles.Where((x, i) => i != 4 && x.Value > 0 && x.Value <= mass)

@@ -5,8 +5,8 @@ public class RendererHost : Control
 {
     public Vector2 Scale { get; set; }
 
-    public List<ILayerRenderer> Renderers = new();
-    public List<ILayer> Layers = new();
+    public List<ILayerRenderer> Renderers = [];
+    public List<ILayer> Layers = [];
 
     public RendererHost(IControlContainer container, float x, float y) : base(container, x, y)
     {

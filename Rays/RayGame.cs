@@ -24,7 +24,7 @@ public class RayGame : MooseGame
     public SpriteFont Font30 = null!;
     public SpriteFont Font50 = null!;
 
-    List<Texture2D> WallTextures = new();
+    List<Texture2D> WallTextures = [];
     public int WallCount;
 
     Texture2D FloorTexture = null!;
@@ -95,11 +95,11 @@ public class RayGame : MooseGame
 
         WeaponTexture = ContentManager.LoadImage("Weapons");
         
-        AddDef(new WeaponDef("knife", 0, 0, Keys.D1, 5, new() { 3 }, Weapon.KnifeAttack));
-        AddDef(new WeaponDef("pistol", 0, 1, Keys.D2, 5, new() { 2 }, Weapon.RayAttack));
-        AddDef(new WeaponDef("machine-gun", 94, 2, Keys.D3, 5, new() { 2 }, Weapon.RayAttack));
-        AddDef(new WeaponDef("chain-gun", 95, 3, Keys.D4, 5, new() { 2, 3 }, Weapon.RayAttack));
-        AddDef(new WeaponDef("rocket-launcher", 107, 4, Keys.D5, 5, new() { 2 }, Weapon.Rocket));
+        AddDef(new WeaponDef("knife", 0, 0, Keys.D1, 5, [3], Weapon.KnifeAttack));
+        AddDef(new WeaponDef("pistol", 0, 1, Keys.D2, 5, [2], Weapon.RayAttack));
+        AddDef(new WeaponDef("machine-gun", 94, 2, Keys.D3, 5, [2], Weapon.RayAttack));
+        AddDef(new WeaponDef("chain-gun", 95, 3, Keys.D4, 5, [2, 3], Weapon.RayAttack));
+        AddDef(new WeaponDef("rocket-launcher", 107, 4, Keys.D5, 5, [2], Weapon.Rocket));
 
         AddDef(new RocketDef());
 

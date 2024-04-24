@@ -31,9 +31,9 @@ public class DungeonMap : PathFinderMap
     public int SeedUsed;
     public Map<DungeonCell>? GeneratedMap;
 
-    public List<Rectangle> Rooms = new();
+    public List<Rectangle> Rooms = [];
 
-    public WeightedSet<ItemTile> Treasures = new();
+    public WeightedSet<ItemTile> Treasures = [];
 
     public DungeonMap(int width, int height) : base(new AStarPathFinder())
     {

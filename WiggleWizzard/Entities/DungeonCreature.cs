@@ -22,7 +22,7 @@ public abstract class DungeonCreature : DungeonObject
     public bool UseVisionCircle = true;
     public bool BuildSightMap = false;
 
-    public readonly List<DungeonCreature> VisibleMonsters = new();
+    public readonly List<DungeonCreature> VisibleMonsters = [];
 
     public int FrozenTurnCount;
 

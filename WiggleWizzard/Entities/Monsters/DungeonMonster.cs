@@ -21,7 +21,7 @@ public record MonsterDef : DungeonCreatureDef
         {
             FrameDuration = .2f,
             IsLooping = true,
-            Frames = new() { new(index), new(index + 1), new(index + 2) }
+            Frames = [new(index), new(index + 1), new(index + 2)]
         };
     }
 }

@@ -11,7 +11,7 @@ public class SpriteBatchCharacterRenderer : SpriteLayerBatchRenderer
         Color? ShadowColor = null
     );
 
-    public List<CharacterDefinition> Palette { get; } = new();
+    public List<CharacterDefinition> Palette { get; } = [];
     public SpriteFont Font { get; set; }
 
     public SpriteBatchCharacterRenderer(SpriteBatch spriteBatch, SpriteFont font, params CharacterDefinition[] characters) : base(spriteBatch)

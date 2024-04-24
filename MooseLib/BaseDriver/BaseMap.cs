@@ -14,10 +14,10 @@ public abstract class BaseMap : IMap
     public Topology Topology { get; set; } = Topology.Plane;
     
     public int NumLayers { get; set; }
-    protected List<ILayer> layers = new();
+    protected List<ILayer> layers = [];
     public virtual IReadOnlyList<ILayer> Layers => layers.AsReadOnly();
 
-    protected Dictionary<string, ILayer> layerMap = new();
+    protected Dictionary<string, ILayer> layerMap = [];
     public virtual IReadOnlyDictionary<string, ILayer> LayerMap => layerMap.AsReadOnly();
 
     public abstract int IsBlockedAt(string layer, int x, int y);
@@ -77,5 +77,5 @@ public abstract class BaseMap : IMap
             && cell.Y >= 0 && cell.Y < Height;
     }
 
-    public abstract void Update(MooseGame game, GameTime gameTime);
+    public virtual void Update(MooseGame game, GameTime gameTime) { }
 }

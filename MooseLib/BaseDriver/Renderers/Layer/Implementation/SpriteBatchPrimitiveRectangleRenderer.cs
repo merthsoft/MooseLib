@@ -3,7 +3,7 @@
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 public class SpriteBatchPrimitiveRectangleRenderer : SpriteLayerBatchRenderer
 {
-    private List<Color> Palette { get; } = new();
+    private List<Color> Palette { get; } = [];
 
     public int TileWidth { get; private set; }
     public int TileHeight { get; private set; }

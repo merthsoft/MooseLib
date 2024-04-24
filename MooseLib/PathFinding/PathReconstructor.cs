@@ -4,7 +4,7 @@ internal sealed class PathReconstructor
 {
     private readonly Dictionary<Node, Edge> CameFrom;
 
-    public PathReconstructor() => CameFrom = new Dictionary<Node, Edge>();
+    public PathReconstructor() => CameFrom = [];
 
     public void SetCameFrom(Node node, Edge via)
         => CameFrom[node] = via;

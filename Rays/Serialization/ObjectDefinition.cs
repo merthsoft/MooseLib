@@ -14,7 +14,7 @@ public class ObjectDefinition
     public bool Blocking { get; set; } = false;
 
     [JsonPropertyName("frames")]
-    public List<Frame> Frames { get; set; } = new();
+    public List<Frame> Frames { get; set; } = [];
 
     [JsonIgnore]
     public int FirstFrameIndex => Frames[0].Index;

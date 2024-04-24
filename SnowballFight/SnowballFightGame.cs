@@ -31,7 +31,7 @@ public class SnowballFightGame : MooseGame
 
     public OrthographicCamera StatsWindowCamera = null!;
 
-    private readonly Dictionary<Vector2, Color> SelectedUnitHintCells = new();
+    private readonly Dictionary<Vector2, Color> SelectedUnitHintCells = [];
 
     private Unit? SelectedUnit { get; set; }
 

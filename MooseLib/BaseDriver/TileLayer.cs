@@ -39,7 +39,7 @@ public class TileLayer<TTile> : ITileLayer<TTile>
         }
     }
 
-    private HashSet<Point> rendererDirtyCells = new();
+    private HashSet<Point> rendererDirtyCells = [];
     public IEnumerable<Point> RendererDirtyCells => rendererDirtyCells;
     public float Opacity { get; set; }
     public virtual Vector2 DrawOffset { get; set; }

@@ -10,7 +10,7 @@ public class RayPlayer : RayGameObject
 
     public RayPlayerDef RayPlayerDef;
 
-    public List<WeaponDef> Weapons = new();
+    public List<WeaponDef> Weapons = [];
     public WeaponDef? CurrentWeapon;
 
     public int AttackFrame = 0;

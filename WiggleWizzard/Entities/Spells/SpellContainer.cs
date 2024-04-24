@@ -3,7 +3,7 @@
 namespace Merthsoft.Moose.Dungeon.Entities.Spells;
 public class SpellContainer : Spell, IEnumerable<Spell>
 {
-    public List<Spell> Spells = new List<Spell>();
+    public List<Spell> Spells = [];
     private int manaCost;
     public override int ManaCost => manaCost;
 

@@ -12,14 +12,14 @@ public class MooseContentManager
     private static readonly int DefaultBitmapSize = 1024;
     public static readonly CharacterRange BasicAsciiRange = new(' ', '~');
 
-    public List<CharacterRange> DefaultCharacterRange { get; } = new() { BasicAsciiRange };
+    public List<CharacterRange> DefaultCharacterRange { get; } = [BasicAsciiRange];
 
     ContentManager Content { get; }
 
     public MooseGame Game { get; }
     public GraphicsDevice GraphicsDevice { get; }
 
-    public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = new();
+    public readonly Dictionary<string, SpriteSheet> AnimationSpriteSheets = [];
 
     public MooseContentManager(MooseGame game, ContentManager content, GraphicsDevice graphicsDevice)
     {

@@ -2,7 +2,7 @@
 
 public class TextGrid : Control
 {
-    public List<Option> Options = new();
+    public List<Option> Options = [];
 
     public SelectMode SelectMode { get; set; } = SelectMode.None;
     public bool Horizontal { get; set; } = false;

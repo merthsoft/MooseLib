@@ -8,7 +8,7 @@ internal sealed class MinHeap<T>
 {
     private readonly List<T> Items;
 
-    public MinHeap() => Items = new List<T>();
+    public MinHeap() => Items = [];
 
     public int Count => Items.Count;
 

@@ -15,7 +15,7 @@ public record SpinesDef : SpellDef
 public class Spines : Spell
 {
     readonly IEnumerator<Vector2> FlightPath;
-    readonly HashSet<DungeonObject> HitObjects = new();
+    readonly HashSet<DungeonObject> HitObjects = [];
 
     public Spines(SpellDef def, DungeonObject owner, Vector2 end)
         : base(def, owner, owner.Position)

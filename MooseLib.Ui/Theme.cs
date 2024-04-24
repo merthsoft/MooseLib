@@ -11,7 +11,7 @@ public class Theme
     private int tileWidth;
     private int tileHeight;
 
-    public List<SpriteFont> Fonts { get; } = new();
+    public List<SpriteFont> Fonts { get; } = [];
 
     public Texture2D? Cursor { get; set; }
 

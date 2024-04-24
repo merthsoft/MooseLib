@@ -4,9 +4,9 @@ namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 
 public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
 {
-    public Dictionary<int, int> WangDefinitions = new();
-    public List<WangTile> WangTiles = new();
-    public Dictionary<string, List<WangTile>> Cache = new();
+    public Dictionary<int, int> WangDefinitions = [];
+    public List<WangTile> WangTiles = [];
+    public Dictionary<string, List<WangTile>> Cache = [];
 
     public SpriteBatchWangTileTextureRenderer(SpriteBatch spriteBatch, int tileWidth, int tileHeight, Texture2D baseTexture, int textureMargin = 0, int tilePadding = 0)
         : base(spriteBatch, tileWidth, tileHeight, baseTexture, textureMargin, tilePadding)
@@ -73,7 +73,7 @@ public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
             }
             tileIndex = tileGroup.ToList();
             if (!Cache.ContainsKey(wangId))
-                Cache[wangId] = new();
+                Cache[wangId] = [];
             Cache[wangId].AddRange(tileIndex);
         }
         var validItems = tileIndex.Where(t => t.AppliesTo.HasValue ? t.AppliesTo.Value == wangDef : true).ToList();

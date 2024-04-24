@@ -8,7 +8,7 @@ public class ObjectLayer<TObject> : IObjectLayer where TObject : GameObjectBase
 {
     public string? RendererKey { get; set; }
 
-    readonly SortedSet<TObject> objects = new();
+    readonly SortedSet<TObject> objects = [];
     public IEnumerable<TObject> Objects => objects;
 
     public string Name { get; }
@@ -35,7 +35,7 @@ public class ObjectLayer<TObject> : IObjectLayer where TObject : GameObjectBase
         ObjectMap = new List<TObject>[width, height];
         for (var x = 0; x < width; x++)
             for (var y = 0; y < height; y++)
-                ObjectMap[x, y] = new();
+                ObjectMap[x, y] = [];
     }
 
     public void AddObject(TObject obj)
