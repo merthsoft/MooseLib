@@ -23,3 +23,10 @@ I plan on adding:
 - More UI elements
 - Better code organization and reuse
 - More interfaces at API level
+
+## Liscensing
+All code, unless otherwise stated, is liscenced under the WTF-PL. See LICENCE file. 
+
+Art has largely been licensed for individual use (mine) so you can't just take art from here and use it in your game. If you're going to make money off your game, support artist and purchase their assets, or use freely available assets with appropriate attribution. See the content for authors.
+
+Do what thou wilt is the whole of the law.
