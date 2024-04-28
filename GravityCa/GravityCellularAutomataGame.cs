@@ -106,7 +106,7 @@ public class GravityCellularAutomataGame : MooseGame
             var l = MouseLocation;
             var x = (int)l.X;
             var y = (int)l.Y;
-            var mass = IsLeftMouseDown() ? Map.GetMass(x, y) + MaxMass / MassDivisor : 0;
+            var mass = IsLeftMouseDown() ? Map.GetMass(x, y, 0) + MaxMass / MassDivisor : 0;
             for (var i = 0; i <= 2; i++)
                 for (var j = 0; j <= 2; j++)
                     Map.SetMass(x + i, y + j, mass);
@@ -152,13 +152,13 @@ public class GravityCellularAutomataGame : MooseGame
             for (var x = 0; x < MapSize; x++)
                 for (var y = 0; y < MapSize; y++)
                 {
-                    if (Map.GetMass(x, y) == 0 && Random.NextSingle() <= chance)
+                    if (Map.GetMass(x, y, 0) == 0 && Random.NextSingle() <= chance)
                         Map.SetMass(x, y, MaxMass / MassDivisor);
                 }
         }
 
         if (hasRenderMinimum)
-            Renderer.MassMinDrawValue = MaxMass / (MassDivisor>>1);
+            Renderer.MassMinDrawValue = MaxMass / (MassDivisor+1);
         else
             Renderer.MassMinDrawValue = null;
 

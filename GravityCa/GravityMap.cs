@@ -52,42 +52,48 @@ public class GravityMap : BaseMap
                 AdjacentTiles[index++] = new() { XOffset = x, YOffset = y };
     }
 
-    public override int IsBlockedAt(string layer, int x, int y) 
+    public override int IsBlockedAt(string layer, int x, int y)
         => 0;
 
     public void SetMass(int x, int y, UInt128 mass)
-        => SafeSet(MassLayer, x, y, Width, Height, mass);
+        => SafeSet(MassLayer, x, y, Width, Height, mass, Topology);
 
-    public UInt128 GetMass(int x, int y)
-        => SafeGet(MassLayer, x, y, Width, Height);
+    public UInt128 GetMass(int x, int y, UInt128 @default)
+        => SafeGet(MassLayer, x, y, Width, Height, Topology, @default);
 
     public void SetGravity(int x, int y, UInt128 gravity)
-        => SafeSet(GravityLayer, x, y, Width, Height, gravity);
+        => SafeSet(GravityLayer, x, y, Width, Height, gravity, Topology);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void SafeSet(UInt128[] array, int x, int y, int w, int h, UInt128 v)
+    private static void SafeSet(UInt128[] array, int x, int y, int w, int h, UInt128 v, Topology topology)
     {
+        (x, y) = TopologyHelper.TranslatePoint(x, y, topology, w, h);
         if (x < 0 || y < 0 || x >= w || y >= h)
             return;
         array[x * w + y] = v;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static UInt128 SafeGet(UInt128[] array, int x, int y, int w, int h)
-        => x < 0 || y < 0 || x >= w || y >= h ? 0 : array[x * w + y];
+    private static UInt128 SafeGet(UInt128[] array, int x, int y, int w, int h, Topology topology, UInt128 @default)
+    {
+        (x, y) = TopologyHelper.TranslatePoint(x, y, topology, w, h);
+        if (x < 0 || y < 0 || x >= w || y >= h)
+            return @default;
+        return array[x * w + y];
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void FillAdjacentCells(UInt128[] array, int x, int y, int w, int h)
+    private static void FillAdjacentCells(UInt128[] array, int x, int y, int w, int h, Topology topology)
     {
-        AdjacentTiles[0].Value = SafeGet(array, x - 1, y - 1, w, h);
-        AdjacentTiles[1].Value = SafeGet(array, x - 1, y, w, h);
-        AdjacentTiles[2].Value = SafeGet(array, x - 1, y + 1, w, h);
-        AdjacentTiles[3].Value = SafeGet(array, x, y - 1, w, h);
-        AdjacentTiles[4].Value = SafeGet(array, x, y, w, h);
-        AdjacentTiles[5].Value = SafeGet(array, x, y + 1, w, h);
-        AdjacentTiles[6].Value = SafeGet(array, x + 1, y - 1, w, h);
-        AdjacentTiles[7].Value = SafeGet(array, x + 1, y, w, h);
-        AdjacentTiles[8].Value = SafeGet(array, x + 1, y + 1, w, h);
+        AdjacentTiles[0].Value = SafeGet(array, x - 1, y - 1, w, h, topology, 0);
+        AdjacentTiles[1].Value = SafeGet(array, x - 1, y, w, h, topology, 0);
+        AdjacentTiles[2].Value = SafeGet(array, x - 1, y + 1, w, h, topology, 0);
+        AdjacentTiles[3].Value = SafeGet(array, x, y - 1, w, h, topology, 0);
+        AdjacentTiles[4].Value = SafeGet(array, x, y, w, h, topology, 0);
+        AdjacentTiles[5].Value = SafeGet(array, x, y + 1, w, h, topology, 0);
+        AdjacentTiles[6].Value = SafeGet(array, x + 1, y - 1, w, h, topology, 0);
+        AdjacentTiles[7].Value = SafeGet(array, x + 1, y, w, h, topology, 0);
+        AdjacentTiles[8].Value = SafeGet(array, x + 1, y + 1, w, h, topology, 0);
     }
 
     public void Update(bool totalsOnly)
@@ -108,7 +114,7 @@ public class GravityMap : BaseMap
             for (var x = 0; x < Width; x++)
                 for (var y = 0; y < Height; y++)
                 {
-                    FillAdjacentCells(GravityLayer, x, y, Width, Height);
+                    FillAdjacentCells(GravityLayer, x, y, Width, Height, Topology);
                     const int massReducer = 3;
                     var adjGrav = (AdjacentTiles[0].Value >> massReducer)
                                 + (AdjacentTiles[1].Value >> massReducer)
@@ -165,7 +171,7 @@ public class GravityMap : BaseMap
                     if (floatingPointMass < MinMass)
                         MinMass = floatingPointMass;
 
-                    FillAdjacentCells(MassLayer, x, y, Width, Height);
+                    FillAdjacentCells(MassLayer, x, y, Width, Height, Topology);
 
                     var surrounded = AdjacentTiles.All(t => t.Value > 0);
                     var set = false;
@@ -174,7 +180,7 @@ public class GravityMap : BaseMap
                     {
                         var spotGrav = GravityLayer[x * Width + y];
 
-                        FillAdjacentCells(GravityLayer, x, y, Width, Height);
+                        FillAdjacentCells(GravityLayer, x, y, Width, Height, Topology);
                         var gravList = AdjacentTiles.GroupBy(x => x.Value).OrderByDescending(x => x.Key);
                         foreach (var g in gravList)
                         {
@@ -222,7 +228,7 @@ public class GravityMap : BaseMap
                     if (floatingPointMass < MinMass)
                         MinMass = floatingPointMass;
 
-                    FillAdjacentCells(MassLayer, x, y, Width, Height);
+                    FillAdjacentCells(MassLayer, x, y, Width, Height, Topology);
 
                     var surrounded = AdjacentTiles.Count(t => t.Value > 0) > 1;
                     var set = false;
