@@ -3,6 +3,7 @@ using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Extension;
 using Merthsoft.Moose.MooseEngine.Topologies;
 using System.Runtime.CompilerServices;
+using System.Xml.Serialization;
 
 namespace GravityCa;
 
@@ -67,19 +68,19 @@ public class GravityMap : BaseMap
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void SafeSet(UInt128[] array, int x, int y, int w, int h, UInt128 v, Topology topology)
     {
-        (x, y) = TopologyHelper.TranslatePoint(x, y, topology, w, h);
-        if (x < 0 || y < 0 || x >= w || y >= h)
+        TopologyHelper.TranslatePoint(x, y, topology, w, h, out var lX, out var lY);
+        if (lX < 0 || lY < 0 || lX >= w || lY >= h)
             return;
-        array[x * w + y] = v;
+        array[lX * w + lY] = v;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static UInt128 SafeGet(UInt128[] array, int x, int y, int w, int h, Topology topology, UInt128 @default)
     {
-        (x, y) = TopologyHelper.TranslatePoint(x, y, topology, w, h);
-        if (x < 0 || y < 0 || x >= w || y >= h)
+        TopologyHelper.TranslatePoint(x, y, topology, w, h, out var lX, out var lY);
+        if (lX < 0 || lY < 0 || lX >= w || lY >= h)
             return @default;
-        return array[x * w + y];
+        return array[lX * w + lY];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

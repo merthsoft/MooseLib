@@ -19,8 +19,20 @@ public static class TopologyHelper
 
     public static Point TranslatePoint(int c, int r, Topology toTopology, int mapWidth, int mapHeight)
     {
-        var lC = 0;
-        var lR = 0;
+        if (toTopology == Topology.Plane)
+            return new(c, r);
+
+        TranslatePoint(c, r, toTopology, mapWidth, mapHeight, out var lC, out var lR);
+        return new(lC, lR);
+    }
+
+    public static void TranslatePoint(int c, int r, Topology toTopology, int mapWidth, int mapHeight, out int lC, out int lR)
+    {
+        lC = c;
+        lR = r;
+
+        if (toTopology == Topology.Plane)
+            return;
 
         var lE = c <= -1;
         var tEE = r <= -1;
@@ -30,7 +42,7 @@ public static class TopologyHelper
         var ovR = tEE || bE;
 
         if (!ovC && !ovR || toTopology == Topology.Plane)
-            return new(c, r);
+            return;
 
         switch (toTopology)
         {
@@ -57,7 +69,9 @@ public static class TopologyHelper
                     {
                         case 0xA:
                         case 0x5:
-                            return Point.Zero;
+                            lC = 0;
+                            lR = 0;
+                            return;
                         case 0x9:
                             lC = mapWidth;
                             lR = 1;
@@ -91,7 +105,7 @@ public static class TopologyHelper
                 }
             case Topology.Klein:
                 lC = ovC ? Cycle(c, mapWidth) : c;
-                lR = ovR ? Cycle(r, mapHeight): r;
+                lR = ovR ? Cycle(r, mapHeight) : r;
                 lR = ovC ? mapHeight - lR : lR;
                 break;
             case Topology.ProjectivePlane:
@@ -101,7 +115,5 @@ public static class TopologyHelper
                 lR = ovC ? mapHeight - lR : lR;
                 break;
         }
-        return new(lC, lR);
     }
-
 }

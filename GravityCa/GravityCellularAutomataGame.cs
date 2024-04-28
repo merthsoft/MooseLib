@@ -138,13 +138,16 @@ public class GravityCellularAutomataGame : MooseGame
             Map.Generation = 0;
 
         if (WasKeyJustPressed(Keys.Q))
-            Renderer.GravityLerpMode = Renderer.GravityLerpMode.Next()  ;
+            Renderer.GravityLerpMode = Renderer.GravityLerpMode.Next();
 
         if (WasKeyJustPressed(Keys.V))
             hasRenderMinimum = !hasRenderMinimum;
 
         if (WasKeyJustPressed(Keys.B))
             genRandom = !genRandom;
+
+        if (WasKeyJustPressed(Keys.T))
+            Map.Topology = Map.Topology.Next();
 
         if ((genRandom && running) || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.F))
         {
@@ -162,7 +165,7 @@ public class GravityCellularAutomataGame : MooseGame
         else
             Renderer.MassMinDrawValue = null;
 
-        Window.Title =  $"{version} - {(running ? "Running" : "Paused")}{(genRandom ? "*" : "")} | Div: {MassDivisor:N0} | Generation {Map.Generation:N0} | FPS {FramesPerSecondCounter.FramesPerSecond}";
+        Window.Title =  $"{version} - {(running ? "Running" : "Paused")}{(genRandom ? "*" : "")} | Div: {MassDivisor:N0} | Generation {Map.Generation:N0} | FPS {FramesPerSecondCounter.FramesPerSecond} | {Map.Topology}";
     }
 
     private void DrawString(int x, int y, string text)
