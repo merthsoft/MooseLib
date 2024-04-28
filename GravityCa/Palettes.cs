@@ -38,8 +38,9 @@ internal static class Palettes
 
     public static Color[][] AllPalettes = [
         [
+            Color.White,
+            ..ReverseRainbow,
             Color.Black,
-            Color.White
         ], 
         [
             Color.Black,

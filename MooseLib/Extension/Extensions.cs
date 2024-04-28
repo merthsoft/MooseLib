@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Merthsoft.Moose.MooseEngine.Extension;
 
@@ -73,5 +74,13 @@ public static class Extensions
         float pastZoom = camera.Zoom;
         camera.ZoomIn(deltaZoom);
         camera.Position += (zoomCenter - camera.Origin - camera.Position) * ((camera.Zoom - pastZoom) / camera.Zoom);
+    }
+
+    public static TEnum Next<TEnum>(this TEnum t) where TEnum : struct, Enum
+    {   
+        var values = Enum.GetValues<TEnum>();
+        var index = Array.IndexOf(values, t);
+        index = index >= values.Length - 1 ? 0 : index + 1;
+        return values[index];
     }
 }

@@ -11,13 +11,15 @@ using System.Reflection;
 namespace GravityCa;
 public class GravityCellularAutomataGame : MooseGame
 {
-    public const int MapSize = 150;
+    public const int MapSize = 300;
     public const int DrawSize = 2;
 
     public static UInt128 MaxGravity = UInt128.MaxValue >> 1;
     public static UInt128 MaxMass = MaxGravity - 1;
     static readonly GravityMap Map = new(MapSize, MapSize, Topology.Torus);
-    bool running = true;
+    bool running = false;
+    bool genRandom = false;
+    bool hasRenderMinimum = false;
     SpriteFont font = null!;
     private GravityMapRenderer Renderer = null!;
     public UInt128 MassDivisor = (UInt128)Math.Pow(2, 25);
@@ -26,6 +28,9 @@ public class GravityCellularAutomataGame : MooseGame
     private string version = "Gravity";
 
     public Point ScreenScale = Point.Zero;
+    float ScreenWidthRatio => (float)ScreenWidth / MapSize;
+    float ScreenHeightRatio => (float)ScreenHeight / MapSize;
+    Vector2 MouseLocation => MainCamera.ScreenToWorld(CurrentMouseState.X / (int)ScreenWidthRatio, CurrentMouseState.Y / (int)ScreenHeightRatio);
 
     //Task updateTask;
     List<List<Color>> GravityPalettes = [];
@@ -37,11 +42,11 @@ public class GravityCellularAutomataGame : MooseGame
     protected override StartupParameters Startup()
         => base.Startup() with
         {
-            ScreenWidth = 1600*2,
+            ScreenWidth = 900*2,
             ScreenHeight = 900*2,
             IsFullscreen = false,
             IsMouseVisible = false,
-            DefaultBackgroundColor = Color.DarkGray,
+            DefaultBackgroundColor = Color.Black,
             RenderMode = RenderMode.Map
         };
 
@@ -50,7 +55,7 @@ public class GravityCellularAutomataGame : MooseGame
         IsFixedTimeStep = false;
         Graphics.SynchronizeWithVerticalRetrace = false;
         
-        font = ContentManager.BakeFont("Capital_Hill_Monospaced", 24);
+        font = ContentManager.BakeFont("Capital_Hill_Monospaced", 8);
         var assembly = Assembly.GetExecutingAssembly();
         var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
 
@@ -59,7 +64,6 @@ public class GravityCellularAutomataGame : MooseGame
         ActiveMaps.Add(Map);
         ScreenScale = new Point(ScreenWidth, ScreenHeight);
         Renderer = AddMapRenderer(Map.RendererKey!, new GravityMapRenderer(SpriteBatch, ScreenScale));
-        MainCamera.ZoomIn(0);
         //var div = (UInt128)(1 << 15);
         //var x = MapSize / 2;
         //var y = MapSize / 2;
@@ -67,42 +71,7 @@ public class GravityCellularAutomataGame : MooseGame
         //Map.SetMass(x + 1, y, MaxMass / div);
         //Map.SetMass(x, y + 1, MaxMass / div);
         //Map.SetMass(x + 1, y + 1, MaxMass / div);
-        //for (var x = 0; x < MapSize; x++)
-        //    for (var y = 0; y < MapSize; y++)
-        //    {
-        //        if (Map.MassLayer[x, y] == 0 && Random.NextSingle() <= .00075)
-        //        {
-        //            var div = (UInt128)(1 << Random.Next(15, 20));
-        //            Map.SetMass(x, y, MaxMass / div);
-        //            Map.SetMass(x + 1, y, MaxMass / div);
-        //            Map.SetMass(x, y+1, MaxMass / div);
-        //            Map.SetMass(x + 1, y + 1, MaxMass / div);
-        //        }
-        //    }
-
-        //updateTask = Task.Factory.StartNew(() =>
-        //{
-        //    while (true)
-        //    {
-        //        if (running)
-        //        {
-        //            lock (mapLock)
-        //            {
-        //                Map.Update();
-        //            }
-        //        }
-        //        Thread.Sleep(0);
-        //    }
-        //});
     }
-
-    //protected override void Draw(GameTime gameTime)
-    //{
-    //    lock (mapLock)
-    //    {
-    //        base.Draw(gameTime);
-    //    }
-    //}
 
     protected override void Update(GameTime gameTime)
     {
@@ -111,8 +80,7 @@ public class GravityCellularAutomataGame : MooseGame
         if (WasKeyJustPressed(Keys.Escape))
             Exit();
         
-        if (running)
-            Map.Update();
+        Map.Update(!running);
 
         if (WasKeyJustPressed(Keys.Space))
             running = !running;
@@ -126,9 +94,6 @@ public class GravityCellularAutomataGame : MooseGame
         if (WasKeyJustPressed(Keys.G))
             Renderer.DrawGravity = !Renderer.DrawGravity;
 
-        if (WasKeyJustPressed(Keys.B))
-            Renderer.GravityBlendColors = !Renderer.GravityBlendColors;
-
         var keyPressed = CurrentKeyState.GetPressedKeys().FirstOrDefault();
         if (keyPressed >= Keys.D0 && keyPressed <= Keys.D9)
             Renderer.GravityColors = Palettes.AllPalettes[keyPressed - Keys.D0];
@@ -138,13 +103,13 @@ public class GravityCellularAutomataGame : MooseGame
 
         if (IsActive && (IsLeftMouseDown() || IsRightMouseDown()))
         {
-            var x = CurrentMouseState.X / DrawSize;
-            var y = CurrentMouseState.Y / DrawSize;
-            var mass = IsLeftMouseDown() ? MaxMass / MassDivisor : 0;
-            Map.SetMass(x, y, mass);
-            //Map.SetMass(x, y + 1, mass);
-            //Map.SetMass(x + 1, y, mass);
-            //Map.SetMass(x + 1, y + 1, mass);
+            var l = MouseLocation;
+            var x = (int)l.X;
+            var y = (int)l.Y;
+            var mass = IsLeftMouseDown() ? Map.GetMass(x, y) + MaxMass / MassDivisor : 0;
+            for (var i = 0; i <= 2; i++)
+                for (var j = 0; j <= 2; j++)
+                    Map.SetMass(x + i, y + j, mass);
         }
 
         if (GetScrollWheelDelta() > 0)
@@ -173,24 +138,31 @@ public class GravityCellularAutomataGame : MooseGame
             Map.Generation = 0;
 
         if (WasKeyJustPressed(Keys.Q))
-            Renderer.GravityRelativeSpectrum = !Renderer.GravityRelativeSpectrum;
+            Renderer.GravityLerpMode = Renderer.GravityLerpMode.Next()  ;
 
-        if (running || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.F))
+        if (WasKeyJustPressed(Keys.V))
+            hasRenderMinimum = !hasRenderMinimum;
+
+        if (WasKeyJustPressed(Keys.B))
+            genRandom = !genRandom;
+
+        if ((genRandom && running) || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.F))
         {
-            var chance = running || WasKeyJustPressed(Keys.R) ? .2f : 1f;
+            var chance = (genRandom && running) ? .002 : WasKeyJustPressed(Keys.R) ? .02f : 1f;
             for (var x = 0; x < MapSize; x++)
                 for (var y = 0; y < MapSize; y++)
                 {
-                    if (Map.MassLayer[x, y] == 0 && Random.NextSingle() <= chance)
-                        if (MassDivisor == 1)
-                            Map.SetMass(x, y, MaxMass / MassDivisor);
-                        else
-                            Map.SetMass(x, y, MaxMass / (MassDivisor + (UInt128)Random.Next(-2, 3)));
+                    if (Map.GetMass(x, y) == 0 && Random.NextSingle() <= chance)
+                        Map.SetMass(x, y, MaxMass / MassDivisor);
                 }
         }
 
-        Renderer.MassMinDrawValue = MaxMass / (UInt128)((double)MassDivisor / 50);
-        Window.Title =  $"{version} - Generation {Map.Generation:N0} - FPS {FramesPerSecondCounter.FramesPerSecond}";
+        if (hasRenderMinimum)
+            Renderer.MassMinDrawValue = MaxMass / (MassDivisor>>1);
+        else
+            Renderer.MassMinDrawValue = null;
+
+        Window.Title =  $"{version} - {(running ? "Running" : "Paused")}{(genRandom ? "*" : "")} | Div: {MassDivisor:N0} | Generation {Map.Generation:N0} | FPS {FramesPerSecondCounter.FramesPerSecond}";
     }
 
     private void DrawString(int x, int y, string text)
@@ -198,16 +170,8 @@ public class GravityCellularAutomataGame : MooseGame
 
     protected override void PostDraw(GameTime gameTime)
     {
-        if (!DrawText)
-            return;
-        SpriteBatch.Begin();
-        
-        DrawString(4, 4, $"Generation {Map.Generation:N0} - FPS {FramesPerSecondCounter.FramesPerSecond}");
-        
-        var massString = Map.TotalMass.ToString().Split('E');
-        var mass = double.Parse(massString[0]);
-        DrawString(5, 30, $"Total mass {Math.Round(mass, 2, MidpointRounding.ToEven)}E{massString.ElementAtOrDefault(1) ?? "0"}");
-        
+        SpriteBatch.Begin(transformMatrix: Matrix.CreateScale(ScreenWidthRatio, ScreenHeightRatio, 1));
+        SpriteBatch.FillRect(MouseLocation, 3, 3, Color.PaleVioletRed);
         SpriteBatch.End();
     }
 }

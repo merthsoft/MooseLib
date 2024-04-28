@@ -1,4 +1,5 @@
 ﻿namespace GravityCa;
+
 public struct AdjacentTile<T>
 {
     public int XOffset;

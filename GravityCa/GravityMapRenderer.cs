@@ -8,6 +8,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace GravityCa;
+enum LerpMode
+{
+    ZeroToGlobalMax,
+    ZeroToSystemMax,
+    SystemMinToSystemMax
+}
 internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : SpriteBatchMapRenderer(spriteBatch)
 {
     public int Width { get; set; } = GravityCellularAutomataGame.MapSize;
@@ -19,9 +25,8 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
     public bool DrawMass { get; set; } = true;
 
     public Color[] GravityColors { get; set; } = Palettes.AllPalettes[1];
-    public bool GravityBlendColors { get; set; } = true;
-    public bool GravityRelativeSpectrum { get; set; } = true;
-    public Color[] MassColors { get; set; } = Palettes.AllPalettes[1];
+    public LerpMode GravityLerpMode { get; set; } = LerpMode.SystemMinToSystemMax;
+    public Color[] MassColors { get; set; } = Palettes.AllPalettes[0];
     public UInt128? MassMinDrawValue { get; set; }
 
     private Texture2D BackingTexture = null!; // LoadContent
@@ -35,21 +40,22 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
 
     public override void Draw(MooseGame game, GameTime gameTime, IMap map)
     {
+        if (!DrawMass && !DrawGravity) 
+            return;
+
         var gravityMap = map as GravityMap ?? throw new NotSupportedException();
 
         var gravityLayer = gravityMap.GravityLayer;
         var massLayer = gravityMap.MassLayer;
-        var massMax = Math.Max(1, gravityMap.MaxMass);
-        var gravityMax = Math.Max(1, gravityMap.MaxGravity);
-
+        
         for (int i = 0; i < Width; i++)
             for (int j = 0; j < Height; j++)
             {
                 Color? color = null;
-                if (DrawMass)
-                    color = GetColor(massLayer, i, j, MassColors, massMax, MassMinDrawValue, null, true);
-                if (DrawGravity && color == null)
-                    color = GetColor(gravityLayer, i, j, GravityColors, GravityRelativeSpectrum ? gravityMax :(double)GravityCellularAutomataGame.MaxGravity, null, null, GravityBlendColors);
+                if (DrawMass && gravityMap.TotalMass > 0)
+                    color = GetColor(massLayer, i, j, MassColors, (double)GravityCellularAutomataGame.MaxMass, MassMinDrawValue, null, gravityMap.MinMass, gravityMap.MaxMass, LerpMode.ZeroToSystemMax);
+                if (DrawGravity && color == null && gravityMap.TotalGravity > 0)
+                    color = GetColor(gravityLayer, i, j, GravityColors, (double)GravityCellularAutomataGame.MaxGravity, null, null, gravityMap.MinGravity, gravityMap.MaxGravity, GravityLerpMode);
 
                 ColorArray[j * Height + i] = color ?? Color.Transparent;
             }
@@ -58,18 +64,25 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
         SpriteBatch.Draw(BackingTexture, new Rectangle(DrawOffset.ToPoint(), ScreenSize), Color.White);
     }
 
-    private Color? GetColor(TileLayer<UInt128> tileLayer,
+    private Color? GetColor(
+                           UInt128[] tileLayer,
                            int i,
                            int j,
                            Color[] colors,
-                           double maxValue,
+                           double overallMax,
                            UInt128? minDrawValue,
                            UInt128? maxDrawValue,
-                           bool blendColors)
+                           double systemMin,
+                           double systemMax,
+                           LerpMode lerpMode)
     {
-        var value = tileLayer.Tiles[i, j];
-        var percentage = (double)value / (double)maxValue;
-        Color color;
+        var value = tileLayer[i * Width + j];
+        var percentage = lerpMode switch
+        {
+            LerpMode.ZeroToSystemMax => (double)value / (double)systemMax,
+            LerpMode.SystemMinToSystemMax => ((double)value + systemMin) / (double)systemMax,
+            _ => (double)value / (double)overallMax,
+        };
 
         if (minDrawValue.HasValue && value < minDrawValue.Value
             || maxDrawValue.HasValue && value > maxDrawValue.Value
@@ -84,12 +97,7 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
 
         var colorLocation = (colors.Length - 1) * percentage;
         var colorIndex = (int)colorLocation;
-        color = colors[colorIndex];
-        if (blendColors)
-        {
-            var newPercentage = colorLocation - colorIndex;
-            color = GraphicsExtensions.ColorGradientPercentage(colors[colorIndex], colors[colorIndex + 1], newPercentage);
-        }
-        return color;
+        var newPercentage = colorLocation - colorIndex;
+        return GraphicsExtensions.ColorGradientPercentage(colors[colorIndex], colors[colorIndex + 1], newPercentage);
     }
 }
