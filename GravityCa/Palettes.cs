@@ -13,7 +13,8 @@ internal static class Palettes
         ..Rainbow, ..ReverseRainbow ];
     
     public static Color[] HundredRainbow = [..TenRainbow, ..TenRainbow, ..TenRainbow, ..TenRainbow, ..TenRainbow, ..TenRainbow, ..TenRainbow, ..TenRainbow, ..TenRainbow, ..TenRainbow];
-    public static Color[] MultiBlackWhite = [Color.Black, Color.White, Color.Black, Color.White, Color.Black, Color.White, Color.Black, Color.White];
+    public static Color[] BlackWhite = [Color.SeaGreen, Color.HotPink];
+    public static Color[] MultiBlackWhite = [..BlackWhite, ..BlackWhite, ..BlackWhite, ..BlackWhite];
     public static Color[] HundredBlackWhite = [..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite,
             ..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite,
             ..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite, ..MultiBlackWhite,
@@ -41,39 +42,38 @@ internal static class Palettes
             Color.White,
             ..ReverseRainbow,
             Color.Black,
-        ], 
+        ],
         [
             Color.Black,
             ..Rainbow,
             Color.White
-        ], 
+        ],
         [
             ..HundredBlackWhite, ..HundredBlackWhite
         ],
         [
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
+            ..MultiBlackWhite, ..MultiBlackWhite
         ],
         [
             ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
             ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
             ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
             ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, 
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, 
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, 
             ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
             ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
             ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
             ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            
-        ], 
+            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
+            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
+            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
+
+        ],
         [
             Color.DarkRed,
             ..TenRainbow,
             Color.White,
             Color.Black
-        ], 
+        ],
         [
             Color.DarkRed,
             ..TenRainbow,
@@ -81,28 +81,11 @@ internal static class Palettes
             ..TenRainbow,
             Color.White,
             Color.Black
-        ], 
+        ],
         [
-            Color.White,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            ..Rainbow,
-            Color.White,
-            Color.Black
-        ], 
+            Color.Black,
+            ..HundredRainbow
+        ],
         [
             Color.Black,
             ..HundredRainbow, ..HundredRainbow, ..HundredRainbow, ..HundredRainbow, ..HundredRainbow,
@@ -119,7 +102,7 @@ internal static class Palettes
             ..HundredRainbow, ..HundredRainbow, ..HundredRainbow, ..HundredRainbow, ..HundredRainbow,
             Color.White,
             Color.Black
-        ], 
+        ],
         [
             Color.Black,
             ..HundredRainbow, ..HundredRainbow, ..HundredRainbow, ..HundredRainbow, ..HundredRainbow,

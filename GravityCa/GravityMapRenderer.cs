@@ -1,6 +1,5 @@
 ﻿using Merthsoft.Moose.GravityCa;
 using Merthsoft.Moose.MooseEngine;
-using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
 using Merthsoft.Moose.MooseEngine.Extension;
 using Merthsoft.Moose.MooseEngine.Interface;
@@ -44,6 +43,11 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
             return;
 
         var gravityMap = map as GravityMap ?? throw new NotSupportedException();
+        if (gravityMap.UpdateState != 3 && gravityMap.Running) // Always re-render when it's paused in case things change
+        {
+            SpriteBatch.Draw(BackingTexture, new Rectangle(DrawOffset.ToPoint(), ScreenSize), Color.White);
+            return;
+        }
 
         var gravityLayer = gravityMap.GravityLayer;
         var massLayer = gravityMap.MassLayer;
@@ -76,16 +80,16 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
                            double systemMax,
                            LerpMode lerpMode)
     {
-        var value = tileLayer[i * Width + j];
+        var value = (double)tileLayer[i * Width + j];
         var percentage = lerpMode switch
         {
-            LerpMode.ZeroToSystemMax => (double)value / (double)systemMax,
-            LerpMode.SystemMinToSystemMax => ((double)value + systemMin) / (double)systemMax,
-            _ => (double)value / (double)overallMax,
+            LerpMode.ZeroToSystemMax => value / systemMax,
+            LerpMode.SystemMinToSystemMax => (value - systemMin) / (systemMax - systemMin),
+            _ => value / overallMax,
         };
 
-        if (minDrawValue.HasValue && value < minDrawValue.Value
-            || maxDrawValue.HasValue && value > maxDrawValue.Value
+        if (minDrawValue.HasValue && value < (double)minDrawValue.Value
+            || maxDrawValue.HasValue && value > (double)maxDrawValue.Value
             || percentage == 0)
         {
             return null;

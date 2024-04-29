@@ -1,7 +1,9 @@
 ﻿using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Extension;
+using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.MooseEngine.Topologies;
+using Microsoft.Xna.Framework;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
@@ -22,6 +24,7 @@ public class GravityMap : BaseMap
     private UInt128[] BackBoard;
 
     public int Generation { get; set; } = 0;
+    public bool Running { get; set; } = false;
     public double TotalMass { get; private set; } = 0;
     public double MaxMass { get; private set; } = 0;
     public double MinMass { get; private set; }
@@ -97,9 +100,9 @@ public class GravityMap : BaseMap
         AdjacentTiles[8].Value = SafeGet(array, x + 1, y + 1, w, h, topology, 0);
     }
 
-    public void Update(bool totalsOnly)
+    public override void Update(MooseGame game, GameTime gameTime)
     {
-        if (totalsOnly)
+        if (!Running)
         {
             UpdateTotals();
             return;
@@ -125,7 +128,7 @@ public class GravityMap : BaseMap
                                 + (AdjacentTiles[6].Value >> massReducer)
                                 + (AdjacentTiles[7].Value >> massReducer)
                                 + (AdjacentTiles[8].Value >> massReducer);
-                    var gravity = (MassLayer[x * Width + y] >> 4) + adjGrav;
+                    var gravity = (MassLayer[x * Width + y] >> 6) + adjGrav;
                     if (gravity == 0 && adjGrav > 0)
                         gravity = 1;
 
@@ -248,7 +251,7 @@ public class GravityMap : BaseMap
                                 if (eatenMass + mass < GravityCellularAutomataGame.MaxMass)
                                 {
                                     BackBoard[x * Width + y] = mass + eatenMass;
-                                    BackBoard[newX*Width + newY] = 0;
+                                    BackBoard[newX * Width + newY] = 0;
                                     MassLayer[newX * Width + newY] = 0;
                                     set = true;
                                 }
@@ -270,11 +273,18 @@ public class GravityMap : BaseMap
             Array.Copy(BackBoard, MassLayer, Width * Height);
         }
 
-        UpdateState = (UpdateState + 1) % 3;
+        UpdateState = (UpdateState + 1) % 4;
     }
 
     private void UpdateTotals()
     {
+        TotalMass = 0;
+        MaxMass = 0;
+        MinMass = double.PositiveInfinity;
+        TotalGravity = 0;
+        MaxGravity = 0;
+        MinGravity = double.PositiveInfinity;
+
         for (var x = 0; x < Width * Height; x++)
         {
             BackBoard[x] = 0;
@@ -305,5 +315,19 @@ public class GravityMap : BaseMap
                     MinMass = floatingPointMass;
             }
         }
+    }
+
+    internal void Reset()
+    {
+        Generation = 0;
+        Array.Fill<UInt128>(GravityLayer, 0);
+        Array.Fill<UInt128>(MassLayer, 0);
+        Array.Fill<UInt128>(BackBoard, 0);
+        TotalMass = 0;
+        MaxMass = 0;
+        MinMass = MaxMass;
+        TotalGravity = 0;
+        MaxGravity = 0;
+        MinGravity = MaxGravity;
     }
 }

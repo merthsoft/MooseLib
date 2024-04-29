@@ -11,13 +11,11 @@ using System.Reflection;
 namespace GravityCa;
 public class GravityCellularAutomataGame : MooseGame
 {
-    public const int MapSize = 300;
-    public const int DrawSize = 2;
-
-    public static UInt128 MaxGravity = UInt128.MaxValue >> 1;
-    public static UInt128 MaxMass = MaxGravity - 1;
+    public const int MapSize = 200;
+    
+    public static readonly UInt128 MaxGravity = UInt128.MaxValue >> 1;
+    public static readonly UInt128 MaxMass = UInt128.MaxValue >> 3;
     static readonly GravityMap Map = new(MapSize, MapSize, Topology.Torus);
-    bool running = false;
     bool genRandom = false;
     bool hasRenderMinimum = false;
     SpriteFont font = null!;
@@ -31,9 +29,6 @@ public class GravityCellularAutomataGame : MooseGame
     float ScreenWidthRatio => (float)ScreenWidth / MapSize;
     float ScreenHeightRatio => (float)ScreenHeight / MapSize;
     Vector2 MouseLocation => MainCamera.ScreenToWorld(CurrentMouseState.X / (int)ScreenWidthRatio, CurrentMouseState.Y / (int)ScreenHeightRatio);
-
-    //Task updateTask;
-    List<List<Color>> GravityPalettes = [];
 
     public GravityCellularAutomataGame()
     {
@@ -64,7 +59,7 @@ public class GravityCellularAutomataGame : MooseGame
         ActiveMaps.Add(Map);
         ScreenScale = new Point(ScreenWidth, ScreenHeight);
         Renderer = AddMapRenderer(Map.RendererKey!, new GravityMapRenderer(SpriteBatch, ScreenScale));
-        //var div = (UInt128)(1 << 15);
+        //var div = (UInt128)(1);
         //var x = MapSize / 2;
         //var y = MapSize / 2;
         //Map.SetMass(x, y, MaxMass / div);
@@ -79,11 +74,9 @@ public class GravityCellularAutomataGame : MooseGame
 
         if (WasKeyJustPressed(Keys.Escape))
             Exit();
-        
-        Map.Update(!running);
 
         if (WasKeyJustPressed(Keys.Space))
-            running = !running;
+            Map.Running = !Map.Running;
 
         if (WasKeyJustPressed(Keys.T))
             DrawText = !DrawText;
@@ -135,7 +128,7 @@ public class GravityCellularAutomataGame : MooseGame
         }
 
         if (WasKeyJustPressed(Keys.C))
-            Map.Generation = 0;
+            Map.Reset();
 
         if (WasKeyJustPressed(Keys.Q))
             Renderer.GravityLerpMode = Renderer.GravityLerpMode.Next();
@@ -149,9 +142,9 @@ public class GravityCellularAutomataGame : MooseGame
         if (WasKeyJustPressed(Keys.T))
             Map.Topology = Map.Topology.Next();
 
-        if ((genRandom && running) || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.F))
+        if ((genRandom && Map.Running) || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.F))
         {
-            var chance = (genRandom && running) ? .002 : WasKeyJustPressed(Keys.R) ? .02f : 1f;
+            var chance = (genRandom && Map.Running) ? .002 : WasKeyJustPressed(Keys.R) ? .02f : 1f;
             for (var x = 0; x < MapSize; x++)
                 for (var y = 0; y < MapSize; y++)
                 {
@@ -160,12 +153,12 @@ public class GravityCellularAutomataGame : MooseGame
                 }
         }
 
-        if (hasRenderMinimum)
-            Renderer.MassMinDrawValue = MaxMass / (MassDivisor+1);
-        else
-            Renderer.MassMinDrawValue = null;
+        //if (hasRenderMinimum)
+        //    Renderer.MassMinDrawValue = MaxMass / (MassDivisor+1);
+        //else
+        //    Renderer.MassMinDrawValue = null;
 
-        Window.Title =  $"{version} - {(running ? "Running" : "Paused")}{(genRandom ? "*" : "")} | Div: {MassDivisor:N0} | Generation {Map.Generation:N0} | FPS {FramesPerSecondCounter.FramesPerSecond} | {Map.Topology}";
+        Window.Title =  $"{version} - {(Map.Running ? "Running" : "Paused")}{(genRandom ? "*" : "")} | Div: {MassDivisor:N0} | Generation {Map.Generation:N0} | FPS {FramesPerSecondCounter.FramesPerSecond} | {Map.Topology}";
     }
 
     private void DrawString(int x, int y, string text)
