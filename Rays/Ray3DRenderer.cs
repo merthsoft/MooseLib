@@ -3,7 +3,7 @@ using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.Rays.Actors;
 
 namespace Merthsoft.Moose.Rays;
-public class Ray3DRenderer : GraphicsDevice3DMapRenderer
+public class Ray3DRenderer : GraphicsDevice3DTriangleListMapRenderer
 {
     private const int TextureSize = RayGame.TextureSize;
 

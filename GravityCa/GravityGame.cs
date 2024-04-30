@@ -9,28 +9,38 @@ using System.Diagnostics;
 using System.Reflection;
 
 namespace GravityCa;
-public class GravityCellularAutomataGame : MooseGame
+public class GravityGame : MooseGame
 {
     public const int MapSize = 200;
     
     public static readonly UInt128 MaxGravity = UInt128.MaxValue >> 1;
     public static readonly UInt128 MaxMass = UInt128.MaxValue >> 3;
-    static readonly GravityMap Map = new(MapSize, MapSize, Topology.Torus);
-    bool genRandom = false;
+    public static readonly GravityMap Map = new(MapSize, MapSize, Topology.Torus);
+    public static Point ScreenScale { get; private set; } = Point.Zero;
+    public static bool DrawGravity { get; set; } = true;
+    public static bool DrawMass { get; set; } = true;
+    public static Color[] GravityColors { get; set; } = Palettes.AllPalettes[1];
+    public static LerpMode GravityLerpMode { get; set; } = LerpMode.SystemMinToSystemMax;
+    public static Color[] MassColors { get; set; } = Palettes.AllPalettes[0];
+    public static UInt128? MassMinDrawValue { get; set; }
+
+    bool genRandom = true;
     bool hasRenderMinimum = false;
     SpriteFont font = null!;
     private GravityMapRenderer Renderer = null!;
+    private Gravity3DPlaneRenderer Gravity3DPlaneRenderer = null!;
     public UInt128 MassDivisor = (UInt128)Math.Pow(2, 25);
     public bool DrawText = false;
     public object mapLock = new();
     private string version = "Gravity";
 
-    public Point ScreenScale = Point.Zero;
     float ScreenWidthRatio => (float)ScreenWidth / MapSize;
     float ScreenHeightRatio => (float)ScreenHeight / MapSize;
     Vector2 MouseLocation => MainCamera.ScreenToWorld(CurrentMouseState.X / (int)ScreenWidthRatio, CurrentMouseState.Y / (int)ScreenHeightRatio);
 
-    public GravityCellularAutomataGame()
+    public static Vector3 PositionIn3dSpace = Vector3.One;
+    
+    public GravityGame()
     {
     }
 
@@ -58,7 +68,17 @@ public class GravityCellularAutomataGame : MooseGame
         Window.Title = version;
         ActiveMaps.Add(Map);
         ScreenScale = new Point(ScreenWidth, ScreenHeight);
-        Renderer = AddMapRenderer(Map.RendererKey!, new GravityMapRenderer(SpriteBatch, ScreenScale));
+        Renderer = AddMapRenderer(GravityMapRenderer.RenderKey, new GravityMapRenderer(SpriteBatch, ScreenScale));
+        Gravity3DPlaneRenderer = AddMapRenderer(Gravity3DPlaneRenderer.RenderKey, new Gravity3DPlaneRenderer(GraphicsDevice, new(GraphicsDevice)
+        {
+            Alpha = 1,
+            TextureEnabled = false,
+            VertexColorEnabled = true,
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(100), 1, 1f, 1000f),
+            World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up),
+        }));
+        Map.RendererKey = Gravity3DPlaneRenderer.RenderKey;
+
         //var div = (UInt128)(1);
         //var x = MapSize / 2;
         //var y = MapSize / 2;
@@ -82,24 +102,24 @@ public class GravityCellularAutomataGame : MooseGame
             DrawText = !DrawText;
 
         if (WasKeyJustPressed(Keys.M))
-            Renderer.DrawMass = !Renderer.DrawMass;
+            DrawMass = !DrawMass;
 
         if (WasKeyJustPressed(Keys.G))
-            Renderer.DrawGravity = !Renderer.DrawGravity;
+            DrawGravity = !DrawGravity;
 
         var keyPressed = CurrentKeyState.GetPressedKeys().FirstOrDefault();
         if (keyPressed >= Keys.D0 && keyPressed <= Keys.D9)
-            Renderer.GravityColors = Palettes.AllPalettes[keyPressed - Keys.D0];
+            GravityColors = Palettes.AllPalettes[keyPressed - Keys.D0];
 
         if (keyPressed >= Keys.NumPad0 && keyPressed <= Keys.NumPad9)
-            Renderer.MassColors = Palettes.AllPalettes[keyPressed - Keys.NumPad0];
+            MassColors = Palettes.AllPalettes[keyPressed - Keys.NumPad0];
 
         if (IsActive && (IsLeftMouseDown() || IsRightMouseDown()))
         {
             var l = MouseLocation;
             var x = (int)l.X;
             var y = (int)l.Y;
-            var mass = IsLeftMouseDown() ? Map.GetMass(x, y, 0) + MaxMass / MassDivisor : 0;
+            var mass = IsLeftMouseDown() ? Map.GetMassAt(x, y, 0) + MaxMass / MassDivisor : 0;
             for (var i = 0; i <= 2; i++)
                 for (var j = 0; j <= 2; j++)
                     Map.SetMass(x + i, y + j, mass);
@@ -131,7 +151,7 @@ public class GravityCellularAutomataGame : MooseGame
             Map.Reset();
 
         if (WasKeyJustPressed(Keys.Q))
-            Renderer.GravityLerpMode = Renderer.GravityLerpMode.Next();
+            GravityLerpMode = GravityLerpMode.Next();
 
         if (WasKeyJustPressed(Keys.V))
             hasRenderMinimum = !hasRenderMinimum;
@@ -148,9 +168,47 @@ public class GravityCellularAutomataGame : MooseGame
             for (var x = 0; x < MapSize; x++)
                 for (var y = 0; y < MapSize; y++)
                 {
-                    if (Map.GetMass(x, y, 0) == 0 && Random.NextSingle() <= chance)
+                    if (Map.GetMassAt(x, y, 0) == 0 && Random.NextSingle() <= chance)
                         Map.SetMass(x, y, MaxMass / MassDivisor);
                 }
+        }
+
+        if (WasKeyJustPressed(Keys.F1))
+            Map.RendererKey = GravityMapRenderer.RenderKey;
+        else if (WasKeyJustPressed(Keys.F2))
+            Map.RendererKey = Gravity3DPlaneRenderer.RenderKey;
+
+        if (Map.RendererKey == Gravity3DPlaneRenderer.RenderKey)
+        {
+            if (IsKeyDown(Keys.Left))
+            {
+                PositionIn3dSpace.X -= 1f;
+                //CameraTarget.X -= 1f;
+            }
+            if (IsKeyDown(Keys.Right))
+            {
+                PositionIn3dSpace.X += 1f;
+                //CameraTarget.X += 1f;
+            }
+            if (IsKeyDown(Keys.Up))
+            {
+                PositionIn3dSpace.Y -= 1f;
+                //CameraTarget.Y -= 1f;
+            }
+            if (IsKeyDown(Keys.Down))
+            {
+                PositionIn3dSpace.Y += 1f;
+                //CameraTarget.Y += 1f;
+            }
+            if (IsKeyDown(Keys.OemPlus))
+            {
+                PositionIn3dSpace.Z += 1f;
+            }
+            if (IsKeyDown(Keys.OemMinus))
+            {
+                PositionIn3dSpace.Z -= 1f;
+            }
+
         }
 
         //if (hasRenderMinimum)

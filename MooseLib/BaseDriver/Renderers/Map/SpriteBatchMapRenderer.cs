@@ -2,17 +2,13 @@
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
 
-public abstract class SpriteBatchMapRenderer : IMapRenderer
+public abstract class SpriteBatchMapRenderer(SpriteBatch spriteBatch) : IMapRenderer
 {
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawScale { get; set; } = Vector2.One;
 
-    public string? RenderKey { get; set; }
-    public SpriteBatch SpriteBatch { get; set; }
+    public SpriteBatch SpriteBatch { get; set; } = spriteBatch;
     public Effect? Effect { get; set; }
-
-    protected SpriteBatchMapRenderer(SpriteBatch spriteBatch)
-        => SpriteBatch = spriteBatch;
 
     public virtual bool PreDraw(MooseGame game, GameTime _gameTime, IMap map) => true;
 

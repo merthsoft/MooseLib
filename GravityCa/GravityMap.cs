@@ -1,4 +1,5 @@
-﻿using Merthsoft.Moose.MooseEngine;
+﻿using Merthsoft.Moose.GravityCa;
+using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Extension;
 using Merthsoft.Moose.MooseEngine.Interface;
@@ -62,8 +63,11 @@ public class GravityMap : BaseMap
     public void SetMass(int x, int y, UInt128 mass)
         => SafeSet(MassLayer, x, y, Width, Height, mass, Topology);
 
-    public UInt128 GetMass(int x, int y, UInt128 @default)
+    public UInt128 GetMassAt(int x, int y, UInt128 @default)
         => SafeGet(MassLayer, x, y, Width, Height, Topology, @default);
+
+    public UInt128 GetGravityAt(int x, int y, UInt128 @default)
+            => SafeGet(GravityLayer, x, y, Width, Height, Topology, @default);
 
     public void SetGravity(int x, int y, UInt128 gravity)
         => SafeSet(GravityLayer, x, y, Width, Height, gravity, Topology);
@@ -98,6 +102,53 @@ public class GravityMap : BaseMap
         AdjacentTiles[6].Value = SafeGet(array, x + 1, y - 1, w, h, topology, 0);
         AdjacentTiles[7].Value = SafeGet(array, x + 1, y, w, h, topology, 0);
         AdjacentTiles[8].Value = SafeGet(array, x + 1, y + 1, w, h, topology, 0);
+    }
+
+    public Color GetColorAt(int i, int j)
+    {
+        Color? color = null;
+        if (GravityGame.DrawMass && TotalMass > 0)
+            color = GetColor(MassLayer, i, j, GravityGame.MassColors, (double)GravityGame.MaxMass, GravityGame.MassMinDrawValue, null, MinMass, MaxMass, LerpMode.ZeroToSystemMax);
+        if (GravityGame.DrawGravity && color == null && TotalGravity > 0)
+            color = GetColor(GravityLayer, i, j, GravityGame.GravityColors, (double)GravityGame.MaxGravity, null, null, MinGravity, MaxGravity, GravityGame.GravityLerpMode);
+
+        return color ?? Color.Transparent;
+    }
+    private Color? GetColor(
+                       UInt128[] tileLayer,
+                       int i,
+                       int j,
+                       Color[] colors,
+                       double overallMax,
+                       UInt128? minDrawValue,
+                       UInt128? maxDrawValue,
+                       double systemMin,
+                       double systemMax,
+                       LerpMode lerpMode)
+    {
+        var value = (double)tileLayer[i * Width + j];
+        var percentage = lerpMode switch
+        {
+            LerpMode.ZeroToSystemMax => value / systemMax,
+            LerpMode.SystemMinToSystemMax => (value - systemMin) / (systemMax - systemMin),
+            _ => value / overallMax,
+        };
+
+        if (minDrawValue.HasValue && value < (double)minDrawValue.Value
+            || maxDrawValue.HasValue && value > (double)maxDrawValue.Value
+            || percentage == 0)
+        {
+            return null;
+        }
+        else if (percentage >= 1)
+        {
+            return colors.Last();
+        }
+
+        var colorLocation = (colors.Length - 1) * percentage;
+        var colorIndex = (int)colorLocation;
+        var newPercentage = colorLocation - colorIndex;
+        return GraphicsExtensions.ColorGradientPercentage(colors[colorIndex], colors[colorIndex + 1], newPercentage);
     }
 
     public override void Update(MooseGame game, GameTime gameTime)
@@ -135,8 +186,8 @@ public class GravityMap : BaseMap
                     if (gravity < 0)
                         gravity = 0;
 
-                    if (gravity > GravityCellularAutomataGame.MaxGravity)
-                        gravity = GravityCellularAutomataGame.MaxGravity;
+                    if (gravity > GravityGame.MaxGravity)
+                        gravity = GravityGame.MaxGravity;
 
                     BackBoard[x * Width + y] = gravity;
 
@@ -237,7 +288,7 @@ public class GravityMap : BaseMap
                     var surrounded = AdjacentTiles.Count(t => t.Value > 0) > 1;
                     var set = false;
                     var hungry = MooseGame.Random.NextDouble() < .25f;
-                    if (hungry && surrounded && mass < GravityCellularAutomataGame.MaxMass)
+                    if (hungry && surrounded && mass < GravityGame.MaxMass)
                     {
                         var smallestGroup = AdjacentTiles.Where((x, i) => i != 4 && x.Value > 0 && x.Value <= mass)
                                                             .GroupBy(x => x.Value).OrderBy(x => x.Key).FirstOrDefault();
@@ -248,7 +299,7 @@ public class GravityMap : BaseMap
                             var (newX, newY) = TranslatePoint(x + xOffset, y + yOffset);
                             if (newX >= 0 && newX < Width && newY >= 0 && newY < Height)
                             {
-                                if (eatenMass + mass < GravityCellularAutomataGame.MaxMass)
+                                if (eatenMass + mass < GravityGame.MaxMass)
                                 {
                                     BackBoard[x * Width + y] = mass + eatenMass;
                                     BackBoard[newX * Width + newY] = 0;

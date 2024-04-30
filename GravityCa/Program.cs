@@ -1,3 +1,3 @@
 ﻿
-using var game = new GravityCa.GravityCellularAutomataGame();
+using var game = new GravityCa.GravityGame();
 game.Run();

@@ -7,7 +7,6 @@ public abstract class GraphicsDeviceMapRenderer : IMapRenderer
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawScale { get; set; } = Vector2.One;
 
-    public string? RenderKey { get; set; }
     public GraphicsDevice GraphicsDevice { get; set; }
     public BasicEffect Effect { get; set; }
 

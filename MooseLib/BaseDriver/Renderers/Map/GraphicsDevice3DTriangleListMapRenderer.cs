@@ -1,10 +1,14 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
-public abstract class GraphicsDevice3DMapRenderer : GraphicsDeviceMapRenderer
+public abstract class GraphicsDevice3DTriangleListMapRenderer(
+    GraphicsDevice graphicsDevice, 
+    BasicEffect effect, 
+    int initialPrimitiveCount = 10_000_000) 
+    : GraphicsDeviceMapRenderer(graphicsDevice, effect)
 {
-    protected VertexPositionColorTexture[] VertexBuffer;
-    protected int[] IndexBuffer;
+    protected VertexPositionColorTexture[] VertexBuffer = new VertexPositionColorTexture[initialPrimitiveCount];
+    protected int[] IndexBuffer = new int[initialPrimitiveCount];
     protected int PrimitiveCount;
 
     protected int VertexBufferIndex = 0;
@@ -12,12 +16,6 @@ public abstract class GraphicsDevice3DMapRenderer : GraphicsDeviceMapRenderer
 
     public Vector3 CameraPosition { get; set; }
     public Vector3 CameraFacing { get; set; }
-
-    protected GraphicsDevice3DMapRenderer(GraphicsDevice graphicsDevice, BasicEffect effect, int initialPrimitiveCount = 10_000_000) : base(graphicsDevice, effect)
-    {
-        VertexBuffer = new VertexPositionColorTexture[initialPrimitiveCount];
-        IndexBuffer = new int[initialPrimitiveCount];
-    }
 
     public override abstract void Update(MooseGame game, GameTime gameTime, IMap map);
 
@@ -34,6 +32,7 @@ public abstract class GraphicsDevice3DMapRenderer : GraphicsDeviceMapRenderer
         foreach (var pass in Effect.CurrentTechnique.Passes)
         {
             pass.Apply();
+            
             GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, VertexBuffer, 0, VertexBufferIndex, IndexBuffer, 0, PrimitiveCount);
         }
     }
