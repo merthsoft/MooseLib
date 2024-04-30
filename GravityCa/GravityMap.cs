@@ -1,12 +1,9 @@
-﻿using Merthsoft.Moose.GravityCa;
-using Merthsoft.Moose.MooseEngine;
+﻿using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.BaseDriver;
 using Merthsoft.Moose.MooseEngine.Extension;
-using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.MooseEngine.Topologies;
 using Microsoft.Xna.Framework;
 using System.Runtime.CompilerServices;
-using System.Xml.Serialization;
 
 namespace GravityCa;
 
@@ -179,7 +176,7 @@ public class GravityMap : BaseMap
                                 + (AdjacentTiles[6].Value >> massReducer)
                                 + (AdjacentTiles[7].Value >> massReducer)
                                 + (AdjacentTiles[8].Value >> massReducer);
-                    var gravity = (MassLayer[x * Width + y] >> 6) + adjGrav;
+                    var gravity = (MassLayer[x * Width + y] >> 4) + adjGrav;
                     if (gravity == 0 && adjGrav > 0)
                         gravity = 1;
 

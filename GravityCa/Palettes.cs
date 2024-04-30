@@ -49,23 +49,13 @@ internal static class Palettes
             Color.White
         ],
         [
-            ..HundredBlackWhite, ..HundredBlackWhite
+            ..BlackWhite
         ],
         [
-            ..MultiBlackWhite, ..MultiBlackWhite
+            ..MultiBlackWhite,
         ],
         [
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
-            ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite, ..HundredBlackWhite,
+            ..HundredBlackWhite
 
         ],
         [

@@ -1,4 +1,5 @@
 ﻿using Merthsoft.Moose.GravityCa;
+using Merthsoft.Moose.GravityCa.Renderers;
 using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.Extension;
 using Merthsoft.Moose.MooseEngine.Topologies;
@@ -11,7 +12,7 @@ using System.Reflection;
 namespace GravityCa;
 public class GravityGame : MooseGame
 {
-    public const int MapSize = 200;
+    public const int MapSize = 150;
     
     public static readonly UInt128 MaxGravity = UInt128.MaxValue >> 1;
     public static readonly UInt128 MaxMass = UInt128.MaxValue >> 3;
@@ -38,8 +39,9 @@ public class GravityGame : MooseGame
     float ScreenHeightRatio => (float)ScreenHeight / MapSize;
     Vector2 MouseLocation => MainCamera.ScreenToWorld(CurrentMouseState.X / (int)ScreenWidthRatio, CurrentMouseState.Y / (int)ScreenHeightRatio);
 
-    public static Vector3 PositionIn3dSpace = Vector3.One;
-    
+    public static Vector3 PositionIn3dSpace =
+            new(MapSize / 2, MapSize / 2, 100);
+
     public GravityGame()
     {
     }
@@ -47,7 +49,7 @@ public class GravityGame : MooseGame
     protected override StartupParameters Startup()
         => base.Startup() with
         {
-            ScreenWidth = 900*2,
+            ScreenWidth = 1600*2,
             ScreenHeight = 900*2,
             IsFullscreen = false,
             IsMouseVisible = false,
@@ -74,18 +76,19 @@ public class GravityGame : MooseGame
             Alpha = 1,
             TextureEnabled = false,
             VertexColorEnabled = true,
+            LightingEnabled = false,
             Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(100), 1, 1f, 1000f),
             World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up),
         }));
-        Map.RendererKey = Gravity3DPlaneRenderer.RenderKey;
+        Map.RendererKey = GravityMapRenderer.RenderKey;
 
-        //var div = (UInt128)(1);
-        //var x = MapSize / 2;
-        //var y = MapSize / 2;
-        //Map.SetMass(x, y, MaxMass / div);
-        //Map.SetMass(x + 1, y, MaxMass / div);
-        //Map.SetMass(x, y + 1, MaxMass / div);
-        //Map.SetMass(x + 1, y + 1, MaxMass / div);
+        var div = (UInt128)(1);
+        var x = MapSize / 2;
+        var y = MapSize / 2;
+        Map.SetMass(x, y, MaxMass / div);
+        Map.SetMass(x + 1, y, MaxMass / div);
+        Map.SetMass(x, y + 1, MaxMass / div);
+        Map.SetMass(x + 1, y + 1, MaxMass / div);
     }
 
     protected override void Update(GameTime gameTime)
@@ -94,6 +97,9 @@ public class GravityGame : MooseGame
 
         if (WasKeyJustPressed(Keys.Escape))
             Exit();
+
+        if (WasKeyJustPressed(Keys.Enter) && IsKeyDown(Keys.LeftAlt))
+            Graphics.ToggleFullScreen();
 
         if (WasKeyJustPressed(Keys.Space))
             Map.Running = !Map.Running;
@@ -219,11 +225,11 @@ public class GravityGame : MooseGame
         Window.Title =  $"{version} - {(Map.Running ? "Running" : "Paused")}{(genRandom ? "*" : "")} | Div: {MassDivisor:N0} | Generation {Map.Generation:N0} | FPS {FramesPerSecondCounter.FramesPerSecond} | {Map.Topology}";
     }
 
-    private void DrawString(int x, int y, string text)
-        => SpriteBatch.DrawStringShadow(font, text, new(x, y), Color.White);
-
     protected override void PostDraw(GameTime gameTime)
     {
+        if (Map.RendererKey == Gravity3DPlaneRenderer.RenderKey)
+            return;
+
         SpriteBatch.Begin(transformMatrix: Matrix.CreateScale(ScreenWidthRatio, ScreenHeightRatio, 1));
         SpriteBatch.FillRect(MouseLocation, 3, 3, Color.PaleVioletRed);
         SpriteBatch.End();

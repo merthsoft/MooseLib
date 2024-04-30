@@ -1,10 +1,11 @@
-﻿using Merthsoft.Moose.MooseEngine;
+﻿using GravityCa;
+using Merthsoft.Moose.MooseEngine;
 using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
 using Merthsoft.Moose.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GravityCa;
+namespace Merthsoft.Moose.GravityCa.Renderers;
 internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : SpriteBatchMapRenderer(spriteBatch)
 {
     public static string RenderKey => "Standard";
@@ -26,7 +27,7 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
 
     public override void Draw(MooseGame game, GameTime gameTime, IMap map)
     {
-        if (!GravityGame.DrawMass && !GravityGame.DrawGravity) 
+        if (!GravityGame.DrawMass && !GravityGame.DrawGravity)
             return;
 
         if (GravityMap.UpdateState != 3 && GravityMap.Running) // Always re-render when it's paused in case things change
@@ -39,9 +40,9 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
             for (int j = 0; j < GravityMap.Height; j++)
                 ColorArray[j * GravityMap.Height + i] = GravityMap.GetColorAt(i, j);
 
-        BackingTexture.SetData(ColorArray); 
+        BackingTexture.SetData(ColorArray);
         SpriteBatch.Draw(BackingTexture, new Rectangle(DrawOffset.ToPoint(), ScreenSize), Color.White);
     }
 
-    
+
 }

@@ -1,7 +1,7 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
-public abstract class GraphicsDevice3DTriangleListMapRenderer(
+public abstract class GraphicsDevice3DTriangleListTextureMapRenderer(
     GraphicsDevice graphicsDevice, 
     BasicEffect effect, 
     int initialPrimitiveCount = 10_000_000) 
