@@ -24,6 +24,7 @@ public class GravityGame : MooseGame
     public static LerpMode GravityLerpMode { get; set; } = LerpMode.SystemMinToSystemMax;
     public static Color[] MassColors { get; set; } = Palettes.AllPalettes[0];
     public static UInt128? MassMinDrawValue { get; set; }
+    public static bool ConnectCells { get; set; } = true;
 
     bool genRandom = true;
     bool hasRenderMinimum = false;
@@ -80,15 +81,15 @@ public class GravityGame : MooseGame
         Map.RendererKey = GravityMapRenderer.RenderKey;
 
         var div = (UInt128)(10);
-        for (var i = 0; i < 10; i++)
-        {
-            var x = Random.Next(MapSize - 2) + 2;
-            var y = Random.Next(MapSize - 2) + 2;
-            Map.SetMass(x, y, MaxMass / div);
-            Map.SetMass(x + 1, y, MaxMass / div);
-            Map.SetMass(x, y + 1, MaxMass / div);
-            Map.SetMass(x + 1, y + 1, MaxMass / div);
-        }
+        //for (var i = 0; i < 10; i++)
+        //{
+        //    var x = Random.Next(MapSize - 2) + 2;
+        //    var y = Random.Next(MapSize - 2) + 2;
+        //    Map.SetMass(x, y, MaxMass / div);
+        //    Map.SetMass(x + 1, y, MaxMass / div);
+        //    Map.SetMass(x, y + 1, MaxMass / div);
+        //    Map.SetMass(x + 1, y + 1, MaxMass / div);
+        //}
     }
 
     protected override void Update(GameTime gameTime)
