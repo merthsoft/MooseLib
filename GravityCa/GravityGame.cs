@@ -28,7 +28,7 @@ public class GravityGame : MooseGame
     public static bool ConnectCells { get; set; } = true;
     public static GravityRendererMode GravityRendererMode { get; set; } = GravityRendererMode.ThreeDimmensionalRectangularPrism2;
 
-    bool genRandom = false;
+    bool genRandom = true;
     bool hasRenderMinimum = false;
     SpriteFont font = null!;
     private GravityMapRenderer Renderer = null!;
@@ -81,13 +81,13 @@ public class GravityGame : MooseGame
             World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up),
         }));
 
-        var div = (UInt128)(2);
-        var x = MapSize / 2 - 1;
-        var y = MapSize / 2 - 1;
-        Map.SetMass(x, y, MaxMass / div);
-        Map.SetMass(x + 1, y, MaxMass / div);
-        Map.SetMass(x, y + 1, MaxMass / div);
-        Map.SetMass(x + 1, y + 1, MaxMass / div);
+        //var div = (UInt128)(2);
+        //var x = MapSize / 2 - 1;
+        //var y = MapSize / 2 - 1;
+        //Map.SetMass(x, y, MaxMass / div);
+        //Map.SetMass(x + 1, y, MaxMass / div);
+        //Map.SetMass(x, y + 1, MaxMass / div);
+        //Map.SetMass(x + 1, y + 1, MaxMass / div);
         //for (var i = 0; i < 10; i++)
         //{
         //    var x = Random.Next(MapSize - 2) + 2;
