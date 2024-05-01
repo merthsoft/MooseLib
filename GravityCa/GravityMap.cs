@@ -142,6 +142,9 @@ public class GravityMap : BaseMap
             return colors.Last();
         }
 
+        if (percentage != 0 && !double.IsNormal(percentage))
+            return null;
+
         var colorLocation = (colors.Length - 1) * percentage;
         var colorIndex = (int)colorLocation;
         var newPercentage = colorLocation - colorIndex;

@@ -14,6 +14,7 @@ internal class Gravity3DPlaneRenderer : GraphicsDevice3DTriangleListColorMapRend
 
     public Point ScreenSize { get; set; }
     public GravityMap GravityMap { get; set; } = null!; // LoadContent
+    public Camera3D Camera { get; } = Camera3D.CreateDefaultOrthographic();
 
     public Gravity3DPlaneRenderer(GraphicsDevice graphicsDevice, BasicEffect effect, int initialPrimitiveCount = 10000000) : base(graphicsDevice, effect, initialPrimitiveCount)
     {
@@ -24,21 +25,22 @@ internal class Gravity3DPlaneRenderer : GraphicsDevice3DTriangleListColorMapRend
         base.LoadContent(contentManager);
         GravityMap = GravityGame.Map;
         ScreenSize = GravityGame.ScreenScale;
+        Camera.MoveTo(new(0, GravityGame.MapSize / 2, 100));
+        Camera.LookAt(new(GravityGame.MapSize / 2, GravityGame.MapSize / 2, 0));
     }
 
     public override void Update(MooseGame game, GameTime gameTime, IMap map)
     {
+        Camera.HandleControls(gameTime);
+
         if (!GravityGame.DrawMass && !GravityGame.DrawGravity)
             return;
 
         VertexBufferIndex = 0;
         IndexBufferIndex = 0;
         PrimitiveCount = 0;
-
-        Effect.View = Matrix.CreateLookAt(
-            GravityGame.PositionIn3dSpace,
-            new(GravityMap.Width / 2, GravityMap.Height / 2, 50),
-            Vector3.Up);
+        
+        Effect.View = Camera.View;
 
         for (int i = 0; i < GravityMap.Width; i++)
             for (int j = 0; j < GravityMap.Height; j++)
@@ -46,16 +48,16 @@ internal class Gravity3DPlaneRenderer : GraphicsDevice3DTriangleListColorMapRend
                 var gravity = GravityMap.GetGravityAt(i, j, 0);
                 var signedGravity = (double)gravity / (double)GravityMap.MaxGravity;
                 var color = GravityMap.GetColorAt(i, j);
-                AddCell(i*2, j*2, (float)signedGravity*100, color);
+                AddCell(i, (float)signedGravity*100, j, color);
             }
     }
 
     private void AddCell(float x, float y, float z, Color color)
     {
         Vectors[0] = new Vector3(x, y, z);
-        Vectors[1] = new Vector3(x + 2, y, z);
-        Vectors[2] = new Vector3(x + 2, y + 2, z);
-        Vectors[3] = new Vector3(x, y + 2, z);
+        Vectors[1] = new Vector3(x + 1, y, z);
+        Vectors[2] = new Vector3(x + 1, y, z + 1);
+        Vectors[3] = new Vector3(x, y, z + 1);
         AddQuad(Vectors, color);
     }
 }

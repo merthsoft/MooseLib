@@ -39,9 +39,6 @@ public class GravityGame : MooseGame
     float ScreenHeightRatio => (float)ScreenHeight / MapSize;
     Vector2 MouseLocation => MainCamera.ScreenToWorld(CurrentMouseState.X / (int)ScreenWidthRatio, CurrentMouseState.Y / (int)ScreenHeightRatio);
 
-    public static Vector3 PositionIn3dSpace =
-            new(MapSize / 2, MapSize / 2, 100);
-
     public GravityGame()
     {
     }
@@ -49,7 +46,7 @@ public class GravityGame : MooseGame
     protected override StartupParameters Startup()
         => base.Startup() with
         {
-            ScreenWidth = 1600*2,
+            ScreenWidth = 900*2,
             ScreenHeight = 900*2,
             IsFullscreen = false,
             IsMouseVisible = false,
@@ -82,13 +79,16 @@ public class GravityGame : MooseGame
         }));
         Map.RendererKey = GravityMapRenderer.RenderKey;
 
-        var div = (UInt128)(1);
-        var x = MapSize / 2;
-        var y = MapSize / 2;
-        Map.SetMass(x, y, MaxMass / div);
-        Map.SetMass(x + 1, y, MaxMass / div);
-        Map.SetMass(x, y + 1, MaxMass / div);
-        Map.SetMass(x + 1, y + 1, MaxMass / div);
+        var div = (UInt128)(10);
+        for (var i = 0; i < 10; i++)
+        {
+            var x = Random.Next(MapSize - 2) + 2;
+            var y = Random.Next(MapSize - 2) + 2;
+            Map.SetMass(x, y, MaxMass / div);
+            Map.SetMass(x + 1, y, MaxMass / div);
+            Map.SetMass(x, y + 1, MaxMass / div);
+            Map.SetMass(x + 1, y + 1, MaxMass / div);
+        }
     }
 
     protected override void Update(GameTime gameTime)
@@ -115,10 +115,12 @@ public class GravityGame : MooseGame
 
         var keyPressed = CurrentKeyState.GetPressedKeys().FirstOrDefault();
         if (keyPressed >= Keys.D0 && keyPressed <= Keys.D9)
-            GravityColors = Palettes.AllPalettes[keyPressed - Keys.D0];
-
-        if (keyPressed >= Keys.NumPad0 && keyPressed <= Keys.NumPad9)
-            MassColors = Palettes.AllPalettes[keyPressed - Keys.NumPad0];
+        {
+            if (IsKeyDown(Keys.LeftAlt) || IsKeyDown(Keys.RightAlt))
+                MassColors = Palettes.AllPalettes[keyPressed - Keys.D0];
+            else
+                GravityColors = Palettes.AllPalettes[keyPressed - Keys.D0];
+        }
 
         if (IsActive && (IsLeftMouseDown() || IsRightMouseDown()))
         {
@@ -186,35 +188,7 @@ public class GravityGame : MooseGame
 
         if (Map.RendererKey == Gravity3DPlaneRenderer.RenderKey)
         {
-            if (IsKeyDown(Keys.Left))
-            {
-                PositionIn3dSpace.X -= 1f;
-                //CameraTarget.X -= 1f;
-            }
-            if (IsKeyDown(Keys.Right))
-            {
-                PositionIn3dSpace.X += 1f;
-                //CameraTarget.X += 1f;
-            }
-            if (IsKeyDown(Keys.Up))
-            {
-                PositionIn3dSpace.Y -= 1f;
-                //CameraTarget.Y -= 1f;
-            }
-            if (IsKeyDown(Keys.Down))
-            {
-                PositionIn3dSpace.Y += 1f;
-                //CameraTarget.Y += 1f;
-            }
-            if (IsKeyDown(Keys.OemPlus))
-            {
-                PositionIn3dSpace.Z += 1f;
-            }
-            if (IsKeyDown(Keys.OemMinus))
-            {
-                PositionIn3dSpace.Z -= 1f;
-            }
-
+            
         }
 
         //if (hasRenderMinimum)
