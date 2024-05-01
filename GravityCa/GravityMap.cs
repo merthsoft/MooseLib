@@ -66,6 +66,12 @@ public class GravityMap : BaseMap
     public UInt128 GetGravityAt(int x, int y, UInt128 @default)
             => SafeGet(GravityLayer, x, y, Width, Height, Topology, @default);
 
+    public AdjacentTile<UInt128>[] GetGravityAdjacent(int x, int y)
+    {
+        FillAdjacentCells(GravityLayer, x, y, Width, Height, Topology);
+        return AdjacentTiles;
+    }
+
     public void SetGravity(int x, int y, UInt128 gravity)
         => SafeSet(GravityLayer, x, y, Width, Height, gravity, Topology);
 
@@ -107,7 +113,7 @@ public class GravityMap : BaseMap
         if (GravityGame.DrawMass && TotalMass > 0)
             color = GetColor(MassLayer, i, j, GravityGame.MassColors, (double)GravityGame.MaxMass, GravityGame.MassMinDrawValue, null, MinMass, MaxMass, LerpMode.ZeroToSystemMax);
         if (GravityGame.DrawGravity && color == null && TotalGravity > 0)
-            color = GetColor(GravityLayer, i, j, GravityGame.GravityColors, (double)GravityGame.MaxGravity, null, null, MinGravity, MaxGravity, GravityGame.GravityLerpMode);
+            color = GetColor(GravityLayer, i, j, GravityGame.GravityColors, (double)GravityGame.MaxGravity, null, null, MinGravity, MaxGravity, GravityGame.GravityColorLerpMode);
 
         return color ?? Color.Transparent;
     }
@@ -142,8 +148,8 @@ public class GravityMap : BaseMap
             return colors.Last();
         }
 
-        if (percentage != 0 && !double.IsNormal(percentage))
-            return null;
+        if (percentage <= 0 || double.IsNaN(percentage) || double.IsInfinity(percentage) || !double.IsPositive(percentage))
+            return colors[0];
 
         var colorLocation = (colors.Length - 1) * percentage;
         var colorIndex = (int)colorLocation;

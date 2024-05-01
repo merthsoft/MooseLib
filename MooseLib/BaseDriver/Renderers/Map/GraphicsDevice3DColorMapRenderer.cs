@@ -1,12 +1,13 @@
 ﻿using Merthsoft.Moose.MooseEngine.Interface;
 
 namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
-public abstract class GraphicsDevice3DTriangleListColorMapRenderer(
+public abstract class GraphicsDevice3DColorMapRenderer(
     GraphicsDevice graphicsDevice, 
     BasicEffect effect, 
     int initialPrimitiveCount = 10_000_000) 
     : GraphicsDeviceMapRenderer(graphicsDevice, effect)
 {
+    protected PrimitiveType PrimitiveType = PrimitiveType.TriangleList;
     protected VertexPositionColor[] VertexBuffer = new VertexPositionColor[initialPrimitiveCount];
     protected int[] IndexBuffer = new int[initialPrimitiveCount];
     protected int PrimitiveCount;
@@ -32,11 +33,11 @@ public abstract class GraphicsDevice3DTriangleListColorMapRenderer(
         foreach (var pass in Effect.CurrentTechnique.Passes)
         {
             pass.Apply();
-            GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, VertexBuffer, 0, VertexBufferIndex, IndexBuffer, 0, PrimitiveCount);
+            GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType, VertexBuffer, 0, VertexBufferIndex, IndexBuffer, 0, PrimitiveCount);
         }
     }
 
-    protected virtual void SetVertexAndIncrementBufferIndex(Vector3 vector, Color c)
+    protected virtual void PushVertex(Vector3 vector, Color c)
     {
         VertexBuffer[VertexBufferIndex].Position.X = vector.X; 
         VertexBuffer[VertexBufferIndex].Position.Y = vector.Y;
@@ -45,13 +46,45 @@ public abstract class GraphicsDevice3DTriangleListColorMapRenderer(
         VertexBufferIndex++;
     }
 
+    protected virtual void AddTri(Vector3[] vectors, Color c)
+    {
+        var currIndex = VertexBufferIndex;
+        PushVertex(vectors[0], c);
+        PushVertex(vectors[1], c);
+        PushVertex(vectors[2], c);
+
+        IndexBuffer[IndexBufferIndex++] = currIndex + 0;
+        IndexBuffer[IndexBufferIndex++] = currIndex + 1;
+        IndexBuffer[IndexBufferIndex++] = currIndex + 2;
+        PrimitiveCount++;
+    }
+
     protected virtual void AddQuad(Vector3[] vectors, Color c)
     {
         var currIndex = VertexBufferIndex;
-        SetVertexAndIncrementBufferIndex(vectors[0], c);
-        SetVertexAndIncrementBufferIndex(vectors[1], c);
-        SetVertexAndIncrementBufferIndex(vectors[2], c);
-        SetVertexAndIncrementBufferIndex(vectors[3], c);
+        PushVertex(vectors[0], c);
+        PushVertex(vectors[1], c);
+        PushVertex(vectors[2], c);
+        PushVertex(vectors[3], c);
+
+        IndexBuffer[IndexBufferIndex++] = currIndex + 0;
+        IndexBuffer[IndexBufferIndex++] = currIndex + 1;
+        IndexBuffer[IndexBufferIndex++] = currIndex + 2;
+        PrimitiveCount++;
+
+        IndexBuffer[IndexBufferIndex++] = currIndex + 2;
+        IndexBuffer[IndexBufferIndex++] = currIndex + 3;
+        IndexBuffer[IndexBufferIndex++] = currIndex + 0;
+        PrimitiveCount++;
+    }
+
+    protected virtual void AddQuad(Vector3[] vectors, Color[] colors)
+    {
+        var currIndex = VertexBufferIndex;
+        PushVertex(vectors[0], colors[0]);
+        PushVertex(vectors[1], colors[1]);
+        PushVertex(vectors[2], colors[2]);
+        PushVertex(vectors[3], colors[3]);
 
         IndexBuffer[IndexBufferIndex++] = currIndex + 0;
         IndexBuffer[IndexBufferIndex++] = currIndex + 1;
