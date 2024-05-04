@@ -16,7 +16,7 @@ internal class Gravity3DRenderer : GraphicsDevice3DColorMapRenderer
     public GravityMap GravityMap { get; set; } = null!; // LoadContent
     public Camera3D Camera { get; } = Camera3D.CreateDefaultOrthographic();
 
-    public Gravity3DRenderer(GraphicsDevice graphicsDevice, BasicEffect effect, int initialPrimitiveCount = 10000000) : base(graphicsDevice, effect, initialPrimitiveCount)
+    public Gravity3DRenderer(GraphicsDevice graphicsDevice, BasicEffect effect, int initialPrimitiveCount = 1_000_000) : base(graphicsDevice, effect, initialPrimitiveCount)
     {
     }
 
@@ -53,7 +53,7 @@ internal class Gravity3DRenderer : GraphicsDevice3DColorMapRenderer
 
         var (divisor, multiplier, reducer) = GravityGame.GravityHeightLerpMode switch
         {
-            LerpMode.ZeroToSystemMax => (GravityMap.MaxGravity, 20f, 0),
+            LerpMode.ZeroToSystemMax => (GravityMap.MaxGravity, GravityGame.MapSize/4f, GravityMap.MinGravity),
             LerpMode.SystemMinToSystemMax => (GravityMap.MaxGravity, (float)GravityGame.MapSize, GravityMap.MinGravity),
             _ => ((double)GravityGame.MaxGravity, (float)GravityGame.MapSize, 0)
         };
@@ -86,15 +86,15 @@ internal class Gravity3DRenderer : GraphicsDevice3DColorMapRenderer
                 AddSheetQuad(x, z, color, allGravities, divisor, multiplier, reducer);
                 break;
             case GravityRendererMode.ThreeDimmensionalDots:
-                for (var q = 0f; q < 1; q++)
-                {
-                    Vectors[0] = new Vector3(x + q/20f, gravity + q/20f, z + q/20f);
-                    PushVertex(Vectors[0], color);
-                    PrimitiveCount++;
-                }
+                Vectors[0] = new Vector3(x, gravity, z);
+                PushVertex(Vectors[0], color);
+                PrimitiveCount++;
+                break;
+            case GravityRendererMode.ThreeDimmensionalTinyCube:
+                CreateCube(x, gravity, z, .1f, .1f, .1f, color);
                 break;
             case GravityRendererMode.ThreeDimmensionalCube:
-                CreateCube(x, gravity, z, 1, 1, 1, color);
+                CreateCube(x, gravity, z, 1f, 1f, 1f, color);
                 break;
             case GravityRendererMode.ThreeDimmensionalRectangularPrism1:
                 CreateCube(x, gravity, z, 1, GravityGame.MapSize- gravity, 1, color);

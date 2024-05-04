@@ -16,7 +16,7 @@
 	  <Company>Merthsoft Creations</Company>
 	  <Deterministic>False</Deterministic>
 	  <VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-	  <VersionPrefix>0.7</VersionPrefix>
+	  <VersionPrefix>0.8</VersionPrefix>
 	  <DebugType>embedded</DebugType>
 	  <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>

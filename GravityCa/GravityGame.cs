@@ -12,10 +12,10 @@ using System.Reflection;
 namespace GravityCa;
 public class GravityGame : MooseGame
 {
-    public const int MapSize = 100;
+    public const int MapSize = 125;
     
-    public static readonly UInt128 MaxGravity = UInt128.MaxValue >> 3;
-    public static readonly UInt128 MaxMass = UInt128.MaxValue >> 30;
+    public static readonly UInt128 MaxGravity = UInt128.MaxValue;
+    public static readonly UInt128 MaxMass = UInt128.MaxValue >> 8;
     public static readonly GravityMap Map = new(MapSize, MapSize, Topology.Torus);
     public static Point ScreenScale { get; private set; } = Point.Zero;
     public static bool DrawGravity { get; set; } = true;
@@ -190,7 +190,7 @@ public class GravityGame : MooseGame
         if (WasKeyJustPressed(Keys.T))
             Map.Topology = Map.Topology.Next();
 
-        if ((genRandom && Map.Running) || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.F))
+        if ((genRandom && Map.Running) || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.H))
         {
             var chance = (genRandom && Map.Running) ? .002 : WasKeyJustPressed(Keys.R) ? .02f : 1f;
             for (var x = 0; x < MapSize; x++)

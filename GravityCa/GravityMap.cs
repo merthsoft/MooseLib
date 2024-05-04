@@ -141,7 +141,7 @@ public class GravityMap : BaseMap
             || maxDrawValue.HasValue && value > (double)maxDrawValue.Value
             || percentage == 0)
         {
-            return null;
+            return colors[0];
         }
         else if (percentage >= 1)
         {
@@ -185,7 +185,7 @@ public class GravityMap : BaseMap
                                 + (AdjacentTiles[6].Value >> massReducer)
                                 + (AdjacentTiles[7].Value >> massReducer)
                                 + (AdjacentTiles[8].Value >> massReducer);
-                    var gravity = (MassLayer[x * Width + y] >> 4) + adjGrav;
+                    var gravity = (MassLayer[x * Width + y] >> massReducer) + adjGrav;
                     if (gravity == 0 && adjGrav > 0)
                         gravity = 1;
 
@@ -294,7 +294,9 @@ public class GravityMap : BaseMap
                     var surrounded = AdjacentTiles.Count(t => t.Value > 0) > 1;
                     var set = false;
                     var hungry = MooseGame.Random.NextDouble() < .25f;
-                    if (hungry && surrounded && mass < GravityGame.MaxMass)
+                    var cellGravityPercent = (double)GetGravityAt(x, y, 0) / (double)GravityGame.MaxGravity;
+                    var localMassMax = (UInt128)((double)GravityGame.MaxMass * cellGravityPercent);
+                    if (hungry && surrounded && mass < localMassMax)
                     {
                         var smallestGroup = AdjacentTiles.Where((x, i) => i != 4 && x.Value > 0 && x.Value <= mass)
                                                             .GroupBy(x => x.Value).OrderBy(x => x.Key).FirstOrDefault();
@@ -305,7 +307,7 @@ public class GravityMap : BaseMap
                             var (newX, newY) = TranslatePoint(x + xOffset, y + yOffset);
                             if (newX >= 0 && newX < Width && newY >= 0 && newY < Height)
                             {
-                                if (eatenMass + mass < GravityGame.MaxMass)
+                                if (eatenMass + mass < localMassMax)
                                 {
                                     BackBoard[x * Width + y] = mass + eatenMass;
                                     BackBoard[newX * Width + newY] = 0;
