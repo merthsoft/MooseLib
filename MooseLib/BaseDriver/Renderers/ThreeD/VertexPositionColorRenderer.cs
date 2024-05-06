@@ -1,10 +1,11 @@
-﻿using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
+using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
-public abstract class GraphicsDevice3DColorMapRenderer(
-    GraphicsDevice graphicsDevice, 
-    BasicEffect effect, 
-    int initialPrimitiveCount = 10_000_000) 
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.ThreeD;
+public abstract class VertexPositionColorRenderer(
+    GraphicsDevice graphicsDevice,
+    BasicEffect effect,
+    int initialPrimitiveCount = 10_000_000)
     : GraphicsDeviceMapRenderer(graphicsDevice, effect)
 {
     protected PrimitiveType PrimitiveType = PrimitiveType.TriangleList;
@@ -14,9 +15,6 @@ public abstract class GraphicsDevice3DColorMapRenderer(
 
     protected int VertexBufferIndex = 0;
     protected int IndexBufferIndex = 0;
-
-    public Vector3 CameraPosition { get; set; }
-    public Vector3 CameraFacing { get; set; }
 
     public override abstract void Update(MooseGame game, GameTime gameTime, IMap map);
 
@@ -39,7 +37,7 @@ public abstract class GraphicsDevice3DColorMapRenderer(
 
     protected virtual void PushVertex(Vector3 vector, Color c)
     {
-        VertexBuffer[VertexBufferIndex].Position.X = vector.X; 
+        VertexBuffer[VertexBufferIndex].Position.X = vector.X;
         VertexBuffer[VertexBufferIndex].Position.Y = vector.Y;
         VertexBuffer[VertexBufferIndex].Position.Z = vector.Z;
         VertexBuffer[VertexBufferIndex].Color = c;

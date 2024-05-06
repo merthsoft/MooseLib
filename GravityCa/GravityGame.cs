@@ -15,7 +15,7 @@ public class GravityGame : MooseGame
     public const int MapSize = 125;
     
     public static readonly UInt128 MaxGravity = UInt128.MaxValue;
-    public static readonly UInt128 MaxMass = UInt128.MaxValue >> 8;
+    public static readonly UInt128 MaxMass = UInt128.MaxValue >> 1;
     public static readonly GravityMap Map = new(MapSize, MapSize, Topology.Torus);
     public static Point ScreenScale { get; private set; } = Point.Zero;
     public static bool DrawGravity { get; set; } = true;

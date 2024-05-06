@@ -1,4 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.ThreeD;
 using Merthsoft.Moose.MooseEngine.Interface;
 using Merthsoft.Moose.Rays.Actors;
 

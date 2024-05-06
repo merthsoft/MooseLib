@@ -1,10 +1,11 @@
-﻿using Merthsoft.Moose.MooseEngine.Interface;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
+using Merthsoft.Moose.MooseEngine.Interface;
 
-namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
+namespace Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.ThreeD;
 public abstract class GraphicsDevice3DTriangleListTextureMapRenderer(
-    GraphicsDevice graphicsDevice, 
-    BasicEffect effect, 
-    int initialPrimitiveCount = 10_000_000) 
+    GraphicsDevice graphicsDevice,
+    BasicEffect effect,
+    int initialPrimitiveCount = 10_000_000)
     : GraphicsDeviceMapRenderer(graphicsDevice, effect)
 {
     protected VertexPositionColorTexture[] VertexBuffer = new VertexPositionColorTexture[initialPrimitiveCount];
@@ -32,14 +33,14 @@ public abstract class GraphicsDevice3DTriangleListTextureMapRenderer(
         foreach (var pass in Effect.CurrentTechnique.Passes)
         {
             pass.Apply();
-            
+
             GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, VertexBuffer, 0, VertexBufferIndex, IndexBuffer, 0, PrimitiveCount);
         }
     }
 
     protected virtual void SetVertexAndIncrementBufferIndex(Vector3 vector, Color c, float textureX, float textureY)
     {
-        VertexBuffer[VertexBufferIndex].Position.X = vector.X; 
+        VertexBuffer[VertexBufferIndex].Position.X = vector.X;
         VertexBuffer[VertexBufferIndex].Position.Y = vector.Y;
         VertexBuffer[VertexBufferIndex].Position.Z = vector.Z;
         VertexBuffer[VertexBufferIndex].Color = c;

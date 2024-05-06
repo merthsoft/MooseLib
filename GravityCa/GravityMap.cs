@@ -111,7 +111,7 @@ public class GravityMap : BaseMap
     {
         Color? color = null;
         if (GravityGame.DrawMass && TotalMass > 0)
-            color = GetColor(MassLayer, i, j, GravityGame.MassColors, (double)GravityGame.MaxMass, GravityGame.MassMinDrawValue, null, MinMass, MaxMass, LerpMode.ZeroToSystemMax);
+            color = GetColor(MassLayer, i, j, GravityGame.MassColors, (double)GravityGame.MaxMass, (UInt128)(MaxMass/2.0), null, MinMass, MaxMass, LerpMode.ZeroToSystemMax);
         if (GravityGame.DrawGravity && color == null && TotalGravity > 0)
             color = GetColor(GravityLayer, i, j, GravityGame.GravityColors, (double)GravityGame.MaxGravity, null, null, MinGravity, MaxGravity, GravityGame.GravityColorLerpMode);
 
@@ -137,19 +137,18 @@ public class GravityMap : BaseMap
             _ => value / overallMax,
         };
 
-        if (minDrawValue.HasValue && value < (double)minDrawValue.Value
-            || maxDrawValue.HasValue && value > (double)maxDrawValue.Value
-            || percentage == 0)
+        if ((minDrawValue.HasValue && value < (double)minDrawValue.Value)
+            || (maxDrawValue.HasValue && value > (double)maxDrawValue.Value))
+        {
+            return null; 
+        } else if (percentage == 0 || percentage <= 0 || double.IsNaN(percentage) || !double.IsPositive(percentage))
         {
             return colors[0];
         }
-        else if (percentage >= 1)
+        else if (percentage >= 1 || double.IsInfinity(percentage))
         {
             return colors.Last();
         }
-
-        if (percentage <= 0 || double.IsNaN(percentage) || double.IsInfinity(percentage) || !double.IsPositive(percentage))
-            return colors[0];
 
         var colorLocation = (colors.Length - 1) * percentage;
         var colorIndex = (int)colorLocation;
@@ -176,16 +175,16 @@ public class GravityMap : BaseMap
                 for (var y = 0; y < Height; y++)
                 {
                     FillAdjacentCells(GravityLayer, x, y, Width, Height, Topology);
-                    const int massReducer = 3;
-                    var adjGrav = (AdjacentTiles[0].Value >> massReducer)
-                                + (AdjacentTiles[1].Value >> massReducer)
-                                + (AdjacentTiles[2].Value >> massReducer)
-                                + (AdjacentTiles[3].Value >> massReducer)
-                                + (AdjacentTiles[5].Value >> massReducer)
-                                + (AdjacentTiles[6].Value >> massReducer)
-                                + (AdjacentTiles[7].Value >> massReducer)
-                                + (AdjacentTiles[8].Value >> massReducer);
-                    var gravity = (MassLayer[x * Width + y] >> massReducer) + adjGrav;
+                    const int massReducer = 8;
+                    var adjGrav = (AdjacentTiles[0].Value / massReducer)
+                                + (AdjacentTiles[1].Value / massReducer)
+                                + (AdjacentTiles[2].Value / massReducer)
+                                + (AdjacentTiles[3].Value / massReducer)
+                                + (AdjacentTiles[5].Value / massReducer)
+                                + (AdjacentTiles[6].Value / massReducer)
+                                + (AdjacentTiles[7].Value / massReducer)
+                                + (AdjacentTiles[8].Value / massReducer);
+                    var gravity = (MassLayer[x * Width + y] / massReducer/2) + adjGrav;
                     if (gravity == 0 && adjGrav > 0)
                         gravity = 1;
 

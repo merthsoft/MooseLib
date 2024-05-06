@@ -1,12 +1,12 @@
 ﻿using GravityCa;
 using Merthsoft.Moose.MooseEngine;
-using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Map;
+using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.ThreeD;
 using Merthsoft.Moose.MooseEngine.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Merthsoft.Moose.GravityCa.Renderers;
-internal class Gravity3DRenderer : GraphicsDevice3DColorMapRenderer
+internal class Gravity3DRenderer : VertexPositionColorRenderer
 {
     private static Vector3[] Vectors = new Vector3[4];
 
@@ -53,8 +53,8 @@ internal class Gravity3DRenderer : GraphicsDevice3DColorMapRenderer
 
         var (divisor, multiplier, reducer) = GravityGame.GravityHeightLerpMode switch
         {
-            LerpMode.ZeroToSystemMax => (GravityMap.MaxGravity, GravityGame.MapSize/4f, GravityMap.MinGravity),
-            LerpMode.SystemMinToSystemMax => (GravityMap.MaxGravity, (float)GravityGame.MapSize, GravityMap.MinGravity),
+            LerpMode.ZeroToSystemMax => (GravityMap.MaxGravity, GravityGame.MapSize/4f, 0),
+            LerpMode.SystemMinToSystemMax => (GravityMap.MaxGravity, (float)GravityGame.MapSize/4f, GravityMap.MinGravity),
             _ => ((double)GravityGame.MaxGravity, (float)GravityGame.MapSize, 0)
         };
 
