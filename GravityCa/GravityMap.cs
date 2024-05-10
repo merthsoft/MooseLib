@@ -66,6 +66,12 @@ public class GravityMap : BaseMap
     public UInt128 GetGravityAt(int x, int y, UInt128 @default)
             => SafeGet(GravityLayer, x, y, Width, Height, Topology, @default);
 
+    public AdjacentTile<UInt128>[] GetGravityAdjacent(int x, int y)
+    {
+        FillAdjacentCells(GravityLayer, x, y, Width, Height, Topology);
+        return AdjacentTiles;
+    }
+
     public void SetGravity(int x, int y, UInt128 gravity)
         => SafeSet(GravityLayer, x, y, Width, Height, gravity, Topology);
 
@@ -105,9 +111,9 @@ public class GravityMap : BaseMap
     {
         Color? color = null;
         if (GravityGame.DrawMass && TotalMass > 0)
-            color = GetColor(MassLayer, i, j, GravityGame.MassColors, (double)GravityGame.MaxMass, GravityGame.MassMinDrawValue, null, MinMass, MaxMass, LerpMode.ZeroToSystemMax);
+            color = GetColor(MassLayer, i, j, GravityGame.MassColors, (double)GravityGame.MaxMass, (UInt128)(MaxMass/2.0), null, MinMass, MaxMass, LerpMode.ZeroToSystemMax);
         if (GravityGame.DrawGravity && color == null && TotalGravity > 0)
-            color = GetColor(GravityLayer, i, j, GravityGame.GravityColors, (double)GravityGame.MaxGravity, null, null, MinGravity, MaxGravity, GravityGame.GravityLerpMode);
+            color = GetColor(GravityLayer, i, j, GravityGame.GravityColors, (double)GravityGame.MaxGravity, null, null, MinGravity, MaxGravity, GravityGame.GravityColorLerpMode);
 
         return color ?? Color.Transparent;
     }
@@ -131,19 +137,18 @@ public class GravityMap : BaseMap
             _ => value / overallMax,
         };
 
-        if (minDrawValue.HasValue && value < (double)minDrawValue.Value
-            || maxDrawValue.HasValue && value > (double)maxDrawValue.Value
-            || percentage == 0)
+        if ((minDrawValue.HasValue && value < (double)minDrawValue.Value)
+            || (maxDrawValue.HasValue && value > (double)maxDrawValue.Value))
         {
-            return null;
+            return null; 
+        } else if (percentage == 0 || percentage <= 0 || double.IsNaN(percentage) || !double.IsPositive(percentage))
+        {
+            return colors[0];
         }
-        else if (percentage >= 1)
+        else if (percentage >= 1 || double.IsInfinity(percentage))
         {
             return colors.Last();
         }
-
-        if (percentage != 0 && !double.IsNormal(percentage))
-            return null;
 
         var colorLocation = (colors.Length - 1) * percentage;
         var colorIndex = (int)colorLocation;
@@ -170,16 +175,16 @@ public class GravityMap : BaseMap
                 for (var y = 0; y < Height; y++)
                 {
                     FillAdjacentCells(GravityLayer, x, y, Width, Height, Topology);
-                    const int massReducer = 3;
-                    var adjGrav = (AdjacentTiles[0].Value >> massReducer)
-                                + (AdjacentTiles[1].Value >> massReducer)
-                                + (AdjacentTiles[2].Value >> massReducer)
-                                + (AdjacentTiles[3].Value >> massReducer)
-                                + (AdjacentTiles[5].Value >> massReducer)
-                                + (AdjacentTiles[6].Value >> massReducer)
-                                + (AdjacentTiles[7].Value >> massReducer)
-                                + (AdjacentTiles[8].Value >> massReducer);
-                    var gravity = (MassLayer[x * Width + y] >> 4) + adjGrav;
+                    const int massReducer = 8;
+                    var adjGrav = (AdjacentTiles[0].Value / massReducer)
+                                + (AdjacentTiles[1].Value / massReducer)
+                                + (AdjacentTiles[2].Value / massReducer)
+                                + (AdjacentTiles[3].Value / massReducer)
+                                + (AdjacentTiles[5].Value / massReducer)
+                                + (AdjacentTiles[6].Value / massReducer)
+                                + (AdjacentTiles[7].Value / massReducer)
+                                + (AdjacentTiles[8].Value / massReducer);
+                    var gravity = (MassLayer[x * Width + y] / massReducer/2) + adjGrav;
                     if (gravity == 0 && adjGrav > 0)
                         gravity = 1;
 
@@ -288,7 +293,9 @@ public class GravityMap : BaseMap
                     var surrounded = AdjacentTiles.Count(t => t.Value > 0) > 1;
                     var set = false;
                     var hungry = MooseGame.Random.NextDouble() < .25f;
-                    if (hungry && surrounded && mass < GravityGame.MaxMass)
+                    var cellGravityPercent = (double)GetGravityAt(x, y, 0) / (double)GravityGame.MaxGravity;
+                    var localMassMax = (UInt128)((double)GravityGame.MaxMass * cellGravityPercent);
+                    if (hungry && surrounded && mass < localMassMax)
                     {
                         var smallestGroup = AdjacentTiles.Where((x, i) => i != 4 && x.Value > 0 && x.Value <= mass)
                                                             .GroupBy(x => x.Value).OrderBy(x => x.Key).FirstOrDefault();
@@ -299,7 +306,7 @@ public class GravityMap : BaseMap
                             var (newX, newY) = TranslatePoint(x + xOffset, y + yOffset);
                             if (newX >= 0 && newX < Width && newY >= 0 && newY < Height)
                             {
-                                if (eatenMass + mass < GravityGame.MaxMass)
+                                if (eatenMass + mass < localMassMax)
                                 {
                                     BackBoard[x * Width + y] = mass + eatenMass;
                                     BackBoard[newX * Width + newY] = 0;

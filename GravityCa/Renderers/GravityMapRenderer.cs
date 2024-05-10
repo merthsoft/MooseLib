@@ -27,6 +27,9 @@ internal class GravityMapRenderer(SpriteBatch spriteBatch, Point scaledSize) : S
 
     public override void Draw(MooseGame game, GameTime gameTime, IMap map)
     {
+        if (map.RendererKey != RenderKey)
+            return;
+
         if (!GravityGame.DrawMass && !GravityGame.DrawGravity)
             return;
 

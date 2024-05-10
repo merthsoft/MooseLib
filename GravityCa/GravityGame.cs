@@ -12,25 +12,27 @@ using System.Reflection;
 namespace GravityCa;
 public class GravityGame : MooseGame
 {
-    public const int MapSize = 150;
+    public const int MapSize = 125;
     
-    public static readonly UInt128 MaxGravity = UInt128.MaxValue >> 1;
-    public static readonly UInt128 MaxMass = UInt128.MaxValue >> 3;
+    public static readonly UInt128 MaxGravity = UInt128.MaxValue;
+    public static readonly UInt128 MaxMass = UInt128.MaxValue >> 1;
     public static readonly GravityMap Map = new(MapSize, MapSize, Topology.Torus);
     public static Point ScreenScale { get; private set; } = Point.Zero;
     public static bool DrawGravity { get; set; } = true;
     public static bool DrawMass { get; set; } = true;
     public static Color[] GravityColors { get; set; } = Palettes.AllPalettes[1];
-    public static LerpMode GravityLerpMode { get; set; } = LerpMode.SystemMinToSystemMax;
+    public static LerpMode GravityColorLerpMode { get; set; } = LerpMode.SystemMinToSystemMax;
+    public static LerpMode GravityHeightLerpMode { get; set; } = LerpMode.SystemMinToSystemMax;
     public static Color[] MassColors { get; set; } = Palettes.AllPalettes[0];
     public static UInt128? MassMinDrawValue { get; set; }
     public static bool ConnectCells { get; set; } = true;
+    public static GravityRendererMode GravityRendererMode { get; set; } = GravityRendererMode.ThreeDimmensionalRectangularPrism2;
 
     bool genRandom = true;
     bool hasRenderMinimum = false;
     SpriteFont font = null!;
     private GravityMapRenderer Renderer = null!;
-    private Gravity3DPlaneRenderer Gravity3DPlaneRenderer = null!;
+    private Gravity3DRenderer Gravity3DPlaneRenderer = null!;
     public UInt128 MassDivisor = (UInt128)Math.Pow(2, 25);
     public bool DrawText = false;
     public object mapLock = new();
@@ -69,7 +71,7 @@ public class GravityGame : MooseGame
         ActiveMaps.Add(Map);
         ScreenScale = new Point(ScreenWidth, ScreenHeight);
         Renderer = AddMapRenderer(GravityMapRenderer.RenderKey, new GravityMapRenderer(SpriteBatch, ScreenScale));
-        Gravity3DPlaneRenderer = AddMapRenderer(Gravity3DPlaneRenderer.RenderKey, new Gravity3DPlaneRenderer(GraphicsDevice, new(GraphicsDevice)
+        Gravity3DPlaneRenderer = AddMapRenderer(Gravity3DRenderer.RenderKey, new Gravity3DRenderer(GraphicsDevice, new(GraphicsDevice)
         {
             Alpha = 1,
             TextureEnabled = false,
@@ -78,9 +80,14 @@ public class GravityGame : MooseGame
             Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(100), 1, 1f, 1000f),
             World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up),
         }));
-        Map.RendererKey = GravityMapRenderer.RenderKey;
 
-        var div = (UInt128)(10);
+        //var div = (UInt128)(2);
+        //var x = MapSize / 2 - 1;
+        //var y = MapSize / 2 - 1;
+        //Map.SetMass(x, y, MaxMass / div);
+        //Map.SetMass(x + 1, y, MaxMass / div);
+        //Map.SetMass(x, y + 1, MaxMass / div);
+        //Map.SetMass(x + 1, y + 1, MaxMass / div);
         //for (var i = 0; i < 10; i++)
         //{
         //    var x = Random.Next(MapSize - 2) + 2;
@@ -122,6 +129,15 @@ public class GravityGame : MooseGame
             else
                 GravityColors = Palettes.AllPalettes[keyPressed - Keys.D0];
         }
+        else if (keyPressed >= Keys.F1 && keyPressed <= Keys.F12)
+        {
+            var index = keyPressed - Keys.F1;
+            if (index < Enum.GetValues(typeof(GravityRendererMode)).Length)
+                GravityRendererMode = (GravityRendererMode)index;
+        }
+        Map.RendererKey = GravityRendererMode == GravityRendererMode.Flat
+                            ? GravityMapRenderer.RenderKey
+                            : Gravity3DRenderer.RenderKey;
 
         if (IsActive && (IsLeftMouseDown() || IsRightMouseDown()))
         {
@@ -160,7 +176,10 @@ public class GravityGame : MooseGame
             Map.Reset();
 
         if (WasKeyJustPressed(Keys.Q))
-            GravityLerpMode = GravityLerpMode.Next();
+            GravityColorLerpMode = GravityColorLerpMode.Next();
+        
+        if (WasKeyJustPressed(Keys.E))
+            GravityHeightLerpMode = GravityHeightLerpMode.Next();
 
         if (WasKeyJustPressed(Keys.V))
             hasRenderMinimum = !hasRenderMinimum;
@@ -171,7 +190,7 @@ public class GravityGame : MooseGame
         if (WasKeyJustPressed(Keys.T))
             Map.Topology = Map.Topology.Next();
 
-        if ((genRandom && Map.Running) || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.F))
+        if ((genRandom && Map.Running) || WasKeyJustPressed(Keys.R) || WasKeyJustPressed(Keys.H))
         {
             var chance = (genRandom && Map.Running) ? .002 : WasKeyJustPressed(Keys.R) ? .02f : 1f;
             for (var x = 0; x < MapSize; x++)
@@ -182,15 +201,6 @@ public class GravityGame : MooseGame
                 }
         }
 
-        if (WasKeyJustPressed(Keys.F1))
-            Map.RendererKey = GravityMapRenderer.RenderKey;
-        else if (WasKeyJustPressed(Keys.F2))
-            Map.RendererKey = Gravity3DPlaneRenderer.RenderKey;
-
-        if (Map.RendererKey == Gravity3DPlaneRenderer.RenderKey)
-        {
-            
-        }
 
         //if (hasRenderMinimum)
         //    Renderer.MassMinDrawValue = MaxMass / (MassDivisor+1);
@@ -202,7 +212,7 @@ public class GravityGame : MooseGame
 
     protected override void PostDraw(GameTime gameTime)
     {
-        if (Map.RendererKey == Gravity3DPlaneRenderer.RenderKey)
+        if (Map.RendererKey == Gravity3DRenderer.RenderKey)
             return;
 
         SpriteBatch.Begin(transformMatrix: Matrix.CreateScale(ScreenWidthRatio, ScreenHeightRatio, 1));
