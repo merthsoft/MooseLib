@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<LangVersion>preview</LangVersion>
 		<Nullable>enable</Nullable>
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
@@ -9,9 +9,10 @@
 		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-		<VersionPrefix>0.6</VersionPrefix>
+		<VersionPrefix>0.7</VersionPrefix>
 		<DebugType>embedded</DebugType>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Content Remove="C:\Users\shaun\.nuget\packages\monogame.extended.content.pipeline\3.9.0-alpha0051\contentFiles\any\netcoreapp3.1\CppNet.dll" />
@@ -45,10 +46,10 @@
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="SpriteFontPlus.MonoGame" Version="0.7.0.22" />
-		<PackageReference Include="MonoGame.Extended" Version="3.9.0-alpha0107" />
-		<PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.9.0-alpha0107" />
-		<PackageReference Include="MonoGame.Extended.Graphics" Version="3.9.0-alpha0107" />
-		<PackageReference Include="MonoGame.Extended.Tweening" Version="3.9.0-alpha0107" />
+		<PackageReference Include="MonoGame.Extended" Version="3.8.0" />
+		<PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.8.0" />
+		<PackageReference Include="MonoGame.Extended.Graphics" Version="3.8.0" />
+		<PackageReference Include="MonoGame.Extended.Tweening" Version="3.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>

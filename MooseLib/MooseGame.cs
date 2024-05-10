@@ -479,6 +479,7 @@ public abstract class MooseGame : Game
     public void MoveCameraTo(Vector2 destination)
         => MainCamera.LookAt(destination);
 
+
     protected override void Dispose(bool disposing)
     {
         Tweener?.Dispose();

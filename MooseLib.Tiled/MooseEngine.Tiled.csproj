@@ -10,9 +10,10 @@
 		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
 		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
-		<VersionPrefix>0.6</VersionPrefix>
+		<VersionPrefix>0.7</VersionPrefix>
 		<DebugType>embedded</DebugType>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -5,6 +5,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui;
 public class Theme
 {
     internal Rectangle[] TextureRects = new Rectangle[16];
+    internal Rectangle ArrowRectangle;
 
     private Texture2D windowTexture;
     private Vector2 textureOffset;
@@ -118,6 +119,9 @@ public class Theme
     public Color ResolvePointerColor(bool selected)
         => selected ? SelectedMouseOverColor : ControlPointerColor;
 
+    public void DrawArrow(SpriteBatch spriteBatch, int x, int y, float rotation = 0f, float scale = 1f, Color? color = null)
+        => spriteBatch.Draw(windowTexture, new Vector2(x, y), ArrowRectangle, color ?? Color.White, rotation, new Vector2(TileWidth / 2, TileHeight / 2), scale, SpriteEffects.None, 0);
+
     public Vector2 DrawWindow(SpriteBatch spriteBatch, Vector2 position, Vector2 size, BackgroundDrawingMode backgroundDrawingMode, Color? colorShift = null)
         => DrawWindow(spriteBatch, new(position, size), backgroundDrawingMode, colorShift);
 
@@ -229,6 +233,8 @@ public class Theme
         }
 
         TextureRects[15] = new RectangleF(3 * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight).ToRectangle();
+
+        ArrowRectangle = new RectangleF(3 * TileWidth + TextureOffset.X, 3 * TileHeight + TextureOffset.Y, TileWidth, TileHeight).ToRectangle();
     }
 
     public Vector2 MeasureString(string s, int fontIndex)

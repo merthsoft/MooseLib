@@ -9,6 +9,7 @@
 	<LangVersion>preview</LangVersion>
 	<BaseOutputPath></BaseOutputPath>
 	  <EnablePreviewFeatures>true</EnablePreviewFeatures>
+	  <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿using Merthsoft.Moose.MooseEngine.BaseDriver;
-using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
+﻿using Merthsoft.Moose.MooseEngine.BaseDriver.Renderers.Layer.Implementation;
 using Merthsoft.Moose.MooseEngine.PathFinding.PathFinders.FlowField;
 using System;
 using System.Diagnostics;
