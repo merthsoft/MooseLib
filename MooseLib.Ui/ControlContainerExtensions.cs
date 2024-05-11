@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace Merthsoft.Moose.MooseEngine.Ui;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui;
 
 public static class ControlContainerExtensions
 {
@@ -11,11 +8,12 @@ public static class ControlContainerExtensions
         return control;
     }
 
-    public static TextBox AddTextBox(this IControlContainer container, float x, float y, int width, string text = "", int fontIndex = 0)
+    public static TextBox AddTextBox(this IControlContainer container, float x, float y, int width, string text = "", int fontIndex = 0, string? helpText = null)
         => container.AddControlPassThrough(new TextBox(container, x, y, width)
         {
             Text = text,
-            FontIndex = fontIndex
+            FontIndex = fontIndex,
+            HelpText = helpText,
         });
 
     public static Line AddLine(this IControlContainer container, int x1, int y1, int x2, int y2, int thickness = 1)
@@ -31,10 +29,10 @@ public static class ControlContainerExtensions
              BackgroundColor = fillColor,
          });
 
-    public static Label AddLabel(this IControlContainer container, float x, float y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false)
-        =>  container.AddLabel(text, x, y, fontIndex, color, strokeSize, strokeColor, hightlightOnHover);
+    public static Label AddLabel(this IControlContainer container, float x, float y, string text, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false, string? helpText = null)
+        =>  container.AddLabel(text, x, y, fontIndex, color, strokeSize, strokeColor, hightlightOnHover, helpText);
 
-    public static Label AddLabel(this IControlContainer container, string text, float x = 0, float y = 0, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false)
+    public static Label AddLabel(this IControlContainer container, string text, float x = 0, float y = 0, int fontIndex = 0, Color? color = null, int strokeSize = 0, Color? strokeColor = null, bool hightlightOnHover = false, string? helpText = null)
         => container.AddControlPassThrough(new Label(container, x, y)
         {
             Text = text,
@@ -42,57 +40,63 @@ public static class ControlContainerExtensions
             TextColor = color,
             StrokeSize = strokeSize,
             StrokeColor = strokeColor ?? container.Theme.TextBorderColor,
-            HighlightOnHover = hightlightOnHover,
+            HighlightTextureOnHover = hightlightOnHover,
+            HelpText = helpText,
         });
 
-    public static Label AddActionLabel(this IControlContainer container, float x, float y, string text, Action<Control, UpdateParameters>? action, int fontIndex = 0)
+    public static Label AddActionLabel(this IControlContainer container, float x, float y, string text, Action<Control, UpdateParameters>? action, int fontIndex = 0, string? helpText = null)
         => container.AddControlPassThrough(new Label(container, x, y)
         {
             Text = text,
             Action = action,
             FontIndex = fontIndex,
-            HighlightOnHover = true,
+            HighlightTextureOnHover = true,
             Enabled = action != null,
+            HelpText = helpText,
         });
 
-    public static TextGrid AddActionGrid(this IControlContainer container, float x, float y, int gridWidth, Action<Control, UpdateParameters> action, IEnumerable<string> options, int fontIndex = 0)
+    public static TextGrid AddActionGrid(this IControlContainer container, float x, float y, int gridWidth, Action<Control, UpdateParameters> action, IEnumerable<string> options, int fontIndex = 0, string? helpText = null)
         => container.AddControlPassThrough(new TextGrid(container, x, y, gridWidth, options)
         {
             Action = action,
             SelectMode = SelectMode.None,
             FontIndex = fontIndex,
+            HelpText = helpText,
         });
 
-    public static Picture AddPicture(this IControlContainer container, float x, float y, Texture2D texture, Rectangle? sourceRectangle = null, Vector2? scale = null, Color? color = null)
+    public static Picture AddPicture(this IControlContainer container, float x, float y, Texture2D texture, Rectangle? sourceRectangle = null, Vector2? scale = null, Color? color = null, string? helpText = null)
         => container.AddControlPassThrough(new Picture(container, x, y, texture)
         {
             SourceRectangle = sourceRectangle ?? new(0, 0, texture.Width, texture.Height),
             Scale = scale ?? Vector2.One,
             Color = color ?? Color.White,
+            HelpText = helpText,
         });
 
-    public static Picture AddPicture(this IControlContainer container, float x, float y, Texture2D texture, Vector2 scale)
-        => container.AddControlPassThrough(new Picture(container, x, y, texture) { Scale = scale });
+    public static Picture AddPicture(this IControlContainer container, float x, float y, Texture2D texture, Vector2 scale, string? helpText = null)
+        => container.AddControlPassThrough(new Picture(container, x, y, texture) { Scale = scale, HelpText = helpText });
 
-    public static Picture AddPicture(this IControlContainer container, float x, float y, Texture2D texture, float scale)
-        => container.AddControlPassThrough(new Picture(container, x, y, texture) { Scale = new(scale, scale) });
+    public static Picture AddPicture(this IControlContainer container, float x, float y, Texture2D texture, float scale, string? helpText = null)
+        => container.AddControlPassThrough(new Picture(container, x, y, texture) { Scale = new(scale, scale), HelpText = helpText });
 
-    public static Button AddButton(this IControlContainer container, float x, float y, string text, Action<Control, UpdateParameters>? action = null, int fontIndex = 0)
+    public static Button AddButton(this IControlContainer container, float x, float y, string text, Action<Control, UpdateParameters>? action = null, int fontIndex = 0, string? helpText = null)
         => container.AddControlPassThrough(new Button(text, container, x, y)
         {
             Action = action,
             FontIndex = fontIndex,
+            HelpText = helpText,
         });
 
-    public static Button AddButton(this IControlContainer container, string text, Action<Control, UpdateParameters>? action = null, int fontIndex = 0)
+    public static Button AddButton(this IControlContainer container, string text, Action<Control, UpdateParameters>? action = null, int fontIndex = 0, string? helpText = null)
         => container.AddControlPassThrough(new Button(text, container, 0, 0)
         {
             Action = action,
             FontIndex = fontIndex,
+            HelpText = helpText,
         });
 
     public static Button AddTextureButton(this IControlContainer container, float x, float y, Texture2D texture,
-        Action<Control, UpdateParameters> action, int fontIndex = 0, Rectangle? sourceRect = null, Vector2? scale = null, string label = "")
+        Action<Control, UpdateParameters> action, int fontIndex = 0, Rectangle? sourceRect = null, Vector2? scale = null, string label = "", string? helpText = null)
         => container.AddControlPassThrough(new Button("", container, x, y)
         {
             Action = action,
@@ -102,23 +106,26 @@ public static class ControlContainerExtensions
             BackgroundDrawingMode = BackgroundDrawingMode.None,
             TextureScale = scale ?? Vector2.One,
             Text = label,
+            HelpText = helpText,
         });
 
-    public static Button AddToggleButton(this IControlContainer container, float x, float y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0)
+    public static Button AddToggleButton(this IControlContainer container, float x, float y, string text, bool toggled, Action<Control, UpdateParameters> action, int fontIndex = 0, string? helpText = null)
         => container.AddControlPassThrough(new Button(text, container, x, y)
         {
             Action = action,
             FontIndex = fontIndex,
             Toggleable = true,
             Toggled = toggled,
+            HelpText = helpText,
         });
 
-    public static Slider AddSlider(this IControlContainer container, float x, float y, int min, int max, int initialValue, Action<Control, UpdateParameters> action, int fontIndex = 0)
+    public static Slider AddSlider(this IControlContainer container, float x, float y, int min, int max, int initialValue, Action<Control, UpdateParameters> action, int fontIndex = 0, string? helpText = null)
         => container.AddControlPassThrough(new Slider(container, x, y, min, max)
         {
             Value = initialValue,
             Action = action,
             FontIndex = fontIndex,
+            HelpText = helpText,
         });
 
     public static Panel AddPanel(this IControlContainer container, float x, float y, float w, float h, BackgroundDrawingMode backgroundDrawingMode = BackgroundDrawingMode.Texture)

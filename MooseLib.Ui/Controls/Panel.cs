@@ -18,12 +18,12 @@ public class Panel : Control, IControlContainer
     }
 
     protected List<Control> controls = [];
-    public Control[] Controls => controls.ToArray();
+    public Control[] Controls => [.. controls];
 
     public TControl GetControl<TControl>(int index) where TControl : Control
         => (TControl)controls[index];
 
-    protected Control? FocusedControl { get; set; }
+    public Control? FocusedControl { get; private set; }
 
     public Panel(IControlContainer container, float x, float y, float w, float h)
         : base(container, x, y)
@@ -78,10 +78,9 @@ public class Panel : Control, IControlContainer
                FocusedControl);
             if (c.Rectangle.Contains(updateParameters.LocalMousePosition)
                 && !Hidden && !c.Hidden
-                && updateParameters.MouseOver
-                && (FocusedControl == null || FocusedControl == c))
+                && updateParameters.MouseOver)
             {
-                if (FocusedControl == null && (updateParameters.LeftMouseClick || updateParameters.RightMouseClick))
+                if (updateParameters.MouseOver)
                     updateParameters.FocusedControl = controlUpdateParameters.FocusedControl = FocusedControl = c;
                 controlUpdateParameters.MouseOver = true;
                 controlUpdateParameters.LeftMouseClick = updateParameters.LeftMouseClick;

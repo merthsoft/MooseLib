@@ -47,7 +47,7 @@ public class GrowPanel : StackPanel
             width += Padding;
 
         var offset = Theme.GetDrawOffset(BackgroundDrawingMode);
-        var newSize = new Vector2(width + offset.X, height + offset.Y);
+        var newSize = new Vector2(width + offset.X, height + offset.Y+2);
         Size = BackgroundDrawingMode == BackgroundDrawingMode.Texture
                 ? Theme.CalculateNewSize(newSize)
                 : newSize;

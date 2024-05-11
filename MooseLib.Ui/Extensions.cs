@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Merthsoft.Moose.MooseEngine.Ui;
 
@@ -17,4 +16,7 @@ public static class Extensions
 
     public static bool JustReleased(this ButtonState buttonState, ButtonState previousButtonState)
         => buttonState == ButtonState.Released && previousButtonState == ButtonState.Pressed;
+
+    public static bool IsControlDown(this KeyboardState keyboardState)
+        => keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl);
 }

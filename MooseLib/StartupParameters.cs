@@ -13,4 +13,6 @@ public record StartupParameters
     public Color DefaultBackgroundColor { get; set; }
     public bool IsMouseVisible { get; set; }
     public RenderMode RenderMode { get; set; }
+    public Action<MooseGame, Exception>? UpdateExceptionHook { get; set; }
+    public Action<MooseGame, Exception>? DrawExceptionHook { get; set; }
 }

@@ -5,7 +5,7 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 public class Label : Control
 {
     private string text = "";
-    public string Text
+    public override string? Text
     {
         get => text;
         set
@@ -37,7 +37,6 @@ public class Label : Control
         }
     }
 
-    public bool HighlightOnHover { get; set; }
 
     private Texture2D? renderedTexture;
 

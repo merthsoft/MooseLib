@@ -82,6 +82,8 @@ public abstract class MooseGame : Game
 
     protected FramesPerSecondCounter FramesPerSecondCounter { get; } = new();
 
+    public Action<MooseGame, Exception>? UpdateExceptionHook { get; set; }
+    public Action<MooseGame, Exception>? DrawExceptionHook { get; set; }
 
     public MooseGame()
     {
@@ -120,6 +122,8 @@ public abstract class MooseGame : Game
             DefaultBackgroundColor = Color.DarkCyan,
             IsMouseVisible = true,
             RenderMode = RenderMode.Layer,
+            UpdateExceptionHook = null,
+            DrawExceptionHook = null,
         };
 
     protected override void Initialize()
@@ -156,6 +160,9 @@ public abstract class MooseGame : Game
         }
 
         DefaultBackgroundColor = initialization.DefaultBackgroundColor;
+
+        UpdateExceptionHook = initialization.UpdateExceptionHook;
+        DrawExceptionHook = initialization.DrawExceptionHook;
 
         base.Initialize();
     }
@@ -237,72 +244,78 @@ public abstract class MooseGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        PreviousMouseStates.RemoveAt(0);
-        PreviousMouseStates.Add(CurrentMouseState);
-        CurrentMouseState = Mouse.GetState();
-        
-        PreviousKeyStates.RemoveAt(0);
-        PreviousKeyStates.Add(CurrentKeyState);
-        CurrentKeyState = Keyboard.GetState();
+        try
+        {
+            PreviousMouseStates.RemoveAt(0);
+            PreviousMouseStates.Add(CurrentMouseState);
+            CurrentMouseState = Mouse.GetState();
 
-        WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
-        Tweener?.Update(gameTime.GetElapsedSeconds());
-        
-        PreUpdate(gameTime);
+            PreviousKeyStates.RemoveAt(0);
+            PreviousKeyStates.Add(CurrentKeyState);
+            CurrentKeyState = Keyboard.GetState();
 
-        if (PreMapUpdate(gameTime) && ActiveMaps.Any())
-            foreach (var map in ActiveMaps)
-            {
-                foreach (var layer in map.Layers)
+            WorldMouse = MainCamera.ScreenToWorld(CurrentMouseState.Position.X, CurrentMouseState.Position.Y).GetFloor();
+            Tweener?.Update(gameTime.GetElapsedSeconds());
+
+            PreUpdate(gameTime);
+
+            if (PreMapUpdate(gameTime) && ActiveMaps.Any())
+                foreach (var map in ActiveMaps)
                 {
-                    layer.Update(gameTime);
-                    foreach (var renderer in LayerRendererDictionary.Values)
-                        renderer.Update(this, gameTime, layer);
+                    foreach (var layer in map.Layers)
+                    {
+                        layer.Update(gameTime);
+                        foreach (var renderer in LayerRendererDictionary.Values)
+                            renderer.Update(this, gameTime, layer);
 
-                    if (layer is IObjectLayer objectLayer)
-                        foreach (var obj in objectLayer.Objects)
-                            objectLayer.ObjectUpdate(obj);
+                        if (layer is IObjectLayer objectLayer)
+                            foreach (var obj in objectLayer.Objects)
+                                objectLayer.ObjectUpdate(obj);
+                    }
+                    map.Update(this, gameTime);
+                    foreach (var renderer in MapRendererDictionary.Values)
+                        renderer.Update(this, gameTime, map);
                 }
-                map.Update(this, gameTime);
-                foreach (var renderer in MapRendererDictionary.Values)
-                    renderer.Update(this, gameTime, map);
+
+            if (PreObjectsUpdate(gameTime))
+                foreach (var obj in Objects.Where(o => o.PreUpdate(this, gameTime)))
+                {
+                    obj.Update(this, gameTime);
+                    obj.PostUpdate(this, gameTime);
+                }
+
+            foreach (var obj in Objects)
+            {
+                if (obj.ParentMap != null && obj.ParentMap.LayerMap[obj.Layer] is IObjectLayer layer)
+                {
+                    if (obj.Remove)
+                    {
+                        layer.RemoveObject(obj);
+                        obj.OnRemove();
+                    }
+                }
             }
 
-        if (PreObjectsUpdate(gameTime))
-            foreach (var obj in Objects.Where(o => o.PreUpdate(this, gameTime)))
+            Objects.RemoveAll(obj => obj.Remove);
+
+            foreach (var obj in ObjectsToAdd)
             {
+                Objects.Add(obj);
+                var layer = obj.ParentMap?.LayerMap[obj.Layer] as IObjectLayer;
+                layer?.AddObject(obj);
+                obj.OnAdd();
                 obj.Update(this, gameTime);
-                obj.PostUpdate(this, gameTime);
             }
 
-        foreach (var obj in Objects)
+            ObjectsToAdd.Clear();
+
+            PostObjectsUpdate(gameTime);
+
+            PostUpdate(gameTime);
+        } catch (Exception ex)
         {
-            if (obj.ParentMap != null && obj.ParentMap.LayerMap[obj.Layer] is IObjectLayer layer)
-            {
-                if (obj.Remove)
-                {
-                    layer.RemoveObject(obj);
-                    obj.OnRemove();
-                }
-            }
+            UpdateExceptionHook?.Invoke(this, ex);
         }
-
-        Objects.RemoveAll(obj => obj.Remove);
-
-        foreach (var obj in ObjectsToAdd)
-        {
-            Objects.Add(obj);
-            var layer = obj.ParentMap?.LayerMap[obj.Layer] as IObjectLayer;
-            layer?.AddObject(obj);
-            obj.OnAdd();
-            obj.Update(this, gameTime);
-        }
-
-        ObjectsToAdd.Clear();
-
-        PostObjectsUpdate(gameTime);
-
-        PostUpdate(gameTime);
 
         if (ShouldQuit)
             Exit();
@@ -316,17 +329,24 @@ public abstract class MooseGame : Game
     protected override void Draw(GameTime gameTime)
     {
         FramesPerSecondCounter.Draw(gameTime);
-        var transformMatrix = MainCamera.GetViewMatrix();
 
-        if (PreMapDraw(gameTime))
+        try
         {
-            if (PreClear(gameTime))
-                GraphicsDevice.Clear(DefaultBackgroundColor);
+            var transformMatrix = MainCamera.GetViewMatrix();
 
-            foreach (var map in ActiveMaps)
-                RenderMethods[RenderMode](map, gameTime, transformMatrix);
+            if (PreMapDraw(gameTime))
+            {
+                if (PreClear(gameTime))
+                    GraphicsDevice.Clear(DefaultBackgroundColor);
 
-            PostDraw(gameTime);
+                foreach (var map in ActiveMaps)
+                    RenderMethods[RenderMode](map, gameTime, transformMatrix);
+
+                PostDraw(gameTime);
+            }
+        } catch (Exception ex)
+        {
+            DrawExceptionHook?.Invoke(this, ex);
         }
     }
 

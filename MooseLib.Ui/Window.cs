@@ -16,7 +16,7 @@ public class Window : IControlContainer, ITweenOwner
     private RectangleF rectangle;
 
     protected List<Control> controls = [];
-    public Control[] Controls => controls.ToArray();
+    public Control[] Controls => [.. controls];
     public TControl GetControl<TControl>(int index) where TControl : Control
         => (TControl)controls[index];
 
@@ -39,7 +39,7 @@ public class Window : IControlContainer, ITweenOwner
         }
     }
 
-    private Control? FocusedControl { get; set; }
+    public Control? FocusedControl { get; private set; }
 
     public RectangleF Rectangle
     {
@@ -116,6 +116,7 @@ public class Window : IControlContainer, ITweenOwner
     {
         CurrentMouseState = Mouse.GetState();
         CurrentKeyState = Keyboard.GetState();
+        var isControlDown = CurrentKeyState.IsControlDown(); // Add control-click for macs
         var gameHasFocus = MooseGame.Instance.IsActive;
         var mousePosition = Camera?.ScreenToWorld(CurrentMouseState.Position.ToVector2())
             ?? new(CurrentMouseState.Position.X, CurrentMouseState.Position.Y);
@@ -129,14 +130,16 @@ public class Window : IControlContainer, ITweenOwner
         var windowUpdateParameters = defaultUpdateParameters with
         {
             MouseOver = Rectangle.Intersects(mousePosition),
-            LeftMouseDown = CurrentMouseState.LeftButton == ButtonState.Pressed,
-            RightMouseDown = CurrentMouseState.RightButton == ButtonState.Pressed,
-            LeftMouseClick = CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton),
-            RightMouseClick = CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton),
+            LeftMouseDown = CurrentMouseState.LeftButton == ButtonState.Pressed && !isControlDown,
+            RightMouseDown = CurrentMouseState.RightButton == ButtonState.Pressed
+                             || (CurrentMouseState.LeftButton == ButtonState.Pressed && isControlDown),
+            LeftMouseClick = CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton) && !isControlDown,
+            RightMouseClick = CurrentMouseState.RightButton.JustPressed(PreviousMouseState.RightButton)
+                                || (CurrentMouseState.LeftButton.JustPressed(PreviousMouseState.LeftButton) && isControlDown),
         };
 
         PreControlUpdate(windowUpdateParameters);
-        
+
         if (!windowUpdateParameters.LeftMouseDown && !windowUpdateParameters.RightMouseDown)
             FocusedControl = null;
 

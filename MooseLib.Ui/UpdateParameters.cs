@@ -1,7 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-
-namespace Merthsoft.Moose.MooseEngine.Ui;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui;
 
 public record UpdateParameters(GameTime GameTime, Vector2 ParentOffset, Vector2 LocalMousePosition, MouseState RawMouseState, KeyboardState RawKeyState, Control? FocusedControl)
 {

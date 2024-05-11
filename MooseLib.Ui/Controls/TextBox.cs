@@ -1,9 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
-
-namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
+﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class TextBox : Control
 {
@@ -11,7 +6,7 @@ public class TextBox : Control
     protected int Padding => Font.MeasureString("W").X.Ceiling();
 
     private string text = null!;
-    public string Text
+    public override string? Text
     {
         get => text;
         set
@@ -52,7 +47,7 @@ public class TextBox : Control
         var cursorX = x + 3;
         if (CursorPosition != 0)
         {
-            var subString = Text.Substring(ScrollPosition, CursorPosition - ScrollPosition);
+            var subString = Text[ScrollPosition..CursorPosition];
             cursorX += MeasureString(subString).X;
         }
         spriteBatch.DrawLine(cursorX, y + 3, cursorX, y + h - 3, Theme.ControlPointerColor, 3);

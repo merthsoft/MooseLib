@@ -4,7 +4,6 @@
   </Folder>
   <Project Path="..\Chess\moosechess\MidiChess.csproj" />
   <Project Path="Dungeon\Dungeon.csproj" />
-  <Project Path="GravityCa\GravityCa.csproj" />
   <Project Path="Island\Island.csproj" />
   <Project Path="MooseLib.Tiled\MooseEngine.Tiled.csproj" />
   <Project Path="MooseLib.Ui\MooseEngine.Ui.csproj" />
@@ -15,4 +14,5 @@
   <Project Path="SnowballFight\SnowballFight.csproj" />
   <Project Path="Town\Town.csproj" />
   <Project Path="WiggleWizzard\WiggleWizzard.csproj" />
+</Solution>ggleWizzard\WiggleWizzard.csproj" />
 </Solution>

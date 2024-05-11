@@ -7,9 +7,9 @@
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 		<RootNamespace>Merthsoft.Moose.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		<AssemblyName>Merthsoft.Moose.$(MSBuildProjectName)</AssemblyName>
-		<Copyright>$([System.DateTime]::UtcNow.ToString(yyyy)) Merthsoft Creations</Copyright>
+		<Copyright>$([System.DateTime]::Now.ToString(yyyy)) Merthsoft Creations</Copyright>
 		<Deterministic>False</Deterministic>
-		<VersionSuffix>alpha-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmm))</VersionSuffix>
+		<VersionSuffix>alpha-$([System.DateTime]::Now.ToString(yyyyMMdd-HHmm))</VersionSuffix>
 		<VersionPrefix>0.7</VersionPrefix>
 		<DebugType>embedded</DebugType>
 		<ImplicitUsings>enable</ImplicitUsings>

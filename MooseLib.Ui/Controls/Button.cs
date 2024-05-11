@@ -1,9 +1,7 @@
 ﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class Button : Control
-{
-    public string Text { get; set; }
-    
+{    
     public Texture2D? Texture { get; set; }
     public Color TextureHighlightColor { get; set; } = Color.White;
     

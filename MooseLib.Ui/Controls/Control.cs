@@ -6,7 +6,8 @@ namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 public abstract class Control : ITweenOwner
 {
     public IControlContainer Container { get; }
- 
+    public virtual string? Text { get; set; }
+    public virtual string? HelpText { get; set; }
     public int FontIndex { get; set; }
     public SpriteFont Font => Theme.Fonts[FontIndex];
 
@@ -22,7 +23,7 @@ public abstract class Control : ITweenOwner
 
     public BackgroundDrawingMode BackgroundDrawingMode { get; set; } = BackgroundDrawingMode.Basic;
 
-    private Theme theme;
+    private Theme? theme;
     public Theme Theme { get => theme ?? Container.Theme; set => theme = value; }
 
     public Vector2 Position { get; set; }
@@ -61,6 +62,7 @@ public abstract class Control : ITweenOwner
     }
 
     public Action<Control, UpdateParameters>? Action { get; set; }
+    public Action<Control>? CloseAction { get; set; }
     public List<Tween> ActiveTweens { get; } = [];
 
     public Control(IControlContainer container, float x, float y)
@@ -102,7 +104,10 @@ public abstract class Control : ITweenOwner
     public virtual void PostUpdate()
     {
         if (Remove)
+        {
             this.ClearTweens();
+            CloseAction?.Invoke(this);
+        }
         else
             this.ClearCompletedTweens();
     }

@@ -286,7 +286,7 @@ public class WiggleWizzardGame : MooseGame
         
         var container = spell as SpellContainer;
         
-        var spellsToAdd = container != null ? container!.Spells.ToArray() : new[] { spell };
+        var spellsToAdd = container != null ? [.. container!.Spells] : new[] { spell };
         var manaCost = spell.ManaCost;
         
         if (!Player.TrySpendMana(manaCost))

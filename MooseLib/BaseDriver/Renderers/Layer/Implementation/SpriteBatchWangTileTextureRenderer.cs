@@ -18,7 +18,7 @@ public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
     {
         Cache.Clear();
         foreach (var tile in WangTiles.GroupBy(w => w.WangId))
-            Cache[tile.Key] = tile.ToList();
+            Cache[tile.Key] = [.. tile];
     }
 
     protected virtual WangTile GetWangId(int x, int y, ITileLayer layer)
@@ -71,7 +71,7 @@ public class SpriteBatchWangTileTextureRenderer : SpriteBatchTileTextureRenderer
                     origin: Vector2.Zero, scale: DrawScale, layerDepth: layerDepth);
                 return;
             }
-            tileIndex = tileGroup.ToList();
+            tileIndex = [.. tileGroup];
             if (!Cache.ContainsKey(wangId))
                 Cache[wangId] = [];
             Cache[wangId].AddRange(tileIndex);

@@ -63,6 +63,6 @@ public class MooseContentManager
     public SpriteFont BakeFont(string font, int fontPixelHeight, CharacterRange[]? characterRange = null)
         => TtfFontBaker.Bake(
                 File.ReadAllBytes($"Content/Fonts/{font}.ttf"), fontPixelHeight,
-                DefaultBitmapSize, DefaultBitmapSize, characterRange ?? DefaultCharacterRange.ToArray()
+                DefaultBitmapSize, DefaultBitmapSize, characterRange ?? [.. DefaultCharacterRange]
            ).CreateSpriteFont(GraphicsDevice);
 }
