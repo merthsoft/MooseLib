@@ -17,8 +17,8 @@ public class SpriteBatchTileTextureRenderer : SpriteBatchAbstractTileRenderer
         if (layer is not ITileLayer tileLayer)
             throw new Exception("TileLayer layer expected");
 
-        for (int i = 0; i < tileLayer.Width; i++)
-            for (int j = 0; j < tileLayer.Height; j++)
+        for (var i = 0; i < tileLayer.Width; i++)
+            for (var j = 0; j < tileLayer.Height; j++)
             {
                 var tileValue = tileLayer.GetTileIndex(i, j);
                 if (tileValue >= 0)

@@ -555,7 +555,7 @@ public class DungeonPlayer : DungeonCreature
 
             var newTilePosition = Position / 16 + moveDelta;
             var newX = (int)newTilePosition.X;
-            int newY = (int)newTilePosition.Y;
+            var newY = (int)newTilePosition.Y;
             var tile = game.GetDungeonTile(newX, newY);
             var monster = game.GetMonster(newX, newY);
             var item = game.GetItem(newX, newY);

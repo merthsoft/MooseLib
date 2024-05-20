@@ -13,7 +13,7 @@ public partial class FrameEditor : Form
         minTimeBox.Value = frame.MinTime;
         maxTimeBox.Value = frame.MaxTime;
 
-        for (int i = 0; i < images.Length; i++)
+        for (var i = 0; i < images.Length; i++)
             listView1.Items.Add(i.ToString(), i);
     }
 

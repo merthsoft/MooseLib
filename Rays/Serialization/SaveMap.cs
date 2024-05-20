@@ -5,7 +5,7 @@ public record SaveMap()
     public int Width { get; set; }
     public int Height { get; set; }
 
-    public int[][] Walls { get; set; } = new int[0][];
+    public int[][] Walls { get; set; } = [];
     public List<SaveItem> Items { get; set; } = [];
 
     public SaveMap(int width, int height) : this()

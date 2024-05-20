@@ -3,7 +3,7 @@ public static class CollectionsExtensions
 {
     public static void Resize<T>(this List<T?> list, int size, T? @default = default)
     {
-        int count = list.Count;
+        var count = list.Count;
 
         if (size < count)
         {
@@ -40,16 +40,16 @@ public static class CollectionsExtensions
 
     public static void MoveToTop<T>(this List<T> list, int index)
     {
-        T item = list[index];
-        for (int i = index; i > 0; i--)
+        var item = list[index];
+        for (var i = index; i > 0; i--)
             list[i] = list[i - 1];
         list[0] = item;
     }
 
     public static void MoveToBottom<T>(this List<T> list, int index)
     {
-        T item = list[index];
-        for (int i = index; i < list.Count - 1; i++)
+        var item = list[index];
+        for (var i = index; i < list.Count - 1; i++)
             list[i] = list[i + 1];
         list[^1] = item;
     }
@@ -96,9 +96,9 @@ public static class CollectionsExtensions
         this IEnumerable<T> source, Random rng)
     {
         var buffer = source.ToList();
-        for (int i = 0; i < buffer.Count; i++)
+        for (var i = 0; i < buffer.Count; i++)
         {
-            int j = rng.Next(i, buffer.Count);
+            var j = rng.Next(i, buffer.Count);
             yield return buffer[j];
 
             buffer[j] = buffer[i];

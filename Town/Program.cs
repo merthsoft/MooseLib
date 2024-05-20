@@ -8,8 +8,8 @@ namespace Merthsoft.Moose.Town
         [STAThread]
         static void Main()
         {
-            using (var game = new TownGame())
-                game.Run();
+            using var game = new TownGame();
+            game.Run();
         }
     }
 }

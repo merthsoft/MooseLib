@@ -55,8 +55,8 @@ public class WiggleWizzardGame : MooseGame
 
     public bool GeneratingDungeon = false;
 
-    private readonly (int w, int h)[] roomSizes = new[]
-        {
+    private readonly (int w, int h)[] roomSizes =
+        [
             (5, 5),
             (6, 6),
             (7, 6),
@@ -64,7 +64,7 @@ public class WiggleWizzardGame : MooseGame
             (4, 7),
             (6, 5),
             (5, 6),
-        };
+        ];
 
     public DungeonMap DungeonMap = null!;
 

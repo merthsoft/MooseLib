@@ -45,8 +45,8 @@ public class SpriteBatchPaletteRenderer : SpriteLayerBatchRenderer
         if (layer is not TileLayer<UInt128> tileLayer)
             throw new Exception("TileLayer<UInt128> layer expected");
 
-        for (int i = 0; i < tileLayer.Width; i++)
-            for (int j = 0; j < tileLayer.Height; j++)
+        for (var i = 0; i < tileLayer.Width; i++)
+            for (var j = 0; j < tileLayer.Height; j++)
             {
                 var value = tileLayer.Tiles[i, j];
                 var percentage = (double)value / (double)MaxValue;

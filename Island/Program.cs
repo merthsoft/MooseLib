@@ -7,8 +7,8 @@ namespace Merthsoft.Moose.Island
         [STAThread]
         static void Main()
         {
-            using (var game = new IslandGame())
-                game.Run();
+            using var game = new IslandGame();
+            game.Run();
         }
     }
 }

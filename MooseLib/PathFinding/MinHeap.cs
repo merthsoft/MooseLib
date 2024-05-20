@@ -39,7 +39,7 @@ internal sealed class MinHeap<T>
             var index = Items.IndexOf(item);
             if (index >= 0)
             {
-                Items[index] = Items[Items.Count - 1];
+                Items[index] = Items[^1];
                 Items.RemoveAt(Items.Count - 1);
 
                 Heapify(0);
@@ -51,7 +51,7 @@ internal sealed class MinHeap<T>
 
     private void ReplaceFirstItemWithLastItem()
     {
-        Items[0] = Items[Items.Count - 1];
+        Items[0] = Items[^1];
         Items.RemoveAt(Items.Count - 1);
     }
 

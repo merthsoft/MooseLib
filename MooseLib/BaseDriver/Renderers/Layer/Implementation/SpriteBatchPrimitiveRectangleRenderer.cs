@@ -20,8 +20,8 @@ public class SpriteBatchPrimitiveRectangleRenderer : SpriteLayerBatchRenderer
         if (layer is not TileLayer<int> tileLayer)
             throw new Exception("TileLayer<int> layer expected");
 
-        for (int i = 0; i < tileLayer.Width; i++)
-            for (int j = 0; j < tileLayer.Height; j++)
+        for (var i = 0; i < tileLayer.Width; i++)
+            for (var j = 0; j < tileLayer.Height; j++)
             {
                 var color = Palette[tileLayer.Tiles[i, j]];
                 if (color == Color.Transparent)

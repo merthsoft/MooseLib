@@ -39,7 +39,7 @@ public static class Extensions
 
     public static IEnumerable<Point> SpiralAround(this Point x)
     {
-        int stepNum = 0;
+        var stepNum = 0;
         while (true)
             yield return x.FindSpiralStep(stepNum++);
     }
@@ -71,7 +71,7 @@ public static class Extensions
 
     public static void ZoomToPoint(this OrthographicCamera camera, float deltaZoom, Vector2 zoomCenter)
     {
-        float pastZoom = camera.Zoom;
+        var pastZoom = camera.Zoom;
         camera.ZoomIn(deltaZoom);
         camera.Position += (zoomCenter - camera.Origin - camera.Position) * ((camera.Zoom - pastZoom) / camera.Zoom);
     }

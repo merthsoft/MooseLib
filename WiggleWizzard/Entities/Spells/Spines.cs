@@ -26,8 +26,8 @@ public class Spines : Spell
         var (x1, y1) = Position;
         var (x2, y2) = end;
 
-        float xDiff = x2 - x1;
-        float yDiff = y2 - y1;
+        var xDiff = x2 - x1;
+        var yDiff = y2 - y1;
         Rotation = MathF.Atan2(yDiff, xDiff);
 
         StateCompleteAction = () => State = Active;

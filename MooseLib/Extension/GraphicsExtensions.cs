@@ -101,7 +101,7 @@ public static class GraphicsExtensions
     public static void Draw(this Texture2D destinationTexture, Texture2D sourceTexture, Rectangle destinationRect)
     {
         var count = sourceTexture.Width * sourceTexture.Height;
-        Color[] data = new Color[count];
+        var data = new Color[count];
         sourceTexture.GetData(0, sourceTexture.Bounds, data, 0, count);
         destinationTexture.SetData(0, destinationRect, data, 0, count);
     }
@@ -109,19 +109,19 @@ public static class GraphicsExtensions
     public static void Draw(this Texture2D destinationTexture, Texture2D sourceTexture, Rectangle destinationRect, Rectangle sourceRectangle)
     {
         var count = sourceRectangle.Width * sourceRectangle.Height;
-        Color[] data = new Color[count];
+        var data = new Color[count];
         sourceTexture.GetData(0, sourceRectangle, data, 0, count);
         destinationTexture.SetData(0, destinationRect, data, 0, count);
     }
 
     public static IEnumerable<Color> ColorGradient(Color start, Color end, int steps)
     {
-        int stepA = ((end.A - start.A) / (steps - 1));
-        int stepR = ((end.R - start.R) / (steps - 1));
-        int stepG = ((end.G - start.G) / (steps - 1));
-        int stepB = ((end.B - start.B) / (steps - 1));
+        var stepA = ((end.A - start.A) / (steps - 1));
+        var stepR = ((end.R - start.R) / (steps - 1));
+        var stepG = ((end.G - start.G) / (steps - 1));
+        var stepB = ((end.B - start.B) / (steps - 1));
 
-        for (int i = 0; i < steps; i++)
+        for (var i = 0; i < steps; i++)
         {
             yield return Color.FromNonPremultiplied(start.R + (stepR * i),
                                                     start.G + (stepG * i),
@@ -156,7 +156,7 @@ public static class GraphicsExtensions
         else
         {
             double v1, v2;
-            double hue = h / 360.0;
+            var hue = h / 360.0;
 
             v2 = (l < 0.5) ? (l * (1 + s)) : ((l + s) - (l * s));
             v1 = 2 * l - v2;

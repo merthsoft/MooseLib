@@ -32,8 +32,8 @@ public class SpriteBatchCharacterRenderer : SpriteLayerBatchRenderer
     {
         var (tileWidth, tileHeight) = Font.MeasureString("M");
 
-        for (int i = 0; i < tileLayer.Width; i++)
-            for (int j = 0; j < tileLayer.Height; j++)
+        for (var i = 0; i < tileLayer.Width; i++)
+            for (var j = 0; j < tileLayer.Height; j++)
             {
                 var character = Palette[tileLayer.Tiles[i, j]];
                 DrawCharacter(tileWidth, tileHeight, i, j, character);

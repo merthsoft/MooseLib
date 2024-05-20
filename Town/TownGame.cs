@@ -28,7 +28,7 @@ public class TownGame : MooseGame
         MainFont = ContentManager.BakeFont("Tomorrow_Night_Monospaced", 16);
 
         AddLayerRenderer("base", new SpriteBatchCharacterRenderer(SpriteBatch, MainFont,
-            new SpriteBatchCharacterRenderer.CharacterDefinition[] {
+            [
                 new(' ', Color.White),
                 new('t', Color.DarkGreen),
                 new('R', Color.Gray),
@@ -38,7 +38,7 @@ public class TownGame : MooseGame
                 new('.', Color.Brown),
                 new('r', Color.DarkGray),
                 new(' ', Color.SandyBrown, Color.SandyBrown)
-            }));
+            ]));
     }
 
     private void UpdateCamera(GameTime gameTime)
