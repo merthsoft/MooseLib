@@ -1,4 +1,6 @@
-﻿namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
+﻿using MonoGame.Extended.TextureAtlases;
+
+namespace Merthsoft.Moose.MooseEngine.Ui.Controls;
 
 public class TextBox : Control
 {
@@ -11,12 +13,18 @@ public class TextBox : Control
         get => text;
         set
         {
+            if (text == null)
+                CursorPosition = value?.Length ?? 0;
+
             text = value ?? "";
 
-            if (text == "" || CursorPosition - ScrollPosition > text.Length)
+            if (text == "")
             {
                 CursorPosition = 0;
                 ScrollPosition = 0;
+            } else if (CursorPosition - ScrollPosition > text.Length)
+            {
+                CursorPosition = text.Length - ScrollPosition;
             }
         }
     }
@@ -118,11 +126,13 @@ public class TextBox : Control
         {
             if (CursorPosition == 0 || Text.Length == 0)
                 return;
-            if (CursorPosition == Text.Length + 1)
+            if (CursorPosition == Text.Length)
                 Text = Text[..(CursorPosition - 1)];
             else
+            {
                 Text = Text[..(CursorPosition - 1)] + Text[CursorPosition..];
-            CursorPosition -= 1;
+                CursorPosition -= 1;
+            }
             if (CursorPosition < 0)
                 CursorPosition = 0;
             if (ScrollPosition > 0)
